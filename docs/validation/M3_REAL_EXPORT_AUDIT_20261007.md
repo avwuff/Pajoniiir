@@ -141,3 +141,111 @@ still require the normal fallback; no missing referenced artwork was found.
 
 No GitHub Actions run was started (operator quota waiver remains in force).
 No release, push or public OTA publication was performed.
+
+## Correction candidate — software verified, not installed
+
+Source `082d2c0abda01f3406fef3f35f433415c69521bd` corrects all three observed
+defects in the shared production modules. Artist/album lookup now uses each
+table's ID and near/far name-reference layout, bounds references to the heap
+row and decodes long ASCII fields. EXT PCOB cues enrich DAT metadata
+transactionally: identical slots are idempotent, conflicting source slots
+reject enrichment, and memory lists remain distinct and bounded. The existing
+optional truncated-PWV4 fallback to PWV3 is preserved. PCO2-only cue import,
+comments and colors are not added by this targeted repair; the observed D
+record is present in EXT PCOB.
+
+Metadata cache header version is now 6. Version 5 misses and is rebuilt;
+persistent identity and local cue storage are unchanged. Temporary EXT cue
+parsing uses a bounded heap allocation, avoiding another full metadata object
+on the firmware worker stack. Allocation failure rejects enrichment without
+publishing partial data.
+
+New regressions cover real row layouts, Unicode/long ASCII/far names,
+out-of-row/slot references, source D and all eight Hot Cue slots, duplicate and
+conflicting DAT/EXT slots, memory-loop separation/capacity, reparse, empty EXT,
+truncated PCPT, missing PWV3 and old-cache rejection/rebuild. The first focused
+run exposed an unintended change to the optional PWV4 fallback; that change
+was corrected, and the original fallback regression remains passing.
+
+Validation:
+
+- Complete default shared host runner exited 0. Final focused PDB/ANLZ/cache
+  suites also exited 0 after the last test/bounds changes. This is not a new
+  physical soak or a `-Qualification` run.
+- The exact committed production parser was rerun against all 324 source
+  tracks and 648 DAT/EXT files. Independent comparisons report **zero artist,
+  album, title, path, duration, artwork-ID or source-cue differences** and
+  zero beat/low-presence/PWV3-length/PWV4-length differences. Hot Cue D is
+  restored at 123347 ms. Export SHA remained identical.
+- Audio/artwork probe results are retained from the preceding PC audit;
+  those probes were not unnecessarily repeated in the correction comparison.
+- M3 alone passed ESP-IDF **v6.0.2** `reconfigure build` on the clean source;
+  this was an incremental build, not a newly full-clean build. Dependency
+  lock stayed unchanged. Board identity, image budget, ECDSA bundle and signed
+  manifest verification passed during packaging.
+- JC4880/JC1060 rebuilds were deferred per the M3-first bench policy; current
+  GitHub Actions remains SKIPPED BY OPERATOR. No UI/DSP module changed.
+
+Exact candidate `M3-dev-g082d2c0abda0`, project `main-deck-m3`, board `m3`:
+
+| Artifact | Size / SHA-256 |
+| --- | --- |
+| Image | 2573808 B; `70ee7fbb65f8d7cef0aa49e8b623c048ad39c409c9986a186cb9202553f7cd74` |
+| Signed bundle | 2573996 B; `56cbd15e3b0d6416fea9bf2216078630460f39ddb4cbb2a890aa55c3ea2c9c4c` |
+| ELF identity | `5b6148c686766314ef7aa983e87ca8572ff4107bd82c5265d75f07e30660c83a` |
+
+Package directory:
+`releases/m3-bench-082d2c0a/pajoniiir-m3-M3-dev-g082d2c0abda0/`.
+Fresh comparison evidence:
+`.cache/m3-migration/20261007-fb5cbca1/real-export-fix-082d2c0a/`, including
+the asserted `result.json` PASS with source and evidence hashes.
+Logs: `D:/AI/m3-real-export-fix-{host,focused-final,build,package}.log` and
+`D:/AI/m3-real-export-fix-082d2c0a-production.log`.
+
+The candidate has **NOT BEEN INSTALLED** at this checkpoint. On-device import,
+cue/rendering and new-image physical acceptance remain open; fb5 exact-image
+acceptance is not transferred. The operator was asked to return the stick to
+M3 USB3 and stop both decks for the next OTA/device validation step. No public
+publication or remote push was performed.
+
+## Installed correction — device import verified
+
+After the operator returned the medium to M3 USB3 and confirmed both decks
+stopped, the verified signed candidate was uploaded locally. HTTP 200 was
+followed by observed `M3-dev-g082d2c0abda0`, exact source/ELF, **VALID ota_1**
+and OTA idle at `2026-10-07T15:58:19.386487+00:00`. The PC Wi-Fi interface did
+not automatically reconnect after the AP restart; reconnecting the saved
+`Pajoniiir-M3` profile restored access within the helper's observation deadline.
+That host gap is not a measured firmware startup duration. The runtime's VALID
+state confirms its startup health gate; no manual device reset was performed.
+
+The live library contains 324 tracks and exactly 109 empty artists. Every
+artist matches the independent source export, including all 13 corrected
+names. FLX4 MIDI In/Out/UAC and mounted USB3 storage are available; Wi-Fi stays
+enabled. Startup is `ready` with zero reported allocation/critical allocation
+failures. These observations are import/availability evidence, not listening
+or physical lifecycle acceptance.
+
+D1 was loaded with track 7 (France Gall); D2 with track 317 (Jura Stublić).
+Both reached READY without playback, and the live D2 artist is `Jura Stublić`.
+The operator was asked to inspect the GUI and source Hot Cue D without
+activating it. Album/source-cue contents are not exposed by the existing
+status/library API, so the independent parser comparison does not substitute
+for physical cue rendering. Both decks remain stopped; no new soak or audio
+test was started. Evidence: `.cache/m3-migration/20261007-082d2c0a/`, including
+`ota-install.json`, `after-library.json`, `device-import-check.json` and the
+prepared stopped snapshot. Existing fb5 physical/soak records remain immutable.
+
+All 324 persistent identities and export/path mappings were captured over 41
+pages and match the previous fb5 catalog exactly. The initial ad-hoc capture
+used the wrong pagination field (`has_more` instead of `next_offset`) and
+stopped after eight rows; its assertion failed before writing a catalog. The
+corrected read-only capture uses the actual endpoint contract and exited 0.
+
+The operator confirmed an orderly GUI and the corrected artist label, but
+reported **Hot Cue D not marked** in the first visual check. Do not treat this
+as cue-rendering PASS. Follow-up asks for the explicit D1 target (France Gall)
+and the observed A/B/C/D bank to distinguish target selection, local overrides
+and source/rendering failure. No local cue record was deleted or restored to
+force the test to pass. Parser/source comparison remains PASS; on-device cue
+rendering is **NOT CONFIRMED** at this checkpoint.

@@ -35,7 +35,7 @@ the mechanism on the device. The operator reports much improved visuals with
 slight residual stutter and clean sound; full fluidity remains open. The next
 M3 revision `bf2fdc47` removed repeated UI work on unchanged covers/hidden controls;
 its repeated physical test still showed slight stutter with clean sound.
-The current `fb5cbca1` image is installed VALID in ota_0 and removes a blocking
+The `fb5cbca1` qualification image was installed VALID in ota_0 and removes a blocking
 audio-position read from jog-mode polling. Its short dual MT/zoom-8 retest passed
 with operator-confirmed fluid waveforms and clean MAIN/headphones sound.
 A subsequent short operator review confirmed all five zooms fluid with clean
@@ -60,6 +60,10 @@ found three reproducible import defects: 13 artist names, 12 album names and
 one EXT Hot Cue D are lost. The installed candidate is unchanged. All 324
 analysis pairs parse and 282 referenced JPEGs decode; this export contains no
 playlists or source loops, so their real-media gates remain open.
+Correction source `082d2c0a` now passes the same real-export comparisons, shared
+host tests, M3 build and signed packaging. Its candidate is now installed VALID
+in ota_1; the live 324-track library recovers all 13 artist names. Source-cue
+rendering and broader new-image physical acceptance remain separate open gates.
 
 **A standalone dual-deck DJ system for the Pioneer DDJ-FLX4, powered by a
 single ESP32-P4 board.**

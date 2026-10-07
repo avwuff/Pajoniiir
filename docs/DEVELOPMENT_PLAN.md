@@ -14,7 +14,7 @@ worst-case Campaign B timing. Legacy-image acceptance does not transfer.
 Unavailable hardware is NOT RUN. Public board-channel publication requires
 separate authorization after that board's acceptance.
 
-The current M3 bench image is `M3-dev-gfb5cbca13f33` from clean source
+The accepted M3 qualification baseline is `M3-dev-gfb5cbca13f33` from clean source
 `fb5cbca13f33d21dfb4e16e0ba667c340399eb0c`, installed VALID in ota_0.
 It removes an unused blocking audio-position read from per-refresh jog-mode
 polling. Host qualification, unchanged M3 simulator hashes, M3 build and signed
@@ -48,6 +48,11 @@ and transactional EXT cue enrichment, preserve local cue identities, and rerun
 the actual 324-track comparisons before an M3 candidate build. No firmware was
 changed by the audit. Playlists/source loops are absent from this medium;
 their real-media gates and on-device rendering remain open.
+Correction `082d2c0a` passes exact-source 324-track comparisons with zero import
+differences, the default shared host gate, final focused regressions and the
+M3 IDF 6.0.2 build/signed package. It is now installed VALID in ota_1, and the
+live 324-track library recovers all 13 artist names. Source-cue rendering and
+new-image physical acceptance remain open; do not transfer fb5 acceptance.
 
 The preceding bf2fdc47 skipped unchanged cover comparisons and hidden Library styling, and separated
 chrome/UI-tail/LVGL timings. Host qualification, unchanged M3 simulator hashes,

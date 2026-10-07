@@ -2,7 +2,7 @@
 
 Status: implementation in progress; partial exact-image M3 acceptance, no publication.
 
-Current M3 bench: clean source `fb5cbca13f33d21dfb4e16e0ba667c340399eb0c`,
+Accepted M3 qualification baseline: clean source `fb5cbca13f33d21dfb4e16e0ba667c340399eb0c`,
 signed local OTA, observed VALID in ota_0 on 2026-10-07. Its short dual
 MT/zoom-8 retest passed: operator-confirmed fluid waveforms and clean sound.
 The subsequent short operator review confirmed all five zooms fluid and sound
@@ -34,6 +34,12 @@ then reproduced three import defects: 13 lost artist names, 12 lost album names
 and one missing EXT Hot Cue D. Firmware remains unchanged; library acceptance
 cannot close until corrected imports are retested. Real playlists/source loops
 are absent from this medium and remain unexercised.
+Correction source `082d2c0a` subsequently passed the actual 324-track/648-file
+comparisons with zero observed import differences, the default host suite,
+final focused regressions and M3-only build/signed packaging. Local signed OTA
+then installed it VALID in ota_1 with exact source/ELF; all 13 artist names are
+recovered in the live 324-track library. Cue/rendering and broader new-image
+physical acceptance remain open. This is the current M3 bench image.
 See the [exact-image record](validation/M3_SHARED_WAVEFORM_REGRESSION_20261006.md).
 
 Canonical repository: `dvucinozd/Pajoniiir`. Work branch: `codex/shared-p4-core-m3`.

@@ -21,7 +21,7 @@ remain image-specific; successful builds do not qualify the new M3 target.
 
 These checks do not authorize publication or qualify JC4880/JC1060 hardware.
 
-For the current installed `M3-dev-gfb5cbca13f33` M3 bench candidate in VALID
+For the `M3-dev-gfb5cbca13f33` M3 qualification baseline in VALID
 ota_0, see the
 [exact-image acceptance record](validation/M3_SHARED_WAVEFORM_REGRESSION_20261006.md).
 The preceding 1d3ee7b6 short retest was improved but not fully fluid: slight dual stutter remains
@@ -52,6 +52,11 @@ read-only on the PC and found artist/album row-layout losses and missing EXT
 Hot Cue D. Repair and rerun source comparisons before accepting a new candidate;
 do not label this audit a full library PASS. No playlists/source loops occur
 in this export; physical cover/cue rendering remains NOT RUN.
+Correction candidate `M3-dev-g082d2c0abda0` has passed software comparisons,
+host regressions, M3 build and signed identity/budget checks. Local OTA installed
+it VALID in ota_1, with the exact source/ELF and 324 tracks; all 13 artist names
+are recovered. D1 France Gall and D2 Jura Stublić are READY/stopped for the
+operator's cue/rendering check. New-image physical acceptance remains separate.
 Both 11574f4e and c698fa67 failed on dual waveform deformation; c698fa67 also
 showed visual stutter without audible stutter.
 The measurement candidate also reproduced the visual failure and measured
