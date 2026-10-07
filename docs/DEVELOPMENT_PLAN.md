@@ -14,12 +14,15 @@ worst-case Campaign B timing. Legacy-image acceptance does not transfer.
 Unavailable hardware is NOT RUN. Public board-channel publication requires
 separate authorization after that board's acceptance.
 
-The current M3 bench image is `M3-dev-gb0c66744b252` from clean source
-`b0c66744b252aa383009959986011393c9308247`, installed VALID in ota_1.
-Its deferred framebuffer-preservation repair passed host qualification,
+The current M3 bench image is `M3-dev-g1d3ee7b60ac5` from clean source
+`1d3ee7b60ac5a28e78695009fea567b923d263bc`, installed VALID in ota_0.
+Host qualification, unchanged M3 simulator baselines, the M3 build and signed
+package verification passed. Its retained-position physical retest is pending.
+
+The preceding b0c66744 deferred framebuffer-preservation repair passed host qualification,
 unchanged M3 simulator baselines and the M3 IDF 6.0.2 build. The operator stopped
 the test because of severe stuttering, beginning only when both decks played.
-This image failed the physical visual gate; listening was not qualified.
+That image failed the physical visual gate; listening was not qualified.
 
 During unresolved M3 bench diagnosis, build, sign and test M3 only. Resume
 JC4880/JC1060 builds and full cross-board CI after the operator accepts the M3

@@ -21,8 +21,8 @@ remain image-specific; successful builds do not qualify the new M3 target.
 
 These checks do not authorize publication or qualify JC4880/JC1060 hardware.
 
-For the current installed `M3-dev-gb0c66744b252` M3 bench candidate in VALID
-ota_1, see the
+For the current installed `M3-dev-g1d3ee7b60ac5` M3 bench candidate in VALID
+ota_0, see the
 [exact-image acceptance record](validation/M3_SHARED_WAVEFORM_REGRESSION_20261006.md).
 Both 11574f4e and c698fa67 failed on dual waveform deformation; c698fa67 also
 showed visual stutter without audible stutter.

@@ -29,8 +29,9 @@ The initial dual-deck timing attempt exposed a
 the signed development image has no production hardware PASS.
 Both paired-buffer bench revisions failed the physical test. The installed
 `b0c66744` image has operator-confirmed severe stutter when both decks play.
-The next M3 revision distinguishes retained position observations from fresh
-ones, with RAM age counters to check the mechanism on the device. Other board
+The signed `1d3ee7b6` revision is now installed VALID in ota_0. It distinguishes
+retained position observations from fresh ones, with RAM age counters to check
+the mechanism on the device; its physical retest is pending. Other board
 builds resume after the M3 repair passes the operator test.
 
 **A standalone dual-deck DJ system for the Pioneer DDJ-FLX4, powered by a

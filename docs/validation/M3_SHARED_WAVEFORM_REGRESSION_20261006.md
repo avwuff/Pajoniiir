@@ -559,3 +559,32 @@ an output position whose deferred bookkeeping has not advanced yet; these
 counters measure metadata-observation age, not audio-clock publication age.
 Device measurements and operator confirmation must decide whether this repair
 resolves the dual symptom. The new candidate has no physical PASS in advance.
+
+## Retained-position candidate 1d3ee7b6: installed, physical retest pending
+
+Clean source `1d3ee7b60ac5a28e78695009fea567b923d263bc`, version
+`M3-dev-g1d3ee7b60ac5`, passed full host qualification, focused freshness/cache/
+timing regressions, unchanged M3 product simulator hashes and the M3-only
+ESP-IDF 6.0.2 build. The committed dependency lock did not change. Signature,
+project/source identity and the 0x380000 image budget passed. Other board
+builds, full CI, push and publication remain deferred.
+
+Image size is 2,572,752 bytes, SHA-256
+`5a8acf585c33d507592006d30cdacca84f2d1d803155d52f4a4a7f22728b6323`.
+Bundle size is 2,572,940 bytes, SHA-256
+`488fbf14cf52d994388d7b636013912a7a37e4373f659b8923c93e9122c8dcef`.
+ELF SHA-256 is
+`5281dbc698ac2a2125a38cef8e01b4ba7ff4eff55835900ed498d5982fa57154`.
+Immutable software evidence is under `releases/m3-bench-1d3ee7b6/`.
+
+Signed OTA upload returned HTTP 200. The host disconnected from Wi-Fi during
+restart; reconnecting the existing Pajoniiir-M3 profile restored access. Exact
+source/ELF, clean image, ota_0 VALID and OTA idle were observed at
+`2026-10-07T08:49:29.361822+00:00`. This observation time is not a measured startup
+duration. Install snapshots are under `.cache/m3-migration/20261007-1d3ee7b6/`.
+
+The same key 5 44.1-kHz and key 139 48-kHz tracks, opposite 5% pitch and loops
+are prepared; both decks remain stopped. Preparation observed MT off and zoom
+12. The operator must set MT on both and zoom 8 before a comparable bounded
+solo/dual measurement. GUI/listening acceptance, dual visual result and the
+new timing soak remain **NOT RUN**. VALID is not physical acceptance.
