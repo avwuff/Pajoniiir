@@ -321,8 +321,10 @@ static bool ui_performance_persistent_id(media_persistent_id_t *out)
 static deck_state_t ui_performance_deck_state(void)
 {
     uint8_t deck = ui_controls_active_deck(&s_controls);
-    return deck == CTRL_DECK_1 ? deck_core_get_state()
-                               : deck_core_get_deck_state(deck);
+    /* Jog-mode display/actions need control state only. Reading the audio
+     * position here would wait for the decoder mutex on every UI refresh,
+     * including while the Hot Cues tab is hidden. */
+    return deck_core_get_deck_control_state(deck);
 }
 
 static uint32_t ui_performance_deck_position_ms(uint8_t deck)

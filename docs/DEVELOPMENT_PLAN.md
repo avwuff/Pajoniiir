@@ -14,8 +14,13 @@ worst-case Campaign B timing. Legacy-image acceptance does not transfer.
 Unavailable hardware is NOT RUN. Public board-channel publication requires
 separate authorization after that board's acceptance.
 
-The current M3 bench image is `M3-dev-g1d3ee7b60ac5` from clean source
-`1d3ee7b60ac5a28e78695009fea567b923d263bc`, installed VALID in ota_0.
+The current M3 bench image is `M3-dev-gbf2fdc474ae7` from clean source
+`bf2fdc474ae7a1636a22245656681780f6bebe74`, installed VALID in ota_1.
+It skips unchanged cover comparisons and hidden Library styling, and separates
+chrome/UI-tail/LVGL timings. Host qualification, unchanged M3 simulator hashes,
+M3 build and signed identity/budget checks passed; physical retest is pending.
+
+The preceding 1d3ee7b6 was installed VALID in ota_0.
 Host qualification, unchanged M3 simulator baselines, the M3 build and signed
 package verification passed. Its physical retest showed much improved visuals
 with slight residual stutter and clean MAIN/headphones sound. Continuous dual

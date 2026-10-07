@@ -647,3 +647,57 @@ Overview chrome, UI work after Overview, and LVGL timers/rendering. These
 measurements add no log formatting, UART or file/NVS writes. Waveform cadence,
 transport/audio DSP, layout, panel timing and framebuffer ownership are unchanged.
 Exact-image build/sign/install and operator verification remain required.
+
+## UI work candidate bf2fdc47: installed, physical retest pending
+
+Clean source `bf2fdc474ae7a1636a22245656681780f6bebe74`, version
+`M3-dev-gbf2fdc474ae7`, passed full host qualification with mandatory fixtures,
+unchanged M3 simulator hashes, documentation integrity and the M3-only
+ESP-IDF 6.0.2 build. Dependency locks are unchanged. Signed manifest/bundle,
+project/source identity and image budget checks passed. Other boards/full CI
+and publication remain deferred.
+
+Image size is 2,573,040 bytes, SHA-256
+`3e63b888fa84caf3dd4dd1bbe55533b3fe6279d7cb9b71ba34970146b507a9bc`.
+Bundle size is 2,573,228 bytes, SHA-256
+`2f04f5a41d1cf6f963c20167ac0e561ec0e625aec15ca78c6c74aad07ec3a2bf`.
+ELF SHA-256 is
+`9151b6e923497817f25309863c1d26a3eb42fcfa9514dd00850f48f608fcfc15`.
+Immutable M3 software evidence is under `releases/m3-bench-bf2fdc47/`.
+
+Local signed upload returned HTTP 200. The exact clean source/ELF, ota_1 VALID
+and OTA idle were observed at `2026-10-07T12:12:45.959143+00:00` within the
+helper's polling deadline; this time is not a measured startup duration. Wi-Fi
+remains on. The same tracks, opposite pitch and loops were prepared with both
+decks stopped. Preparation read MT off and zoom 12; operator configuration is
+required for the comparable MT/zoom-8 retest. New metrics `chrome`, `ui_tail`
+and `lvgl_timers` are available. No listening/visual acceptance or new long
+soak has been performed on this image. Install and preparation snapshots are
+under `.cache/m3-migration/20261007-bf2fdc47/`.
+
+### Comparable MT/zoom-8 measurement
+
+After operator readiness, three continuous 12-second windows completed on the
+exact bf2fdc47 image: stopped, solo D1 and dual playback. Both decks were stopped
+afterwards. MT, zoom, transport and source remained consistent. Strict new
+PCM/UAC loss checks passed; visual/listening confirmation is still pending.
+
+Solo delivered 603 callbacks from 608 refreshes; dual delivered 484 from 631
+(147 coalesced). Dual mean waveform D2 finish was 10,506.4 us, UI tail 3,032.2 us,
+chrome 1,299.5 us and LVGL timers/render 2,298.0 us. Whole handler mean was
+18,394.8 us with 134 samples over 20 ms. The cover/hidden-Library optimization
+has not established the missing full fluidity. Raw snapshots are in
+`20261007-bf2fdc47/mt-8-beat/`.
+
+### Jog-mode polling correction
+
+Inspection of the measured UI tail found a blocking query that remained after
+the zero-wait frame observation work: `ui_performance_deck_state()` called
+`deck_core_get_deck_state()`, which obtains position under the audio decoder
+mutex. The jog-mode label invokes this callback on every UI update, including
+when Hot Cues is hidden. Its only consumers read `jog_cdj_mode`; position has a
+separate callback. The revision uses `deck_core_get_deck_control_state()` for
+this callback, preserving jog mode/transport control state without obtaining an
+unused audio position. No DSP, panel, scanout policy or label behavior changes.
+Software checks and exact-image physical measurement are required before
+attributing the residual stutter to this wait.

@@ -2,8 +2,9 @@
 
 Status: implementation in progress; no new hardware acceptance or publication.
 
-Current M3 bench: clean source `1d3ee7b60ac5a28e78695009fea567b923d263bc`,
-signed local OTA, observed VALID in ota_0 on 2026-10-07. The retained-position
+Current M3 bench: clean source `bf2fdc474ae7a1636a22245656681780f6bebe74`,
+signed local OTA, observed VALID in ota_1 on 2026-10-07, physical retest pending.
+The preceding 1d3ee7b6 retained-position
 repair passed M3 software checks; the physical retest showed improved visuals
 with slight residual dual stutter and clean sound. Full fluidity remains open. The preceding
 b0c66744 image failed on operator-confirmed severe dual waveform stutter.
