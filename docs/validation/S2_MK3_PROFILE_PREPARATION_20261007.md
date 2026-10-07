@@ -33,7 +33,19 @@ publication and a three-attempt reader prevent torn reads without unbounded
 waiting; the HTTP response uses heap buffers, not a large HTTP stack frame.
 It sends no USB requests and adds no periodic logging or audio/UI loop work.
 Focused USB codec, snapshot bounds/overwrite and audio/gate tests pass.
-Diagnostic image installation and full descriptor interpretation remain pending.
+The clean M3-only ESP-IDF 6.0.2 build, full default host suite, unchanged M3
+dependency lock, signed packaging and documentation checks passed. Diagnostic
+source `6438c351ea2de9072d74d809b0107071bb31c8a0`, version
+`M3-dev-g6438c351ea2d`, installed with HTTP 200 and reached VALID on `ota_0`.
+Image: 2,575,472 bytes, SHA-256
+`6a6bad305f9464319804067ff442b250db4ae6b416888fbb24410097939b8235`.
+Bundle: 2,575,660 bytes, SHA-256
+`cb80347aa5bad4333cb6fc2bc85bd2c2c266be41b3ff513c721eedd8d35036d0`.
+ELF: `9f4f1783ca9f3acf76e4d47bec9b35ae8a9a924f05d3cf1ae41c2f08e6239656`.
+The first post-boot snapshot was the USB stick, not S2; its VID/PID and length
+must not be attributed to the controller. S2 reconnect and full descriptor
+interpretation remain pending. This diagnostic image has no new audio/UI soak
+or production acceptance. Other board builds and hosted CI were not run.
 
 ## Bench isolation
 
