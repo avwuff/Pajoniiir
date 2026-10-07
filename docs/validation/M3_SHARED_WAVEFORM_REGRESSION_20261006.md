@@ -868,3 +868,14 @@ this exact M3 image. Campaign A, startup fault/timeout/rollback, current-source
 CI, complete bounded per-zoom dwell coverage, other-board/controller hardware
 gates and remaining integration acceptance are still open. No release tag,
 remote push or public OTA channel was changed.
+
+### Subsequent Campaign A scope waiver
+
+After this soak the operator excluded all Campaign A work requiring human
+intervention. All 30 physical cycles and operator LED/control/listening checks
+were SKIPPED BY OPERATOR. Ten software restarts were run separately, with
+verified eventual recovery and nine complete timing windows; host visibility
+flags and cycle-6 timing remain investigation/incomplete evidence. See the
+[automatic recovery supplement](M3_AUTOMATIC_RECOVERY_20261007.md). This changes
+the Campaign A scope record and does not extend the soak's physical PASS to
+cold boot, cable reconnect or other controllers.

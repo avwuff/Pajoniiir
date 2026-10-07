@@ -8,8 +8,12 @@ MT/zoom-8 retest passed: operator-confirmed fluid waveforms and clean sound.
 The subsequent short operator review confirmed all five zooms fluid and sound
 clean. Its continuous 3600.163-second Campaign B soak then passed telemetry and
 operator visual/listening acceptance. New PCM/UAC/service-log loss deltas were
-zero; 11 output-late events remain monitoring findings. Campaign A, startup
-fault/rollback, current-source CI and full hardware acceptance remain open.
+zero; 11 output-late events remain monitoring findings. Campaign A physical
+cycles and operator checks were subsequently excluded by the operator. The
+[automatic software-reboot supplement](validation/M3_AUTOMATIC_RECOVERY_20261007.md)
+observed ten recoveries, nine complete timing windows, host visibility flags and
+one incomplete timing window. It does not establish physical Campaign A PASS.
+Startup fault/rollback, current-source CI and full hardware acceptance remain open.
 It removes a blocking audio-position query from jog-mode polling. The preceding
 bf2fdc47 repeated test retained slight dual stutter with clean sound.
 The preceding 1d3ee7b6 retained-position

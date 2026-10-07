@@ -57,6 +57,14 @@ The summary must include at least:
 
 ## Campaign A: USB enumeration and recovery
 
+For the exact shared-core `fb5cbca1` M3 image on 2026-10-07, the operator
+excluded every scenario requiring human intervention. The 30 physical cycles
+and LED/listening/control checks are **SKIPPED BY OPERATOR**, not PASS. Ten
+software restarts were exercised separately; nine have complete timing windows,
+with host visibility flags and one incomplete window. See the
+[automatic supplement and waiver record](validation/M3_AUTOMATIC_RECOVERY_20261007.md).
+The physical matrix below defines the full campaign, not the waived scope.
+
 Run the following 30 controlled cycles with a fixed, verified Rekordbox medium.
 Pass its exact count with `-ExpectedLibraryTracks`; the current shared-core bench
 medium has 324 tracks. The historical M3 campaign used 191 tracks.

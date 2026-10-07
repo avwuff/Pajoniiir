@@ -34,9 +34,12 @@ MAIN/headphones sound. A subsequent short operator review confirmed all five
 zooms fluid and sound clean; captured per-zoom dwell varied. Campaign B subsequently
 passed on this exact image for 3600.163 seconds with operator visual/listening
 confirmation, zero new PCM/UAC/service-log losses and 11 output-late monitoring
-events. Both decks ended stopped. Complete Campaign A, startup fault/rollback and
-remaining image-specific gates before full qualification; current-source CI and
-other-board physical acceptance remain open.
+events. Both decks ended stopped. Campaign A physical cycles/operator checks
+were subsequently SKIPPED BY OPERATOR. The [automatic software-reboot supplement](validation/M3_AUTOMATIC_RECOVERY_20261007.md)
+observed ten recoveries with nine complete timing windows; host visibility flags
+and cycle-6 timing remain investigation/incomplete evidence. This is not a
+physical Campaign A PASS. Startup fault/rollback, remaining image-specific gates,
+current-source CI and other-board physical acceptance remain open.
 Both 11574f4e and c698fa67 failed on dual waveform deformation; c698fa67 also
 showed visual stutter without audible stutter.
 The measurement candidate also reproduced the visual failure and measured
