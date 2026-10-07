@@ -3077,6 +3077,17 @@ $tests = @(
         )
     },
     @{
+        Name = "ui_position_interpolator"
+        Dir = "tests/ui_position_interpolator"
+        Target = "test_ui_position_interpolator.exe"
+        Args = @(
+            "-Wall", "-Wextra", "-Wpedantic", "-std=c99",
+            "-I../../firmware/p4-core/components/ui/include",
+            "-o", "test_ui_position_interpolator.exe", "test_ui_position_interpolator.c",
+            "../../firmware/p4-core/components/ui/ui_position_interpolator.c"
+        )
+    },
+    @{
         Name = "ui_overview_motion"
         Dir = "tests/ui_overview_motion"
         Target = "test_ui_overview_motion.exe"
@@ -3191,6 +3202,7 @@ $tests = @(
             "-o", "test_ui_overview_wave_cache.exe",
             "test_ui_overview_wave_cache.c",
             "../../firmware/p4-core/components/ui/ui_overview_wave_cache.c",
+            "../../firmware/p4-core/components/ui/ui_position_interpolator.c",
             "../../firmware/p4-core/components/ui/ui_overview_renderer.c",
             "../../firmware/p4-core/components/ui/ui_waveform_model.c",
             "../../firmware/p4-core/components/ui/ui_overview_grid.c"

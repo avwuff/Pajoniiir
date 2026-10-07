@@ -5,6 +5,7 @@
 #include <string.h>
 
 #include "ui_overview_wave_cache.h"
+#include "ui_position_interpolator.h"
 
 static const uint16_t palette[] = {
     0x0000, 0xF16E, 0x235F, 0x475C, 0xE71D,
@@ -413,6 +414,41 @@ static void test_stats_count_update_kinds_columns_and_blits(void)
     assert(stats.total_blits == 0);
 }
 
+static void test_retained_position_does_not_force_backward_full_rebuilds(void)
+{
+    unsigned full[2], backwards[2] = {0};
+    for (unsigned mode = 0; mode < 2; ++mode) {
+        uint8_t samples[512]; memset(samples, 0x1f, sizeof(samples));
+        uint16_t pixels[1024 * 12] = {0};
+        ui_waveform_source_t source = { .kind = UI_WAVEFORM_SOURCE_HIGH,
+            .samples = samples, .sample_count = sizeof(samples) };
+        ui_overview_wave_cache_t cache;
+        ui_position_interpolator_t interp;
+        ui_position_interpolator_init(&interp);
+        assert(ui_overview_wave_cache_bind_strip(&cache, pixels, 1024, 1024, 752,
+            12, 136, palette, sizeof(palette) / sizeof(palette[0])));
+        uint32_t previous = 0;
+        for (unsigned frame = 0; frame <= 25; ++frame) {
+            uint64_t now = 1000000u + frame * 20000u;
+            uint32_t pos = mode
+                ? ui_position_interpolator_update_observed(&interp, 30000, 200000,
+                    true, 1050, now, frame == 0)
+                : ui_position_interpolator_update(&interp, 30000, 200000, true, 1050, now);
+            if (frame && pos < previous) backwards[mode]++;
+            previous = pos;
+            ui_overview_wave_cache_report_t report;
+            (void)ui_overview_wave_cache_update(&cache, &source, 200000, NULL,
+                pos, 4608, &report);
+        }
+        ui_overview_wave_cache_stats_t stats;
+        ui_overview_wave_cache_get_stats(&cache, &stats);
+        full[mode] = stats.update_count[UI_OVERVIEW_WAVE_CACHE_FULL];
+    }
+    assert(backwards[0] == 4 && backwards[1] == 0);
+    assert(full[0] == 5 && full[1] == 1);
+    puts("PASS production interpolator/cache chain: 4 retained-input rewinds and 5 full redraws become 0 rewinds and 1 initial redraw");
+}
+
 int main(void)
 {
     test_initial_update_renders_full_view();
@@ -426,6 +462,7 @@ int main(void)
     test_backward_jump_loop_wrap_forces_full_redraw();
     test_missing_source_returns_false_without_blit();
     test_stats_count_update_kinds_columns_and_blits();
+    test_retained_position_does_not_force_backward_full_rebuilds();
     puts("ui_overview_wave_cache tests passed");
     return 0;
 }

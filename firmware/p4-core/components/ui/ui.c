@@ -53,6 +53,7 @@ void deck_core_test_apply_event(const ctrl_event_t *event);
 #include "media_catalog.h"
 #include "esp_heap_caps.h"
 #include "esp_timer.h"
+#include "ui_scanout_timing.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/queue.h"
 #include "freertos/task.h"
@@ -1274,16 +1275,24 @@ static void ui_build_frame_context(ui_frame_context_t *ctx)
     ctx->active_tab = s_active_tab;
 
     for (uint8_t deck = 0; deck < DECK_CORE_DECK_COUNT; ++deck) {
-        if (audio_engine_deck_try_get_status(deck, &s_display_audio_status[deck]) == ESP_OK)
+        bool fresh = audio_engine_deck_try_get_status(deck, &s_display_audio_status[deck]) == ESP_OK;
+        if (fresh)
             s_display_audio_status_valid[deck] = true;
         ctx->deck_audio_status[deck] = s_display_audio_status[deck];
+#ifndef WIN32
+        /* Count metadata observation age without waiting or logging. Scratch
+         * uses zero interpolation speed below; an unavailable observation holds
+         * its last displayed coordinate until a coherent sample arrives. */
+        ui_scanout_timing_position_sample(deck, fresh, esp_timer_get_time());
+#endif
         const audio_engine_deck_status_t *audio = &ctx->deck_audio_status[deck];
         const bool same_session = s_display_audio_status_valid[deck] &&
             ui_library_deck_observation_matches(deck, audio->loaded, audio->session_generation);
+        ctx->deck_position_retained[deck] = !fresh && same_session;
         ctx->deck_loop_display[deck] = deck_core_get_loop_display_observed(deck,
             same_session && audio->loop_active, audio->loop_start_ms, audio->loop_end_ms);
         ctx->deck_state[deck] = deck_core_get_deck_control_state(deck);
-        if (s_display_audio_status_valid[deck])
+        if (same_session)
             ctx->deck_state[deck].position_ms = ctx->deck_audio_status[deck].position_ms;
     }
     ctx->active_deck = ui_controls_active_deck(&s_controls);

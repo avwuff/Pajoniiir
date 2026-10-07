@@ -41,6 +41,19 @@ int main(void)
         assert(snapshot.metric[UI_TIMING_CALLBACK].histogram[i] ==
                (i == 0 || i == 6 ? 1u : 2u));
     }
+    ui_scanout_timing_position_sample(0, true, 1000000);
+    ui_scanout_timing_position_sample(0, false, 1020000);
+    ui_scanout_timing_position_sample(0, false, 1200000);
+    ui_scanout_timing_position_sample(0, true, 1210000);
+    ui_scanout_timing_position_sample(1, true, 1210000);
+    ui_scanout_timing_position_sample(2, false, 1500000); /* invalid deck */
+    ui_scanout_timing_snapshot(&snapshot);
+    assert(snapshot.position_fresh[0] == 2 && snapshot.position_retained[0] == 2);
+    assert(snapshot.position_retained_streak_max[0] == 2);
+    assert(snapshot.position_over_rebase_age[0] == 1 && snapshot.position_over_rebase_age[1] == 0);
+    assert(snapshot.position_fresh[1] == 1 && snapshot.position_retained[1] == 0);
+    assert(snapshot.metric[UI_TIMING_D1_POSITION_AGE].max_us == 200000);
+    assert(snapshot.metric[UI_TIMING_D1_POSITION_AGE].last_us == 0);
     puts("PASS scanout timing: in-flight refresh origin, coalescing, histogram boundaries");
     return 0;
 }

@@ -21,8 +21,8 @@ remain image-specific; successful builds do not qualify the new M3 target.
 
 These checks do not authorize publication or qualify JC4880/JC1060 hardware.
 
-For the current installed `M3-dev-gee54f0d11cb6` M3 bench candidate in VALID
-ota_0, see the
+For the current installed `M3-dev-gb0c66744b252` M3 bench candidate in VALID
+ota_1, see the
 [exact-image acceptance record](validation/M3_SHARED_WAVEFORM_REGRESSION_20261006.md).
 Both 11574f4e and c698fa67 failed on dual waveform deformation; c698fa67 also
 showed visual stutter without audible stutter.
@@ -52,11 +52,17 @@ PASS. The separate bench manifest retains full software qualification as false;
 it does not relax final integration, Campaign A/B or publication gates.
 
 The initial completed-frame candidate 6d55ce2a failed; the bench was returned to
-ee54f0d1 VALID in ota_0. The next M3 candidate retains paired presentation but
-copies only old damage not overwritten by new rendering. Before its physical
+ee54f0d1 VALID in ota_0 before installing b0c66744 VALID in ota_1. Deferred
+preservation reduced the solo copy cost but b0c66744 also failed: severe stutter
+began with dual playback. Its interrupted dual aggregate is not a continuous
+dual measurement. The next revision fixes retained position handling and adds
+RAM observation-age counters. Before its physical
 PASS, verify exact source/ELF/VALID state,
 `capabilities.display_framebuffers=2`, stable panel/touch/colours and all zooms,
 then compare solo/dual MT timing including framebuffer-sync/present cost.
+Require unchanged playback state throughout each window; an operator stop
+invalidates that window and terminates the test. Compare observation-age
+counters as well, without assuming mutex contention caused the device failure.
 Both previous visual failures remain recorded; no physical PASS follows from
 installation or host pixel tests. Check audio/UAC and HTTP stability as well.
 

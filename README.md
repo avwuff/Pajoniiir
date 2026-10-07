@@ -27,10 +27,11 @@ Audio/USB lifecycle campaigns and full hardware qualification remain open.
 The initial dual-deck timing attempt exposed a
 [waveform regression](docs/validation/M3_SHARED_WAVEFORM_REGRESSION_20261006.md);
 the signed development image has no production hardware PASS.
-The initial paired-buffer bench image failed its physical test. The next M3
-revision preserves complete-frame ownership while copying only pixels not
-redrawn in the new frame; its physical retest is pending. Other board builds resume after the M3
-repair passes the operator test.
+Both paired-buffer bench revisions failed the physical test. The installed
+`b0c66744` image has operator-confirmed severe stutter when both decks play.
+The next M3 revision distinguishes retained position observations from fresh
+ones, with RAM age counters to check the mechanism on the device. Other board
+builds resume after the M3 repair passes the operator test.
 
 **A standalone dual-deck DJ system for the Pioneer DDJ-FLX4, powered by a
 single ESP32-P4 board.**

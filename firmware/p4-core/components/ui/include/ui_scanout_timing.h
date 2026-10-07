@@ -1,6 +1,7 @@
 #pragma once
 
 #include <stdint.h>
+#include <stdbool.h>
 
 /* Fixed-size, RAM-only measurements. No logging, allocation or I/O from the
  * refresh ISR or LVGL frame path. Durations are microseconds. */
@@ -18,6 +19,8 @@ typedef enum {
     UI_TIMING_D2_FINISH,
     UI_TIMING_FB_SYNC,
     UI_TIMING_PRESENT,
+    UI_TIMING_D1_POSITION_AGE,
+    UI_TIMING_D2_POSITION_AGE,
     UI_TIMING_COUNT
 } ui_scanout_timing_metric_t;
 
@@ -33,6 +36,8 @@ typedef struct {
     uint32_t refresh_count;
     uint32_t coalesced_refreshes;
     uint32_t zoom_beats;
+    uint32_t position_fresh[2], position_retained[2], position_retained_streak_max[2];
+    uint32_t position_over_rebase_age[2];
     ui_scanout_timing_stat_t metric[UI_TIMING_COUNT];
 } ui_scanout_timing_snapshot_t;
 
@@ -40,6 +45,7 @@ void ui_scanout_timing_refresh_isr(int64_t now_us);
 void ui_scanout_timing_frame_begin(int64_t now_us);
 void ui_scanout_timing_overview_begin(uint32_t zoom_beats, int64_t now_us);
 void ui_scanout_timing_record(ui_scanout_timing_metric_t metric, uint32_t us);
+void ui_scanout_timing_position_sample(uint8_t deck_index, bool fresh, int64_t now_us);
 void ui_scanout_timing_wave_complete(uint8_t deck_index, uint32_t cache_us,
                                      uint32_t blit_us, int64_t now_us);
 void ui_scanout_timing_snapshot(ui_scanout_timing_snapshot_t *out);

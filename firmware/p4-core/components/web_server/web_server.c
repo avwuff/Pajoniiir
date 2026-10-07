@@ -1404,7 +1404,7 @@ static esp_err_t api_ui_timing_handler(httpd_req_t *req)
     static const char *names[UI_TIMING_COUNT] = {
         "wake", "frame_interval", "overview_begin", "callback", "handler",
         "d1_cache", "d1_blit", "d1_finish", "d2_cache", "d2_blit", "d2_finish",
-        "framebuffer_sync", "present"
+        "framebuffer_sync", "present", "d1_position_age", "d2_position_age"
     };
     /* Keep the snapshot and small chunk on the HTTP task stack. A single large
      * JSON stack buffer would compromise its existing stack headroom. */
@@ -1413,9 +1413,15 @@ static esp_err_t api_ui_timing_handler(httpd_req_t *req)
     httpd_resp_set_hdr(req, "Cache-Control", "no-store");
     int n = snprintf(chunk, sizeof chunk,
         "{\"unit\":\"us\",\"scope\":\"since_boot\",\"refresh_count\":%u,"
-        "\"coalesced_refreshes\":%u,\"zoom_beats\":%u,\"metrics\":{",
+        "\"coalesced_refreshes\":%u,\"zoom_beats\":%u,"
+        "\"position_samples\":{\"fresh\":[%u,%u],\"retained\":[%u,%u],\"max_streak\":[%u,%u],"
+        "\"older_than_120ms\":[%u,%u]},\"metrics\":{",
         (unsigned)timing.refresh_count, (unsigned)timing.coalesced_refreshes,
-        (unsigned)timing.zoom_beats);
+        (unsigned)timing.zoom_beats,
+        (unsigned)timing.position_fresh[0], (unsigned)timing.position_fresh[1],
+        (unsigned)timing.position_retained[0], (unsigned)timing.position_retained[1],
+        (unsigned)timing.position_retained_streak_max[0], (unsigned)timing.position_retained_streak_max[1],
+        (unsigned)timing.position_over_rebase_age[0], (unsigned)timing.position_over_rebase_age[1]);
     if (n < 0 || (size_t)n >= sizeof chunk) return ESP_FAIL;
     esp_err_t rc = httpd_resp_send_chunk(req, chunk, n);
     if (rc != ESP_OK) return rc;

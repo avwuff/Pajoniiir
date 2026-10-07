@@ -500,3 +500,62 @@ remain unchanged. Full host qualification passed with no optional qualification
 SKIP, and documentation integrity passed. The exact clean-source M3 build,
 packaging and physical retest are separate gates. The preceding failure has
 not been resolved by these software tests.
+
+## Deferred-preservation candidate b0c66744: failed visual retest
+
+Clean source `b0c66744b252aa383009959986011393c9308247`, version
+`M3-dev-gb0c66744b252`, was installed with signed local OTA (HTTP 200) and
+observed VALID in ota_1 at `2026-10-07T08:21:26.422033+00:00`.
+Image size is 2,572,096 bytes with SHA-256
+`abb2231be28c0d6888e4b5bd35bcd15a576d18251e93174d0f12b83319e593b2`.
+The 2,572,284-byte bundle SHA-256 is
+`bfb5d9915e05a0b764ebffb909f8a7843f9ec5569992fd9e678e0c5cffc8e1e6`;
+ELF SHA-256 is
+`b72e44755ecbc16cc2974bb2e52a17e1eeadb6fa2899bddc9b921d3c4fa8fb5d`.
+Immutable software evidence is under `releases/m3-bench-b0c66744/`.
+Full host qualification, unchanged M3 simulator hashes, the exact M3 build,
+signature/project identity and budget passed. Other boards/CI remain deferred.
+
+MT was on both decks and zoom remained 8. The solo twelve-second window had
+614 refreshes, six coalesced notifications and a mean framebuffer-sync cost of
+798 us, down from 6,039 us on 6d55ce2a. Mean handler cost was 8,008 us. The
+operator stopped playback during the dual interval because of severe stutter,
+and confirmed it began only when both decks played. Physical visual result is
+**FAIL**. Both decks were observed stopped at the midpoint and end; therefore
+the dual summary mixes playing/stopped intervals and cannot qualify continuous
+dual operation. Raw records remain in
+`.cache/m3-migration/20261007-b0c66744/mt-8-beat/`.
+Captured PCM/UAC loss, output-late and service-log-drop deltas were zero; this
+does not establish listening acceptance. No new long soak followed the failure.
+The measurement runner now rejects a changed playback state at midpoint/end
+and records an interrupted window instead of reporting it as completed.
+
+## Retained-position correction and observation-age measurement
+
+The shared zero-wait UI observer retained its last coherent status when the
+decoder metadata mutex was busy. It passed that old position into the production
+interpolator without freshness information. A retained sample could exceed the
+120-ms correction threshold and reset a smoothly advancing display backwards.
+The production waveform cache then treats the backwards motion as a large
+change and rebuilds its strip.
+
+A regression now executes both production modules with a 500-ms retained
+observation, +5% speed and 20-ms frame cadence. The previous contract produces
+four backwards resets and five full cache redraws. With an explicit retained
+flag it produces zero backwards resets and only the initial full redraw.
+Separate cases cover -5%, pause/play handoff, fresh seek/CUE/loop wrap, and
+scratch-authoritative zero-speed motion. A retained scratch observation holds
+the last displayed coordinate until the next coherent observation.
+
+The UI now carries freshness only for a matching loaded session. A timed-out
+observation cannot authorize a rebase. Fresh large changes remain authoritative.
+RAM counters expose successful/retained observations, retained streak maxima
+and age histograms, including samples older than 120 ms. They perform no UART,
+NVS or file writes. No decoder, mixer, panel timing or geometry change is made.
+
+The host reproduction proves a defect in the retained-input path, not its
+occurrence or primacy on the device. A successful mutex read can also observe
+an output position whose deferred bookkeeping has not advanced yet; these
+counters measure metadata-observation age, not audio-clock publication age.
+Device measurements and operator confirmation must decide whether this repair
+resolves the dual symptom. The new candidate has no physical PASS in advance.

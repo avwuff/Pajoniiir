@@ -2469,6 +2469,7 @@ static void ui_update_overview_deck(uint8_t deck, const deck_state_t *state,
                                     const audio_engine_deck_status_t *audio_status,
                                     uint16_t effective_speed_permille,
                                     bool scratch_position_authoritative,
+                                    bool position_retained,
                                     ui_overview_update_phase_t phase,
                                     uint32_t *frame_elapsed_ms)
 {
@@ -2486,13 +2487,13 @@ static void ui_update_overview_deck(uint8_t deck, const deck_state_t *state,
                             ? effective_speed_permille
                             : ui_pitch_speed_permille(state);
     uint32_t elapsed_ms = phase == UI_OVERVIEW_PHASE_CHROME ? *frame_elapsed_ms :
-        ui_position_interpolator_update(
+        ui_position_interpolator_update_observed(
         &s_overview_position_interp[idx],
         state->position_ms,
         duration_ms,
         state->playing,
         speed_permille,
-        ui_monotonic_time_us());
+        ui_monotonic_time_us(), !position_retained);
     *frame_elapsed_ms = elapsed_ms;
     if (phase == UI_OVERVIEW_PHASE_WAVEFORM) {
         /* Do not take status/track locks or query artwork before either main
@@ -2714,6 +2715,7 @@ void ui_overview_update(const ui_frame_context_t *ctx)
                                 &ctx->deck_audio_status[deck],
                                 ctx->mixer_snapshot.effective_speed_permille[deck],
                                 ctx->mixer_snapshot.scratch_position_authoritative[deck],
+                                ctx->deck_position_retained[deck],
                                 steps[i].phase, &frame_elapsed_ms[deck]);
     }
     ui_update_overview_fx_panel(&ctx->beat_fx_state);

@@ -1,4 +1,5 @@
 #include "ui_scanout_timing.h"
+#include "ui_position_interpolator.h"
 
 #include "esp_attr.h"
 #include "freertos/FreeRTOS.h"
@@ -9,6 +10,8 @@ static int64_t s_refresh_us;
 static int64_t s_frame_refresh_us;
 static int64_t s_previous_frame_us;
 static uint32_t s_frame_refresh_count;
+static int64_t s_position_fresh_us[2];
+static uint32_t s_position_retained_streak[2];
 
 static uint32_t elapsed_us(int64_t now_us, int64_t start_us)
 {
@@ -66,6 +69,27 @@ void ui_scanout_timing_record(ui_scanout_timing_metric_t metric, uint32_t us)
     if ((unsigned)metric >= UI_TIMING_COUNT) return;
     portENTER_CRITICAL(&s_timing_lock);
     record_locked(metric, us);
+    portEXIT_CRITICAL(&s_timing_lock);
+}
+
+void ui_scanout_timing_position_sample(uint8_t deck_index, bool fresh, int64_t now_us)
+{
+    if (deck_index > 1) return;
+    portENTER_CRITICAL(&s_timing_lock);
+    if (fresh) {
+        s_timing.position_fresh[deck_index]++;
+        s_position_fresh_us[deck_index] = now_us;
+        s_position_retained_streak[deck_index] = 0;
+    } else {
+        s_timing.position_retained[deck_index]++;
+        uint32_t streak = ++s_position_retained_streak[deck_index];
+        if (streak > s_timing.position_retained_streak_max[deck_index])
+            s_timing.position_retained_streak_max[deck_index] = streak;
+    }
+    uint32_t age_us = elapsed_us(now_us, s_position_fresh_us[deck_index]);
+    if (age_us > UI_POSITION_INTERPOLATOR_REBASE_THRESHOLD_MS * 1000u)
+        s_timing.position_over_rebase_age[deck_index]++;
+    record_locked(deck_index ? UI_TIMING_D2_POSITION_AGE : UI_TIMING_D1_POSITION_AGE, age_us);
     portEXIT_CRITICAL(&s_timing_lock);
 }
 

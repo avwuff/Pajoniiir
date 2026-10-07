@@ -14,11 +14,12 @@ worst-case Campaign B timing. Legacy-image acceptance does not transfer.
 Unavailable hardware is NOT RUN. Public board-channel publication requires
 separate authorization after that board's acceptance.
 
-The current M3 bench image is `M3-dev-gee54f0d11cb6` from clean source
-`ee54f0d11cb6a46d487c56c9fcbcdda3a640a270`, installed VALID in ota_0.
-Its nonblocking loop-display repair passed host qualification, unchanged product
-simulators and the M3 IDF 6.0.2 build. The operator reports increased visual
-stuttering; this image has not passed the physical visual gate.
+The current M3 bench image is `M3-dev-gb0c66744b252` from clean source
+`b0c66744b252aa383009959986011393c9308247`, installed VALID in ota_1.
+Its deferred framebuffer-preservation repair passed host qualification,
+unchanged M3 simulator baselines and the M3 IDF 6.0.2 build. The operator stopped
+the test because of severe stuttering, beginning only when both decks played.
+This image failed the physical visual gate; listening was not qualified.
 
 During unresolved M3 bench diagnosis, build, sign and test M3 only. Resume
 JC4880/JC1060 builds and full cross-board CI after the operator accepts the M3
@@ -31,13 +32,16 @@ The paired-buffer image 6d55ce2a failed its physical test and the bench was
 returned to the signed ee54f0d1 image, VALID in ota_0. Its captured solo window
 spent 6.04 ms copying old framebuffer content before redraw. The subsequent
 dual interval lost HTTP access and persistent logs recorded audio/UAC losses.
-The next revision keeps complete-frame ownership but defers preservation until
+The installed b0c66744 revision keeps complete-frame ownership but defers preservation until
 after rendering, copying only previous damage not covered by new writes.
 Exact bitmap coverage preserves paused content and holes between rectangles;
 fully redrawn strips require no old-pixel copy. Pixel reference tests and M3
-simulator baselines pass; exact-image build/packaging/physical gates remain.
-Interpolation and audio code are unchanged. See the candidate record for the
-pre-v3 contract and image-specific failure evidence.
+simulator baselines, exact M3 build and signed packaging passed. The physical
+retest failed. The next revision changes only UI position freshness handling:
+retained observations cannot rebase the display prediction backwards. RAM
+observation-age counters will distinguish this reproduced host defect from
+unproven device causes. Audio DSP and panel configuration remain unchanged.
+See the candidate record for the pre-v3 contract and image-specific evidence.
 
 The preceding `M3-dev-ge4536de2ec6f` was installed in M3 ota_1 with VALID health state,
 verified against its exact clean source and ELF on 2026-10-07 within the
