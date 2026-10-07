@@ -51,8 +51,12 @@ their real-media gates and on-device rendering remain open.
 Correction `082d2c0a` passes exact-source 324-track comparisons with zero import
 differences, the default shared host gate, final focused regressions and the
 M3 IDF 6.0.2 build/signed package. It is now installed VALID in ota_1, and the
-live 324-track library recovers all 13 artist names. Source-cue rendering and
-new-image physical acceptance remain open; do not transfer fb5 acceptance.
+live 324-track library recovers all 13 artist names. D1 A–D recall is now
+operator-confirmed, including source D at 123347 ms in the stopped API snapshot.
+The [on-device cue lifecycle](validation/M3_CUE_LIFECYCLE_20261007.md) now passes:
+local override, deletion tombstone and restore-source persist through reboot.
+Final source D recall is 123347 ms and both decks are stopped.
+Next: remaining new-image physical gates; do not transfer fb5 acceptance.
 
 The preceding bf2fdc47 skipped unchanged cover comparisons and hidden Library styling, and separated
 chrome/UI-tail/LVGL timings. Host qualification, unchanged M3 simulator hashes,

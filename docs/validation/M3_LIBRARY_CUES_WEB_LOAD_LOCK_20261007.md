@@ -96,7 +96,7 @@ their audio/store/platform fakes are not physical controller acceptance.
 
 | Gate | Status / reason |
 | --- | --- |
-| On-device Hot Cue set/delete/restore/recall and persistence across reboot | NOT RUN; current web API does not expose Hot Cue mutation, operator actions remain separate |
+| On-device Hot Cue set/delete/restore/recall and persistence across reboot | Subsequently PASS on correction image 082d2c0a via operator touch actions and guarded reboot/reload; see [exact-image lifecycle record](M3_CUE_LIFECYCLE_20261007.md). Exact 30000 ms set-time round trip was not verified. |
 | Physical interrupted NVS write / power-loss recovery | NOT RUN; host contract tests do not establish flash atomicity |
 | Two real exports with the same track ID / media swap | NOT RUN; one unchanged medium captured; software identity tests passed |
 | Legacy cue migration apply | NOT RUN; requires the explicitly selected old export and guarded wired NVS apply |

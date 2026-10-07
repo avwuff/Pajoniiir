@@ -56,7 +56,12 @@ Correction candidate `M3-dev-g082d2c0abda0` has passed software comparisons,
 host regressions, M3 build and signed identity/budget checks. Local OTA installed
 it VALID in ota_1, with the exact source/ELF and 324 tracks; all 13 artist names
 are recovered. D1 France Gall and D2 Jura Stublić are READY/stopped for the
-operator's cue/rendering check. New-image physical acceptance remains separate.
+operator's cue/rendering check. The operator subsequently confirmed D1 A–D
+recall, with source D at 123347 ms observed through the API. Subsequent
+[cue lifecycle checks](validation/M3_CUE_LIFECYCLE_20261007.md) passed local
+override, deletion and restore-source persistence through reboot. Both decks
+are stopped and the original source bank is restored. Broader new-image
+physical acceptance is separate.
 Both 11574f4e and c698fa67 failed on dual waveform deformation; c698fa67 also
 showed visual stutter without audible stutter.
 The measurement candidate also reproduced the visual failure and measured

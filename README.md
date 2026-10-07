@@ -52,7 +52,7 @@ This is not a production release or a physical Campaign A PASS.
 
 [Catalog/cue software and web LOAD LOCK checks](docs/validation/M3_LIBRARY_CUES_WEB_LOAD_LOCK_20261007.md)
 subsequently passed on the unchanged M3 image: 324 stable identities across a
-reboot and six refused playing-deck replacements. On-device Hot Cue mutation,
+reboot and six refused playing-deck replacements. At that checkpoint, on-device Hot Cue mutation,
 physical MIDI/touch LOAD LOCK and independent export/UI review remain open.
 
 The subsequent [read-only real-export audit](docs/validation/M3_REAL_EXPORT_AUDIT_20261007.md)
@@ -62,8 +62,12 @@ analysis pairs parse and 282 referenced JPEGs decode; this export contains no
 playlists or source loops, so their real-media gates remain open.
 Correction source `082d2c0a` now passes the same real-export comparisons, shared
 host tests, M3 build and signed packaging. Its candidate is now installed VALID
-in ota_1; the live 324-track library recovers all 13 artist names. Source-cue
-rendering and broader new-image physical acceptance remain separate open gates.
+in ota_1; the live 324-track library recovers all 13 artist names. The operator
+confirmed D1 A–D recall, with the API observing source D at 123347 ms. Cue
+[set/delete/restore persistence](docs/validation/M3_CUE_LIFECYCLE_20261007.md)
+now passes on this image: local D survived reboot, its deletion stayed effective,
+and HOLD RESTORE returned source D at 123347 ms after another reboot.
+Broader new-image physical acceptance remains open.
 
 **A standalone dual-deck DJ system for the Pioneer DDJ-FLX4, powered by a
 single ESP32-P4 board.**

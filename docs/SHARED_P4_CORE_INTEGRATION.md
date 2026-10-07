@@ -39,7 +39,13 @@ comparisons with zero observed import differences, the default host suite,
 final focused regressions and M3-only build/signed packaging. Local signed OTA
 then installed it VALID in ota_1 with exact source/ELF; all 13 artist names are
 recovered in the live 324-track library. Cue/rendering and broader new-image
-physical acceptance remain open. This is the current M3 bench image.
+physical acceptance remain open. This is the current M3 bench image. The
+operator subsequently confirmed D1 A–D recall; the stopped D1 API position
+matches source D at 123347 ms. Subsequent
+[cue lifecycle checks](validation/M3_CUE_LIFECYCLE_20261007.md) passed local
+override, deletion tombstone and restore-source persistence through reboot.
+The original source bank is restored; both decks are stopped. Broader physical
+gates remain open.
 See the [exact-image record](validation/M3_SHARED_WAVEFORM_REGRESSION_20261006.md).
 
 Canonical repository: `dvucinozd/Pajoniiir`. Work branch: `codex/shared-p4-core-m3`.

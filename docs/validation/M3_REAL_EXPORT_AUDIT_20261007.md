@@ -249,3 +249,24 @@ and the observed A/B/C/D bank to distinguish target selection, local overrides
 and source/rendering failure. No local cue record was deleted or restored to
 force the test to pass. Parser/source comparison remains PASS; on-device cue
 rendering is **NOT CONFIRMED** at this checkpoint.
+
+### Subsequent operator/source D recall confirmation
+
+The operator subsequently confirmed that A/B/C/D on D1 can be recalled.
+The live stopped D1 snapshot then reported **position_ms=123347**, exactly the
+independently decoded source Hot Cue D in France Gall (track 7). Exact installed
+source/ELF and VALID ota_1 were reconfirmed. This closes source D **recall**
+acceptance on this image; the earlier negative visual report remains recorded,
+and the label/highlight observation is not silently reclassified. GUI and the
+corrected artist label are operator-confirmed. Evidence:
+`20261007-082d2c0a/cue-lifecycle/{initial-status,stopped-status}.json` under
+`.cache/m3-migration/`.
+
+The subsequent [on-device lifecycle test](M3_CUE_LIFECYCLE_20261007.md) passed
+one D-slot local override, deletion tombstone and restore-source, each followed
+by reboot/reload. The operator explicitly authorized resetting this track's
+local edits and confirmed there were none to preserve before testing.
+The local D was 31058 ms (operator clarified it was always about 31 s);
+the initial 30000 ms preparation is not an exact set-time verification.
+HOLD RESTORE returned the source bank; final stopped API recall was 123347 ms.
+Physical interrupted writes and broader new-image qualification remain open.
