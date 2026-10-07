@@ -62,8 +62,38 @@ M3 build. `BSP_M3_HS_CONTROLLER` defaults off; when enabled, only M3 board USB
 roles swap. Existing routing and recovery continue using board capabilities.
 The variant uses an isolated SDKCONFIG/build directory, keeps PCM5102A MAIN and
 USB audio disabled in the S2 profile. Prior production default and its physical
-acceptance are retained, not reassigned to this experiment. Variant installation
-and physical gates are pending.
+acceptance are retained, not reassigned to this experiment.
+
+### Experimental variant installation
+
+Clean source `1fea1fd16d8ba35441671f5511cfaee09b779019`, version
+`M3-dev-g1fea1fd16d8b`, passed the full default host suite (including the
+swapped M3 board contract), isolated ESP-IDF 6.0.2 `build_s2_hs`, unchanged
+dependency lock, signed packaging and documentation integrity checks.
+The isolated configuration enables `BSP_M3_HS_CONTROLLER`; production defaults
+remain unchanged. Local signed OTA returned HTTP 200 and startup health
+confirmed VALID on `ota_1` with matching clean source and ELF identity.
+
+- Image: 2,575,648 bytes, SHA-256
+  `8ae01dade85e072e3e4656e885081477360a45355e589cbf5d3dbdb4efc0c0e9`.
+- Bundle: 2,575,836 bytes, SHA-256
+  `ecfbaa3a4d4a4c2c1a0b3d26d27946051e88716404b02dad3f4ea5bbecddc3bc`.
+- ELF: `aedb1ef17c3ecef49d749bdcb5d51e0962c20c509e1b47e7f16ac36a12548980`.
+- Runtime capabilities: storage root 1, controller root 0, PCM5102A MAIN,
+  fixed 48-kHz output capability, Wi-Fi enabled. Storage mounted successfully
+  on root 1; the current `/api/library` snapshot contains 260 tracks at
+  generation 1. This is the observed count, not confirmation that this stick
+  contains the previously audited 324-track export. Both decks are stopped;
+  no playback output rate or storage-throughput acceptance is inferred.
+
+Evidence: `.cache/s2-mk3/20261008-m3-enumeration/experimental-ota-install.json`
+and `*-s2-hs-installed.json` / `*-s2-hs-ready.json`; package under
+`releases/m3-s2-hs-1fea1fd1/`. S2 was not present in the first post-OTA
+snapshot; an operator MIDI-mode reconnect was requested. Controller binding,
+physical controls/LEDs, FS-storage playback performance and reconnect remain
+**NOT RUN**. USB audio remains disabled. No soak or release qualification is
+inferred from successful installation. Other board builds and hosted CI were
+not run for this experiment.
 
 ## Bench isolation
 
