@@ -1,5 +1,37 @@
 #include "ui_idle.h"
 
+#define UI_IDLE_SIGNAL_ACTIVITY 1u
+#define UI_IDLE_SIGNAL_SHOWN 2u
+
+bool ui_idle_signal_is_shown(const ui_idle_signal_t *signal)
+{
+    return signal && (__atomic_load_n(&signal->flags, __ATOMIC_ACQUIRE) & UI_IDLE_SIGNAL_SHOWN) != 0;
+}
+
+bool ui_idle_signal_notice(ui_idle_signal_t *signal)
+{
+    if (!signal) return false;
+    /* The returned state belongs to the same atomic operation that wakes UI.
+     * Reading shown after publishing activity lets UI clear it before return. */
+    uint32_t previous = __atomic_fetch_or(&signal->flags, UI_IDLE_SIGNAL_ACTIVITY,
+                                          __ATOMIC_ACQ_REL);
+    return (previous & UI_IDLE_SIGNAL_SHOWN) != 0;
+}
+
+bool ui_idle_signal_take_activity(ui_idle_signal_t *signal)
+{
+    if (!signal) return false;
+    return (__atomic_fetch_and(&signal->flags, ~UI_IDLE_SIGNAL_ACTIVITY,
+                                __ATOMIC_ACQ_REL) & UI_IDLE_SIGNAL_ACTIVITY) != 0;
+}
+
+void ui_idle_signal_set_shown(ui_idle_signal_t *signal, bool shown)
+{
+    if (!signal) return;
+    if (shown) __atomic_fetch_or(&signal->flags, UI_IDLE_SIGNAL_SHOWN, __ATOMIC_RELEASE);
+    else __atomic_fetch_and(&signal->flags, ~UI_IDLE_SIGNAL_SHOWN, __ATOMIC_RELEASE);
+}
+
 /* Unsigned subtraction, so a wrapping millisecond clock needs no special case:
  * esp_timer's ms counter wraps every 49.7 days and the deck is expected to run
  * far longer than that between reboots. */

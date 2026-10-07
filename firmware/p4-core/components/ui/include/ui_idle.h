@@ -24,6 +24,14 @@ typedef struct {
     bool     shown;
 } ui_idle_t;
 
+/* Cross-task handoff. Only the UI publishes visibility; producers atomically
+ * capture that visibility while posting activity. Do not access flags directly. */
+typedef struct { uint32_t flags; } ui_idle_signal_t;
+bool ui_idle_signal_notice(ui_idle_signal_t *signal);
+bool ui_idle_signal_take_activity(ui_idle_signal_t *signal);
+void ui_idle_signal_set_shown(ui_idle_signal_t *signal, bool shown);
+bool ui_idle_signal_is_shown(const ui_idle_signal_t *signal);
+
 void ui_idle_init(ui_idle_t *idle, uint32_t timeout_ms, uint32_t now_ms);
 
 /* Changing the timeout restarts the countdown rather than back-dating it, so

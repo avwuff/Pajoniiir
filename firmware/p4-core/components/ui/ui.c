@@ -95,16 +95,16 @@ void deck_core_test_apply_event(const ctrl_event_t *event);
 #define UI_IDLE_DEFAULT_TIMEOUT_MS (2u * 60u * 1000u)
 
 static ui_idle_t s_idle;
-/* Written by any task, read by the UI task. A lost concurrent set only delays
- * the dismissal by one 16 ms tick, so a plain volatile flag is sufficient and
- * keeps deck_core_queue_event free of locks. */
-static volatile bool s_idle_activity_flag;
-static volatile bool s_idle_shown_pub;
+static ui_idle_signal_t s_idle_signal;
 
 bool ui_activity_notice(void)
 {
-    s_idle_activity_flag = true;
-    return s_idle_shown_pub;
+    return ui_idle_signal_notice(&s_idle_signal);
+}
+
+bool ui_screensaver_is_shown(void)
+{
+    return ui_idle_signal_is_shown(&s_idle_signal);
 }
 
 static const char *TAG = "ui";
@@ -1389,8 +1389,7 @@ static uint32_t ui_now_ms(void)
 static void ui_idle_service(const ui_frame_context_t *ctx)
 {
     uint32_t now = ui_now_ms();
-    if (s_idle_activity_flag) {
-        s_idle_activity_flag = false;
+    if (ui_idle_signal_take_activity(&s_idle_signal)) {
         ui_idle_notice_activity(&s_idle, now);
     }
 
@@ -1416,7 +1415,7 @@ static void ui_idle_service(const ui_frame_context_t *ctx)
 #else
         splash_screen_screensaver_show();
 #endif
-        s_idle_shown_pub = true;
+        ui_idle_signal_set_shown(&s_idle_signal, true);
         break;
     case UI_IDLE_ACTION_HIDE:
 #if CONFIG_PAJONIIIR_DJ_OVERVIEW
@@ -1424,7 +1423,7 @@ static void ui_idle_service(const ui_frame_context_t *ctx)
 #else
         splash_screen_screensaver_hide();
 #endif
-        s_idle_shown_pub = false;
+        ui_idle_signal_set_shown(&s_idle_signal, false);
         /* LVGL repaints the restored tab, which erases the direct-PPA
          * waveforms exactly as a tab switch does. */
         ui_overview_note_screen_restored();

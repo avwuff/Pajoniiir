@@ -3312,6 +3312,16 @@ void deck_core_process_ui_commands(void)
 }
 
 static deck_core_activity_cb_t s_activity_cb = NULL;
+static deck_core_wake_diagnostics_t s_wake_diag;
+
+void deck_core_get_wake_diagnostics(deck_core_wake_diagnostics_t *out)
+{
+    if (!out) return;
+    out->physical_events = __atomic_load_n(&s_wake_diag.physical_events, __ATOMIC_RELAXED);
+    out->wake_consumed = __atomic_load_n(&s_wake_diag.wake_consumed, __ATOMIC_RELAXED);
+    out->last_consumed_id = __atomic_load_n(&s_wake_diag.last_consumed_id, __ATOMIC_RELAXED);
+    out->last_forwarded_id = __atomic_load_n(&s_wake_diag.last_forwarded_id, __ATOMIC_RELAXED);
+}
 
 void deck_core_set_activity_cb(deck_core_activity_cb_t cb)
 {
@@ -3328,8 +3338,18 @@ static esp_err_t queue_event_with_wake_policy(const ctrl_event_t *ev,
     /* Link lifecycle is not operator activity. In particular, disconnect
      * cleanup must not be swallowed while the display is covered. */
     const bool report_activity = !consume_wake || ev->type != CTRL_EV_STATE;
+    if (consume_wake && report_activity) {
+        __atomic_add_fetch(&s_wake_diag.physical_events, 1u, __ATOMIC_RELAXED);
+    }
     const bool woke_screensaver = report_activity && s_activity_cb && s_activity_cb();
-    if (woke_screensaver && consume_wake) return ESP_OK;
+    if (woke_screensaver && consume_wake) {
+        __atomic_store_n(&s_wake_diag.last_consumed_id, ev->id, __ATOMIC_RELAXED);
+        __atomic_add_fetch(&s_wake_diag.wake_consumed, 1u, __ATOMIC_RELAXED);
+        return ESP_OK;
+    }
+    if (consume_wake && report_activity) {
+        __atomic_store_n(&s_wake_diag.last_forwarded_id, ev->id, __ATOMIC_RELAXED);
+    }
     if (xQueueSend(s_queue, ev, 0) != pdTRUE) {
         s_drop_count++;
         TickType_t now = xTaskGetTickCount();

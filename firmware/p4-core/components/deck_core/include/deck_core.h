@@ -171,6 +171,14 @@ void deck_core_set_activity_cb(deck_core_activity_cb_t cb);
 
 esp_err_t deck_core_queue_event(const ctrl_event_t *ev);
 
+typedef struct {
+    uint32_t physical_events;
+    uint32_t wake_consumed;
+    uint32_t last_consumed_id;
+    uint32_t last_forwarded_id;
+} deck_core_wake_diagnostics_t;
+void deck_core_get_wake_diagnostics(deck_core_wake_diagnostics_t *out);
+
 /* Queue an authenticated remote mutation. It still reports activity so the
  * screensaver is dismissed, but unlike a physical wake press the mutation is
  * never consumed solely to wake the display. */

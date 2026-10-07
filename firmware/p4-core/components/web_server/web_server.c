@@ -1441,7 +1441,16 @@ static esp_err_t api_ui_timing_handler(httpd_req_t *req)
         rc = httpd_resp_send_chunk(req, chunk, n);
         if (rc != ESP_OK) return rc;
     }
-    rc = httpd_resp_send_chunk(req, "}}", 2);
+    deck_core_wake_diagnostics_t wake;
+    deck_core_get_wake_diagnostics(&wake);
+    n = snprintf(chunk, sizeof chunk,
+        "},\"screensaver\":{\"shown\":%s,\"physical_events\":%u,"
+        "\"wake_consumed\":%u,\"last_consumed_id\":%u,\"last_forwarded_id\":%u}}",
+        ui_screensaver_is_shown() ? "true" : "false",
+        (unsigned)wake.physical_events, (unsigned)wake.wake_consumed,
+        (unsigned)wake.last_consumed_id, (unsigned)wake.last_forwarded_id);
+    if (n < 0 || (size_t)n >= sizeof chunk) return ESP_FAIL;
+    rc = httpd_resp_send_chunk(req, chunk, n);
     return rc == ESP_OK ? httpd_resp_send_chunk(req, NULL, 0) : rc;
 }
 

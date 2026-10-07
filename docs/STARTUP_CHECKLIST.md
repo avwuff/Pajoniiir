@@ -69,6 +69,11 @@ also pass; both decks are finally READY/stopped with Star Eater.
 Subsequent touch D1 and FLX4 D2 completed ordinary stopped LOAD parity.
 Repeated [Shift+Load playing-deck refusals](validation/M3_PHYSICAL_SHIFT_LOAD_LOCK_20261007.md)
 passed on both decks; final tracks are Combat Ready, both stopped.
+The subsequent `4620b83c` screensaver repair is now installed VALID in ota_0.
+France Gall D1 and Jura D2 are READY/stopped for the real two-minute idle wake
+check. [Physical wake acceptance](validation/M3_CONTROLLER_SCREENSAVER_WAKE_20261007.md)
+failed: first PLAY started playback. Atomic UI handoff follow-up is pending;
+final soak is deferred and earlier image-specific tests do not transfer.
 Both 11574f4e and c698fa67 failed on dual waveform deformation; c698fa67 also
 showed visual stutter without audible stutter.
 The measurement candidate also reproduced the visual failure and measured

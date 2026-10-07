@@ -3379,6 +3379,11 @@ static void test_physical_controller_input_uses_wake_policy(void)
     assert(deck_core_test_input_queue_sends() == 3);
     assert(control_link_inject_semantic(0xff, 0, 0) == ESP_ERR_INVALID_ARG);
     assert(s_test_activity_calls == 6);
+    deck_core_wake_diagnostics_t wake;
+    deck_core_get_wake_diagnostics(&wake);
+    assert(wake.physical_events == 5 && wake.wake_consumed == 4);
+    assert(wake.last_consumed_id == CTRL_ID_DECK2_TEMPO);
+    assert(wake.last_forwarded_id == CTRL_ID_DECK1_PLAY);
     deck_core_set_activity_cb(NULL);
 }
 

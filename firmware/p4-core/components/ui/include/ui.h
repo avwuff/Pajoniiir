@@ -42,3 +42,5 @@ void ui_get_deck_track_key(uint8_t deck, char *out_key, size_t key_max);
  * press that wakes the screen should not also start the deck.
  */
 bool ui_activity_notice(void);
+/* Read-only published idle state; no LVGL access or activity notification. */
+bool ui_screensaver_is_shown(void);
