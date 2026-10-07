@@ -17,7 +17,11 @@ separate authorization after that board's acceptance.
 The current M3 bench image is `M3-dev-g1d3ee7b60ac5` from clean source
 `1d3ee7b60ac5a28e78695009fea567b923d263bc`, installed VALID in ota_0.
 Host qualification, unchanged M3 simulator baselines, the M3 build and signed
-package verification passed. Its retained-position physical retest is pending.
+package verification passed. Its physical retest showed much improved visuals
+with slight residual stutter and clean MAIN/headphones sound. Continuous dual
+playback without loops also retains the small stutter. Next, remove repeated
+unchanged artwork/hidden Library work and measure chrome, UI tail and LVGL
+render time separately. The full visual and long-soak gates remain open.
 
 The preceding b0c66744 deferred framebuffer-preservation repair passed host qualification,
 unchanged M3 simulator baselines and the M3 IDF 6.0.2 build. The operator stopped

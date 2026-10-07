@@ -148,7 +148,10 @@ loop observations still require repair and an exact-image physical retest.
    outlier remains. Do not remove watchdog/crash evidence just to improve a
    nominal benchmark.
 
-Every firmware change requires a new clean source, host gates, three target
-builds, exact-source CI, signed artifacts, installation and the same measured
-and operator retest. Current short telemetry is neither a new soak nor a
+Final integration requires all target builds and exact-source CI. Under the
+subsequent explicit M3-first operator instruction, unresolved visual bench
+iterations build/sign/install only M3 and defer the other boards/full CI until
+operator acceptance. Each changed M3 image still requires clean source, host
+gates, its build, signed artifacts and the measured/operator retest. Current
+short telemetry is neither a new soak nor a
 production PASS. No public channel or release was changed.

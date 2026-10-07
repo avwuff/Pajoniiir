@@ -21,6 +21,9 @@ typedef enum {
     UI_TIMING_PRESENT,
     UI_TIMING_D1_POSITION_AGE,
     UI_TIMING_D2_POSITION_AGE,
+    UI_TIMING_CHROME,
+    UI_TIMING_UI_TAIL,
+    UI_TIMING_LVGL_TIMERS,
     UI_TIMING_COUNT
 } ui_scanout_timing_metric_t;
 

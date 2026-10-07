@@ -4,7 +4,8 @@ Status: implementation in progress; no new hardware acceptance or publication.
 
 Current M3 bench: clean source `1d3ee7b60ac5a28e78695009fea567b923d263bc`,
 signed local OTA, observed VALID in ota_0 on 2026-10-07. The retained-position
-repair passed M3 software checks; physical retest is pending. The preceding
+repair passed M3 software checks; the physical retest showed improved visuals
+with slight residual dual stutter and clean sound. Full fluidity remains open. The preceding
 b0c66744 image failed on operator-confirmed severe dual waveform stutter.
 During this unresolved regression, other-board builds/CI remain deferred.
 See the [exact-image record](validation/M3_SHARED_WAVEFORM_REGRESSION_20261006.md).

@@ -326,6 +326,8 @@ typedef struct {
     lv_obj_t *artwork;
     lv_image_dsc_t artwork_dsc;
     uint16_t *artwork_pixels;
+    const uint16_t *last_artwork_source;
+    uint32_t last_artwork_revision;
     lv_obj_t *title_time_bg;
     lv_obj_t *label_time_elapsed;
     lv_obj_t *label_time;
@@ -772,6 +774,8 @@ static void ui_create_overview_deck_panel(lv_obj_t *parent, uint8_t deck, int y)
     panel->last_wave_center_ms = UINT32_MAX;
     panel->last_wave_window_ms = 0;
     panel->last_time_bucket = UINT32_MAX;
+    panel->last_artwork_source = NULL;
+    panel->last_artwork_revision = UINT32_MAX;
     int top_y = (deck == CTRL_DECK_1) ? 0 : 158;
     int wave_y = (deck == CTRL_DECK_1) ? OVERVIEW_DECK1_WAVE_Y : OVERVIEW_DECK2_WAVE_Y;
     int info_x = deck * OVERVIEW_DECK_INFO_W;
@@ -2542,8 +2546,14 @@ static void ui_update_overview_deck(uint8_t deck, const deck_state_t *state,
     deck_loaded_track_summary_t track = {0};
     const bool has_track = deck_core_get_loaded_track(deck, &track) && track.valid;
     const uint16_t *pixels = has_track ? ui_library_deck_artwork(deck) : NULL;
+    uint32_t artwork_revision = ui_artwork_content_revision();
     if (pixels && panel->artwork_pixels) {
-        if (memcmp(panel->artwork_pixels, pixels, panel->artwork_dsc.data_size)) {
+        /* The cache changes only on LVGL publication. Do not scan two unchanged
+         * PSRAM thumbnails on every panel refresh; a slot reused at the same
+         * address is still detected by its content revision. */
+        if ((pixels != panel->last_artwork_source ||
+             artwork_revision != panel->last_artwork_revision) &&
+            memcmp(panel->artwork_pixels, pixels, panel->artwork_dsc.data_size)) {
             memcpy(panel->artwork_pixels, pixels, panel->artwork_dsc.data_size);
             lv_obj_invalidate(panel->artwork);
         }
@@ -2555,6 +2565,8 @@ static void ui_update_overview_deck(uint8_t deck, const deck_state_t *state,
             lv_image_set_src(panel->artwork, &ui_artwork_placeholder_deck);
         lv_obj_remove_flag(panel->artwork, LV_OBJ_FLAG_HIDDEN);
     } else lv_obj_add_flag(panel->artwork, LV_OBJ_FLAG_HIDDEN);
+    panel->last_artwork_source = pixels;
+    panel->last_artwork_revision = artwork_revision;
 
     uint32_t time_bucket = duration_ms > 0 ? (elapsed_ms / 1000u) : UINT32_MAX - 1u;
     if (time_bucket != panel->last_time_bucket) {
@@ -2709,7 +2721,14 @@ void ui_overview_update(const ui_frame_context_t *ctx)
     uint32_t frame_elapsed_ms[DECK_CORE_DECK_COUNT] = {0};
     uint8_t step_count = ui_overview_scheduler_plan_updates(first_deck, second_deck,
                                                             waveform_first, steps);
+#ifndef WIN32
+    int64_t chrome_start_us = 0;
+#endif
     for (uint8_t i = 0; i < step_count; ++i) {
+#ifndef WIN32
+        if (!chrome_start_us && steps[i].phase == UI_OVERVIEW_PHASE_CHROME)
+            chrome_start_us = esp_timer_get_time();
+#endif
         uint8_t deck = steps[i].deck;
         ui_update_overview_deck(deck, &ctx->deck_state[deck],
                                 &ctx->deck_audio_status[deck],
@@ -2734,4 +2753,9 @@ void ui_overview_update(const ui_frame_context_t *ctx)
                                        s_overview_deck_meta[CTRL_DECK_2],
                                        ctx->deck_duration_ms[CTRL_DECK_2]);
     }
+#ifndef WIN32
+    if (chrome_start_us)
+        ui_scanout_timing_record(UI_TIMING_CHROME,
+            (uint32_t)(esp_timer_get_time() - chrome_start_us));
+#endif
 }

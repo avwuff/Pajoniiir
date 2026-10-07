@@ -2609,7 +2609,8 @@ void ui_library_update(const ui_frame_context_t *ctx)
         }
     }
 
-    if (ctx && s_active_deck_indicator && s_label_indicator_deck && s_label_indicator_status) {
+    if (ctx && active_tab == 1 && s_active_deck_indicator &&
+        s_label_indicator_deck && s_label_indicator_status) {
         bool d1_playing = ctx->deck_state[CTRL_DECK_1].playing;
         bool d2_playing = ctx->deck_state[CTRL_DECK_2].playing;
 

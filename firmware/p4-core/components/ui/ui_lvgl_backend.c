@@ -605,7 +605,10 @@ static void ui_lvgl_task(void *arg)
             ui_scanout_timing_record(UI_TIMING_CALLBACK,
                 (uint32_t)(esp_timer_get_time() - callback_start_us));
         }
+        int64_t timers_start_us = esp_timer_get_time();
         uint32_t next_ms = lv_timer_handler();
+        ui_scanout_timing_record(UI_TIMING_LVGL_TIMERS,
+            (uint32_t)(esp_timer_get_time() - timers_start_us));
 #if UI_DSI_FB_COUNT == 2u
         if (s_framebuffers.dirty) {
             /* Carry only old pixels that neither waveform nor LVGL redrew.

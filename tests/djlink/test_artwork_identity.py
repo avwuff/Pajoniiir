@@ -31,10 +31,13 @@ typedef enum { SLOT_EMPTY, SLOT_PENDING, SLOT_READY, SLOT_NONE } slot_state_t;
 static art_slot_t s_slot[UI_ARTWORK_SLOTS];
 static ui_artwork_thumb_t storage[UI_ARTWORK_SLOTS], *s_thumbs=storage;
 static uint32_t s_clock,s_gen=1;
+static uint32_t s_content_revision;
 static bool s_init_done=true,s_init_failed;
 static bool art_init(void) {return !s_init_failed;}
 '''
-for marker in ("static const uint16_t *slot_pixels(", "static int slot_victim(",
+for marker in ("static void art_content_changed(", "uint32_t ui_artwork_content_revision(",
+               "static const uint16_t *slot_pixels(", "static int slot_victim(",
+               "void ui_artwork_forget(",
                "const uint16_t *ui_artwork_get_identity(", "void ui_artwork_publish_identity("):
     code += block(marker) + "\n"
 code += r'''
@@ -43,6 +46,8 @@ int main(void) {
     a.bytes[31]=1;b.bytes[31]=2;absent.bytes[31]=3;
     ui_artwork_thumb_t thumb={0};thumb.deck[0]=123;thumb.row[0]=124;
     ui_artwork_publish_identity(7,&a,&thumb);
+    uint32_t first_revision=ui_artwork_content_revision();
+    assert(first_revision);
     thumb.deck[0]=999; /* mutate/reuse the worker's buffer after publication */
     assert(ui_artwork_get_identity(7,&a,UI_ARTWORK_DECK)[0]==123);
     assert(!ui_artwork_get_identity(7,&b,UI_ARTWORK_DECK));
@@ -52,8 +57,22 @@ int main(void) {
     s_gen++; /* a local USB catalog refresh must not expire remote ownership */
     assert(ui_artwork_get_identity(7,&a,UI_ARTWORK_ROW)[0]==124);
     assert(!ui_artwork_get_identity(7,&absent,UI_ARTWORK_DECK));
+    const uint16_t *old_pixels=ui_artwork_get_identity(7,&a,UI_ARTWORK_DECK);
+    uint32_t previous_revision=ui_artwork_content_revision();
+    assert(ui_artwork_content_revision()==previous_revision); /* reads do not change content */
+    for(int i=1;i<UI_ARTWORK_SLOTS;++i) {
+        s_slot[i].state=SLOT_PENDING;s_slot[i].gen=s_gen;
+    }
+    thumb.deck[0]=555;
+    ui_artwork_publish_identity(7,&b,&thumb); /* force the same storage address to be reused */
+    assert(ui_artwork_get_identity(7,&b,UI_ARTWORK_DECK)==old_pixels);
+    assert(old_pixels[0]==555 && ui_artwork_content_revision()!=previous_revision);
+    previous_revision=ui_artwork_content_revision();
+    ui_artwork_forget(7);
+    assert(!ui_artwork_get_identity(7,&b,UI_ARTWORK_DECK));
+    assert(ui_artwork_content_revision()!=previous_revision);
     s_init_failed=true;assert(!ui_artwork_get_identity(7,&a,UI_ARTWORK_DECK));
-    puts("PASS production artwork deep-copy, full-ID collision isolation and local epoch independence");
+    puts("PASS production artwork deep-copy, full-ID isolation, epoch independence and same-address content revisions");
 }
 '''
 c_file = out / "test.c"

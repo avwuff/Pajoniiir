@@ -27,6 +27,9 @@ typedef enum { UI_ARTWORK_ROW, UI_ARTWORK_DECK } ui_artwork_size_t;
 /* Cached thumbnail of `track_key`, or NULL (no artwork, not decoded yet, or
  * no memory). A miss queues a decode bound to the current catalog generation. */
 const uint16_t *ui_artwork_get(uint32_t track_key, ui_artwork_size_t size);
+/* LVGL-owned cache content revision, including in-place slot replacement.
+ * It is a change token, not a pixel lifetime extension. */
+uint32_t ui_artwork_content_revision(void);
 /* Full identity lookup for decks; runtime key collisions cannot return
  * another source's artwork. Publish is LVGL-only, decode is worker-only. */
 const uint16_t *ui_artwork_get_identity(uint32_t key,const media_persistent_id_t *id,ui_artwork_size_t size);

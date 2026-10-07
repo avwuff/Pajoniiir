@@ -587,4 +587,63 @@ The same key 5 44.1-kHz and key 139 48-kHz tracks, opposite 5% pitch and loops
 are prepared; both decks remain stopped. Preparation observed MT off and zoom
 12. The operator must set MT on both and zoom 8 before a comparable bounded
 solo/dual measurement. GUI/listening acceptance, dual visual result and the
-new timing soak remain **NOT RUN**. VALID is not physical acceptance.
+new timing soak remain **NOT RUN** at preparation. VALID is not physical acceptance.
+
+## 1d3ee7b6 measured/operator retest: improved, residual stutter
+
+The operator confirmed readiness and the API independently verified the exact
+clean source/ELF, VALID ota_0, both MT flags on, zoom 8, opposite pitch,
+the expected tracks/loops and both decks stopped. All three bounded windows
+completed with unchanged playback state; both decks were stopped at the end.
+
+| Measurement | Stopped | Solo D1 | Dual with loops | Dual without loops |
+|---|---:|---:|---:|---:|
+| Refresh interrupts | 607 | 610 | 621 | 622 |
+| Coalesced notifications | 0 | 5 | 149 | 118 |
+| Completed callbacks | 606 | 605 | 472 | 504 |
+| D1/D2 retained samples | 1/1 | 45/47 | 222/223 | 183/184 |
+| D1/D2 samples older than 120 ms | 0/0 | 0/0 | 38/39 | 0/0 |
+| D1 cache mean, us | No redraw | 190.9 | 236.8 | 59.8 |
+| D2 cache mean, us | No redraw | No redraw | 288.8 | 66.9 |
+| D2 finish after refresh mean, us | No redraw | No redraw | 10,460 | 10,020 |
+| Callback mean, us | Idle | 5,745.6 | 14,828.4 | 13,478.0 |
+| Whole handler mean, us | Idle | 8,008.7 | 18,769.1 | 17,123.3 |
+
+The operator reported much better visuals, but occasional slight stutter.
+Without loops the slight stutter remained; MAIN and FLX4 headphones were
+reported clean. This is improvement, **not a full fluidity PASS**. Captured
+PCM/UAC loss deltas, output-late and service-log-drop deltas were zero. The
+cumulative UAC idle underflow counter is nonzero and is not a zero-since-boot
+claim. Listening confirmation covers these short windows only.
+
+The no-loop comparison disabled the two active loops, measured continuous
+dual playback, stopped both decks and restored each original loop start/end.
+The final snapshot verifies restored loops and stopped playback. Raw records
+are in the image's `mt-8-beat/` and `no-loop-comparison/` directories. No new
+firmware was installed between the two measurements.
+
+Metadata contention older than 120 ms is now observed during dual loop
+playback, confirming the retained-input condition occurs on the device. It
+does not establish every visual symptom as that defect. Without loops, all
+lower-waveform finishes were below 12 ms, both caches were below 1 ms, yet
+118 whole handlers exceeded 20 ms and 118 refreshes coalesced. Residual work
+after waveform rendering, plus ordinary rendering spikes, still matters.
+
+## Residual UI work revision
+
+The next revision skips per-refresh PSRAM comparison of unchanged deck covers.
+An LVGL-owned artwork content revision advances when a staged decode is
+published, a remote thumbnail replaces a slot, or a cached entry is forgotten.
+The Overview still copies pixels immediately on a changed source/revision and
+retains fallback behavior. A production cache regression forces the same
+pixel address to be reused for another full identity and verifies the revision
+changes; reads leave the revision unchanged. Pixel pointers gain no extended
+lifetime or cross-task ownership.
+
+Library's active-deck indicator is styled only while Library is visible; its
+state is rebuilt when that tab is updated. Async artwork and load/media events
+continue to run while the tab is hidden. Additional fixed RAM timings separate
+Overview chrome, UI work after Overview, and LVGL timers/rendering. These
+measurements add no log formatting, UART or file/NVS writes. Waveform cadence,
+transport/audio DSP, layout, panel timing and framebuffer ownership are unchanged.
+Exact-image build/sign/install and operator verification remain required.

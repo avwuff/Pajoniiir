@@ -1469,6 +1469,9 @@ void ui_update(void) {
     if (waveform_first) ui_overview_update(&ctx);
 #endif
 #endif
+#ifndef WIN32
+    int64_t tail_start_us = esp_timer_get_time();
+#endif
     ui_library_update(&ctx);
     ui_performance_tabs_update_jog_mode();
 #ifndef WIN32
@@ -1512,6 +1515,8 @@ void ui_update(void) {
     ui_release_frame_context(&ctx);
 
 #ifndef WIN32
+    ui_scanout_timing_record(UI_TIMING_UI_TAIL,
+        (uint32_t)(esp_timer_get_time() - tail_start_us));
     if (ui_diagnostics_enabled()) {
         uint64_t update_end_us = (uint64_t)esp_timer_get_time();
         ui_overview_perf_report_t duration_report;

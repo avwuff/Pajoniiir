@@ -49,6 +49,7 @@ typedef struct {
 static art_slot_t s_slot[UI_ARTWORK_SLOTS];
 static ui_artwork_thumb_t *s_thumbs;          /* UI_ARTWORK_SLOTS, PSRAM */
 static uint32_t s_clock, s_gen;
+static uint32_t s_content_revision;
 static bool s_retry, s_init_done, s_init_failed;
 static ui_artwork_stats_t s_stats;
 
@@ -67,6 +68,16 @@ static atomic_bool s_paused;
 static uint8_t *s_file;
 static ui_artwork_thumb_work_t *s_work;
 static TickType_t s_last_read;
+
+static void art_content_changed(void)
+{
+    if (++s_content_revision == 0u) ++s_content_revision;
+}
+
+uint32_t ui_artwork_content_revision(void)
+{
+    return s_content_revision;
+}
 
 static void *art_alloc(size_t bytes)
 {
@@ -295,6 +306,7 @@ bool ui_artwork_poll(void)
             if (s->remote || s->state != SLOT_PENDING || s->key != s_stage_req.key || s->gen != s_stage_req.gen) continue;
             if (s_stage_result == RESULT_READY) {
                 memcpy(&s_thumbs[i], s_stage, sizeof(ui_artwork_thumb_t));
+                art_content_changed();
                 s->state = SLOT_READY;
             } else {
                 /* A skipped row may be back on screen: re-ask. */
@@ -320,7 +332,10 @@ void ui_artwork_forget(uint32_t track_key)
     for (int i = 0; i < UI_ARTWORK_SLOTS; i++) {
         art_slot_t *s = &s_slot[i];
         /* A pending decode lands on its slot: it reads the file again. */
-        if (s->key == track_key && s->state != SLOT_PENDING) s->state = SLOT_EMPTY;
+        if (s->key == track_key && s->state != SLOT_PENDING && s->state != SLOT_EMPTY) {
+            s->state = SLOT_EMPTY;
+            art_content_changed();
+        }
     }
 }
 
@@ -350,6 +365,7 @@ void ui_artwork_publish_identity(uint32_t key,const media_persistent_id_t *id,co
     int v=slot_victim();if(v<0)return;
     s_slot[v]=(art_slot_t){.key=key,.gen=s_gen,.stamp=++s_clock,.state=SLOT_READY,.remote=true,.identity=*id};
     memcpy(&s_thumbs[v],thumb,sizeof(*thumb));
+    art_content_changed();
 }
 ui_artwork_thumb_t *ui_artwork_decode_sd(const char *path)
 {

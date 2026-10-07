@@ -1404,7 +1404,8 @@ static esp_err_t api_ui_timing_handler(httpd_req_t *req)
     static const char *names[UI_TIMING_COUNT] = {
         "wake", "frame_interval", "overview_begin", "callback", "handler",
         "d1_cache", "d1_blit", "d1_finish", "d2_cache", "d2_blit", "d2_finish",
-        "framebuffer_sync", "present", "d1_position_age", "d2_position_age"
+        "framebuffer_sync", "present", "d1_position_age", "d2_position_age",
+        "chrome", "ui_tail", "lvgl_timers"
     };
     /* Keep the snapshot and small chunk on the HTTP task stack. A single large
      * JSON stack buffer would compromise its existing stack headroom. */
