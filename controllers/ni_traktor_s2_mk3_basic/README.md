@@ -4,6 +4,10 @@ Status: experimental, source-derived, no S2 MK3 hardware acceptance.
 This is a limited S3CP v2 profile, compatible with v91 and the earlier M2.4
 runtime. Do not advertise full S2 MK3 support based on SD installation.
 
+See the [current preparation and capture checklist](../../docs/validation/S2_MK3_PROFILE_PREPARATION_20261007.md)
+for the borrowed-device MIDI capture workflow, shared-runtime gaps and ordered
+physical gates. The historical upload below is not current M3 acceptance.
+
 ## Source and reproduction
 
 Factory mapping `NI Traktor Kontrol S2 MK3.djayMidiMapping` extracted from
