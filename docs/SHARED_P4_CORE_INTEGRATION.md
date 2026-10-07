@@ -46,6 +46,8 @@ matches source D at 123347 ms. Subsequent
 override, deletion tombstone and restore-source persistence through reboot.
 The original source bank is restored; both decks are stopped. Broader physical
 gates remain open.
+Ordinary FLX4/touch LOAD refusal is now physically confirmed on each playing
+deck; [variants and limits](validation/M3_PHYSICAL_LOAD_LOCK_20261007.md) remain explicit.
 See the [exact-image record](validation/M3_SHARED_WAVEFORM_REGRESSION_20261006.md).
 
 Canonical repository: `dvucinozd/Pajoniiir`. Work branch: `codex/shared-p4-core-m3`.
@@ -259,7 +261,7 @@ no public channel or existing release asset was changed.
 | --- | --- | --- |
 | P01 | Separate signed project/chip/version, channel and embedded descriptor checks | M3 signed rejection/interruption/rollback gates closed; other targets separate |
 | P02 | Full media identity, source/local merge, tombstones/restore, explicit legacy migration | Cue migration/set/delete/restore/reboot on selected exports |
-| P03 | Default-on shared LOAD LOCK and atomic worker/transport reservation | M3 web replacement gate closed; physical MIDI/touch still open |
+| P03 | Default-on shared LOAD LOCK and atomic worker/transport reservation | Web gate and ordinary physical FLX4/touch playing-deck refusals closed; physical variants/races remain open |
 | P04 | Standard tagged PCPT parsing and memory/Hot Cue list type | Real export comparison |
 | P05 | PDB title index 17 | Real export metadata/UI review |
 | P06 | PQTZ phase 1-4 and downbeat 1 | Real export grid/phase review |

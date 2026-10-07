@@ -68,6 +68,9 @@ confirmed D1 A–D recall, with the API observing source D at 123347 ms. Cue
 now passes on this image: local D survived reboot, its deletion stayed effective,
 and HOLD RESTORE returned source D at 123347 ms after another reboot.
 Broader new-image physical acceptance remains open.
+Subsequent [physical LOAD LOCK checks](docs/validation/M3_PHYSICAL_LOAD_LOCK_20261007.md)
+passed ordinary FLX4 and touch LOAD refusal on each playing deck, with unchanged
+tracks, operator-confirmed uninterrupted sound and zero strict counter deltas.
 
 **A standalone dual-deck DJ system for the Pioneer DDJ-FLX4, powered by a
 single ESP32-P4 board.**

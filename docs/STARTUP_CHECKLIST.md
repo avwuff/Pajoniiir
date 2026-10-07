@@ -62,6 +62,8 @@ recall, with source D at 123347 ms observed through the API. Subsequent
 override, deletion and restore-source persistence through reboot. Both decks
 are stopped and the original source bank is restored. Broader new-image
 physical acceptance is separate.
+Ordinary FLX4 and touch LOAD refusal on each playing deck subsequently passed,
+with unchanged tracks and clean sound; see [physical record](validation/M3_PHYSICAL_LOAD_LOCK_20261007.md).
 Both 11574f4e and c698fa67 failed on dual waveform deformation; c698fa67 also
 showed visual stutter without audible stutter.
 The measurement candidate also reproduced the visual failure and measured

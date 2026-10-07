@@ -101,7 +101,7 @@ their audio/store/platform fakes are not physical controller acceptance.
 | Two real exports with the same track ID / media swap | NOT RUN; one unchanged medium captured; software identity tests passed |
 | Legacy cue migration apply | NOT RUN; requires the explicitly selected old export and guarded wired NVS apply |
 | Independent real metadata, beatgrid, playlists and artwork/UI review | Subsequent [PC export audit](M3_REAL_EXPORT_AUDIT_20261007.md) completed; artist/album and EXT cue defects reproduced. Playlists/source loops absent; physical UI review remains NOT RUN |
-| MIDI/touch playing-deck LOAD LOCK | NOT RUN physically; shared semantic/worker reservation tests passed on host |
+| MIDI/touch playing-deck LOAD LOCK | Subsequently PASS for ordinary FLX4 and touch refusal on both decks on 082d2c0a; see [physical record and unrun variants](M3_PHYSICAL_LOAD_LOCK_20261007.md) |
 | New audio listening / waveform visual acceptance | NOT RUN; earlier exact-image acceptance remains separate |
 | Current-source GitHub Actions / physical Campaign A | SKIPPED BY OPERATOR, unchanged from earlier records |
 

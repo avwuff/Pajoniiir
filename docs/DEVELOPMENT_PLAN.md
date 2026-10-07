@@ -57,6 +57,8 @@ The [on-device cue lifecycle](validation/M3_CUE_LIFECYCLE_20261007.md) now passe
 local override, deletion tombstone and restore-source persist through reboot.
 Final source D recall is 123347 ms and both decks are stopped.
 Next: remaining new-image physical gates; do not transfer fb5 acceptance.
+Ordinary playing-deck LOAD refusal now also passes through FLX4 and touch on
+both decks; see [physical LOAD LOCK limits](validation/M3_PHYSICAL_LOAD_LOCK_20261007.md).
 
 The preceding bf2fdc47 skipped unchanged cover comparisons and hidden Library styling, and separated
 chrome/UI-tail/LVGL timings. Host qualification, unchanged M3 simulator hashes,
