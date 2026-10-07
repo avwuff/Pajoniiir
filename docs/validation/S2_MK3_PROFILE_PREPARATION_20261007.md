@@ -1,6 +1,12 @@
 # Traktor Kontrol S2 MK3 profile preparation
 
-Status: preparation only. The existing basic profile is experimental; complete
+Status: PC basic-input/navigation captures completed on 2026-10-08; see the
+[profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
+The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
+It separates LOAD (`13`) from Browse push (`18`) and maps both Browse encoders
+(`B1/B3 19`, `41` / `3F`). Additional `91/93 29` notes remain unmapped.
+Earlier evidence below is historical and does not describe the updated binary.
+The basic profile remains experimental; complete
 S2 MK3 support and its physical acceptance are **NOT RUN**.
 
 ## Bench isolation

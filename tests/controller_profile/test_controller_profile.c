@@ -479,9 +479,9 @@ static void test_s2_mk3_basic_fixture(void)
     FILE *f = fopen("../../controllers/ni_traktor_s2_mk3_basic/profile.s3bin", "rb");
     assert(f);
     size_t len = fread(blob, 1, sizeof(blob), f); fclose(f);
-    assert(len == 864 && cp_profile_parse(blob, len, &p) == CP_OK);
+    assert(len == 928 && cp_profile_parse(blob, len, &p) == CP_OK);
     assert(p.vid == 0x17cc && p.pid == 0x1710 && p.decks == 2);
-    assert(p.input_count == 46 && p.output_count == 8);
+    assert(p.input_count == 50 && p.output_count == 8);
     assert(p.flags == CP_PF_LED_FEEDBACK && p.init_sysex_len == 0);
     cp_runtime_init(&rt);
     for (unsigned d = 0; d < 2; ++d) {

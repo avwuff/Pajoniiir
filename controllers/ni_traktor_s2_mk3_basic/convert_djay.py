@@ -12,6 +12,29 @@ import sys
 SOURCE_SHA256 = "abd3519e35ab24235d950ab5940dfdf72cbb6d5342f7d62fba089945cbebfe0e"
 
 
+def apply_pc_capture_navigation(profile):
+    """Apply 2026-10-08 isolated physical MIDI captures, without guessing touch.
+
+    The factory map used encoder push for load. This unit has separate LOAD
+    buttons (0x13), encoder push (0x18), and offset-binary rotation (0x19).
+    Note 0x29 occurs on contact but remains intentionally unmapped.
+    """
+    profile["inputs"] = [item for item in profile["inputs"]
+                         if item.get("event") not in ("browser.press", "browser.delta")]
+    for deck in (1, 2):
+        load = next(item for item in profile["inputs"]
+                    if item.get("event") == f"browser.load_deck{deck}")
+        load["data1"] = 0x13
+        status = 0x91 if deck == 1 else 0x93
+        profile["inputs"].extend([
+            {"type": "button", "event": "browser.press",
+             "status": hex(status), "data1": 0x18},
+            {"type": "encoder_rel64", "event": "browser.delta",
+             "status": hex(status + 0x20), "data1": 0x19},
+        ])
+    return profile
+
+
 def convert(source):
     assert hashlib.sha256(source).hexdigest() == SOURCE_SHA256, "Unexpected source mapping"
     mapping = plistlib.loads(source)
@@ -62,12 +85,12 @@ def convert(source):
                            "status": first["status"], "first_data1": first["data1"],
                            "count": 8, "mode": "hot_cue"})
 
-    return {"schema": "p4-controller-profile-v1",
+    return apply_pc_capture_navigation({"schema": "p4-controller-profile-v1",
             "name": "NI Traktor Kontrol S2 MK3 - basic transport (unqualified)",
             "vendor": "Native Instruments", "vid": "0x17CC", "pid": "0x1710", "decks": 2,
             "capabilities": {"led_feedback": True, "usb_audio": False,
                              "jog_touch": False, "pitch_14bit": False},
-            "inputs": inputs, "outputs": outputs}
+            "inputs": inputs, "outputs": outputs})
 
 
 if __name__ == "__main__":

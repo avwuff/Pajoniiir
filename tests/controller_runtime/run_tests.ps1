@@ -117,4 +117,12 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 & $MutexExe
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
+$S2Exe = Join-Path $BuildDir "test_s2_navigation.exe"
+gcc @CommonArgs -DCONTROLLER_PROFILE_RUNTIME_PC_TEST `
+    (Join-Path $Profile "controller_profile.c") `
+    (Join-Path $ProfileRuntime "controller_profile_runtime.c") `
+    (Join-Path $PSScriptRoot "test_s2_navigation.c") -o $S2Exe
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+& $S2Exe (Join-Path $RepoRoot "controllers/ni_traktor_s2_mk3_basic/profile.s3bin")
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 exit 0
