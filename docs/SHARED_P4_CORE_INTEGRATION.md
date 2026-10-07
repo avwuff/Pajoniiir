@@ -307,9 +307,12 @@ JC4880 had already built successfully. Separate M3 bench evidence does not claim
 full software or hardware qualification. Final integration, physical campaigns
 and publication authorization remain required.
 
-The next M3 repair adds a completed-frame presentation policy: two RGB888
-buffers with explicit submit/retire ownership and dirty-span synchronization.
-The driver contract is checked against the pinned pre-v3 IDF 6.0.2 path;
-v3-only paired builds require a separate retirement provider. The production
-pixel/ownership test and unchanged M3 simulator pass. Exact M3 build/packaging
-and operator acceptance remain required; interpolation and audio are unchanged.
+The initial completed-frame image 6d55ce2a failed physically. Persistent boot
+327 logs additionally confirm audio/UAC losses after the captured solo window;
+dual measurement and final automatic stop were not completed. The bench was
+returned to signed ee54f0d1, VALID in ota_0. The next focused revision keeps
+explicit submit/retire ownership but carries old damage after rendering using
+exact pixel coverage, eliminating copies of fully redrawn strips. The pre-v3
+IDF 6.0.2 contract is unchanged; v3-only builds need a separate retirement
+provider. Exact M3 software/physical gates remain required. Interpolation and
+audio implementation are unchanged.

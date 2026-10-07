@@ -415,3 +415,88 @@ Full host qualification and the exact clean-source M3 build/sign/install and
 operator retest are required before calling this a repaired physical image.
 The retained-position mechanism is deliberately not changed in this candidate;
 its occurrence on the device remains an independent hypothesis.
+
+## Completed-frame candidate 6d55ce2a: failed bench test
+
+Clean source `6d55ce2a05a187379d8927ab5f053777ce054f59`, version
+`M3-dev-g6d55ce2a05a1`, was installed locally with signed OTA and observed
+VALID in `ota_1`. Status confirmed `display_framebuffers=2`. Full host
+qualification, unchanged M3 simulator baselines, the M3 ESP-IDF 6.0.2 build,
+signature/project identity and image budget passed. Other board builds and
+full CI remain deferred under the M3-first iteration policy.
+
+The image is 2,571,184 bytes, SHA-256
+`58c0b9443674ae9f8635e68f09e104a562d8c5dd99e1ad103f095894c5d5d71a`;
+the signed bundle is 2,571,372 bytes, SHA-256
+`792e0634542f7f4f71a17034e3340876bb7fbc556cbded9eff8109f84ef1d517`.
+The immutable software evidence is in
+`releases/m3-bench-6d55ce2a/pajoniiir-m3-M3-dev-g6d55ce2a05a1/`.
+
+On 2026-10-07, API checks confirmed both MT flags on, zoom 8, both decks
+stopped, and the expected source before measurement. The stopped and solo D1
+windows retained MT and zoom 8. Their twelve-second observations were:
+
+| Measurement | Stopped | Solo D1 |
+|---|---:|---:|
+| Refresh interrupts | 602 | 602 |
+| Coalesced refreshes | 0 | 13 |
+| Framebuffer synchronization mean, us | No copy | 6,038.9 |
+| Callback duration mean, us | 395.3 | 6,669.0 |
+| Handler duration mean, us | 395.5 | 14,142.7 |
+| D1 finish after refresh mean, us | No redraw | 11,423.4 |
+
+PCM underrun, output-late, UAC drop/overflow/underflow and service-log drop
+deltas were zero in those two captured windows. One service-log record was
+written during solo; this is not a no-write window. These observations do not
+qualify dual playback or listening.
+
+No dual before/after records or final-stopped record were produced. Subsequent
+HTTP requests timed out or were reset while Wi-Fi remained connected and ping
+responded. Neither a completed dual test nor automatic final stop is confirmed.
+The operator reported `sve je lose` (everything is bad). Physical acceptance
+is **FAIL**, without assigning a more specific visual/audio symptom to this
+report. A reset and USB1 serial diagnosis were requested. No new long soak,
+cross-board build, push, or public OTA publication follows this failure.
+
+Raw measurements are preserved in
+`.cache/m3-migration/20261007-6d55ce2a/mt-8-beat/`. The measured synchronization
+cost is an additional performance problem to address; it does not by itself
+establish the cause of the HTTP failure.
+
+After the operator reset, API access returned and the same image was observed
+VALID with both decks stopped. The retained-RAM previous journals were invalid
+and the SD journal recorded a POWERON reset; this is not a recorded WDT reset.
+The persistent SD `system.log` identifies the failed image as boot 327 and
+contains new AUDIO_UNDERRUN, UAC_DATA_LOSS, AUDIO_OUTPUT_LATE and
+AUDIO_BLOCK_OUTLIER records after the solo window ended at uptime 723,329 ms.
+At 730,994 ms output-late maximum was 144,367 us. Several mix groups took about
+100 ms; an I2S stall record also names the interrupted `ae_decode` task. These
+are confirmed audio/service failures, not isolated harmless output-late events,
+but do not establish whether framebuffer traffic, decoder work or another
+blocking path initiated the failure. The raw log and post-reset snapshots are
+in the same image's evidence directory. No UART port was present on the host.
+
+For recovery, the previous signed ee54f0d1 bundle was verified and uploaded
+locally (HTTP 200), then observed VALID in ota_0 with the exact expected clean
+source/ELF at `2026-10-07T08:08:36.618435+00:00`. This restores the previous bench
+baseline; it does not change that image's visual FAIL.
+
+## Deferred preservation revision
+
+The next revision preserves inactive-buffer ownership but moves old-pixel
+preservation after all waveform and LVGL writes. A 48,000-byte PSRAM bitmap
+marks exact new pixel coverage on 800x480 M3. For each prior dirty row span,
+only pixels not written in the current frame are copied from the front. Fully
+redrawn strips therefore copy no old pixels. This also preserves a paused
+waveform and gaps between disjoint LVGL rectangles; a conservative bounding
+span alone would incorrectly discard pixels in those gaps. Copied CPU rows
+are written back after PPA rendering and before submitting the complete frame.
+
+Retirement and the sealed-buffer contract stay unchanged. There are no panel,
+audio, interpolation or waveform geometry changes. The production helper
+passes 2,000 randomized reference frames plus full-overwrite zero-copy and
+explicit disjoint-gap cases in RGB565/RGB888; M3 simulator screenshot hashes
+remain unchanged. Full host qualification passed with no optional qualification
+SKIP, and documentation integrity passed. The exact clean-source M3 build,
+packaging and physical retest are separate gates. The preceding failure has
+not been resolved by these software tests.

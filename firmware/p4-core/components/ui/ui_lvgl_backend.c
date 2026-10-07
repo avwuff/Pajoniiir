@@ -186,6 +186,7 @@ static int s_dsi_active_fb_idx = 0;
 #if UI_DSI_FB_COUNT == 2u
 static ui_framebuffer_pair_t s_framebuffers;
 static uint32_t s_refresh_generation;
+static uint32_t s_framebuffer_retire_us;
 #endif
 static size_t s_cache_align = 64;
 static uint16_t s_hor_res = 800;
@@ -585,10 +586,8 @@ static void ui_lvgl_task(void *arg)
 #if UI_DSI_FB_COUNT == 2u
         if (s_framebuffers.pending) {
             int64_t sync_start_us = esp_timer_get_time();
-            unsigned first_row, end_row;
             uint32_t refresh = __atomic_load_n(&s_refresh_generation, __ATOMIC_ACQUIRE);
-            if (!ui_framebuffer_pair_acquire(&s_framebuffers, refresh, s_dsi_fb,
-                    board_capabilities_get()->scanout_bytes_per_pixel, &first_row, &end_row)) {
+            if (!ui_framebuffer_pair_acquire(&s_framebuffers, refresh)) {
                 _lock_release_recursive(&s_lvgl_lock);
                 uint32_t notifications = 0;
                 xTaskNotifyWait(0, UINT32_MAX, &notifications, pdMS_TO_TICKS(20));
@@ -596,16 +595,7 @@ static void ui_lvgl_task(void *arg)
                 continue;
             }
             s_dsi_active_fb_idx = ui_framebuffer_pair_writable(&s_framebuffers);
-            /* CPU copied dirty pixels from the newly displayed buffer. Flush
-             * them before PPA invalidates overlapping output cache lines. */
-            if (end_row > first_row) {
-                size_t stride = BSP_LCD_H_RES * board_capabilities_get()->scanout_bytes_per_pixel;
-                ESP_ERROR_CHECK(esp_cache_msync((uint8_t *)s_dsi_fb[s_dsi_active_fb_idx] + first_row * stride,
-                    (end_row - first_row) * stride,
-                    ESP_CACHE_MSYNC_FLAG_DIR_C2M | ESP_CACHE_MSYNC_FLAG_UNALIGNED));
-            }
-            ui_scanout_timing_record(UI_TIMING_FB_SYNC,
-                (uint32_t)(esp_timer_get_time() - sync_start_us));
+            s_framebuffer_retire_us = (uint32_t)(esp_timer_get_time() - sync_start_us);
         }
 #endif
         if (refresh_pending && s_frame_callback != NULL) {
@@ -618,6 +608,24 @@ static void ui_lvgl_task(void *arg)
         uint32_t next_ms = lv_timer_handler();
 #if UI_DSI_FB_COUNT == 2u
         if (s_framebuffers.dirty) {
+            /* Carry only old pixels that neither waveform nor LVGL redrew.
+             * In particular, do not memcpy two old waveform strips immediately
+             * before PPA overwrites them. Exact coverage preserves gaps between
+             * partial LVGL rectangles and paused waveforms. */
+            int64_t sync_start_us = esp_timer_get_time();
+            unsigned first_row, end_row;
+            bool composed = ui_framebuffer_pair_compose(&s_framebuffers, s_dsi_fb,
+                board_capabilities_get()->scanout_bytes_per_pixel, &first_row, &end_row);
+            assert(composed);
+            if (end_row > first_row) {
+                size_t stride = BSP_LCD_H_RES * board_capabilities_get()->scanout_bytes_per_pixel;
+                ESP_ERROR_CHECK(esp_cache_msync((uint8_t *)s_dsi_fb[s_dsi_active_fb_idx] + first_row * stride,
+                    (end_row - first_row) * stride,
+                    ESP_CACHE_MSYNC_FLAG_DIR_C2M | ESP_CACHE_MSYNC_FLAG_UNALIGNED));
+            }
+            ui_scanout_timing_record(UI_TIMING_FB_SYNC, s_framebuffer_retire_us +
+                (uint32_t)(esp_timer_get_time() - sync_start_us));
+            s_framebuffer_retire_us = 0;
             int64_t present_start_us = esp_timer_get_time();
             /* Both waveforms and LVGL chrome are complete. Submission only
              * chooses the next DMA buffer; do not recycle the old front until
@@ -684,7 +692,11 @@ esp_err_t ui_lvgl_backend_init(uint16_t hor_res, uint16_t ver_res)
 
 #if UI_DSI_FB_COUNT == 2u
     ESP_ERROR_CHECK(esp_lcd_dpi_panel_get_frame_buffer(panel, 2, &s_dsi_fb[0], &s_dsi_fb[1]));
-    bool initialized = ui_framebuffer_pair_init(&s_framebuffers, BSP_LCD_H_RES, BSP_LCD_V_RES);
+    size_t coverage_bytes = ui_framebuffer_pair_workspace_size(BSP_LCD_H_RES, BSP_LCD_V_RES);
+    void *coverage = heap_caps_malloc(coverage_bytes, MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
+    if (!coverage) return ESP_ERR_NO_MEM;
+    bool initialized = ui_framebuffer_pair_init(&s_framebuffers, BSP_LCD_H_RES, BSP_LCD_V_RES,
+        coverage, coverage_bytes);
     assert(initialized);
     s_dsi_active_fb_idx = ui_framebuffer_pair_writable(&s_framebuffers);
 #else

@@ -51,11 +51,14 @@ resume after an operator-accepted M3 retest. Cancelled/interrupted work is not a
 PASS. The separate bench manifest retains full software qualification as false;
 it does not relax final integration, Campaign A/B or publication gates.
 
-The next M3 candidate uses two RGB888 framebuffers with completed-frame
-presentation. Before its physical PASS, verify exact source/ELF/VALID state,
+The initial completed-frame candidate 6d55ce2a failed; the bench was returned to
+ee54f0d1 VALID in ota_0. The next M3 candidate retains paired presentation but
+copies only old damage not overwritten by new rendering. Before its physical
+PASS, verify exact source/ELF/VALID state,
 `capabilities.display_framebuffers=2`, stable panel/touch/colours and all zooms,
 then compare solo/dual MT timing including framebuffer-sync/present cost.
-The last installed ee54f0d1 visual FAIL remains authoritative until that retest.
+Both previous visual failures remain recorded; no physical PASS follows from
+installation or host pixel tests. Check audio/UAC and HTTP stability as well.
 
 Status: **current M2.5 JC4880 checklist and development qualification gates**
 (2026-10-06). Acceptance already recorded in the

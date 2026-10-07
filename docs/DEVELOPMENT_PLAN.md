@@ -27,12 +27,17 @@ The redundant matrix runs were cancelled; the earlier JC4880 build had already
 finished and the JC1060 configure was interrupted. Keep separate M3 bench
 evidence rather than marking full software qualification complete.
 
-The next focused repair changes M3 framebuffer ownership: draw a complete frame
-in an inactive RGB888 buffer, submit it and wait for DMA retirement before reuse.
-The frame-pair pixel/ownership test and unchanged M3 simulator baselines pass.
-See the candidate record for the pre-v3 driver contract, PSRAM cost and pending
-exact-image software/physical gates. The retained-position hypothesis remains
-separate; this candidate does not change interpolation.
+The paired-buffer image 6d55ce2a failed its physical test and the bench was
+returned to the signed ee54f0d1 image, VALID in ota_0. Its captured solo window
+spent 6.04 ms copying old framebuffer content before redraw. The subsequent
+dual interval lost HTTP access and persistent logs recorded audio/UAC losses.
+The next revision keeps complete-frame ownership but defers preservation until
+after rendering, copying only previous damage not covered by new writes.
+Exact bitmap coverage preserves paused content and holes between rectangles;
+fully redrawn strips require no old-pixel copy. Pixel reference tests and M3
+simulator baselines pass; exact-image build/packaging/physical gates remain.
+Interpolation and audio code are unchanged. See the candidate record for the
+pre-v3 contract and image-specific failure evidence.
 
 The preceding `M3-dev-ge4536de2ec6f` was installed in M3 ota_1 with VALID health state,
 verified against its exact clean source and ELF on 2026-10-07 within the
