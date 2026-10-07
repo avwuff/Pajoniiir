@@ -27,15 +27,20 @@ Audio/USB lifecycle campaigns and full hardware qualification remain open.
 The initial dual-deck timing attempt exposed a
 [waveform regression](docs/validation/M3_SHARED_WAVEFORM_REGRESSION_20261006.md);
 the signed development image has no production hardware PASS.
-Both paired-buffer bench revisions failed the physical test. The installed
-`b0c66744` image has operator-confirmed severe stutter when both decks play.
-The signed `1d3ee7b6` revision is now installed VALID in ota_0. It distinguishes
+Both paired-buffer bench revisions failed the physical test. The historical
+`b0c66744` image had operator-confirmed severe stutter when both decks played.
+The `1d3ee7b6` revision distinguishes
 retained position observations from fresh ones, with RAM age counters to check
 the mechanism on the device. The operator reports much improved visuals with
 slight residual stutter and clean sound; full fluidity remains open. The next
-M3 revision `bf2fdc47` removes repeated UI work on unchanged covers/hidden controls
-and is installed VALID in ota_1, awaiting its physical retest. Other board
-builds resume after the M3 repair passes the operator test.
+M3 revision `bf2fdc47` removed repeated UI work on unchanged covers/hidden controls;
+its repeated physical test still showed slight stutter with clean sound.
+The current `fb5cbca1` image is installed VALID in ota_0 and removes a blocking
+audio-position read from jog-mode polling. Its short dual MT/zoom-8 retest passed
+with operator-confirmed fluid waveforms and clean MAIN/headphones sound.
+A subsequent short operator review confirmed all five zooms fluid with clean
+sound. Local JC4880/JC1060 builds then passed on the same clean source without
+rebuilding M3. Long-soak/lifecycle qualification and current-source CI remain open.
 
 **A standalone dual-deck DJ system for the Pioneer DDJ-FLX4, powered by a
 single ESP32-P4 board.**

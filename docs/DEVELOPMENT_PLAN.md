@@ -14,19 +14,26 @@ worst-case Campaign B timing. Legacy-image acceptance does not transfer.
 Unavailable hardware is NOT RUN. Public board-channel publication requires
 separate authorization after that board's acceptance.
 
-The current M3 bench image is `M3-dev-gbf2fdc474ae7` from clean source
-`bf2fdc474ae7a1636a22245656681780f6bebe74`, installed VALID in ota_1.
-It skips unchanged cover comparisons and hidden Library styling, and separates
+The current M3 bench image is `M3-dev-gfb5cbca13f33` from clean source
+`fb5cbca13f33d21dfb4e16e0ba667c340399eb0c`, installed VALID in ota_0.
+It removes an unused blocking audio-position read from per-refresh jog-mode
+polling. Host qualification, unchanged M3 simulator hashes, M3 build and signed
+identity/budget checks passed. Its short dual MT/zoom-8 retest passed with
+operator-confirmed fluid waveforms and clean MAIN/headphones sound. A subsequent
+short review confirmed all five zooms fluid and sound clean. Long-soak and full
+hardware acceptance remain open; short coverage is recorded separately.
+
+The preceding bf2fdc47 skipped unchanged cover comparisons and hidden Library styling, and separated
 chrome/UI-tail/LVGL timings. Host qualification, unchanged M3 simulator hashes,
-M3 build and signed identity/budget checks passed; physical retest is pending.
+M3 build and signed identity/budget checks passed. Its repeated physical test
+still showed slight dual stutter with clean MAIN/headphones sound.
 
 The preceding 1d3ee7b6 was installed VALID in ota_0.
 Host qualification, unchanged M3 simulator baselines, the M3 build and signed
 package verification passed. Its physical retest showed much improved visuals
 with slight residual stutter and clean MAIN/headphones sound. Continuous dual
-playback without loops also retains the small stutter. Next, remove repeated
-unchanged artwork/hidden Library work and measure chrome, UI tail and LVGL
-render time separately. The full visual and long-soak gates remain open.
+playback without loops also retains the small stutter. The full visual and
+long-soak gates remain open.
 
 The preceding b0c66744 deferred framebuffer-preservation repair passed host qualification,
 unchanged M3 simulator baselines and the M3 IDF 6.0.2 build. The operator stopped

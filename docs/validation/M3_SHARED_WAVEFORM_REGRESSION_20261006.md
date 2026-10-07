@@ -701,3 +701,122 @@ this callback, preserving jog mode/transport control state without obtaining an
 unused audio position. No DSP, panel, scanout policy or label behavior changes.
 Software checks and exact-image physical measurement are required before
 attributing the residual stutter to this wait.
+
+### Repeated bf2fdc47 physical test
+
+The operator missed the first measurement and requested a repeat. The same
+MT-on-both, zoom-8, opposite-pitch, looped tracks were verified before the three
+12-second windows. Stage announcements identified solo D1 and dual playback.
+The operator reported slight stutter and confirmed clean MAIN/FLX4 headphones
+sound. Full fluidity remains **FAIL**; listening confirmation covers this short
+repeat only. Strict new PCM/UAC losses stayed zero and both decks ended stopped.
+
+Dual delivered 481 callbacks from 630 refreshes (150 coalesced); mean D2 finish
+was 10,561.2 us, UI tail 3,498.8 us and whole handler 18,581.6 us (131 over 20 ms).
+Raw records are in `20261007-bf2fdc47/mt-8-beat-repeat/`; separate physical status
+is `releases/m3-bench-bf2fdc47-physical-status.json`. Immutable bench evidence
+is unchanged. Campaign B was not started.
+
+## Jog-mode candidate fb5cbca1: installed, physical retest pending
+
+Clean source `fb5cbca13f33d21dfb4e16e0ba667c340399eb0c`, version
+`M3-dev-gfb5cbca13f33`, passed host qualification with mandatory fixtures,
+unchanged M3 simulator screenshots, documentation integrity, M3-only IDF 6.0.2
+build, unchanged dependency locks, and signed package/source/identity/budget
+checks. Immutable software evidence is under `releases/m3-bench-fb5cbca1/`.
+JC4880/JC1060 builds, full CI and publication remain deferred.
+
+Image: 2,573,040 bytes, SHA-256
+`17a5c82ee5ac1944bf756918d1f4094a5f67bf9ab66f60dcb21ce4aa42f1015b`.
+Bundle: 2,573,228 bytes, SHA-256
+`1f6cff625d0db95e5be4617bfb1100aced4ee2dd2908ec06efa3618a94711cb3`.
+ELF SHA-256:
+`e6382dff0c82d9db463e03b956f435ad2d6bad2f4fdee9f9d476cd152d1505a7`.
+
+Local signed upload returned HTTP 200; exact source/ELF, ota_0 VALID and OTA
+idle were observed at `2026-10-07T12:28:58.178806+00:00`. This is observation
+time, not measured startup duration. Same tracks/pitch/loops were prepared
+stopped. Preparation read MT off and zoom 12; operator readiness is required
+before the comparable retest. Wi-Fi remains on. Install/preparation records
+are in `.cache/m3-migration/20261007-fb5cbca1/`. Listening/visual acceptance and
+the long soak on this exact image remain NOT RUN.
+
+### fb5cbca1 MT/zoom-8 measurement
+
+Operator readiness was followed by the same three continuous 12-second windows
+with stage announcements. Exact source/ELF/VALID state was checked before the
+test. Both decks ended stopped with MT still on. Strict new PCM/UAC loss checks
+passed. Physical visual/listening confirmation is pending; no long soak ran.
+
+Solo delivered 604 callback samples from 610 refreshes, with six coalesced.
+Dual delivered 607 from 641, with 35 coalesced. Small count differences reflect
+the non-transactional timing counters sampled across callback boundaries.
+Dual UI tail mean fell from 3,498.8 us in the bf2fdc47 repeat to 130.3 us; all
+607 new tail samples were below 1 ms. Dual whole handler mean was 14,952.9 us
+with 28 over 20 ms, compared with 18,581.6 us and 131 over 20 ms previously.
+D2 waveform finish mean was 10,392.3 us, with 11 samples over 20 ms. The fixed
+mutex wait is consistent with the reduced UI-tail time, but remaining deadline
+misses preclude a zero-stutter claim from telemetry alone.
+
+Retained position observations remain present: D1/D2 fresh 238/235, retained
+369/372, and older-than-120-ms 67/69; maximum streak since boot 22/22. Removing
+the tail's blocking query makes refreshes more frequent while metadata can still
+be busy. These counters measure observation age, not clock-publication age.
+Raw records are in `20261007-fb5cbca1/mt-8-beat/`.
+
+The operator subsequently confirmed fluid dual waveforms and clean MAIN/FLX4
+headphones sound on this exact fb5cbca1 MT/zoom-8 retest. This is a **PASS for
+the short zoom-8 visual/listening gate**, not full hardware qualification or a
+zero-deadline-miss claim. Other zooms, Campaign A/B, startup fault/rollback and
+remaining integrated acceptance still require their own exact-image evidence.
+
+### Short five-zoom operator review
+
+The operator confirmed fluid dual waveforms on 4, 8, 12, 16 and 24 beats with
+clean MAIN/FLX4 headphones sound. The bounded scan lasted about 121 seconds
+including API/file overhead, captured all five zooms and ended with both decks
+stopped. New PCM underrun, UAC drop/overflow/underflow/packet-loss and service-log
+drop deltas were zero. This is **PASS for the short operator review**.
+
+The helper exited 1 on its conservative minimum-four-samples-per-zoom coverage
+check: counts were 11/3/2/1/13 for 4/8/12/16/24. Intermediate zooms were changed
+quickly and visited more than once. This is incomplete bounded per-zoom dwell
+coverage, not an audio/data-loss failure; do not describe it as a software
+coverage PASS or a 15-second-per-zoom acceptance. The earlier dedicated 12-second
+zoom-8 window remains separate valid evidence. Raw records and the explicit
+coverage failure are under `20261007-fb5cbca1/all-zoom/`.
+
+Four new output-late events were observed; since-boot maximum was 11,654 us,
+below 15,000 us. Three events were observed in the last approximately 16 seconds,
+crossing the existing clustering investigation trigger. The operator reported
+no physical consequence and strict loss deltas remained zero. Retain this as
+monitoring/investigation evidence, not a zero-late claim or automatic release
+failure. No firmware change is justified solely by this cluster. Campaign B
+remains required on the exact installed image.
+
+### Cross-board software checks after M3 visual confirmation
+
+After the operator's five-zoom confirmation, JC4880 and JC1060 local IDF 6.0.2
+reconfigure/builds passed on clean `fb5cbca13f33d21dfb4e16e0ba667c340399eb0c`.
+M3's already-verified build was reused; no redundant M3 rebuild or reinstall
+was performed. All three dependency locks are unchanged. Board identity,
+component isolation and budget checks passed. These are local software gates,
+not clean CI qualification or other-board physical acceptance.
+
+| Project | Image bytes | SHA-256 |
+| --- | ---: | --- |
+| main-deck-p4 | 2,588,640 | `73a0d2d7a37d84c40187200b2011a367896f952175ea6a61138d72bba261f3be` |
+| main-deck-jc1060 | 2,646,960 | `2b1c73d0c98630c15abec0e1920e4159b325a0cea56f84e7c26b49852e34a017` |
+| main-deck-m3 | 2,573,040 | `17a5c82ee5ac1944bf756918d1f4094a5f67bf9ab66f60dcb21ce4aa42f1015b` |
+
+The first parallel JC4880 configure encountered the dependency manager's shared
+Git cache `index.lock`; JC1060 completed, then sequential JC4880 retry passed.
+No dependency version or board setting changed. The original failure log is
+retained separately. Only this task's documentation changes were temporarily
+stashed for exact clean-source build identity, then restored. Historical user
+stashes were preserved. Evidence is `20261007-fb5cbca1/cross-board-builds.json`.
+
+Campaign B was started on the same installed M3 image with the required dual
+mixed-rate MT/loop/opposing-pitch/zoom-8 profile and 250-ms Wi-Fi polling. Its
+result remains pending until the full run and operator confirmation complete;
+current records are under `20261007-fb5cbca1/timing-soak/`.
