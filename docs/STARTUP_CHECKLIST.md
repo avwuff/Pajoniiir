@@ -51,6 +51,12 @@ resume after an operator-accepted M3 retest. Cancelled/interrupted work is not a
 PASS. The separate bench manifest retains full software qualification as false;
 it does not relax final integration, Campaign A/B or publication gates.
 
+The next M3 candidate uses two RGB888 framebuffers with completed-frame
+presentation. Before its physical PASS, verify exact source/ELF/VALID state,
+`capabilities.display_framebuffers=2`, stable panel/touch/colours and all zooms,
+then compare solo/dual MT timing including framebuffer-sync/present cost.
+The last installed ee54f0d1 visual FAIL remains authoritative until that retest.
+
 Status: **current M2.5 JC4880 checklist and development qualification gates**
 (2026-10-06). Acceptance already recorded in the
 [M2.5 release](validation/M2_5_RELEASE_20261006.md) is not a request to

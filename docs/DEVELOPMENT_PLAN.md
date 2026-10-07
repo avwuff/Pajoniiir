@@ -27,6 +27,13 @@ The redundant matrix runs were cancelled; the earlier JC4880 build had already
 finished and the JC1060 configure was interrupted. Keep separate M3 bench
 evidence rather than marking full software qualification complete.
 
+The next focused repair changes M3 framebuffer ownership: draw a complete frame
+in an inactive RGB888 buffer, submit it and wait for DMA retirement before reuse.
+The frame-pair pixel/ownership test and unchanged M3 simulator baselines pass.
+See the candidate record for the pre-v3 driver contract, PSRAM cost and pending
+exact-image software/physical gates. The retained-position hypothesis remains
+separate; this candidate does not change interpolation.
+
 The preceding `M3-dev-ge4536de2ec6f` was installed in M3 ota_1 with VALID health state,
 verified against its exact clean source and ELF on 2026-10-07 within the
 installation helper's polling deadline. The preceding 180b008c helper's expired

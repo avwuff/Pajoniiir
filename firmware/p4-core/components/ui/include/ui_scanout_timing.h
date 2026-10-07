@@ -16,6 +16,8 @@ typedef enum {
     UI_TIMING_D2_CACHE,
     UI_TIMING_D2_BLIT,
     UI_TIMING_D2_FINISH,
+    UI_TIMING_FB_SYNC,
+    UI_TIMING_PRESENT,
     UI_TIMING_COUNT
 } ui_scanout_timing_metric_t;
 

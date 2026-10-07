@@ -423,8 +423,8 @@ static void bsp_dsi_log_clock(esp_lcd_dsi_bus_handle_t bus, const char *phase)
              (unsigned long)host->lpclk_ctrl.val, (unsigned long)host->phy_status.val);
 }
 
-_Static_assert(BSP_LCD_FRAMEBUFFER_COUNT == 1u,
-               "the current LVGL/PPA backend supports exactly one DPI framebuffer");
+_Static_assert(BSP_LCD_FRAMEBUFFER_COUNT == 2u,
+               "M3 presents complete frames from an inactive DPI buffer");
 
 esp_err_t bsp_display_init(void)
 {

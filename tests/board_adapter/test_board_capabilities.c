@@ -10,6 +10,8 @@ int main(void)
     assert(m && strcmp(m->project, "main-deck-m3") == 0);
     assert(m->panel_width == 800 && m->panel_height == 480 && m->panel_rotation == 0);
     assert(m->scanout_bytes_per_pixel == 3 && m->waveform_first && m->waveform_top_to_bottom);
+    assert(m->display_framebuffers == 2);
+    assert(a->display_framebuffers == 1 && b->display_framebuffers == 1);
     assert(m->fixed_output_sample_rate == 48000 && m->pcm5102a && m->wifi && !m->ethernet);
     assert(m->storage_root == 0 && m->controller_root == 1 && m->fs_phy_index == 0);
     assert(m->hosted_release_on_stop && m->keylock_dense_correlation);

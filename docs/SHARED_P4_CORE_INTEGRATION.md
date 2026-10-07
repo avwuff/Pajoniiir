@@ -306,3 +306,10 @@ already-running matrix was cancelled and local JC1060 configure interrupted;
 JC4880 had already built successfully. Separate M3 bench evidence does not claim
 full software or hardware qualification. Final integration, physical campaigns
 and publication authorization remain required.
+
+The next M3 repair adds a completed-frame presentation policy: two RGB888
+buffers with explicit submit/retire ownership and dirty-span synchronization.
+The driver contract is checked against the pinned pre-v3 IDF 6.0.2 path;
+v3-only paired builds require a separate retirement provider. The production
+pixel/ownership test and unchanged M3 simulator pass. Exact M3 build/packaging
+and operator acceptance remain required; interpolation and audio are unchanged.

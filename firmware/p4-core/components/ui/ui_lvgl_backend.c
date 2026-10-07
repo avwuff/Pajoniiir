@@ -2,6 +2,7 @@
 #include "ui.h"
 
 #include <limits.h>
+#include <assert.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -145,6 +146,7 @@ esp_err_t ui_lvgl_backend_draw_rect_rgb565(const ui_overlay_rect_t *logical, uin
 #else
 #include "board_adapter.h"
 #include "board_scanout.h"
+#include "ui_framebuffer_pair.h"
 #include "esp_attr.h"
 #include "esp_cache.h"
 #include "esp_heap_caps.h"
@@ -160,14 +162,17 @@ esp_err_t ui_lvgl_backend_draw_rect_rgb565(const ui_overlay_rect_t *logical, uin
 #define LVGL_TICK_PERIOD_MS        2
 #define LVGL_TASK_STACK            (24 * 1024)
 #define LVGL_TASK_PRIO             4
-/* Driven by the BSP so the two cannot disagree. There is no inactive-buffer
- * swap in this backend: LVGL renders partial rows into one PSRAM draw buffer and
- * the flush callback PPA-rotates them straight into the single DPI framebuffer.
- * Asking the driver for more would reserve full-screen buffers that are never
- * scanned. */
+/* The board chooses direct scanout or completed-frame presentation. */
 #define UI_DSI_FB_COUNT            BSP_LCD_FRAMEBUFFER_COUNT
-_Static_assert(UI_DSI_FB_COUNT == 1u,
-               "this backend supports exactly one DPI framebuffer");
+_Static_assert(UI_DSI_FB_COUNT == 1u || UI_DSI_FB_COUNT == 2u,
+               "unsupported DPI framebuffer policy");
+#if UI_DSI_FB_COUNT == 2u
+/* IDF 6.0.2's pre-v3 path calls on_refresh_done AFTER restarting DMA with
+ * cur_fb_index. A v3-only build uses a separate bridge VSYNC interrupt and
+ * must first supply equivalent buffer-retirement semantics. */
+_Static_assert(CONFIG_ESP32P4_REV_MIN_FULL < 300,
+               "paired presentation requires DMA-completion retirement");
+#endif
 #define UI_LVGL_PARTIAL_BUF_ROWS   80u
 #define UI_PERF_SPIKE_THRESHOLD_US 20000u
 #define UI_LVGL_NOTIFY_REFRESH     (1u << 0)
@@ -178,6 +183,10 @@ static lv_display_t *s_disp = NULL;
 static ppa_client_handle_t s_ppa = NULL;
 static void *s_dsi_fb[UI_DSI_FB_COUNT] = { NULL };
 static int s_dsi_active_fb_idx = 0;
+#if UI_DSI_FB_COUNT == 2u
+static ui_framebuffer_pair_t s_framebuffers;
+static uint32_t s_refresh_generation;
+#endif
 static size_t s_cache_align = 64;
 static uint16_t s_hor_res = 800;
 static uint16_t s_ver_res = 480;
@@ -220,6 +229,9 @@ static bool IRAM_ATTR ui_lvgl_dpi_refresh_done_cb(esp_lcd_panel_handle_t panel,
     }
 
     BaseType_t higher_priority_task_woken = pdFALSE;
+#if UI_DSI_FB_COUNT == 2u
+    __atomic_add_fetch(&s_refresh_generation, 1u, __ATOMIC_RELEASE);
+#endif
     ui_scanout_timing_refresh_isr(esp_timer_get_time());
     xTaskNotifyFromISR(task,
                        UI_LVGL_NOTIFY_REFRESH,
@@ -437,6 +449,13 @@ static esp_err_t ui_lvgl_backend_blit_rgb565_ppa270_mapped(const ui_overlay_rect
 
     int64_t ppa_start_us = esp_timer_get_time();
     esp_err_t err = ppa_do_scale_rotate_mirror(s_ppa, &op);
+#if UI_DSI_FB_COUNT == 2u
+    if (err == ESP_OK) {
+        bool marked = ui_framebuffer_pair_dirty(&s_framebuffers,
+            physical->x, physical->y, physical->w, physical->h);
+        assert(marked);
+    }
+#endif
     uint32_t ppa_us = ui_lvgl_backend_perf_elapsed_us(ppa_start_us);
     uint32_t total_us = ui_lvgl_backend_perf_elapsed_us(total_start_us);
 
@@ -563,6 +582,32 @@ static void ui_lvgl_task(void *arg)
         last_handler_start_us = handler_start_us;
 
         _lock_acquire_recursive(&s_lvgl_lock);
+#if UI_DSI_FB_COUNT == 2u
+        if (s_framebuffers.pending) {
+            int64_t sync_start_us = esp_timer_get_time();
+            unsigned first_row, end_row;
+            uint32_t refresh = __atomic_load_n(&s_refresh_generation, __ATOMIC_ACQUIRE);
+            if (!ui_framebuffer_pair_acquire(&s_framebuffers, refresh, s_dsi_fb,
+                    board_capabilities_get()->scanout_bytes_per_pixel, &first_row, &end_row)) {
+                _lock_release_recursive(&s_lvgl_lock);
+                uint32_t notifications = 0;
+                xTaskNotifyWait(0, UINT32_MAX, &notifications, pdMS_TO_TICKS(20));
+                refresh_pending = (notifications & UI_LVGL_NOTIFY_REFRESH) != 0;
+                continue;
+            }
+            s_dsi_active_fb_idx = ui_framebuffer_pair_writable(&s_framebuffers);
+            /* CPU copied dirty pixels from the newly displayed buffer. Flush
+             * them before PPA invalidates overlapping output cache lines. */
+            if (end_row > first_row) {
+                size_t stride = BSP_LCD_H_RES * board_capabilities_get()->scanout_bytes_per_pixel;
+                ESP_ERROR_CHECK(esp_cache_msync((uint8_t *)s_dsi_fb[s_dsi_active_fb_idx] + first_row * stride,
+                    (end_row - first_row) * stride,
+                    ESP_CACHE_MSYNC_FLAG_DIR_C2M | ESP_CACHE_MSYNC_FLAG_UNALIGNED));
+            }
+            ui_scanout_timing_record(UI_TIMING_FB_SYNC,
+                (uint32_t)(esp_timer_get_time() - sync_start_us));
+        }
+#endif
         if (refresh_pending && s_frame_callback != NULL) {
             int64_t callback_start_us = esp_timer_get_time();
             ui_scanout_timing_frame_begin(callback_start_us);
@@ -571,6 +616,22 @@ static void ui_lvgl_task(void *arg)
                 (uint32_t)(esp_timer_get_time() - callback_start_us));
         }
         uint32_t next_ms = lv_timer_handler();
+#if UI_DSI_FB_COUNT == 2u
+        if (s_framebuffers.dirty) {
+            int64_t present_start_us = esp_timer_get_time();
+            /* Both waveforms and LVGL chrome are complete. Submission only
+             * chooses the next DMA buffer; do not recycle the old front until
+             * a later DMA completion, including when rendering misses VSYNC. */
+            ESP_ERROR_CHECK(esp_lcd_panel_draw_bitmap(bsp_display_get_panel_handle(),
+                0, 0, BSP_LCD_H_RES, BSP_LCD_V_RES, s_dsi_fb[s_dsi_active_fb_idx]));
+            uint32_t refresh = __atomic_load_n(&s_refresh_generation, __ATOMIC_ACQUIRE);
+            bool submitted = ui_framebuffer_pair_submit(&s_framebuffers, refresh);
+            assert(submitted);
+            s_dsi_active_fb_idx = -1;
+            ui_scanout_timing_record(UI_TIMING_PRESENT,
+                (uint32_t)(esp_timer_get_time() - present_start_us));
+        }
+#endif
         _lock_release_recursive(&s_lvgl_lock);
         /* Stack scanning is noncritical work. Do it after the refresh callback
          * has written the direct waveform overlays, never in their VFP budget. */
@@ -611,6 +672,8 @@ esp_err_t ui_lvgl_backend_init(uint16_t hor_res, uint16_t ver_res)
     }
     s_hor_res = hor_res;
     s_ver_res = ver_res;
+    if (board_capabilities_get()->display_framebuffers != UI_DSI_FB_COUNT)
+        return ESP_ERR_INVALID_STATE;
     _lock_init_recursive(&s_lvgl_lock);
 
     esp_lcd_panel_handle_t panel = bsp_display_get_panel_handle();
@@ -619,9 +682,15 @@ esp_err_t ui_lvgl_backend_init(uint16_t hor_res, uint16_t ver_res)
         return ESP_ERR_INVALID_STATE;
     }
 
+#if UI_DSI_FB_COUNT == 2u
+    ESP_ERROR_CHECK(esp_lcd_dpi_panel_get_frame_buffer(panel, 2, &s_dsi_fb[0], &s_dsi_fb[1]));
+    bool initialized = ui_framebuffer_pair_init(&s_framebuffers, BSP_LCD_H_RES, BSP_LCD_V_RES);
+    assert(initialized);
+    s_dsi_active_fb_idx = ui_framebuffer_pair_writable(&s_framebuffers);
+#else
     s_dsi_active_fb_idx = 0;
-    ESP_ERROR_CHECK(esp_lcd_dpi_panel_get_frame_buffer(panel, UI_DSI_FB_COUNT,
-                                                       &s_dsi_fb[0]));
+    ESP_ERROR_CHECK(esp_lcd_dpi_panel_get_frame_buffer(panel, 1, &s_dsi_fb[0]));
+#endif
     ESP_ERROR_CHECK(esp_cache_get_alignment(MALLOC_CAP_DMA | MALLOC_CAP_SPIRAM, &s_cache_align));
 
     ppa_client_config_t ppa_cfg = { .oper_type = PPA_OPERATION_SRM };
@@ -691,11 +760,11 @@ esp_err_t ui_lvgl_backend_init(uint16_t hor_res, uint16_t ver_res)
     }
 
     ESP_LOGI(TAG,
-             "LVGL backend ready (%ux%u canvas -> PPA-rotated to %dx%d, RGB565, one DPI framebuffer)",
+             "LVGL backend ready (%ux%u canvas -> %dx%d panel, %u-byte scanout, %u framebuffers)",
              (unsigned)s_hor_res,
              (unsigned)s_ver_res,
              BSP_LCD_H_RES,
-             BSP_LCD_V_RES);
+             BSP_LCD_V_RES, board_capabilities_get()->scanout_bytes_per_pixel, UI_DSI_FB_COUNT);
     return ESP_OK;
 }
 
@@ -854,6 +923,11 @@ esp_err_t ui_lvgl_backend_draw_rect_rgb565(const ui_overlay_rect_t *logical, uin
         if (!bsp_scanout_fill_rect_rgb565(fb, stride * BSP_LCD_V_RES,
                 BSP_LCD_H_RES, BSP_LCD_V_RES, physical.x, physical.y,
                 physical.w, physical.h, color)) return ESP_ERR_INVALID_ARG;
+#if UI_DSI_FB_COUNT == 2u
+        bool marked = ui_framebuffer_pair_dirty(&s_framebuffers,
+            physical.x, physical.y, physical.w, physical.h);
+        assert(marked);
+#endif
         return esp_cache_msync(fb + (size_t)physical.y * stride,
                 (size_t)physical.h * stride,
                 ESP_CACHE_MSYNC_FLAG_DIR_C2M | ESP_CACHE_MSYNC_FLAG_UNALIGNED);

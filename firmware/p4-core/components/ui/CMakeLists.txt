@@ -18,6 +18,7 @@ idf_component_register(
          "ui_load_gate.c"
          "ui_overview.c"
          "ui_lvgl_backend.c"
+         "ui_framebuffer_pair.c"
          "ui_active_deck_leds.c"
          "ui_controls.c"
          "ui_deck_anlz_store.c"

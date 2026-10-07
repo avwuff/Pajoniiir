@@ -10,6 +10,16 @@ Current integration evidence is in [the ledger](SHARED_P4_CORE_INTEGRATION.md).
 Immutable board capabilities select display geometry/scanout, root roles,
 audio outputs, Wi-Fi policy and DSP memory through a pure
 `board_capabilities` component.
+The current M3 bench repair selects two RGB888 DPI framebuffers. The LVGL task
+draws both waveforms and chrome into the inactive buffer, submits a complete
+frame and seals that buffer until a later DMA-completion notification retires
+the old front. Only changed row spans are copied into the retired buffer so
+unchanged/paused content survives partial rendering. JC4880/JC1060 retain direct
+single-framebuffer presentation. This changes framebuffer ownership, not panel
+timing, layout, waveform order or audio. Physical M3 qualification is pending.
+The pre-v3 IDF 6.0.2 DMA callback selects the next buffer before notifying the
+application; a v3-only paired build is rejected until equivalent retirement
+semantics are provided. See [the waveform record](validation/M3_SHARED_WAVEFORM_REGRESSION_20261006.md).
 The adapter consumes its single source/header, which has no physical display,
 codec or SD dependencies, so the USB-only harness uses the same descriptions.
 The physical `board_adapter` remains the BSP-facing dependency.

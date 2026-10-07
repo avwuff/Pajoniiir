@@ -1403,7 +1403,8 @@ static esp_err_t api_ui_timing_handler(httpd_req_t *req)
     ui_scanout_timing_snapshot(&timing);
     static const char *names[UI_TIMING_COUNT] = {
         "wake", "frame_interval", "overview_begin", "callback", "handler",
-        "d1_cache", "d1_blit", "d1_finish", "d2_cache", "d2_blit", "d2_finish"
+        "d1_cache", "d1_blit", "d1_finish", "d2_cache", "d2_blit", "d2_finish",
+        "framebuffer_sync", "present"
     };
     /* Keep the snapshot and small chunk on the HTTP task stack. A single large
      * JSON stack buffer would compromise its existing stack headroom. */
@@ -1760,7 +1761,7 @@ static esp_err_t api_status_handler(httpd_req_t *req)
         "\"pull_update_supported\":%s,"
         "\"uptime_ms\":%llu,"
         "\"capabilities\":{\"wifi\":%s,\"ethernet\":%s,\"pcm5102a\":%s,"
-        "\"display_width\":%u,\"display_height\":%u,\"panel_rotation\":%u,"
+        "\"display_width\":%u,\"display_height\":%u,\"panel_rotation\":%u,\"display_framebuffers\":%u,"
         "\"storage_root\":%u,\"controller_root\":%u,\"fixed_output_sample_rate\":%u,"
         "\"waveform_first\":%s,\"waveform_top_to_bottom\":%s,\"dj_link\":\"%s\",\"recorder\":\"%s\"},"
         "\"main_sink\":\"%s\","
@@ -1900,7 +1901,7 @@ static esp_err_t api_status_handler(httpd_req_t *req)
         p4_ota_pull_version_supported(esp_app_get_description()->version) ? "true" : "false",
         (unsigned long long)(esp_timer_get_time() / 1000),
         board->wifi ? "true" : "false", board->ethernet ? "true" : "false", board->pcm5102a ? "true" : "false",
-        board->display_width, board->display_height, board->panel_rotation,
+        board->display_width, board->display_height, board->panel_rotation, board->display_framebuffers,
         board->storage_root, board->controller_root, (unsigned)board->fixed_output_sample_rate,
         board->waveform_first ? "true" : "false", board->waveform_top_to_bottom ? "true" : "false",
 #if CONFIG_PAJONIIIR_DJ_LINK_SERVICE

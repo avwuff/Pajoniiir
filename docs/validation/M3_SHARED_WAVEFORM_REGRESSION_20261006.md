@@ -376,3 +376,42 @@ observation age or timeout streaks. It also does not explain away the separately
 measured scanout deadline misses. Before another repair, isolate position
 freshness from scanout using the accepted M3 path as an A/B reference; avoid
 layering another speculative optimization onto the failed candidates.
+
+## Completed-frame presentation repair
+
+The direct scanout path modifies the same framebuffer that DPI DMA reads.
+Missing its scanout window exposes pixels from different waveform positions in
+one panel frame. The previous timing-only repairs reduced some measured delays
+but still failed the operator's visual gate.
+
+The new M3 board policy uses two RGB888 framebuffers. Both waveforms retain the
+existing top-to-bottom order and layout, but all PPA and LVGL writes target the
+inactive buffer. Only after both waveform phases and LVGL chrome finish does
+the task select that completed buffer for the next DMA transfer. A late render
+keeps the previous complete picture on the panel rather than modifying its
+active scanout. No new panel timing, DSI lane setting or audio DSP change is made.
+
+IDF 6.0.2 `mipi_dsi_dma_trans_done_cb` on the configured pre-v3 P4 path selects
+`cur_fb_index`, restarts DMA, then invokes `on_refresh_done`. The task seals a
+submitted buffer and waits for a refresh generation observed after submission
+returns. Only then can the previous front be reused. A callback during submission
+cannot release a buffer early. A v3-only build is rejected because its bridge
+VSYNC notification does not provide this same retirement contract.
+
+Before reuse, the retired buffer receives only the previous frame's dirty row
+spans. This preserves stopped waveforms, unchanged widgets, screen transitions,
+and partial LVGL redraws without a mandatory full-screen copy. CPU-copied rows
+are written back before PPA invalidates overlapping destination cache lines.
+The extra M3 framebuffer occupies 1,152,000 bytes of PSRAM. Other board policies
+retain one framebuffer; their ESP builds/CI remain deferred during this bench
+iteration. Status reports the board's `display_framebuffers` capability, and
+RAM timing adds `framebuffer_sync` and `present` costs for the physical retest.
+
+The production framebuffer-state helper passed 2,000 frames against a complete
+pixel reference in RGB565/RGB888, including disjoint/overlapping partial writes,
+sealed submission, late notifications, wrapped generations, stale notifications,
+and unchanged frames. Existing M3 product simulator baselines pass unchanged.
+Full host qualification and the exact clean-source M3 build/sign/install and
+operator retest are required before calling this a repaired physical image.
+The retained-position mechanism is deliberately not changed in this candidate;
+its occurrence on the device remains an independent hypothesis.

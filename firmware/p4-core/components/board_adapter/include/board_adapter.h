@@ -22,7 +22,11 @@
 #define BSP_LCD_H_RES 480
 #define BSP_LCD_V_RES 800
 #endif
+#if defined(CONFIG_PAJONIIIR_BOARD_M3)
+#define BSP_LCD_FRAMEBUFFER_COUNT 2u
+#else
 #define BSP_LCD_FRAMEBUFFER_COUNT 1u
+#endif
 
 esp_err_t bsp_display_init(void);   // ST7701S MIPI DSI, 480x800, landscape rotation
 
