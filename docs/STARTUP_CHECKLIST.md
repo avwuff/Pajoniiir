@@ -66,6 +66,9 @@ Ordinary FLX4 and touch LOAD refusal on each playing deck subsequently passed,
 with unchanged tracks and clean sound; see [physical record](validation/M3_PHYSICAL_LOAD_LOCK_20261007.md).
 Selected [stopped-deck routing cases](validation/M3_PHYSICAL_LOAD_ROUTING_20261007.md)
 also pass; both decks are finally READY/stopped with Star Eater.
+Subsequent touch D1 and FLX4 D2 completed ordinary stopped LOAD parity.
+Repeated [Shift+Load playing-deck refusals](validation/M3_PHYSICAL_SHIFT_LOAD_LOCK_20261007.md)
+passed on both decks; final tracks are Combat Ready, both stopped.
 Both 11574f4e and c698fa67 failed on dual waveform deformation; c698fa67 also
 showed visual stutter without audible stutter.
 The measurement candidate also reproduced the visual failure and measured

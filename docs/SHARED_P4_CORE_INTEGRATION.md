@@ -50,6 +50,9 @@ Ordinary FLX4/touch LOAD refusal is now physically confirmed on each playing
 deck; [variants and limits](validation/M3_PHYSICAL_LOAD_LOCK_20261007.md) remain explicit.
 Selected [stopped LOAD/Shift+Load routing](validation/M3_PHYSICAL_LOAD_ROUTING_20261007.md)
 also passes, with untouched other-deck titles and both decks finally stopped.
+All ordinary stopped FLX4/touch deck combinations subsequently passed, as did
+repeated [playing Shift+Load refusal](validation/M3_PHYSICAL_SHIFT_LOAD_LOCK_20261007.md)
+on each deck. Physical concurrent LOAD/PLAY races and lock OFF remain unrun.
 See the [exact-image record](validation/M3_SHARED_WAVEFORM_REGRESSION_20261006.md).
 
 Canonical repository: `dvucinozd/Pajoniiir`. Work branch: `codex/shared-p4-core-m3`.

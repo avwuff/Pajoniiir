@@ -73,6 +73,9 @@ passed ordinary FLX4 and touch LOAD refusal on each playing deck, with unchanged
 tracks, operator-confirmed uninterrupted sound and zero strict counter deltas.
 Selected [stopped-deck routing checks](docs/validation/M3_PHYSICAL_LOAD_ROUTING_20261007.md)
 also passed: FLX4 LOAD D1, touch LOAD D2 and FLX4 Shift+Load D1/D2.
+The remaining ordinary stopped LOAD combinations then passed, completing
+FLX4/touch on both decks. Repeated [playing Shift+Load checks](docs/validation/M3_PHYSICAL_SHIFT_LOAD_LOCK_20261007.md)
+also passed on both decks, with Comanchero selected and Combat Ready retained.
 
 **A standalone dual-deck DJ system for the Pioneer DDJ-FLX4, powered by a
 single ESP32-P4 board.**
