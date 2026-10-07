@@ -71,6 +71,8 @@ Broader new-image physical acceptance remains open.
 Subsequent [physical LOAD LOCK checks](docs/validation/M3_PHYSICAL_LOAD_LOCK_20261007.md)
 passed ordinary FLX4 and touch LOAD refusal on each playing deck, with unchanged
 tracks, operator-confirmed uninterrupted sound and zero strict counter deltas.
+Selected [stopped-deck routing checks](docs/validation/M3_PHYSICAL_LOAD_ROUTING_20261007.md)
+also passed: FLX4 LOAD D1, touch LOAD D2 and FLX4 Shift+Load D1/D2.
 
 **A standalone dual-deck DJ system for the Pioneer DDJ-FLX4, powered by a
 single ESP32-P4 board.**

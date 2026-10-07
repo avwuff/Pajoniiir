@@ -48,6 +48,8 @@ The original source bank is restored; both decks are stopped. Broader physical
 gates remain open.
 Ordinary FLX4/touch LOAD refusal is now physically confirmed on each playing
 deck; [variants and limits](validation/M3_PHYSICAL_LOAD_LOCK_20261007.md) remain explicit.
+Selected [stopped LOAD/Shift+Load routing](validation/M3_PHYSICAL_LOAD_ROUTING_20261007.md)
+also passes, with untouched other-deck titles and both decks finally stopped.
 See the [exact-image record](validation/M3_SHARED_WAVEFORM_REGRESSION_20261006.md).
 
 Canonical repository: `dvucinozd/Pajoniiir`. Work branch: `codex/shared-p4-core-m3`.

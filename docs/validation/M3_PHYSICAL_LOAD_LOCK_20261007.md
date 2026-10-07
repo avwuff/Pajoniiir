@@ -41,7 +41,9 @@ Console logs: `D:/AI/m3-physical-load-lock-d{1,2}.log`.
 ## Limits
 
 This closes the tested ordinary MIDI/touch LOAD refusal on each playing deck.
-Stopped-deck physical LOAD success, Shift variants, lock OFF, simultaneous
+Subsequent selected stopped-deck LOAD and Shift+Load success cases passed;
+see [routing evidence and unrun combinations](M3_PHYSICAL_LOAD_ROUTING_20261007.md).
+Playing Shift refusal, lock OFF, simultaneous
 physical LOAD/PLAY races and cold-power/reconnect Campaign A were not exercised.
 This is not a new dual-deck waveform/audio soak, other-board qualification,
 current-source CI PASS or production release. No push/public OTA was performed.

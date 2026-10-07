@@ -59,6 +59,8 @@ Final source D recall is 123347 ms and both decks are stopped.
 Next: remaining new-image physical gates; do not transfer fb5 acceptance.
 Ordinary playing-deck LOAD refusal now also passes through FLX4 and touch on
 both decks; see [physical LOAD LOCK limits](validation/M3_PHYSICAL_LOAD_LOCK_20261007.md).
+Selected [stopped-deck LOAD routing](validation/M3_PHYSICAL_LOAD_ROUTING_20261007.md)
+also passes ordinary FLX4 D1, touch D2 and FLX4 Shift+Load D1/D2.
 
 The preceding bf2fdc47 skipped unchanged cover comparisons and hidden Library styling, and separated
 chrome/UI-tail/LVGL timings. Host qualification, unchanged M3 simulator hashes,
