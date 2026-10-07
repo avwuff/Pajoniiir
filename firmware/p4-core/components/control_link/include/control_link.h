@@ -383,8 +383,10 @@ typedef struct {
 
 // ─── Public API ───────────────────────────────────────────────────────────────
 
-// Bind the P4-local controller producer to deck_core's event queue.
-esp_err_t control_link_init(QueueHandle_t ctrl_event_queue);
+// Bind before starting USB input. The sink owns physical wake/admission policy;
+// raw RTOS queue writes would bypass it.
+typedef esp_err_t (*control_link_event_sink_fn_t)(const ctrl_event_t *event);
+esp_err_t control_link_init(control_link_event_sink_fn_t event_sink);
 
 // Send an LED command to the directly attached controller.
 void control_link_send_led(led_id_t led, uint8_t state);  // state: 0 off / 1 on / 2 blink

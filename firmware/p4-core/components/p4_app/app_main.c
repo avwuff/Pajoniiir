@@ -480,7 +480,8 @@ void pajoniiir_common_app_main(void)
     // ── External control producers ───────────────────────────────────────────
     // From this point onward direct USB controller events may update state.
     firmware_resources_phase("controller");
-    ESP_ERROR_CHECK(control_link_init(ctrl_queue));
+    deck_core_set_activity_cb(ui_activity_notice);
+    ESP_ERROR_CHECK(control_link_init(deck_core_queue_event));
 
     // Settings callbacks are published only after their downstream services
     // exist.  A saved Wi-Fi setting is likewise activated after the UI and
@@ -491,7 +492,6 @@ void pajoniiir_common_app_main(void)
      * the connectivity probe through here rather than calling back into it. */
     web_server_set_probe_hooks(app_probe_start, app_probe_status);
 
-    deck_core_set_activity_cb(ui_activity_notice);
     ui_settings_set_wifi_toggle_cb(board_capabilities_get()->wifi ? wifi_link_request_enable : NULL);
 #if CONFIG_AUDIO_RECORDER_ENABLED
     ui_settings_set_recording_toggle_cb(on_recording_toggle);

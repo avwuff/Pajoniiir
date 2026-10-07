@@ -9,18 +9,39 @@ static esp_err_t deck_core_test_live_led_publish(
     flx4_led_send_fn_t send,
     void *ctx);
 static void deck_core_test_live_send_led_deck(led_id_t led, uint8_t state, uint8_t deck);
+static int s_host_queue_sends;
+static ctrl_event_t s_host_queued_event;
+static int host_queue_send(QueueHandle_t queue, const void *event, unsigned ticks)
+{
+    (void)queue;
+    (void)ticks;
+    s_host_queued_event = *(const ctrl_event_t *)event;
+    ++s_host_queue_sends;
+    return pdTRUE;
+}
 
 #define deck_core_test_reset deck_core_test_reset_unpublished
 #define deck_core_test_apply_event deck_core_test_apply_event_unpublished
 #define deck_core_test_get_beat_fx_state deck_core_test_get_beat_fx_state_unpublished
 #define flx4_led_publisher_publish deck_core_test_live_led_publish
 #define control_link_send_led_deck deck_core_test_live_send_led_deck
+#define xQueueSend host_queue_send
 #include "../../firmware/p4-core/components/deck_core/deck_core.c"
+#undef xQueueSend
 #undef control_link_send_led_deck
 #undef flx4_led_publisher_publish
 #undef deck_core_test_reset
 #undef deck_core_test_apply_event
 #undef deck_core_test_get_beat_fx_state
+
+void deck_core_test_prepare_input_queue(void)
+{
+    s_queue = (QueueHandle_t)1;
+    s_host_queue_sends = 0;
+}
+
+int deck_core_test_input_queue_sends(void) { return s_host_queue_sends; }
+ctrl_event_t deck_core_test_last_queued_event(void) { return s_host_queued_event; }
 
 static esp_err_t deck_core_test_live_led_publish(
     flx4_led_publisher_t *publisher,

@@ -3330,8 +3330,61 @@ static void test_network_sync_semantic_path_and_replacement(void)
     deck_core_set_network_ops(NULL);
 }
 
+void deck_core_test_prepare_input_queue(void);
+int deck_core_test_input_queue_sends(void);
+ctrl_event_t deck_core_test_last_queued_event(void);
+static bool s_test_screensaver_shown;
+static unsigned s_test_activity_calls;
+static bool test_activity_notice(void)
+{
+    ++s_test_activity_calls;
+    return s_test_screensaver_shown;
+}
+
+static void test_physical_controller_input_uses_wake_policy(void)
+{
+    deck_core_test_reset();
+    reset_audio_engine_stub();
+    deck_core_test_prepare_input_queue();
+    deck_core_set_activity_cb(test_activity_notice);
+    assert(control_link_init(NULL) == ESP_ERR_INVALID_ARG);
+    assert(control_link_init(deck_core_queue_event) == ESP_OK);
+    s_test_activity_calls = 0;
+    s_test_screensaver_shown = true;
+    /* Execute the real local adapter and production deck queue policy, not a
+     * fake USB path. Every operator event wakes; none executes while covered. */
+    assert(control_link_inject_semantic(CTRL_TYPE_BUTTON, CTRL_ID_DECK1_PLAY, 1) == ESP_OK);
+    assert(control_link_inject_semantic(CTRL_TYPE_ENCODER, CTRL_ID_DECK2_JOG_BEND, 1) == ESP_OK);
+    assert(control_link_inject_semantic(CTRL_TYPE_ENCODER, CTRL_ID_BROWSE_DELTA, 1) == ESP_OK);
+    assert(control_link_inject_semantic(CTRL_TYPE_PITCH, CTRL_ID_DECK2_TEMPO, 100) == ESP_OK);
+    assert(s_test_activity_calls == 4);
+    assert(deck_core_test_input_queue_sends() == 0);
+    assert(!audio_engine_stub_deck_playing[CTRL_DECK_1]);
+    /* A USB disconnect must reach held-state cleanup without waking the UI. */
+    assert(control_link_inject_semantic(CTRL_TYPE_STATE, CTRL_ID_FLX4_CONNECTION,
+                                       CTRL_FLX4_DISCONNECTED) == ESP_OK);
+    assert(deck_core_test_input_queue_sends() == 1);
+    assert(s_test_activity_calls == 4);
+    /* Once the UI dismisses the overlay, a subsequent PLAY reaches transport. */
+    s_test_screensaver_shown = false;
+    assert(control_link_inject_semantic(CTRL_TYPE_BUTTON, CTRL_ID_DECK1_PLAY, 1) == ESP_OK);
+    assert(deck_core_test_input_queue_sends() == 2);
+    ctrl_event_t event = deck_core_test_last_queued_event();
+    assert(event.id == CTRL_ID_DECK1_PLAY && event.deck == CTRL_DECK_1);
+    deck_core_test_apply_event(&event);
+    assert(audio_engine_stub_deck_playing[CTRL_DECK_1]);
+    /* Authenticated remote actions still wake and execute as before. */
+    s_test_screensaver_shown = true;
+    assert(deck_core_queue_remote_event(&event) == ESP_OK);
+    assert(deck_core_test_input_queue_sends() == 3);
+    assert(control_link_inject_semantic(0xff, 0, 0) == ESP_ERR_INVALID_ARG);
+    assert(s_test_activity_calls == 6);
+    deck_core_set_activity_cb(NULL);
+}
+
 int main(void)
 {
+    test_physical_controller_input_uses_wake_policy();
     test_load_lock_uses_actual_target_deck_transport();
     test_load_play_race_reserves_actual_semantic_transport();
     test_decks_track_transport_independently();

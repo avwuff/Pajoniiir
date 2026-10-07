@@ -3325,7 +3325,10 @@ static esp_err_t queue_event_with_wake_policy(const ctrl_event_t *ev,
     /* Single choke point for every FLX4 button, jog, fader and web mutation.
      * Physical controls consume a wake press; authenticated remote mutations
      * dismiss the screensaver but still enter the authoritative deck queue. */
-    const bool woke_screensaver = s_activity_cb && s_activity_cb();
+    /* Link lifecycle is not operator activity. In particular, disconnect
+     * cleanup must not be swallowed while the display is covered. */
+    const bool report_activity = !consume_wake || ev->type != CTRL_EV_STATE;
+    const bool woke_screensaver = report_activity && s_activity_cb && s_activity_cb();
     if (woke_screensaver && consume_wake) return ESP_OK;
     if (xQueueSend(s_queue, ev, 0) != pdTRUE) {
         s_drop_count++;

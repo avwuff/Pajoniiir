@@ -3,18 +3,18 @@
 
 #include <stdatomic.h>
 
-static QueueHandle_t s_event_queue;
+static control_link_event_sink_fn_t s_event_sink;
 static atomic_uint_fast8_t s_sequence;
 static control_link_led_sink_fn_t s_led_sink;
 static void *s_led_sink_context;
 static portMUX_TYPE s_led_sink_mux = portMUX_INITIALIZER_UNLOCKED;
 
-esp_err_t control_link_init(QueueHandle_t ctrl_event_queue)
+esp_err_t control_link_init(control_link_event_sink_fn_t event_sink)
 {
-    if (!ctrl_event_queue) {
+    if (!event_sink) {
         return ESP_ERR_INVALID_ARG;
     }
-    s_event_queue = ctrl_event_queue;
+    s_event_sink = event_sink;
     atomic_store_explicit(&s_sequence, 0u, memory_order_relaxed);
     return ESP_OK;
 }
@@ -47,7 +47,7 @@ void control_link_send_led(led_id_t led, uint8_t state)
 
 esp_err_t control_link_inject_semantic(uint8_t type, uint8_t id, int16_t value)
 {
-    if (!s_event_queue) {
+    if (!s_event_sink) {
         return ESP_ERR_INVALID_STATE;
     }
 
@@ -83,7 +83,5 @@ esp_err_t control_link_inject_semantic(uint8_t type, uint8_t id, int16_t value)
         return ESP_ERR_INVALID_ARG;
     }
 
-    return xQueueSend(s_event_queue, &event, 0) == pdTRUE
-               ? ESP_OK
-               : ESP_ERR_TIMEOUT;
+    return s_event_sink(&event);
 }
