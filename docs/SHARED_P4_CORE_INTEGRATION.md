@@ -29,6 +29,11 @@ hardware gates remain open.
 subsequently passed on the unchanged M3 image, with 324 identities stable across
 reboot and six protected replacement attempts. Production NVS error/corruption
 tests were added; on-device cue writes and physical MIDI/touch checks remain open.
+The [read-only actual export audit](validation/M3_REAL_EXPORT_AUDIT_20261007.md)
+then reproduced three import defects: 13 lost artist names, 12 lost album names
+and one missing EXT Hot Cue D. Firmware remains unchanged; library acceptance
+cannot close until corrected imports are retested. Real playlists/source loops
+are absent from this medium and remain unexercised.
 See the [exact-image record](validation/M3_SHARED_WAVEFORM_REGRESSION_20261006.md).
 
 Canonical repository: `dvucinozd/Pajoniiir`. Work branch: `codex/shared-p4-core-m3`.

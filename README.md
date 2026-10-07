@@ -55,6 +55,12 @@ subsequently passed on the unchanged M3 image: 324 stable identities across a
 reboot and six refused playing-deck replacements. On-device Hot Cue mutation,
 physical MIDI/touch LOAD LOCK and independent export/UI review remain open.
 
+The subsequent [read-only real-export audit](docs/validation/M3_REAL_EXPORT_AUDIT_20261007.md)
+found three reproducible import defects: 13 artist names, 12 album names and
+one EXT Hot Cue D are lost. The installed candidate is unchanged. All 324
+analysis pairs parse and 282 referenced JPEGs decode; this export contains no
+playlists or source loops, so their real-media gates remain open.
+
 **A standalone dual-deck DJ system for the Pioneer DDJ-FLX4, powered by a
 single ESP32-P4 board.**
 

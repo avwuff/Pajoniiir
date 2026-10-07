@@ -41,6 +41,14 @@ equal across reboot and six playing-deck replacements were refused. Production
 NVS adapter error/corruption tests now join the host runner. Physical cue/NVS,
 MIDI/touch LOAD LOCK and independent real-export/UI acceptance remain open.
 
+The [real-export audit](validation/M3_REAL_EXPORT_AUDIT_20261007.md) now
+reproduces lost artist names on 13 tracks, lost album names on 12 tracks and
+missing source Hot Cue D from EXT on track 7. Correct row-specific name layouts
+and transactional EXT cue enrichment, preserve local cue identities, and rerun
+the actual 324-track comparisons before an M3 candidate build. No firmware was
+changed by the audit. Playlists/source loops are absent from this medium;
+their real-media gates and on-device rendering remain open.
+
 The preceding bf2fdc47 skipped unchanged cover comparisons and hidden Library styling, and separated
 chrome/UI-tail/LVGL timings. Host qualification, unchanged M3 simulator hashes,
 M3 build and signed identity/budget checks passed. Its repeated physical test

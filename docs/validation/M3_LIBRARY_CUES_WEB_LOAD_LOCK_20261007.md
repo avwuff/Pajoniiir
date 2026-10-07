@@ -100,7 +100,7 @@ their audio/store/platform fakes are not physical controller acceptance.
 | Physical interrupted NVS write / power-loss recovery | NOT RUN; host contract tests do not establish flash atomicity |
 | Two real exports with the same track ID / media swap | NOT RUN; one unchanged medium captured; software identity tests passed |
 | Legacy cue migration apply | NOT RUN; requires the explicitly selected old export and guarded wired NVS apply |
-| Independent real metadata, beatgrid, playlists and artwork/UI review | NOT RUN; flat catalog/API and fixtures do not provide those observations |
+| Independent real metadata, beatgrid, playlists and artwork/UI review | Subsequent [PC export audit](M3_REAL_EXPORT_AUDIT_20261007.md) completed; artist/album and EXT cue defects reproduced. Playlists/source loops absent; physical UI review remains NOT RUN |
 | MIDI/touch playing-deck LOAD LOCK | NOT RUN physically; shared semantic/worker reservation tests passed on host |
 | New audio listening / waveform visual acceptance | NOT RUN; earlier exact-image acceptance remains separate |
 | Current-source GitHub Actions / physical Campaign A | SKIPPED BY OPERATOR, unchanged from earlier records |

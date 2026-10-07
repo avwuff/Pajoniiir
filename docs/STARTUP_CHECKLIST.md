@@ -46,6 +46,12 @@ and other-board physical acceptance remain open.
 now records 324 identities stable across reboot and six refused replacements
 while both decks kept playing. Final state is the same image, both decks empty
 and stopped. On-device cue writes and physical MIDI/touch checks remain NOT RUN.
+
+The [real-export audit](validation/M3_REAL_EXPORT_AUDIT_20261007.md) completed
+read-only on the PC and found artist/album row-layout losses and missing EXT
+Hot Cue D. Repair and rerun source comparisons before accepting a new candidate;
+do not label this audit a full library PASS. No playlists/source loops occur
+in this export; physical cover/cue rendering remains NOT RUN.
 Both 11574f4e and c698fa67 failed on dual waveform deformation; c698fa67 also
 showed visual stutter without audible stutter.
 The measurement candidate also reproduced the visual failure and measured
