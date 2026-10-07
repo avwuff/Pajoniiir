@@ -42,6 +42,10 @@ physical Campaign A PASS. [Autonomous negative OTA and injected startup rollback
 subsequently passed and restored the exact accepted image. Current-source GitHub
 Actions was SKIPPED BY OPERATOR (quota), not PASS. Remaining image-specific gates
 and other-board physical acceptance remain open.
+[Catalog/web LOAD LOCK evidence](validation/M3_LIBRARY_CUES_WEB_LOAD_LOCK_20261007.md)
+now records 324 identities stable across reboot and six refused replacements
+while both decks kept playing. Final state is the same image, both decks empty
+and stopped. On-device cue writes and physical MIDI/touch checks remain NOT RUN.
 Both 11574f4e and c698fa67 failed on dual waveform deformation; c698fa67 also
 showed visual stutter without audible stutter.
 The measurement candidate also reproduced the visual failure and measured

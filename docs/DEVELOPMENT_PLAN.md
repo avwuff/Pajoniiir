@@ -35,6 +35,12 @@ SKIPPED BY OPERATOR (quota), not PASS; full hardware acceptance remains open.
 Short per-zoom dwell coverage is
 recorded separately from the completed zoom-8 soak.
 
+[Catalog/cue software and web LOAD LOCK checks](validation/M3_LIBRARY_CUES_WEB_LOAD_LOCK_20261007.md)
+subsequently passed on the unchanged image: 324 persistent identities remained
+equal across reboot and six playing-deck replacements were refused. Production
+NVS adapter error/corruption tests now join the host runner. Physical cue/NVS,
+MIDI/touch LOAD LOCK and independent real-export/UI acceptance remain open.
+
 The preceding bf2fdc47 skipped unchanged cover comparisons and hidden Library styling, and separated
 chrome/UI-tail/LVGL timings. Host qualification, unchanged M3 simulator hashes,
 M3 build and signed identity/budget checks passed. Its repeated physical test

@@ -50,6 +50,11 @@ then passed, restoring the same accepted image. Current-source GitHub Actions
 was skipped by the operator because of quota; it has no CI PASS.
 This is not a production release or a physical Campaign A PASS.
 
+[Catalog/cue software and web LOAD LOCK checks](docs/validation/M3_LIBRARY_CUES_WEB_LOAD_LOCK_20261007.md)
+subsequently passed on the unchanged M3 image: 324 stable identities across a
+reboot and six refused playing-deck replacements. On-device Hot Cue mutation,
+physical MIDI/touch LOAD LOCK and independent export/UI review remain open.
+
 **A standalone dual-deck DJ system for the Pioneer DDJ-FLX4, powered by a
 single ESP32-P4 board.**
 

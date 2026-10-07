@@ -2730,6 +2730,21 @@ $tests = @(
         )
     },
     @{
+        Name = "hot_cue_store_nvs"
+        Dir = "tests/hot_cue_store_nvs"
+        Target = "test_hot_cue_store_nvs.exe"
+        Args = @(
+            "-Wall", "-Wextra", "-Wpedantic", "-Werror", "-std=c99",
+            # Shared no-op logging/check macros omit the firmware TAG reference.
+            "-Wno-unused-variable", "-Istubs", "-I../support/stubs",
+            "-I../../firmware/p4-core/components/hot_cue_store/include",
+            "-I../../firmware/p4-core/components/media_identity/include",
+            "-o", "test_hot_cue_store_nvs.exe", "test_hot_cue_store_nvs.c",
+            "../../firmware/p4-core/components/hot_cue_store/hot_cue_store.c",
+            "../../firmware/p4-core/components/media_identity/media_identity.c"
+        )
+    },
+    @{
         Name = "deck_core_dual"
         Dir = "tests/deck_core_dual"
         Target = "test_deck_core_dual.exe"
