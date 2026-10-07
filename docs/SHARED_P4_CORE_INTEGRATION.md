@@ -293,3 +293,16 @@ coalesced 65 refreshes; no service records were written in the measured windows.
 Both decks are stopped and the full soak remains NOT RUN. See the
 [diagnostic-overhead review](validation/M3_DIAGNOSTIC_OVERHEAD_REVIEW_20261007.md)
 and the waveform record for remaining loop-query waits and diagnostic risks.
+
+Clean ee54f0d1 subsequently passed full host qualification, unchanged product
+simulators, M3 IDF 6.0.2 build and signed M3 packaging, and is installed VALID in
+M3 ota_0 with exact source/ELF. The operator reports increased visual stuttering;
+the visual gate remains failed. See the waveform record for immutable bench
+artifact identities and actual measurement conditions.
+
+The operator now requires M3-first bench iterations: defer JC4880/JC1060 builds
+and full cross-board CI until the M3 repair is physically confirmed. The
+already-running matrix was cancelled and local JC1060 configure interrupted;
+JC4880 had already built successfully. Separate M3 bench evidence does not claim
+full software or hardware qualification. Final integration, physical campaigns
+and publication authorization remain required.

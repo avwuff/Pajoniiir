@@ -295,5 +295,84 @@ remains available for transport/controller decisions.
 Production status tests cover observed loop set/clear in addition to existing
 held-decoder contention and recovery checks. Deck tests cover manual IN shadow
 and a supplied observation that deliberately disagrees with the fake backend.
-Software qualification and the new image's measured/operator retest remain
-required. The installed e4536de2 visual FAIL is not superseded by source edits.
+The installed e4536de2 visual FAIL is not superseded by source edits.
+
+## Installed M3-only loop-observation bench candidate, 2026-10-07
+
+Clean source `ee54f0d11cb6a46d487c56c9fcbcdda3a640a270` passed full host
+qualification, unchanged M3/compact/wide product simulator baselines and the M3
+ESP-IDF 6.0.2 build with its committed dependency lock unchanged. Signed M3
+package verification passed. The exact image is installed VALID in ota_0 with
+OTA idle; source, clean identity and ELF matched within the install polling
+deadline. This proves installation, not panel/audio acceptance.
+
+| Artifact | Bytes | SHA-256 |
+|---|---:|---|
+| M3 image | 2,568,944 | `87fb8287514d492dba03ddcb3110c95f413bc0a4ead8ca98bbff3788dd98ad95` |
+| Signed bundle | 2,569,132 | `185fc281150637eb1aca5dff5040d53fcdc2009054c9737a187a2433063689ff` |
+| ELF identity | - | `712be75a1e8e56193c337adf95beba99c80f6021f5c5f1816a072f5418a85360` |
+
+Artifacts and immutable `bench-evidence.json` are under
+`releases/m3-bench-ee54f0d1/pajoniiir-m3-M3-dev-gee54f0d11cb6/`.
+The manifest records M3 software checks as passed, but full integration software
+qualification, hardware acceptance and release remain false.
+
+The operator changed the iteration policy: while the M3 visual defect remains,
+build and retest M3 only; perform other target builds/full CI after M3 physical
+confirmation. The already-finished JC4880 build is retained as evidence, but
+JC1060 configure was interrupted and the push/PR matrix runs were cancelled.
+Those deferred gates are not a software failure or a PASS. No new cross-board
+build or CI run is needed to diagnose this bench candidate.
+
+The operator reported: "sad jos vise zapinje". This candidate is not visually
+accepted. A subsequent API observation found both decks stopped, MT off and
+zoom 8. An exploratory non-MT window later changed zoom from 8 to 4 during dual
+playback, so it is not a controlled eight-beat comparison. Raw observations are
+preserved under `.cache/m3-migration/20261007-ee54f0d1/`; measured windows and
+operator reports must retain their actual conditions. Campaign B remains NOT
+RUN and no public release/channel has changed.
+
+After the operator corrected zoom, API checks confirmed both MT flags on, both
+decks stopped and zoom 8 before the final measurement. All three windows
+retained MT and zoom 8. The runner stopped both decks afterwards.
+
+| Measurement | Stopped | Solo D1 | Dual |
+|---|---:|---:|---:|
+| Refresh interrupts | 602 | 609 | 607 |
+| Coalesced refreshes | 0 | 0 | 31 |
+| Wake latency mean, us | 1,164.9 | 179.3 | 1,255.5 |
+| Overview entry after refresh mean, us | 1,255.1 | 291.7 | 1,365.0 |
+| Callback duration mean, us | 238.3 | 5,133.8 | 13,774.1 |
+| D1 finish after refresh mean, us | No redraw | 4,425.0 | 5,790.5 |
+| D2 finish after refresh mean, us | No redraw | No redraw | 10,836.3 |
+
+There were 578 D2 redraw observations; 38 D2 finishes exceeded 20 ms. Count
+boundaries can differ by one because counters are captured while rendering.
+PCM underrun, output-late, UAC drop/overflow/underflow/packet-loss and service-log
+drop/write deltas were zero across all three short windows. UAC's absolute
+underflow count was already nonzero before the windows; this is an active-window
+delta statement, not an absolute zero-loss claim.
+
+The operator confirmed: "Solo uredan; dual deformiran/trza; zvuk cist".
+Physical visual result: **FAIL**. Audio was reported clean for this short test,
+without qualifying a long audio soak. The smaller coalesced count than e4536de2
+does not establish repaired fluidity, nor prove that every prior candidate was
+quantitatively worse. Keep the operator's reported worsening and the measured
+timing differences as separate evidence.
+
+## Retained-position regression mechanism to isolate
+
+A host probe executing the unchanged production `ui_position_interpolator.c`
+with a deliberately retained 30,000-ms position, +5% speed and 20-ms frame
+cadence reproduced four backwards resets in 500 ms. At 100 ms the display
+prediction reached 30,105 ms; at 120 ms it rebased to the unchanged 30,000-ms
+sample. The new zero-wait frame path retains the last sample on decoder-mutex
+contention but does not tell the interpolator whether that sample is fresh.
+
+This is a reproducible stale-input mechanism that can explain added positional
+jerks if observations remain stale long enough. It is not proof that this
+condition occurred during the device test: the installed image does not count
+observation age or timeout streaks. It also does not explain away the separately
+measured scanout deadline misses. Before another repair, isolate position
+freshness from scanout using the accepted M3 path as an A/B reference; avoid
+layering another speculative optimization onto the failed candidates.

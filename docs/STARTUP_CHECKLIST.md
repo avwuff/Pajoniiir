@@ -21,7 +21,8 @@ remain image-specific; successful builds do not qualify the new M3 target.
 
 These checks do not authorize publication or qualify JC4880/JC1060 hardware.
 
-For the installed `M3-dev-ge4536de2ec6f` candidate in ota_1, see the
+For the current installed `M3-dev-gee54f0d11cb6` M3 bench candidate in VALID
+ota_0, see the
 [exact-image acceptance record](validation/M3_SHARED_WAVEFORM_REGRESSION_20261006.md).
 Both 11574f4e and c698fa67 failed on dual waveform deformation; c698fa67 also
 showed visual stutter without audible stutter.
@@ -41,6 +42,14 @@ The dual window coalesced 65 refreshes. Both decks are stopped; Campaign B
 cannot begin before a successful measured/operator retest. See the
 [diagnostic audit](validation/M3_DIAGNOSTIC_OVERHEAD_REVIEW_20261007.md) for
 remaining loop-query waits and heap/UART overhead.
+
+The ee54f0d1 loop-observation repair passed host qualification, unchanged product
+simulators, M3 build and signed packaging. The operator reports worse visual
+stuttering; it is not physically accepted. During this diagnosis, perform only
+M3 candidate builds and bench tests. JC4880/JC1060 builds and the full CI matrix
+resume after an operator-accepted M3 retest. Cancelled/interrupted work is not a
+PASS. The separate bench manifest retains full software qualification as false;
+it does not relax final integration, Campaign A/B or publication gates.
 
 Status: **current M2.5 JC4880 checklist and development qualification gates**
 (2026-10-06). Acceptance already recorded in the

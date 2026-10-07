@@ -14,7 +14,20 @@ worst-case Campaign B timing. Legacy-image acceptance does not transfer.
 Unavailable hardware is NOT RUN. Public board-channel publication requires
 separate authorization after that board's acceptance.
 
-`M3-dev-ge4536de2ec6f` is installed in M3 ota_1 with VALID health state,
+The current M3 bench image is `M3-dev-gee54f0d11cb6` from clean source
+`ee54f0d11cb6a46d487c56c9fcbcdda3a640a270`, installed VALID in ota_0.
+Its nonblocking loop-display repair passed host qualification, unchanged product
+simulators and the M3 IDF 6.0.2 build. The operator reports increased visual
+stuttering; this image has not passed the physical visual gate.
+
+During unresolved M3 bench diagnosis, build, sign and test M3 only. Resume
+JC4880/JC1060 builds and full cross-board CI after the operator accepts the M3
+repair. Full integration/release requirements remain mandatory afterwards.
+The redundant matrix runs were cancelled; the earlier JC4880 build had already
+finished and the JC1060 configure was interrupted. Keep separate M3 bench
+evidence rather than marking full software qualification complete.
+
+The preceding `M3-dev-ge4536de2ec6f` was installed in M3 ota_1 with VALID health state,
 verified against its exact clean source and ELF on 2026-10-07 within the
 installation helper's polling deadline. The preceding 180b008c helper's expired
 deadline remains a separate historical finding.
@@ -39,8 +52,9 @@ deck between position, session-checked duration and status/progress rendering.
 Busy decode retains the last observation; transport decisions keep their
 authoritative APIs. Production mutex-contention and simulator recovery tests
 and all three clean builds passed, but its physical retest still failed: solo
-sharp, dual deformed, audio clean, with 65 coalesced refreshes. Both decks are
-stopped. Remove the remaining waveform-phase loop-query waits next. The
+sharp, dual deformed, audio clean, with 65 coalesced refreshes. The next ee54f0d1
+candidate removes the remaining waveform-phase loop-query waits, but its operator
+report still rejects the visual result. The
 [diagnostic-overhead audit](validation/M3_DIAGNOSTIC_OVERHEAD_REVIEW_20261007.md)
 separates quiet service-file logging from recurring heap inspection and UART
 producer reports; the full soak remains NOT RUN.
