@@ -13,7 +13,9 @@ cycles and operator checks were subsequently excluded by the operator. The
 [automatic software-reboot supplement](validation/M3_AUTOMATIC_RECOVERY_20261007.md)
 observed ten recoveries, nine complete timing windows, host visibility flags and
 one incomplete timing window. It does not establish physical Campaign A PASS.
-Startup fault/rollback, current-source CI and full hardware acceptance remain open.
+[Autonomous negative OTA and injected startup rollback](validation/M3_OTA_NEGATIVE_ROLLBACK_20261007.md)
+subsequently passed and restored the exact accepted image. Current-source GitHub
+Actions is SKIPPED BY OPERATOR (quota), not PASS. Full hardware acceptance remains open.
 It removes a blocking audio-position query from jog-mode polling. The preceding
 bf2fdc47 repeated test retained slight dual stutter with clean sound.
 The preceding 1d3ee7b6 retained-position
@@ -21,7 +23,8 @@ repair passed M3 software checks; the physical retest showed improved visuals
 with slight residual dual stutter and clean sound. Full fluidity remains open. The preceding
 b0c66744 image failed on operator-confirmed severe dual waveform stutter.
 After the focused M3 visual result, local JC4880/JC1060 builds passed on the
-same clean fb5cbca1 source; current-source CI and full hardware gates remain open.
+same clean fb5cbca1 source; current-source CI is skipped by the operator and full
+hardware gates remain open.
 See the [exact-image record](validation/M3_SHARED_WAVEFORM_REGRESSION_20261006.md).
 
 Canonical repository: `dvucinozd/Pajoniiir`. Work branch: `codex/shared-p4-core-m3`.

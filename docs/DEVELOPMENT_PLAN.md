@@ -28,8 +28,11 @@ findings, not a zero-late claim. Campaign A's 30 physical cycles and operator
 checks were excluded by the operator. The [automatic supplement](validation/M3_AUTOMATIC_RECOVERY_20261007.md)
 observed ten software-reboot recoveries, with nine complete measured cycles,
 host visibility investigation flags and one incomplete timing window. This does
-not establish physical Campaign A acceptance. Startup fault/rollback,
-current-source CI and full hardware acceptance remain open. Short per-zoom dwell coverage is
+not establish physical Campaign A acceptance. [Autonomous negative OTA and injected
+startup rollback tests](validation/M3_OTA_NEGATIVE_ROLLBACK_20261007.md) subsequently
+passed and restored the exact accepted image. Current-source GitHub Actions is
+SKIPPED BY OPERATOR (quota), not PASS; full hardware acceptance remains open.
+Short per-zoom dwell coverage is
 recorded separately from the completed zoom-8 soak.
 
 The preceding bf2fdc47 skipped unchanged cover comparisons and hidden Library styling, and separated

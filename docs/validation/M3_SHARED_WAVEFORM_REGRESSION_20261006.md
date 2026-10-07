@@ -879,3 +879,17 @@ flags and cycle-6 timing remain investigation/incomplete evidence. See the
 [automatic recovery supplement](M3_AUTOMATIC_RECOVERY_20261007.md). This changes
 the Campaign A scope record and does not extend the soak's physical PASS to
 cold boot, cable reconnect or other controllers.
+
+### Subsequent autonomous OTA qualification and CI waiver
+
+The operator then authorized option 2 (negative OTA/startup rollback) and skipped
+option 3 (GitHub Actions) because of quota. Six negative upload cases and both
+injected startup rollback scenarios passed on-device; see the
+[OTA evidence record](M3_OTA_NEGATIVE_ROLLBACK_20261007.md). Timeout rejection was
+recorded at 60.193 seconds. Both temporary diagnostics were rejected by ordinary
+production packaging and returned automatically to the same clean fb5cbca1
+ELF, ota_0 VALID. The timeout helper's parser error and raw FAIL remain preserved;
+the separate read-only assessment establishes the actual device PASS without a
+repeat. Both decks remain stopped, Wi-Fi/FLX4/catalog available. Current-source
+hosted CI is SKIPPED BY OPERATOR, not PASS. This does not add a new image or extend
+the earlier listening/visual acceptance to the diagnostic configurations.

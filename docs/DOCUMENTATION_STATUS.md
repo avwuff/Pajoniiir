@@ -12,7 +12,11 @@ Canonical source is `dvucinozd/Pajoniiir`, branch `codex/shared-p4-core-m3`.
 [exact-image monitoring](RELIABILITY_MONITORING_PLAN.md) govern this candidate.
 Earlier JC and M3 release/acceptance records retain their original image scope.
 Build, package, installed-device, operator acceptance and publication evidence
-must be recorded separately. Integrated physical gates remain NOT RUN.
+must be recorded separately. Current shared-M3 fb5cbca1 has exact-image
+waveform/60-minute Campaign B acceptance and completed
+[negative OTA/injected startup rollback gates](validation/M3_OTA_NEGATIVE_ROLLBACK_20261007.md).
+Physical Campaign A and current-source GitHub Actions are SKIPPED BY OPERATOR
+(Actions quota); remaining hardware/integration gates remain open.
 The M3 repository remains historical and has not been remotely archived.
 
 ## Published product

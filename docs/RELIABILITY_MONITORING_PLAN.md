@@ -1,7 +1,12 @@
 # Shared P4 reliability monitoring plan
 
-Status: integrated-image physical Campaign A/B NOT RUN. Historical M3 results
-are retained in the M3 repository and do not qualify the shared-core image.
+Status: exact shared-M3 fb5cbca1 Campaign B passed telemetry and operator
+acceptance; [see the image record](validation/M3_SHARED_WAVEFORM_REGRESSION_20261006.md).
+Physical Campaign A is SKIPPED BY OPERATOR; the
+[automatic supplement](validation/M3_AUTOMATIC_RECOVERY_20261007.md) retains its
+timing limitations. Other-image/board physical campaigns remain NOT RUN.
+Historical M3 results are retained in the M3 repository and do not qualify a
+different shared-core image.
 Adapted from M3 review source e95417c4e2fea007d2c1dcb693790914692c62ba.
 
 ## Purpose

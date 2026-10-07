@@ -45,8 +45,10 @@ operator visual/listening acceptance on 2026-10-07, with zero new PCM/UAC/servic
 losses and 11 output-late events retained for monitoring. Physical Campaign A
 was excluded by the operator; an [automatic software-reboot supplement](docs/validation/M3_AUTOMATIC_RECOVERY_20261007.md)
 observed ten recoveries with nine complete timing windows and retained host
-visibility flags. Startup fault qualification and current-source CI remain open;
-this is not a production release or a physical Campaign A PASS.
+visibility flags. [M3 negative OTA and injected startup rollback tests](docs/validation/M3_OTA_NEGATIVE_ROLLBACK_20261007.md)
+then passed, restoring the same accepted image. Current-source GitHub Actions
+was skipped by the operator because of quota; it has no CI PASS.
+This is not a production release or a physical Campaign A PASS.
 
 **A standalone dual-deck DJ system for the Pioneer DDJ-FLX4, powered by a
 single ESP32-P4 board.**

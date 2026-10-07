@@ -20,8 +20,12 @@ expected OTA slot, exact board/source/ELF and IDF state `valid`. The factory
 state is reported as `factory`, because it is outside OTA rollback selection.
 The requested AP must have actual DHCP readiness and HTTP must be running before
 pending confirmation. If Wi-Fi was not requested, it is not a health prerequisite.
-Absent FLX4/storage does not trigger rollback. Integrated physical rejection,
-interruption and rollback gates still require the new image.
+Absent FLX4/storage does not trigger rollback. On the shared M3 fb5cbca1 runtime,
+[six negative upload cases and injected unconfirmed-restart/readiness-timeout rollback](validation/M3_OTA_NEGATIVE_ROLLBACK_20261007.md)
+passed on 2026-10-07, restoring the exact accepted ota_0 image. The timeout was
+rejected at 60.193 seconds with the actual AP/API alive; it is false-readiness
+injection, not an induced Wi-Fi hardware failure. Current-source hosted CI was
+SKIPPED BY OPERATOR (quota). Other-board acceptance remains separate.
 
 Status: **current board-specific P4 procedure, reconciled 2026-10-06**.
 Published JC4880/FLX4 release `M2.5` freezes source
