@@ -72,7 +72,10 @@ passed on both decks; final tracks are Combat Ready, both stopped.
 The subsequent `4620b83c` screensaver repair is now installed VALID in ota_0.
 France Gall D1 and Jura D2 are READY/stopped for the real two-minute idle wake
 check. [Physical wake acceptance](validation/M3_CONTROLLER_SCREENSAVER_WAKE_20261007.md)
-failed: first PLAY started playback. Atomic UI handoff follow-up is pending;
+failed: first PLAY started playback. Atomic UI handoff candidate `af4ca590`
+is now installed VALID in ota_1; operator PLAY wake/next-PLAY checks pass with
+one consumed PLAY wake recorded by API. Browse and touch regressions also pass;
+final counter is two consumed controller wakes and both decks are stopped.
 final soak is deferred and earlier image-specific tests do not transfer.
 Both 11574f4e and c698fa67 failed on dual waveform deformation; c698fa67 also
 showed visual stutter without audible stutter.

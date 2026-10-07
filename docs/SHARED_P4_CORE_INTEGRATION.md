@@ -58,7 +58,11 @@ in ota_0, repairing controller screensaver wake lost from historical M3 435bcfe.
 The local controller now binds to the shared deck input sink, with link state
 excluded from wake consumption. Full default host tests, M3 build and signed
 package pass; [physical wake acceptance](validation/M3_CONTROLLER_SCREENSAVER_WAKE_20261007.md)
-failed: first PLAY started playback. Atomic UI handoff follow-up is pending.
+failed: first PLAY started playback. Atomic UI handoff candidate `af4ca590`
+subsequently passes default host/M3 build/signature checks and is installed
+VALID in ota_1. Operator PLAY wake/next-PLAY checks pass and API records one
+consumed PLAY wake. Browse and touch regressions also pass on af4ca590;
+the final counter is two consumed controller wakes, with both decks stopped.
 The final soak is deferred; other-board rebuilds await the M3 retest.
 See the [exact-image record](validation/M3_SHARED_WAVEFORM_REGRESSION_20261006.md).
 

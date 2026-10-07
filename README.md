@@ -76,11 +76,16 @@ also passed: FLX4 LOAD D1, touch LOAD D2 and FLX4 Shift+Load D1/D2.
 The remaining ordinary stopped LOAD combinations then passed, completing
 FLX4/touch on both decks. Repeated [playing Shift+Load checks](docs/validation/M3_PHYSICAL_SHIFT_LOAD_LOCK_20261007.md)
 also passed on both decks, with Comanchero selected and Combat Ready retained.
-The current M3 bench image is now clean `4620b83c`, installed VALID in ota_0
+The controller wake candidate `4620b83c` was installed VALID in ota_0
 to repair [controller screensaver wake](docs/validation/M3_CONTROLLER_SCREENSAVER_WAKE_20261007.md).
 Local USB semantics now enter the common wake policy; full default host tests
 and the M3 build/signed package passed. Physical wake retest failed because the
-first PLAY started playback; an atomic UI activity handoff follow-up is pending.
+first PLAY started playback. The current M3 bench is now clean `af4ca590`, VALID
+in ota_1, with an atomic UI activity handoff and read-only wake counters.
+Default host tests and M3 build/signed packaging pass. The operator confirmed
+first PLAY wakes only and subsequent PLAY works; the API confirms one consumed
+wake. Browse and touch wake regressions also pass on this exact image, with
+both decks finally stopped. The final soak remains deferred.
 Earlier cue/LOAD tests retain their 082d2c0a scope. The final soak is deferred.
 
 **A standalone dual-deck DJ system for the Pioneer DDJ-FLX4, powered by a

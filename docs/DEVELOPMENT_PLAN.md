@@ -69,7 +69,11 @@ Current bench image: clean `4620b83c`, VALID ota_0, repairing the lost direct
 controller screensaver wake callback via the shared event sink. Default host
 tests, M3 build and signed packaging pass; [physical wake retest](validation/M3_CONTROLLER_SCREENSAVER_WAKE_20261007.md)
 failed when first PLAY started playback. The atomic UI handoff follow-up awaits
-M3 build/installation/retest. Soak remains the final step; other-board builds are deferred until
+retest. Atomic candidate `af4ca590` now passes default host/M3 build/signature
+checks and is installed VALID in ota_1. Operator PLAY wake/next-PLAY checks pass;
+API records one consumed PLAY wake and a second Browse wake. Browse and touch
+regressions also pass on af4ca590; final state is both decks stopped.
+Soak remains the final step; other-board builds are deferred until
 the M3 result. Prior physical cue/LOAD evidence remains tied to 082d2c0a.
 
 The preceding bf2fdc47 skipped unchanged cover comparisons and hidden Library styling, and separated

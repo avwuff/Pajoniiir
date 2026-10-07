@@ -77,8 +77,50 @@ UI dismissal, next input forwarding, pending activity preservation and read-only
 visibility. Small RAM-only deck input counters and published visibility are
 added to the existing read-only `/api/ui-timing` response for a before/after
 physical test. They do not log per event, write NVS or run a new monitor.
-Follow-up focused and full default host gates passed, exit 0. M3 build/package
-and physical retest are pending.
+Follow-up focused and full default host gates passed, exit 0. M3-only IDF 6.0.2
+incremental reconfigure/build, identity/isolation/budget, unchanged lock,
+signed image/bundle/manifest and documentation checks also passed.
+Local signed OTA returned HTTP 200 and installed clean
+`af4ca59007e3cbd55453bf2d767eff412a7bba93`, `M3-dev-gaf4ca59007e3`,
+VALID ota_1 / OTA idle. Image: 2574192 bytes,
+SHA-256 `7a6d96069f1a2c0a66d40f37e2a579765bd7aba178befbb24c3c897ec82c76e7`.
+Bundle: 2574380 bytes,
+SHA-256 `ef4cc645a1824f2f3b9efe02dc401453a2da7a6d9e9e5bdeab9787c9c99d803b`.
+ELF: `79a83af8e6b85f9ad8d75ea33bb94025b31ade0138337d829e8b330b7709d8d2`.
+Artifacts: `.cache/m3-migration/20261007-af4ca590/`; before-idle timing confirms
+shown=false, physical_events=0 and wake_consumed=0 with both decks stopped.
+A read-only helper confirmed published shown=true, both decks stopped and all
+physical/wake counters zero before requesting the first PLAY; no web mutation
+was issued during that wait. The operator confirmed GUI wake with both decks
+stopped, then confirmed subsequent PLAY operates normally. The later API
+snapshot shows shown=false, wake_consumed=1 and last_consumed_id=16 (D1 PLAY),
+with both decks stopped. It already contains six physical events and position
+8602 ms, so it is not an isolated one-press trace and does not prove zero
+position movement throughout the interaction. Subsequent PLAY acceptance is
+operator-confirmed; its later snapshot also finds the deck already stopped.
+Both snapshots are preserved; no artificial playback repetition substitutes
+for these observations.
+
+## Physical outcome on af4ca590: PASS for exercised wake paths
+
+The operator also confirmed first Browse press dismisses the screensaver.
+The after snapshot reports wake_consumed=2, last_consumed_id=99 (Browse press),
+shown=false and both decks stopped. The read-only pre-Browse observer did not
+capture shown=true before the operator acted; it was canceled to avoid labeling
+a later idle interval as pre-Browse evidence. Its separate completion records
+that limitation; the operator observation and counter increment remain valid.
+
+After the next idle screensaver, the operator confirmed touch restores GUI
+without unintended action. Final API snapshots show shown=false, both decks
+stopped, unchanged physical_events=8 and wake_consumed=2, and the same clean
+af4ca590 VALID ota_1 / OTA idle identity. Touch does not fabricate a controller
+event. Individual operator verification JSON files preserve each observation.
+
+The reported controller-wake bug is closed for PLAY and Browse plus touch
+regression on this exact image. Physical jog/pitch/fader wake were not separately
+exercised; the shared-path host regression covers jog and pitch. No other-board
+hardware qualification or final soak is inferred. The earlier 4620b83c failure
+and all snapshot/observer limits remain preserved.
 
 ## Operator procedure
 
