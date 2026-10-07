@@ -63,7 +63,8 @@ Selected [stopped-deck LOAD routing](validation/M3_PHYSICAL_LOAD_ROUTING_2026100
 also passes ordinary FLX4 D1, touch D2 and FLX4 Shift+Load D1/D2.
 Subsequent ordinary FLX4 D2 and touch D1 passed, completing stopped LOAD input
 parity. Repeated [playing Shift+Load refusal](validation/M3_PHYSICAL_SHIFT_LOAD_LOCK_20261007.md)
-also passed on both decks; the initial disagreement remains preserved.
+also passed on both decks; the initial disagreement is preserved and has since
+been explicitly attributed to operator error by the operator.
 
 The preceding bf2fdc47 skipped unchanged cover comparisons and hidden Library styling, and separated
 chrome/UI-tail/LVGL timings. Host qualification, unchanged M3 simulator hashes,

@@ -35,8 +35,11 @@ continuously while playing. The assistant then explicitly stopped playback
 in response to the report. The helper's subsequent transport assertion failed
 because playback was stopped; this raw FAIL is retained and is not attributed
 to a firmware LOAD interruption. The report versus loaded-title discrepancy
-was not resolved, so the initial physical attempt remains INCONCLUSIVE.
-The repeated attempts have their own evidence and do not overwrite it.
+was initially unresolved. The operator subsequently explicitly stated that
+the first disagreement was their own mistake. It is now classified as an
+operator-invalidated attempt, not a confirmed firmware defect or a passing
+physical test. The raw helper FAIL caused by the explicit safety stop remains
+unchanged. The repeated attempts have their own evidence and do not overwrite it.
 
 Artifacts: `.cache/m3-migration/20261007-082d2c0a/physical-shift-load-lock/deck1/`
 for the first attempt, including operator-failure snapshots and raw result;
