@@ -56,6 +56,43 @@
 #include "freertos/task.h"
 
 static const char *TAG = "web_server";
+static bool api_request_allowed(httpd_req_t *req, bool mutation);
+static esp_err_t api_usb_probe_descriptor_handler(httpd_req_t *req)
+{
+    if (!api_request_allowed(req, false)) return ESP_FAIL;
+    /* A read-only last-probe snapshot; never opens or resets a USB device. */
+    usb_midi_probe_snapshot_t *snapshot = malloc(sizeof(*snapshot));
+    char *json = malloc(2u * USB_MIDI_PROBE_CONFIG_MAX + 512u);
+    if (!snapshot || !json) {
+        free(snapshot); free(json);
+        return httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR, "No memory");
+    }
+    if (!usb_midi_probe_snapshot_get(snapshot)) {
+        free(snapshot); free(json);
+        httpd_resp_set_status(req, "503 Service Unavailable");
+        return httpd_resp_send(req, "No coherent probe snapshot", HTTPD_RESP_USE_STRLEN);
+    }
+    int used = snprintf(json, 512u,
+        "{\"scope\":\"last_probe_not_live_attachment\",\"address\":%u,"
+        "\"speed\":%u,\"parent_port\":%u,\"direct_root\":%s,"
+        "\"total_length\":%u,\"captured_length\":%u,\"truncated\":%s,"
+        "\"device_hex\":\"",
+        snapshot->address, snapshot->speed, snapshot->parent_port,
+        snapshot->direct_root ? "true" : "false", snapshot->total_length,
+        snapshot->captured_length,
+        snapshot->captured_length != snapshot->total_length ? "true" : "false");
+    for (size_t i = 0; i < sizeof(snapshot->device); ++i)
+        used += snprintf(json + used, 3u, "%02x", snapshot->device[i]);
+    used += snprintf(json + used, 32u, "\",\"config_hex\":\"");
+    for (size_t i = 0; i < snapshot->captured_length; ++i)
+        used += snprintf(json + used, 3u, "%02x", snapshot->config[i]);
+    used += snprintf(json + used, 4u, "\"}");
+    httpd_resp_set_type(req, "application/json");
+    httpd_resp_set_hdr(req, "Cache-Control", "no-store");
+    esp_err_t rc = httpd_resp_send(req, json, used);
+    free(snapshot); free(json);
+    return rc;
+}
 static httpd_handle_t s_web_server = NULL;
 static bool s_mdns_started;
 
@@ -2519,7 +2556,7 @@ esp_err_t web_server_start(void)
     /* Must stay above the number of register_uri_or_stop() calls below: a single
      * failed registration stops the whole server, so an over-tight limit takes
      * every endpoint (including OTA) down with it. */
-    config.max_uri_handlers = 30; /* includes migration and recorder routes */
+    config.max_uri_handlers = 31; /* includes last-probe USB descriptor route */
     config.task_priority = 3;
     config.core_id = 0;
 
@@ -2743,6 +2780,14 @@ esp_err_t web_server_start(void)
         .user_ctx = NULL
     };
     rc = register_uri_or_stop(s_web_server, &controller_profiles_uri);
+    if (rc != ESP_OK) return rc;
+
+    httpd_uri_t probe_descriptor_uri = {
+        .uri = "/api/usb-controller-descriptors",
+        .method = HTTP_GET,
+        .handler = api_usb_probe_descriptor_handler,
+    };
+    rc = register_uri_or_stop(s_web_server, &probe_descriptor_uri);
     if (rc != ESP_OK) return rc;
 
     httpd_uri_t controller_profile_upload_uri = {

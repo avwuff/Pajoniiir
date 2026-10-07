@@ -86,7 +86,27 @@ int main(void)
     CHECK(!usb_midi_parse_event_packet(NULL, &message));
     CHECK(!usb_midi_parse_event_packet(note_on, NULL));
 
-    printf("PASS reusable controller USB-MIDI codec\n");
+    usb_midi_probe_snapshot_t snapshot;
+    CHECK(!usb_midi_probe_snapshot_get(NULL));
+    CHECK(!usb_midi_probe_snapshot_get(&snapshot));
+    uint8_t device[18] = {18, 1};
+    usb_midi_probe_snapshot_capture(device, s_bulk, sizeof(s_bulk), 7, 1, 1, true);
+    CHECK(usb_midi_probe_snapshot_get(&snapshot));
+    CHECK(snapshot.address == 7 && snapshot.speed == 1 && snapshot.direct_root);
+    CHECK(snapshot.total_length == sizeof(s_bulk) && snapshot.captured_length == sizeof(s_bulk));
+    CHECK(memcmp(snapshot.config, s_bulk, sizeof(s_bulk)) == 0);
+    uint8_t oversized[USB_MIDI_PROBE_CONFIG_MAX + 5u];
+    memset(oversized, 0x55, sizeof(oversized));
+    usb_midi_probe_snapshot_capture(device, oversized, sizeof(oversized), 8, 2, 0, false);
+    CHECK(usb_midi_probe_snapshot_get(&snapshot));
+    CHECK(snapshot.total_length == sizeof(oversized) && snapshot.captured_length == USB_MIDI_PROBE_CONFIG_MAX);
+    CHECK(snapshot.config[USB_MIDI_PROBE_CONFIG_MAX - 1] == 0x55);
+    usb_midi_probe_snapshot_capture(NULL, s_bulk, sizeof(s_bulk), 1, 0, 0, false);
+    CHECK(usb_midi_probe_snapshot_get(&snapshot) && snapshot.address == 8);
+    usb_midi_probe_snapshot_capture(device, s_bulk, sizeof(s_bulk), 9, 1, 1, true);
+    CHECK(usb_midi_probe_snapshot_get(&snapshot));
+    CHECK(snapshot.config[sizeof(s_bulk)] == 0 && snapshot.address == 9);
+    printf("PASS reusable controller USB-MIDI codec and bounded probe snapshots\n");
     printf("TESTS_RUN=%u\n", s_tests_run);
     return 0;
 }

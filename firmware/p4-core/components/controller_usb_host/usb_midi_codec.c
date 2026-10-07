@@ -3,6 +3,47 @@
 
 #include <string.h>
 
+static uint8_t s_probe_bytes[sizeof(usb_midi_probe_snapshot_t)];
+static uint32_t s_probe_sequence;
+
+void usb_midi_probe_snapshot_capture(const uint8_t device[18],
+                                    const uint8_t *config, size_t length,
+                                    uint8_t address, uint8_t speed,
+                                    uint8_t parent_port, bool direct_root)
+{
+    if (!device || !config || length < 9u || length > UINT16_MAX) return;
+    usb_midi_probe_snapshot_t snapshot = {0};
+    memcpy(snapshot.device, device, sizeof(snapshot.device));
+    snapshot.total_length = (uint16_t)length;
+    snapshot.captured_length = (uint16_t)(length > sizeof(snapshot.config) ?
+                                         sizeof(snapshot.config) : length);
+    memcpy(snapshot.config, config, snapshot.captured_length);
+    snapshot.address = address;
+    snapshot.speed = speed;
+    snapshot.parent_port = parent_port;
+    snapshot.direct_root = direct_root;
+    (void)__atomic_add_fetch(&s_probe_sequence, 1u, __ATOMIC_SEQ_CST);
+    const uint8_t *bytes = (const uint8_t *)&snapshot;
+    for (size_t i = 0; i < sizeof(snapshot); ++i)
+        __atomic_store_n(&s_probe_bytes[i], bytes[i], __ATOMIC_SEQ_CST);
+    (void)__atomic_add_fetch(&s_probe_sequence, 1u, __ATOMIC_SEQ_CST);
+}
+
+bool usb_midi_probe_snapshot_get(usb_midi_probe_snapshot_t *out)
+{
+    if (!out) return false;
+    for (unsigned attempt = 0; attempt < 3; ++attempt) {
+        uint32_t before = __atomic_load_n(&s_probe_sequence, __ATOMIC_SEQ_CST);
+        if (!before || (before & 1u)) continue;
+        uint8_t *bytes = (uint8_t *)out;
+        for (size_t i = 0; i < sizeof(*out); ++i)
+            bytes[i] = __atomic_load_n(&s_probe_bytes[i], __ATOMIC_SEQ_CST);
+        if (before == __atomic_load_n(&s_probe_sequence, __ATOMIC_SEQ_CST)) return true;
+    }
+    memset(out, 0, sizeof(*out));
+    return false;
+}
+
 #define USB_DESC_CONFIGURATION 0x02u
 #define USB_DESC_INTERFACE     0x04u
 #define USB_DESC_ENDPOINT      0x05u

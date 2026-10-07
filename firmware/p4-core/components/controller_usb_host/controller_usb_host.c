@@ -462,6 +462,10 @@ static esp_err_t probe_device(controller_state_t *state, uint8_t address)
     }
     __atomic_store_n(&s_last_config_total_length, config_desc->wTotalLength,
                      __ATOMIC_RELEASE);
+    usb_midi_probe_snapshot_capture((const uint8_t *)device_desc,
+        (const uint8_t *)config_desc, config_desc->wTotalLength,
+        address, (uint8_t)info.speed, info.parent.port_num,
+        info.parent.dev_hdl == NULL);
 
     usb_midi_endpoints_t endpoints;
     if (!usb_midi_find_streaming_endpoints((const uint8_t *)config_desc,

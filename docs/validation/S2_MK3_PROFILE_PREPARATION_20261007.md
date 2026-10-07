@@ -9,6 +9,32 @@ Earlier evidence below is historical and does not describe the updated binary.
 The basic profile remains experimental; complete
 S2 MK3 support and its physical acceptance are **NOT RUN**.
 
+## M3 enumeration investigation (2026-10-08)
+
+On installed clean `af4ca59007e3`, both decks stopped, the captured 928-byte
+profile installed with HTTP 201 and was listed valid as `17CC:1710`.
+It did not activate: the USB probe saw S2 but returned `ESP_ERR_NOT_FOUND`
+at the MIDI-descriptor stage. Operator-confirmed left-FLX/green-flash reconnect
+reproduced this on USB2 (direct root 1, configuration length 221).
+A temporary USB3 check saw the same VID/PID on root 0 with configuration length
+318 and the same rejection. These lengths differ; neither observation alone
+establishes a full-speed restriction or a malformed MIDI descriptor.
+The operator restored S2 to USB2 and storage to USB3. Raw before/upload/
+reconnect/USB3 status evidence is retained in
+`.cache/s2-mk3/20261008-m3-enumeration/`. No controller actions or audio were
+qualified, and the temporary USB3 connection is not an accepted topology.
+
+The investigation adds a read-only `/api/usb-controller-descriptors` last-probe
+snapshot: raw device descriptor, bounded configuration bytes (max 1024),
+captured/total lengths and explicit truncation, speed/address/root information.
+The scope is explicitly the last probe, not current attachment or all device
+configurations. Snapshot publication happens only on USB probes. Atomic byte
+publication and a three-attempt reader prevent torn reads without unbounded
+waiting; the HTTP response uses heap buffers, not a large HTTP stack frame.
+It sends no USB requests and adds no periodic logging or audio/UI loop work.
+Focused USB codec, snapshot bounds/overwrite and audio/gate tests pass.
+Diagnostic image installation and full descriptor interpretation remain pending.
+
 ## Bench isolation
 
 The M3 timing soak uses the exact clean `fb5cbca13f33d21dfb4e16e0ba667c340399eb0c`

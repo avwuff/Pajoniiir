@@ -37,6 +37,25 @@ bool usb_midi_config_has_interface_class(const uint8_t *config,
 bool usb_midi_parse_event_packet(const uint8_t packet[4],
                                  usb_midi_message_t *out);
 
+/* Last probe, not necessarily an attached controller. Single USB probe writer;
+ * atomic byte publication makes a concurrent web read bounded and coherent. */
+#define USB_MIDI_PROBE_CONFIG_MAX 1024u
+typedef struct {
+    uint8_t device[18];
+    uint8_t config[USB_MIDI_PROBE_CONFIG_MAX];
+    uint16_t total_length;
+    uint16_t captured_length;
+    uint8_t address;
+    uint8_t speed;
+    uint8_t parent_port;
+    bool direct_root;
+} usb_midi_probe_snapshot_t;
+void usb_midi_probe_snapshot_capture(const uint8_t device[18],
+                                    const uint8_t *config, size_t length,
+                                    uint8_t address, uint8_t speed,
+                                    uint8_t parent_port, bool direct_root);
+bool usb_midi_probe_snapshot_get(usb_midi_probe_snapshot_t *out);
+
 #ifdef __cplusplus
 }
 #endif
