@@ -40,7 +40,10 @@ audio-position read from jog-mode polling. Its short dual MT/zoom-8 retest passe
 with operator-confirmed fluid waveforms and clean MAIN/headphones sound.
 A subsequent short operator review confirmed all five zooms fluid with clean
 sound. Local JC4880/JC1060 builds then passed on the same clean source without
-rebuilding M3. Long-soak/lifecycle qualification and current-source CI remain open.
+rebuilding M3. Its exact-image 60-minute Campaign B soak passed telemetry and
+operator visual/listening acceptance on 2026-10-07, with zero new PCM/UAC/service-log
+losses and 11 output-late events retained for monitoring. Lifecycle/startup fault
+qualification and current-source CI remain open; this is not a production release.
 
 **A standalone dual-deck DJ system for the Pioneer DDJ-FLX4, powered by a
 single ESP32-P4 board.**

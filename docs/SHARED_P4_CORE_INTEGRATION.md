@@ -1,12 +1,15 @@
 # Shared P4 core integration
 
-Status: implementation in progress; no new hardware acceptance or publication.
+Status: implementation in progress; partial exact-image M3 acceptance, no publication.
 
 Current M3 bench: clean source `fb5cbca13f33d21dfb4e16e0ba667c340399eb0c`,
 signed local OTA, observed VALID in ota_0 on 2026-10-07. Its short dual
 MT/zoom-8 retest passed: operator-confirmed fluid waveforms and clean sound.
 The subsequent short operator review confirmed all five zooms fluid and sound
-clean. Long soak and full hardware acceptance remain open.
+clean. Its continuous 3600.163-second Campaign B soak then passed telemetry and
+operator visual/listening acceptance. New PCM/UAC/service-log loss deltas were
+zero; 11 output-late events remain monitoring findings. Campaign A, startup
+fault/rollback, current-source CI and full hardware acceptance remain open.
 It removes a blocking audio-position query from jog-mode polling. The preceding
 bf2fdc47 repeated test retained slight dual stutter with clean sound.
 The preceding 1d3ee7b6 retained-position

@@ -31,8 +31,12 @@ remaining visual gate passes.
 The bf2fdc47 repeated retest retained slight dual stutter with clean sound.
 The fb5cbca1 short MT/zoom-8 dual retest passed with fluid waveforms and clean
 MAIN/headphones sound. A subsequent short operator review confirmed all five
-zooms fluid and sound clean; captured per-zoom dwell varied. Complete Campaign B
-and lifecycle acceptance on this exact image before full qualification.
+zooms fluid and sound clean; captured per-zoom dwell varied. Campaign B subsequently
+passed on this exact image for 3600.163 seconds with operator visual/listening
+confirmation, zero new PCM/UAC/service-log losses and 11 output-late monitoring
+events. Both decks ended stopped. Complete Campaign A, startup fault/rollback and
+remaining image-specific gates before full qualification; current-source CI and
+other-board physical acceptance remain open.
 Both 11574f4e and c698fa67 failed on dual waveform deformation; c698fa67 also
 showed visual stutter without audible stutter.
 The measurement candidate also reproduced the visual failure and measured

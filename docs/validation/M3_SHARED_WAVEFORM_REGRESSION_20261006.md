@@ -717,7 +717,7 @@ Raw records are in `20261007-bf2fdc47/mt-8-beat-repeat/`; separate physical stat
 is `releases/m3-bench-bf2fdc47-physical-status.json`. Immutable bench evidence
 is unchanged. Campaign B was not started.
 
-## Jog-mode candidate fb5cbca1: installed, physical retest pending
+## Jog-mode candidate fb5cbca1: installed, short visual gates and Campaign B passed
 
 Clean source `fb5cbca13f33d21dfb4e16e0ba667c340399eb0c`, version
 `M3-dev-gfb5cbca13f33`, passed host qualification with mandatory fixtures,
@@ -816,7 +816,55 @@ retained separately. Only this task's documentation changes were temporarily
 stashed for exact clean-source build identity, then restored. Historical user
 stashes were preserved. Evidence is `20261007-fb5cbca1/cross-board-builds.json`.
 
-Campaign B was started on the same installed M3 image with the required dual
-mixed-rate MT/loop/opposing-pitch/zoom-8 profile and 250-ms Wi-Fi polling. Its
-result remains pending until the full run and operator confirmation complete;
-current records are under `20261007-fb5cbca1/timing-soak/`.
+### Completed exact-image Campaign B timing soak
+
+The continuous run completed on 2026-10-07 with **telemetry PASS and operator
+visual/listening PASS**. Playback samples cover 14:41:26.561 through
+15:41:26.529 Europe/Zagreb; the monitor's elapsed counter reached 3600.163 seconds.
+Initial metadata precedes playback sampling (14:41:10.458), and final diagnostic
+collection finished at 15:41:41.012. These timestamps are not startup durations.
+
+The installed clean source/ELF above remained unchanged, ota_0 VALID, with
+324 library tracks, both decks playing, MT and loops active, 44.1/48-kHz sources,
++5/-5 percent pitch, fixed 48-kHz MAIN output, FLX4 MIDI/UAC and Wi-Fi polling
+at the requested 250-ms cadence. There were 9,759 status samples and zero
+workload violations. Checkpoint and final UI snapshots confirmed zoom 8.
+
+| Observation | Result |
+| --- | --- |
+| New PCM underruns, D1/D2 | 0 / 0 |
+| New UAC dropped blocks / overflow / underflow | 0 / 0 / 0 |
+| UAC underflow since-boot baseline and final | 996,009 / 996,009 (not a lifetime-zero claim) |
+| New service-log drops | 0 |
+| HTTP status / library / firmware errors | 0 / 0 / 0 |
+| Allocation / critical allocation failures | 0 / 0 |
+| Minimum sampled free internal / PSRAM bytes | 61,647 / 21,836,872 |
+| Minimum reported task stack headroom | 2,200 bytes |
+| New output-late events | 11 (count 4 to 15) |
+| Maximum output-late since boot | 12,212 us |
+| Monitor hard failures / investigation triggers | none / none during this run |
+
+Maximum HTTP status/library/firmware latency was 1,599.424 / 2,162.856 /
+926.145 ms. No query failed; this does not imply uniformly low web latency.
+The preceding short all-zoom cluster remains separate investigation evidence;
+this completed soak does not erase it or establish zero-late behavior.
+
+After completion the operator explicitly confirmed that both waveforms stayed
+fluid, the display stable, and MAIN and FLX4 headphones clean throughout the
+test. Both decks were stopped by the wrapper and the final snapshot retained
+MT/loops, the active FLX4 profile and exact source identity. A subsequent live
+read verified both stopped and the same source/ELF/VALID slot. The recurring
+15-minute checkpoint automation was paused after completion.
+
+Raw monitor `result.json` remains unchanged with its operator field `NOT RUN`:
+the later human acceptance is stored separately in
+`timing-soak/operator-acceptance.json` and
+`releases/m3-bench-fb5cbca1-physical-status.json`. Immutable image/bundle/software
+evidence was not rewritten. Raw records are under
+`.cache/m3-migration/20261007-fb5cbca1/timing-soak/`.
+
+This closes the 60-minute Campaign B timing and operator audio/visual gate for
+this exact M3 image. Campaign A, startup fault/timeout/rollback, current-source
+CI, complete bounded per-zoom dwell coverage, other-board/controller hardware
+gates and remaining integration acceptance are still open. No release tag,
+remote push or public OTA channel was changed.

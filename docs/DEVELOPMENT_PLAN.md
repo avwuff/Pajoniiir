@@ -20,8 +20,13 @@ It removes an unused blocking audio-position read from per-refresh jog-mode
 polling. Host qualification, unchanged M3 simulator hashes, M3 build and signed
 identity/budget checks passed. Its short dual MT/zoom-8 retest passed with
 operator-confirmed fluid waveforms and clean MAIN/headphones sound. A subsequent
-short review confirmed all five zooms fluid and sound clean. Long-soak and full
-hardware acceptance remain open; short coverage is recorded separately.
+short review confirmed all five zooms fluid and sound clean. The same installed
+image then passed a continuous 3600.163-second Campaign B soak: telemetry and
+operator-confirmed stable/fluid display and clean MAIN/headphones. Strict new
+PCM/UAC/service-log losses were zero; 11 output-late events remain monitoring
+findings, not a zero-late claim. Campaign A, startup fault/rollback, current-source
+CI and full hardware acceptance remain open. Short per-zoom dwell coverage is
+recorded separately from the completed zoom-8 soak.
 
 The preceding bf2fdc47 skipped unchanged cover comparisons and hidden Library styling, and separated
 chrome/UI-tail/LVGL timings. Host qualification, unchanged M3 simulator hashes,
