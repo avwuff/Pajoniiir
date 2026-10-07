@@ -236,6 +236,68 @@ static void fixture_one_row_page(uint8_t page[512])
     page[508] = 1u;
 }
 
+static void fixture_name(uint8_t *row, bool album, unsigned variant)
+{
+    unsigned ref = album ? 21u : 9u;
+    unsigned off = ref + (variant == 1u ? 3u : 1u);
+    put_le16(row, (uint16_t)((album ? 0x80u : 0x60u) | (variant == 2u ? 4u : 0u)));
+    put_le32(row + (album ? 12u : 4u), album ? 3u : 2u);
+    row[ref] = (uint8_t)off;
+    if (variant == 2u) { off = 300u; put_le16(row + ref + 1u, (uint16_t)off); }
+    if (variant == 4u) { row[ref] = 255u; return; }
+    if (variant == 5u) { put_le16(row, album ? 0x84u : 0x64u); put_le16(row + ref + 1u, 466u); return; }
+    if (variant == 6u) { row[ref] = 90u; off = 90u; }
+    if (variant == 1u) {
+        row[off] = 0x90u; put_le16(row + off + 1u, 8u);
+        put_le16(row + off + 4u, album ? 'A' : 'J');
+        put_le16(row + off + 6u, 0x0107u); /* UTF-8 c-acute */
+    } else if (variant == 3u) {
+        row[off] = 0x40u; put_le16(row + off + 1u, 9u);
+        memcpy(row + off + 4u, "ASCII", 5u);
+    } else { row[off] = 11u; memcpy(row + off + 1u, "Name", 4u); }
+}
+
+static void test_real_name_row_layouts(void)
+{
+    for (unsigned v = 0u; v < 7u; ++v) {
+        uint8_t data[4u * 512u] = {0};
+        put_le32(data + 4u, 512u); put_le32(data + 8u, 3u);
+        const unsigned types[] = {0u, 2u, 3u};
+        for (unsigned i = 0u; i < 3u; ++i) {
+            put_le32(data + 28u + i * 16u, types[i]);
+            put_le32(data + 36u + i * 16u, i + 1u);
+            fixture_one_row_page(data + (i + 1u) * 512u);
+        }
+        uint8_t *track = data + 512u + 40u;
+        put_le16(track, 0x24u); put_le32(track + 72u, 1u);
+        put_le32(track + 68u, 2u); put_le32(track + 64u, 3u);
+        fixture_short_string(track, 17u, 160u, "Layout test");
+        for (unsigned i = 2u; i <= 3u; ++i) {
+            uint8_t *page = data + i * 512u;
+            fixture_name(page + 40u, i == 3u, v);
+            if (v == 4u || v == 6u) {
+                /* Second heap row bounds the live row's name reference. */
+                put_le32(page + 24u, 2u); put_le16(page + 504u, 80u);
+                page[508u] = 3u;
+            }
+        }
+        const char *path = "test_name_layout.pdb";
+        FILE *fp = fopen(path, "wb");
+        TEST("real artist/album near/far/Unicode/ASCII and bounded offsets");
+        if (!fp) { FAIL("fixture open"); continue; }
+        bool written = fwrite(data, 1u, sizeof(data), fp) == sizeof(data);
+        written = fclose(fp) == 0 && written;
+        pdb_t *pdb = NULL; pdb_track_t t = {0};
+        bool ok = written && pdb_open(path, &pdb) == ESP_OK &&
+            pdb_get_track(pdb, 0, &t) == ESP_OK;
+        const char *artist = v >= 4u ? "" : v == 1u ? "J\xc4\x87" : v == 3u ? "ASCII" : "Name";
+        const char *album = v >= 4u ? "" : v == 1u ? "A\xc4\x87" : v == 3u ? "ASCII" : "Name";
+        CHECK(ok && strcmp(t.artist, artist) == 0 && strcmp(t.album, album) == 0,
+              "row-specific name decoding or reference bound");
+        pdb_close(pdb); remove(path);
+    }
+}
+
 static void test_optional_browse_tables(void)
 {
     const char *path = "test_browse_tables.pdb";
@@ -448,6 +510,7 @@ int main(int argc, char *argv[])
     /* Always run API contract tests */
     test_api_contracts();
     test_devicesql_utf16_to_utf8();
+    test_real_name_row_layouts();
     test_track_title_fields();
     test_malformed_page_zero_row_groups();
     test_paged_track_import_reports_truncation();

@@ -26,7 +26,7 @@ static const char *CACHE_ROOT = "/sd/trackcache/v4";
 #endif
 
 #define TRACK_META_CACHE_MAGIC   0x31434D54u /* "TMC1" */
-#define TRACK_META_CACHE_VERSION 5u
+#define TRACK_META_CACHE_VERSION 6u
 #define TRACK_META_CACHE_FLAGS_LOW  0x01u
 #define TRACK_META_CACHE_FLAGS_VBR  0x02u
 #define TRACK_META_CACHE_FLAGS_HIGH 0x04u

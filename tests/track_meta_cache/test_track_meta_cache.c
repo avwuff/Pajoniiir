@@ -100,6 +100,27 @@ int main(void)
     CHECK(preview_only.waveform_span_ms == meta.waveform_span_ms);
     anlz_free(&preview_only);
 
+    /* A valid v5 record must miss after the EXT cue-import fix, even when
+     * identity and DAT/EXT stat fields are unchanged. Rebuild only metadata. */
+    char cache_path[112], hex[65];
+    memset(hex, '1', 64u); hex[64] = '\0';
+    snprintf(cache_path, sizeof(cache_path), "tc/meta/v4/%s/meta.bin", hex);
+    FILE *old = fopen(cache_path, "r+b");
+    CHECK(old != NULL);
+    if (old) {
+        CHECK(fseek(old, 4, SEEK_SET) == 0); /* uint16 version after magic */
+        const uint16_t version = 5u;
+        CHECK(fwrite(&version, sizeof(version), 1u, old) == 1u);
+        CHECK(fclose(old) == 0);
+    }
+    CHECK(track_meta_cache_load(42, &id, "tc/track.dat", "tc/track.ext",
+                                true, &loaded) == ESP_ERR_INVALID_RESPONSE);
+    CHECK(loaded.cue_count == 0u && loaded.waveform_high == NULL);
+    CHECK(track_meta_cache_save(42, &id, "tc/track.dat", "tc/track.ext", &meta) == ESP_OK);
+    CHECK(track_meta_cache_load(42, &id, "tc/track.dat", "tc/track.ext",
+                                true, &loaded) == ESP_OK && loaded.cue_count == 1u);
+    anlz_free(&loaded);
+
     source = fopen("tc/track.dat", "ab");
     CHECK(source != NULL);
     if (source) { fputc('X', source); fclose(source); }
@@ -121,6 +142,6 @@ int main(void)
     rmdir("tc");
 
     if (s_failed) return 1;
-    puts("track_meta_cache v5 tests passed");
+    puts("track_meta_cache v6 tests passed");
     return 0;
 }

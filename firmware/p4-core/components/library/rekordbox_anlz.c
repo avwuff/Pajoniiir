@@ -455,11 +455,13 @@ static esp_err_t parse_pcob(FILE *fp, anlz_metadata_t *out)
     return ESP_OK;
 }
 
-static esp_err_t parse_all_pcob(FILE *fp, anlz_metadata_t *out)
+static esp_err_t parse_all_pcob(FILE *fp, anlz_metadata_t *out,
+                                bool optional_color_tail)
 {
+    s_anlz_short_read = false;
     if (fseek(fp, 0, SEEK_END) != 0) return ESP_ERR_INVALID_SIZE;
     const long end = ftell(fp);
-    if (end < 12) return ESP_ERR_INVALID_SIZE;
+    if (end < 12 || (unsigned long)end > UINT32_MAX) return ESP_ERR_INVALID_SIZE;
     uint32_t pos = 0u;
     while (pos + 12u <= (uint32_t)end) {
         if (fseek(fp, (long)pos, SEEK_SET) != 0) return ESP_ERR_INVALID_SIZE;
@@ -468,6 +470,16 @@ static esp_err_t parse_all_pcob(FILE *fp, anlz_metadata_t *out)
         const uint32_t segment_size = read_be32(fp);
         if (s_anlz_short_read) return ESP_ERR_INVALID_SIZE;
         const uint32_t advance = tag == ANLZ_TAG_PMAI ? header_size : segment_size;
+        if (header_size < 12u || segment_size < header_size || advance < 12u)
+            return ESP_ERR_INVALID_SIZE;
+        if (advance > (uint32_t)end - pos) {
+            /* Preserve the existing EXT contract: a truncated trailing color
+             * preview degrades to PWV3. Never excuse a truncated cue record. */
+            if (optional_color_tail && tag == ANLZ_TAG_PWV4 &&
+                header_size >= 24u && header_size <= (uint32_t)end - pos)
+                return ESP_OK;
+            return ESP_ERR_INVALID_SIZE;
+        }
         if (tag == ANLZ_TAG_PCOB) {
             if (fseek(fp, (long)(pos + 4u), SEEK_SET) != 0) return ESP_ERR_INVALID_SIZE;
             const esp_err_t rc = parse_pcob(fp, out);
@@ -658,7 +670,7 @@ esp_err_t anlz_parse_dat_stream(FILE *fp, anlz_metadata_t *out)
         if (result != ESP_OK) break;
         if (tags[i] == ANLZ_TAG_PPTH) has_path = found && next.audio_path[0] != '\0';
     }
-    if (result == ESP_OK) result = parse_all_pcob(fp, &next);
+    if (result == ESP_OK) result = parse_all_pcob(fp, &next, false);
 
     /* Without PPTH there is no audio path, so the analysis cannot be tied to a
      * file — treat it as absent rather than partially usable. */
@@ -699,6 +711,50 @@ esp_err_t anlz_parse_ext_stream(FILE *fp, anlz_metadata_t *meta)
     anlz_metadata_t next = {0};
     esp_err_t result = anlz_clone(meta, &next);
     bool found = false;
+    if (result == ESP_OK) {
+        /* EXT can carry Hot Cues D-H missing from DAT. Parse separately so
+         * identical DAT/EXT slots are idempotent, while conflicting source
+         * slots reject this enrichment without changing the caller's data. */
+        anlz_metadata_t *cues = calloc(1u, sizeof(*cues));
+        result = cues ? parse_all_pcob(fp, cues, true) : ESP_ERR_NO_MEM;
+        for (uint8_t i = 0u; result == ESP_OK && i < cues->cue_count; ++i) {
+            const anlz_cue_t *src = &cues->cues[i];
+            bool found_slot = false;
+            for (uint8_t j = 0u; j < next.cue_count; ++j) {
+                const anlz_cue_t *dst = &next.cues[j];
+                if (dst->index != src->index) continue;
+                found_slot = true;
+                if (dst->type != src->type || dst->start_ms != src->start_ms ||
+                    dst->end_ms != src->end_ms) result = ESP_ERR_INVALID_SIZE;
+                break;
+            }
+            if (!found_slot && result == ESP_OK) {
+                if (next.cue_count >= ANLZ_MAX_CUES) result = ESP_ERR_INVALID_SIZE;
+                else next.cues[next.cue_count++] = *src;
+            }
+        }
+        for (uint8_t i = 0u; result == ESP_OK && i < cues->memory_cue_count; ++i) {
+            const anlz_cue_t *src = &cues->memory_cues[i];
+            bool present = false;
+            for (uint8_t j = 0u; j < next.memory_cue_count; ++j) {
+                const anlz_cue_t *dst = &next.memory_cues[j];
+                if (dst->type == src->type && dst->start_ms == src->start_ms &&
+                    dst->end_ms == src->end_ms) { present = true; break; }
+            }
+            if (present) continue;
+            if (next.memory_cue_count >= ANLZ_MAX_MEMORY_CUES) {
+                next.memory_cues_truncated = true;
+                continue;
+            }
+            next.memory_cues[next.memory_cue_count] = *src;
+            next.memory_cues[next.memory_cue_count].index = next.memory_cue_count;
+            ++next.memory_cue_count;
+        }
+        if (cues) {
+            next.memory_cues_truncated |= cues->memory_cues_truncated;
+            free(cues);
+        }
+    }
     if (result == ESP_OK) {
         result = parse_one_strict(fp, ANLZ_TAG_PWV3, &next, &found);
         if (result == ESP_OK && !found) result = ESP_ERR_NOT_FOUND;

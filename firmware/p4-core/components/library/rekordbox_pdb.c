@@ -117,11 +117,6 @@ static void pdb_copy_str(char *dst, size_t dst_len, const char *src)
 #define STR_IDX_FILENAME    19u
 #define STR_IDX_FILE_PATH   20u
 
-/* Name-table row layout offsets (Artists / Albums) */
-#define NAME_ROW_ID_OFF     4u      /* uint32 row ID (skip 4B link field)     */
-#define NAME_ROW_STR_OFF    10u     /* DeviceSQL string (skip id+empty+pad)   */
-#define NAME_ROW_MIN_SIZE   14u
-
 /* Key-table row layout: uint32 id, uint32 id copy, DeviceSQL name */
 #define KEY_ROW_ID_OFF      0u
 #define KEY_ROW_STR_OFF     8u
@@ -194,7 +189,8 @@ static uint16_t read_utf16_unit(const uint8_t *p, bool le)
  * Returns total bytes consumed by the field.
  *
  * String formats:
- *   0x00, 0x40               — empty/null (1 byte)
+ *   0x00                     — empty/null (1 byte)
+ *   0x40                     — long ASCII
  *   flag where (flag & 1)    — short ASCII:
  *                               total_field_len = flag >> 1 (includes flag byte)
  *                               string data = (flag >> 1) - 1 chars
@@ -212,7 +208,7 @@ static size_t decode_devicesql(const uint8_t *data, size_t data_len,
     uint8_t flag = data[abs_off];
 
     /* Empty / null */
-    if (flag == 0x40u || flag == 0x00u) return 1;
+    if (flag == 0x00u) return 1;
 
     /* Short ASCII: odd flag byte */
     if (flag & 1u) {
@@ -447,7 +443,32 @@ typedef struct {
     size_t        id_off;
     size_t        str_off;
     size_t        min_size;
+    uint32_t      table_type;
 } name_ctx_t;
+
+/* Bound name references to their row, not to an unrelated row or slot table.
+ * Row slots need not be in physical heap order. Include deleted slots when
+ * finding the next boundary: their bytes are not part of this live row. */
+static size_t name_row_end(const struct pdb_s *p, uint32_t page_num, size_t row)
+{
+    size_t end = p->data_len, ptr = p->data_len;
+    uint32_t n = page_nrows(p, page_num);
+    for (uint32_t idx = 0u; idx < n;) {
+        uint32_t m = n - idx < 16u ? n - idx : 16u;
+        size_t bytes = 4u + (size_t)m * 2u;
+        if (ptr < bytes) return row;
+        size_t slots = ptr - bytes;
+        if (slots < end) end = slots;
+        for (uint32_t i = 0u; i < m; ++i) {
+            size_t next = PAGE_HEAP_OFFSET +
+                rd_le16(p->data + ptr - 4u - 2u * (i + 1u));
+            if (next > row && next < end) end = next;
+        }
+        ptr = slots;
+        idx += m;
+    }
+    return end;
+}
 
 static bool name_cb(const struct pdb_s *p, uint32_t page_num,
                      uint32_t heap_off, void *user)
@@ -459,15 +480,31 @@ static bool name_cb(const struct pdb_s *p, uint32_t page_num,
     }
 
     size_t row = page_base_off(p, page_num) + PAGE_HEAP_OFFSET + (size_t)heap_off;
-    if (row + ctx->min_size > p->data_len) return true;
+    size_t end = name_row_end(p, page_num, row);
+    if (end <= row || end - row < ctx->min_size) return true;
+
+    size_t str_off = ctx->str_off;
+    if (ctx->table_type != TABLE_TYPE_KEYS) {
+        uint16_t subtype = rd_le16(p->data + row);
+        uint16_t expected = ctx->table_type == TABLE_TYPE_ARTISTS ? 0x60u : 0x80u;
+        if (subtype != expected && subtype != (expected | 4u)) return true;
+        str_off = p->data[row + ctx->str_off];
+        if (subtype & 4u) {
+            if (end - row < ctx->str_off + 3u) return true;
+            str_off = rd_le16(p->data + row + ctx->str_off + 1u);
+        }
+        size_t header = ctx->str_off + ((subtype & 4u) ? 3u : 1u);
+        if (str_off < header) return true;
+    }
+    if (str_off >= end - row) return true;
 
     uint32_t row_id = rd_le32(p->data + row + ctx->id_off);
     if (row_id == 0u) return true;
 
     name_entry_t *e = &ctx->arr[*ctx->count];
     e->id = row_id;
-    decode_devicesql(p->data, p->data_len,
-                     row + ctx->str_off,
+    decode_devicesql(p->data, end,
+                     row + str_off,
                      e->name, PDB_STR_NAME_MAX);
 
     if (e->name[0] != '\0') (*ctx->count)++;
@@ -488,7 +525,7 @@ static void parse_name_table(struct pdb_s *p, uint32_t table_type,
     }
     memset(*out, 0, (size_t)max * sizeof(name_entry_t));
 
-    name_ctx_t ctx = { *out, p, out_count, max, id_off, str_off, min_size };
+    name_ctx_t ctx = { *out, p, out_count, max, id_off, str_off, min_size, table_type };
     walk_table(p, table_type, name_cb, &ctx);
 
     PDB_LOGI(TAG, "Name table 0x%02X: %d entries", table_type, *out_count);
@@ -885,10 +922,10 @@ esp_err_t pdb_open(const char *pdb_path, pdb_t **out)
     /* Build name lookup tables BEFORE parsing tracks */
     parse_name_table(p, TABLE_TYPE_ARTISTS,
                      &p->artists, &p->artist_count, (int)PDB_MAX_NAMES,
-                     NAME_ROW_ID_OFF, NAME_ROW_STR_OFF, NAME_ROW_MIN_SIZE);
+                     4u, 9u, 10u);
     parse_name_table(p, TABLE_TYPE_ALBUMS,
                      &p->albums,  &p->album_count,  (int)PDB_MAX_NAMES,
-                     NAME_ROW_ID_OFF, NAME_ROW_STR_OFF, NAME_ROW_MIN_SIZE);
+                     12u, 21u, 22u);
     parse_name_table(p, TABLE_TYPE_KEYS,
                      &p->keys,    &p->key_count,    (int)PDB_MAX_NAMES,
                      KEY_ROW_ID_OFF, KEY_ROW_STR_OFF, KEY_ROW_MIN_SIZE);
