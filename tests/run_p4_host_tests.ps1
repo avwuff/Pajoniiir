@@ -3366,6 +3366,17 @@ $tests = @(
         )
     },
     @{
+        Name = "board_adapter_m3_hs_controller"
+        Dir = "tests/board_adapter"
+        Target = "test_board_capabilities_m3_hs.exe"
+        Args = @(
+            "-Wall", "-Wextra", "-Werror", "-std=c99", "-DBOARD_CAPABILITIES_PC_TEST", "-DCONFIG_PAJONIIIR_BOARD_M3", "-DCONFIG_BSP_M3_HS_CONTROLLER=1",
+            "-I../../firmware/p4-core/components/board_capabilities/include",
+            "-o", "test_board_capabilities_m3_hs.exe", "test_board_capabilities.c",
+            "../../firmware/p4-core/components/board_capabilities/board_capabilities.c"
+        )
+    },
+    @{
         Name = "controller_profile_manager"
         Dir = "tests/controller_profile_manager"
         Target = "test_controller_profile_manager.exe"

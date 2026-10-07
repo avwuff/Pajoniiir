@@ -51,6 +51,36 @@ Pad LEDs, RGB and meters remain unmapped.
 
 ## Remaining work
 
+### Experimental M3 HS controller topology
+
+Actual M3 captures on 2026-10-08 show this S2 unit (`bcdDevice=0037`) exposing
+audio/HID at Full Speed, but MIDI interface 6 at High Speed. The HS descriptor
+has eight trailing zero bytes inside `wTotalLength`. The common MIDI parser
+accepts an entirely zero tail only after a complete IN/OUT MIDI endpoint pair;
+the actual FS/HS bytes and negative-tail cases are regression fixtures.
+This is a finding about the captured unit/configuration, not a blanket claim
+about every firmware revision of S2 MK3.
+
+The operator selected an experimental M3 product configuration with S2 on USB3
+(HS, root 0) and Rekordbox storage on USB2 (FS, root 1). Enable only with
+`PAJONIIIR_S2_HS_EXPERIMENT=ON` and a separate build directory and SDKCONFIG.
+The default `BSP_M3_HS_CONTROLLER=n` preserves FLX4 on USB2 and storage on USB3.
+Board capabilities supply both roles to existing routing and recovery; neither
+controller nor storage bypasses direct-root checks. USB audio remains off.
+This variant requires its own storage throughput, audio/UI, load and reconnect
+qualification. The prior FLX4 topology/soak does not qualify it.
+
+Example from the M3 project directory (PowerShell):
+
+```powershell
+idf.py -B build_s2_hs -DPAJONIIIR_S2_HS_EXPERIMENT=ON -DSDKCONFIG="$PWD/../../.cache/s2-mk3/sdkconfig-s2-hs" reconfigure build
+```
+
+Use an absent/new SDKCONFIG or explicitly enable the experiment in that isolated
+configuration. Configure fails if the requested experiment is not actually on.
+
+### Controls still to qualify
+
 - Mixer and tempo use 7-bit CC values; current semantic mixer/tempo consumers
   expect 14-bit values. Mapping these directly with `cc7_abs` would give the
   wrong range. v91 supports `cc7_to14` scaling (v3/v4), but this fixture still

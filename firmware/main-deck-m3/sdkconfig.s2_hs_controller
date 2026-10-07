@@ -1,0 +1,3 @@
+# Experimental controller on USB3 (HS), MSC on USB2 (FS).
+# Use a separate build directory and SDKCONFIG; never overwrite the FLX4 default.
+CONFIG_BSP_M3_HS_CONTROLLER=y

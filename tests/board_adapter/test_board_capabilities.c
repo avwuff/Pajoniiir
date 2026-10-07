@@ -13,7 +13,11 @@ int main(void)
     assert(m->display_framebuffers == 2);
     assert(a->display_framebuffers == 1 && b->display_framebuffers == 1);
     assert(m->fixed_output_sample_rate == 48000 && m->pcm5102a && m->wifi && !m->ethernet);
+#if defined(CONFIG_BSP_M3_HS_CONTROLLER) && CONFIG_BSP_M3_HS_CONTROLLER
+    assert(m->storage_root == 1 && m->controller_root == 0 && m->fs_phy_index == 0);
+#else
     assert(m->storage_root == 0 && m->controller_root == 1 && m->fs_phy_index == 0);
+#endif
     assert(m->hosted_release_on_stop && m->keylock_dense_correlation);
     assert(m->wifi_apsta && !m->wifi_wpa3_transition);
     assert(strcmp(m->project, a->project) && strcmp(m->project, b->project));

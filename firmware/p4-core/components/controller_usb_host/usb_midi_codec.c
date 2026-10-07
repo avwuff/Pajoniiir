@@ -115,6 +115,13 @@ bool usb_midi_find_streaming_endpoints(const uint8_t *config,
     for (size_t offset = config[0]; offset + 2u <= total;) {
         const uint8_t length = config[offset];
         const uint8_t type = config[offset + 1u];
+        /* Accept a zero-filled tail only after a complete MIDI endpoint pair.
+         * Never skip malformed descriptors, nonzero tails or partial streams. */
+        if (length == 0u && candidate && have_in && have_out) {
+            for (size_t tail = offset; tail < total; ++tail)
+                if (config[tail] != 0u) return false;
+            break;
+        }
         if (length < 2u || offset + length > total) {
             return false;
         }

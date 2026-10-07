@@ -3,6 +3,13 @@ cmake_minimum_required(VERSION 3.22)
 include("${CMAKE_CURRENT_LIST_DIR}/../p4-core/cmake/project_version.cmake")
 pajoniiir_resolve_version("M3-*")
 
+if(PAJONIIIR_S2_HS_EXPERIMENT)
+    if(NOT SDKCONFIG_DEFAULTS)
+        set(SDKCONFIG_DEFAULTS "${CMAKE_CURRENT_LIST_DIR}/sdkconfig.defaults")
+    endif()
+    list(APPEND SDKCONFIG_DEFAULTS "${CMAKE_CURRENT_LIST_DIR}/sdkconfig.s2_hs_controller")
+endif()
+
 set(EXTRA_COMPONENT_DIRS
     "${CMAKE_CURRENT_LIST_DIR}/../p4-core/components"
     "${CMAKE_CURRENT_LIST_DIR}/../boards/m3"
@@ -32,6 +39,9 @@ if(PAJONIIIR_LINK_EXPERIMENT)
 endif()
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 project(main-deck-m3)
+if(PAJONIIIR_S2_HS_EXPERIMENT AND NOT CONFIG_BSP_M3_HS_CONTROLLER)
+    message(FATAL_ERROR "S2 HS experiment requires its role-swap sdkconfig; use a separate SDKCONFIG")
+endif()
 if(NOT CONFIG_PAJONIIIR_BOARD_M3 OR CONFIG_PAJONIIIR_BOARD_JC1060)
     message(FATAL_ERROR "M3 project requires the isolated M3 board configuration")
 endif()

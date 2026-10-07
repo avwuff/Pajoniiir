@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "usb_midi_codec.h"
+#include "s2_mk3_descriptors.h"
 
 static unsigned s_tests_run;
 #define CHECK(expr) do { \
@@ -32,6 +33,18 @@ static const uint8_t s_interrupt[] = {
 int main(void)
 {
     usb_midi_endpoints_t endpoints;
+    CHECK(!usb_midi_find_streaming_endpoints(s2_mk3_fs, sizeof(s2_mk3_fs), &endpoints));
+    CHECK(usb_midi_find_streaming_endpoints(s2_mk3_hs, sizeof(s2_mk3_hs), &endpoints));
+    CHECK(endpoints.interface_num == 6 && endpoints.alternate_setting == 0);
+    CHECK(endpoints.in_ep_addr == 0x85 && endpoints.in_ep_mps == 512);
+    CHECK(endpoints.out_ep_addr == 0x05 && endpoints.out_ep_mps == 64);
+    uint8_t damaged_s2[sizeof(s2_mk3_hs)];
+    memcpy(damaged_s2, s2_mk3_hs, sizeof(damaged_s2));
+    damaged_s2[sizeof(damaged_s2) - 1u] = 1u;
+    CHECK(!usb_midi_find_streaming_endpoints(damaged_s2, sizeof(damaged_s2), &endpoints));
+    memcpy(damaged_s2, s2_mk3_hs, sizeof(damaged_s2));
+    damaged_s2[298] = 0x05; /* OUT twice: zero padding cannot hide missing IN. */
+    CHECK(!usb_midi_find_streaming_endpoints(damaged_s2, sizeof(damaged_s2), &endpoints));
     CHECK(usb_midi_find_streaming_endpoints(s_bulk, sizeof(s_bulk),
                                             &endpoints));
     CHECK(endpoints.interface_num == 3u);

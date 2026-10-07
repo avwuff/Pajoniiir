@@ -47,6 +47,24 @@ must not be attributed to the controller. S2 reconnect and full descriptor
 interpretation remain pending. This diagnostic image has no new audio/UI soak
 or production acceptance. Other board builds and hosted CI were not run.
 
+### Descriptor result and selected experiment
+
+Fresh diagnostic reconnect snapshots identify `17CC:1710`, `bcdDevice=0037`,
+one configuration. FS has audio and HID, no MIDI interface. HS exposes Audio
+class / MIDIStreaming subclass on interface 6, IN `85` (512-byte MPS), OUT `05`
+(64-byte MPS), followed by eight zero bytes inside its declared 318-byte length.
+The existing parser rejected those zeros after otherwise valid MIDI endpoints.
+Actual 221/318-byte captures are preserved in the host fixture header;
+acceptance of the HS bytes and rejection of nonzero padding/missing IN pass.
+
+The operator explicitly chose S2 USB3 + storage USB2 for a separate experimental
+M3 build. `BSP_M3_HS_CONTROLLER` defaults off; when enabled, only M3 board USB
+roles swap. Existing routing and recovery continue using board capabilities.
+The variant uses an isolated SDKCONFIG/build directory, keeps PCM5102A MAIN and
+USB audio disabled in the S2 profile. Prior production default and its physical
+acceptance are retained, not reassigned to this experiment. Variant installation
+and physical gates are pending.
+
 ## Bench isolation
 
 The M3 timing soak uses the exact clean `fb5cbca13f33d21dfb4e16e0ba667c340399eb0c`
