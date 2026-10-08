@@ -238,6 +238,27 @@ unavailable. `USB_HOST_DIAGNOSTIC_HS_ONLY` defaults off. The M3 CMake option
 SDKCONFIG. This isolates the second host's activity; it is not a product build
 or playback qualification. Build/installation/retest remain pending.
 
+HS-only clean source `378825576fcab75248096b8341d754fbd6d4390d` passes the
+full default host suite, clean isolated `build_s2_hs_only` IDF 6.0.2 build,
+unchanged dependency lock and signed packaging. The preceding host attempt
+on `5f50ec77` stopped on a literal FS PHY-default lint; explicit default
+initializers were restored and the complete suite rerun successfully.
+Local OTA HTTP 200 installed `M3-dev-g378825576fca`, VALID on `ota_0`,
+matching ELF `1e7cb2c72503a03cba24e193cd11334872126a0c00c806b56ff0212f2fcfc4f7`.
+Image: 2,576,224 bytes, SHA-256
+`985410515e89261f11035653db8ec89fa94bad07a861b99fdee28d5a4b026076`.
+Bundle: 2,576,412 bytes, SHA-256
+`e7cb49ee98c790d131df29a3be9d9e3d1bf4eabaefc68729787b3a26056b877d`.
+Runtime confirms peripheral map 1, requested power mask 1, FS PHY override
+false, host ready, zero recovery requests and storage unmounted. No devices
+had enumerated in the first snapshot; descriptor API HTTP 503 is expected
+without a last probe and does not invalidate the separately verified OTA.
+The install wrapper exited on that optional follow-up request after saving
+exact-image VALID evidence. Reconnect/physical outcome remains pending.
+Evidence: `hs-only-ota-install.json`, `status-s2-hs-only-installed.json`;
+package `releases/m3-s2-hs-only-37882557/`. The operator was also asked for
+the M3 5-V source/current specification; no power diagnosis is inferred yet.
+
 The M3 timing soak uses the exact clean `fb5cbca13f33d21dfb4e16e0ba667c340399eb0c`
 image with FLX4 on USB2, storage on USB3, PCM5102A MAIN and FLX4 headphones.
 During that soak, keep the S2 on a separate PC USB port. Do not change the M3
