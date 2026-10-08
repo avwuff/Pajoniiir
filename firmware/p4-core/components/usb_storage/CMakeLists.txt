@@ -23,4 +23,5 @@ idf_component_register(
 # stay enabled everywhere else in the system.
 target_link_options(${COMPONENT_LIB} INTERFACE
     "-Wl,--wrap=usb_dwc_hal_chan_decode_intr"
-    "-Wl,--wrap=usb_dwc_hal_decode_intr")
+    "-Wl,--wrap=usb_dwc_hal_decode_intr"
+    "-Wl,--wrap=usb_dwc_hal_chan_activate")

@@ -51,6 +51,37 @@
 #include "usb_bus_trace.h"
 #include "sdkconfig.h"
 
+void __real_usb_dwc_hal_chan_activate(usb_dwc_hal_chan_t *chan, void *list,
+                                    int length, int start);
+void __wrap_usb_dwc_hal_chan_activate(usb_dwc_hal_chan_t *chan, void *list,
+                                    int length, int start)
+{
+#if CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC && CONFIG_USB_HOST_DIAGNOSTIC_BUS_TRACE
+    /* Capture before activation, publish only after the channel is enabled.
+     * HFNUM: low 16 bits are the microframe number, upper bits time remaining.
+     * Kind 3 event=start index, intr=HFNUM. This is evidence, not recovery.
+     * HCD serializes activation and interrupt decoding under its own lock. */
+    usb_dwc_dev_t *dev = USB_DWC_LL_GET_HW(0);
+    const bool hs_out_isoc = chan->regs == &dev->host_chans[chan->flags.chan_idx] &&
+        length == 64 && ((chan->regs->hcchar_reg.val >> 18) & 3u) == 1u &&
+        !(chan->regs->hcchar_reg.val & (1u << 15));
+    const uint32_t frame = hs_out_isoc ? dev->hfnum_reg.val : 0u;
+#endif
+    __real_usb_dwc_hal_chan_activate(chan, list, length, start);
+#if CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC && CONFIG_USB_HOST_DIAGNOSTIC_BUS_TRACE
+    const uint32_t lead = ((uint32_t)start - (frame & 63u)) & 63u;
+    if (hs_out_isoc && (lead == 0u || lead > 32u)) {
+        const usb_bus_trace_event_t event = {
+            .time_ms = (uint32_t)(esp_timer_get_time() / 1000),
+            .kind = USB_BUS_TRACE_ISOC_LATE_START, .intr = frame,
+            .hprt = dev->hprt_reg.val, .hcchar = chan->regs->hcchar_reg.val,
+            .hctsiz = chan->regs->hctsiz_reg.val, .event = (uint32_t)start,
+        };
+        usb_bus_trace_record(0u, &event);
+    }
+#endif
+}
+
 /* Capture only port transitions and channel errors. Register reads have no
  * side effects; the original decoder remains the sole interrupt acknowledger. */
 usb_dwc_hal_port_event_t __real_usb_dwc_hal_decode_intr(usb_dwc_hal_context_t *hal);

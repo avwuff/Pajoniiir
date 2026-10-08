@@ -5,7 +5,8 @@
 
 #define USB_BUS_TRACE_ROOTS 2u
 #define USB_BUS_TRACE_CAPACITY 8u
-enum { USB_BUS_TRACE_CHANNEL_ERROR = 1u, USB_BUS_TRACE_PORT_EVENT = 2u };
+enum { USB_BUS_TRACE_CHANNEL_ERROR = 1u, USB_BUS_TRACE_PORT_EVENT = 2u,
+       USB_BUS_TRACE_ISOC_LATE_START = 3u };
 typedef struct {
     uint32_t time_ms, kind, intr, hprt, hcchar, hctsiz, event;
 } usb_bus_trace_event_t;

@@ -330,6 +330,23 @@ configuration now pins that installer/daemon to core 1; batch size, priorities,
 profile and production defaults are retained. This is a hypothesis test, not
 an accepted production fix. Dense playback and listening are pending.
 
+Core-1 candidate `7dbf9acb6c2258213b750c58afa728d29caa353c` also passed
+full host/M3 build/package checks and is clean/VALID in ota_0. The playback
+window stopped on a new ISO loss after 11.743 s; both decks are verified stopped.
+Evidence: `playback-20261008T211420Z`. IRQ placement alone is insufficient.
+
+The next diagnostic wraps the actual HAL channel activation without changing
+its arguments or timing policy. With HS diagnostics and bus trace enabled,
+it samples raw HFNUM before activation and publishes a bounded kind-3 trace
+only after activation when the planned 64-entry OUT descriptor start is at
+the current microframe or appears behind it. `intr` is HFNUM (microframe and
+remaining ticks), `event` is the planned start index, and the other fields keep
+register values. This is scheduler evidence, not a new recovery/PASS rule.
+The production wrapper regression executes its actual body against mocked
+registers and verifies pre-activation sampling, post-activation publication,
+and exclusion of IN, bulk and the other root. Production configurations call
+the original HAL directly through the wrapper without diagnostic work.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.

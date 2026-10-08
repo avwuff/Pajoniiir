@@ -10,4 +10,7 @@ config CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC
         Does not bypass startup health or change the FS/FLX4 audio path.
         Diagnostic memory snapshots omit internal/DMA largest-block walks
         (reported as null); free and low-water counters remain available.
+        Installs USB interrupts on core 1. With bus trace enabled, kind 3
+        records suspect HS OUT start indices after channel activation;
+        intr is raw HFNUM and event is the descriptor start index.
 endmenu

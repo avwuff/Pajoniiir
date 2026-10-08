@@ -3972,6 +3972,8 @@ Invoke-Step -Name "run USB control completion ownership regression" -WorkingDire
     -Executable $pythonSource -Arguments @("tests/controller_usb_host/test_control_retirement.py")
 Invoke-Step -Name "run controller audio failure isolation regression" -WorkingDirectory $RepoRoot `
     -Executable $pythonSource -Arguments @("tests/controller_usb_host/test_audio_fault_isolation.py")
+Invoke-Step -Name "run production HS scheduler capture regression" -WorkingDirectory $RepoRoot `
+    -Executable $pythonSource -Arguments @("tests/controller_usb_host/test_hs_start_capture.py")
 if (-not $pythonSource) { throw "Python is required for firmware lifecycle regression" }
 Invoke-Step -Name "run firmware lifecycle regression" -WorkingDirectory $RepoRoot `
     -Executable $pythonSource -Arguments @("tests/audio_fw_runtime/test_firmware_lifecycle.py")
