@@ -576,9 +576,10 @@ static esp_err_t probe_device(controller_state_t *state, uint8_t address)
 
     const bool qualified_flx4 = state->identity.vid == FLX4_USB_VID &&
                                state->identity.pid == FLX4_USB_PID;
-    if (state->identity.direct_root_child && info.speed == USB_SPEED_FULL) {
+    if (state->identity.direct_root_child &&
+        (info.speed == USB_SPEED_FULL || info.speed == USB_SPEED_HIGH)) {
         (void)controller_usb_audio_stream_set_policy(qualified_flx4,
-                    controller_usb_audio_stream_consumer_paced());
+                    controller_usb_audio_stream_consumer_paced(), info.speed == USB_SPEED_HIGH);
         const esp_err_t audio_rc = controller_usb_audio_stream_start(
             state->client, state->device, (const uint8_t *)config_desc,
             config_desc->wTotalLength, xTaskGetCurrentTaskHandle(),

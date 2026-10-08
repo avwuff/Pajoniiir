@@ -12,7 +12,8 @@ gcc -std=c11 -O2 -Wall -Wextra -Wpedantic -Werror `
     (Join-Path $Component "controller_audio_ring.c") `
     (Join-Path $Component "controller_audio_resampler.c") `
     (Join-Path $Component "flx4_uac_packetizer.c") `
-    (Join-Path $Component "flx4_uac_descriptors.c") -o $Target
+    (Join-Path $Component "flx4_uac_descriptors.c") `
+    (Join-Path $Component "controller_uac2.c") -o $Target
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 & $Target
 exit $LASTEXITCODE

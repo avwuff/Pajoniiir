@@ -106,8 +106,8 @@ int cp_profile_parse(const uint8_t *data, size_t len, cp_profile_t *out)
         for (int b = 0; b < 4; b++) {
             e->lut[b] = (int8_t)p[12 + b];
         }
-        if (e->raw_type > CP_IN_NOTE_SELECT ||
-            (version < 4 && e->raw_type == CP_IN_NOTE_SELECT) ||
+        if (e->raw_type > CP_IN_CC7_TO14_INVERTED ||
+            (version < 4 && e->raw_type >= CP_IN_NOTE_SELECT) ||
             (version == CP_VERSION_LEGACY && e->raw_type > CP_IN_NOTE_STATE_PAIR)) {
             return CP_ERR_BOUNDS;
         }
@@ -116,7 +116,7 @@ int cp_profile_parse(const uint8_t *data, size_t len, cp_profile_t *out)
              e->flags != 0 || e->press_mask != 0 || e->base_value < 0)) {
             return CP_ERR_BOUNDS;
         }
-        if (e->raw_type == CP_IN_CC7_TO14 &&
+        if ((e->raw_type == CP_IN_CC7_TO14 || e->raw_type == CP_IN_CC7_TO14_INVERTED) &&
             ((e->match_status & 0xF0) != 0xB0 || e->semantic_type != 0x03 ||
              e->pair_slot != CP_PAIR_SLOT_NONE ||
              (e->flags & ~CP_IN_FLAG_REPLAY) != 0)) {
@@ -254,6 +254,7 @@ bool cp_runtime_process(const cp_profile_t *profile, cp_runtime_t *rt,
         }
         case CP_IN_CC7_ABS:
         case CP_IN_CC7_TO14:
+        case CP_IN_CC7_TO14_INVERTED:
             out->value = (int16_t)(data2 & 0x7F);
             if (e->raw_type == CP_IN_CC7_TO14) {
                 /* Piecewise integer scaling preserves center detents and both
@@ -261,6 +262,12 @@ bool cp_runtime_process(const cp_profile_t *profile, cp_runtime_t *rt,
                 int32_t v = out->value;
                 out->value = (int16_t)(v <= 64 ? v * 128 :
                                       8192 + ((v - 64) * 8191 + 31) / 63);
+            } else if (e->raw_type == CP_IN_CC7_TO14_INVERTED) {
+                /* Preserve the physical center detent as exactly 8192. */
+                int32_t v = out->value;
+                out->value = (int16_t)(v <= 64 ?
+                    8192 + ((64 - v) * 8191 + 32) / 64 :
+                    8192 - ((v - 64) * 8192 + 31) / 63);
             }
             rt->cc7_value[i] = out->value;
             rt->cc7_valid[i] = true;
@@ -313,7 +320,8 @@ size_t cp_runtime_emit_snapshot(const cp_profile_t *profile,
                 return count;
             }
             count++;
-        } else if (e->raw_type == CP_IN_CC7_ABS || e->raw_type == CP_IN_CC7_TO14) {
+        } else if (e->raw_type == CP_IN_CC7_ABS || e->raw_type == CP_IN_CC7_TO14 ||
+                   e->raw_type == CP_IN_CC7_TO14_INVERTED) {
             if (!rt->cc7_valid[i]) {
                 continue;
             }

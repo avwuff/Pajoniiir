@@ -7,6 +7,7 @@ unsigned review_ticks;
  * section hook deterministically pauses the producer before ring publication. */
 #define CONTROLLER_USB_AUDIO_PC_TEST
 #include "controller_usb_audio_stream.c"
+#include "fixtures/s2_mk3_hs_config.h"
 
 static unsigned packet_detail_count;
 static uint32_t packet_details[4][4];
@@ -67,7 +68,7 @@ static void start(void)
     const uint32_t previous_epoch =
         __atomic_load_n(&s_stream_epoch, __ATOMIC_ACQUIRE);
     assert(controller_usb_audio_stream_is_quiesced());
-    assert(controller_usb_audio_stream_set_policy(true, false) == ESP_OK);
+    assert(controller_usb_audio_stream_set_policy(true, false, false) == ESP_OK);
     assert(controller_usb_audio_stream_start((void *)1, (void *)2,
         descriptor, sizeof(descriptor), (void *)3, 10, 5) == ESP_OK);
     assert(s_configuring && !s_streaming);
@@ -104,6 +105,10 @@ static void retire_transfers(void)
             s_isoc[i]->status = USB_TRANSFER_STATUS_CANCELED;
             isoc_callback(s_isoc[i]);
         }
+    }
+    if (s_feedback_active) {
+        s_feedback->status = USB_TRANSFER_STATUS_CANCELED;
+        feedback_callback(s_feedback);
     }
 }
 
@@ -202,7 +207,7 @@ static void test_generic_pacing_and_timeout(void)
     d[2] = sizeof(d);
     d[23] = 3; d[24] = 24; d[26] = 0x80; d[27] = 0xbb;
     d[32] = 9; d[33] = 0x40; d[34] = 2;
-    assert(controller_usb_audio_stream_set_policy(false, true) == ESP_OK);
+    assert(controller_usb_audio_stream_set_policy(false, true, false) == ESP_OK);
     assert(controller_usb_audio_stream_start((void *)1, (void *)2,
         d, sizeof(d), (void *)3, 10, 5) == ESP_OK);
     s_control->status = USB_TRANSFER_STATUS_COMPLETED;
@@ -256,7 +261,7 @@ static void test_generic_pacing_and_timeout(void)
     assert(controller_usb_audio_stream_write(pcm, pcm, 256, 48000) == ESP_ERR_INVALID_STATE);
     retire_transfers();
     assert(controller_usb_audio_stream_poll_cleanup());
-    assert(controller_usb_audio_stream_set_policy(false, true) == ESP_OK);
+    assert(controller_usb_audio_stream_set_policy(false, true, false) == ESP_OK);
     assert(controller_usb_audio_stream_start((void *)1, (void *)2,
         d, sizeof(d), (void *)3, 10, 5) == ESP_OK);
     review_ticks += 1000;
@@ -267,7 +272,7 @@ static void test_generic_pacing_and_timeout(void)
     control_callback(s_control);
     assert(controller_usb_audio_stream_poll_cleanup());
     assert(controller_usb_audio_stream_is_quiesced());
-    assert(controller_usb_audio_stream_set_policy(true, false) == ESP_OK);
+    assert(controller_usb_audio_stream_set_policy(true, false, false) == ESP_OK);
 }
 
 static void test_generic_fixed_16bit(uint32_t rate)
@@ -279,7 +284,7 @@ static void test_generic_fixed_16bit(uint32_t rate)
     d[2] = sizeof(d); d[32] = 9;
     d[26] = (uint8_t)rate; d[27] = (uint8_t)(rate >> 8); d[28] = 0;
     d[33] = 0x80; d[34] = 1; /* 384 bytes covers both rates. */
-    assert(controller_usb_audio_stream_set_policy(false, true) == ESP_OK);
+    assert(controller_usb_audio_stream_set_policy(false, true, false) == ESP_OK);
     flx4_uac_playback_format_t format;
     assert(!select_stream_format(descriptor, sizeof(descriptor), &format));
     d[sizeof(descriptor) + 5u] = 3; /* IEEE float is not integer PCM. */
@@ -299,7 +304,129 @@ static void test_generic_fixed_16bit(uint32_t rate)
     controller_usb_audio_stream_request_stop(true);
     retire_transfers();
     assert(controller_usb_audio_stream_poll_cleanup());
-    assert(controller_usb_audio_stream_set_policy(true, false) == ESP_OK);
+    assert(controller_usb_audio_stream_set_policy(true, false, false) == ESP_OK);
+}
+
+static void test_uac2(void)
+{
+    flx4_uac_playback_format_t fmt;
+    assert(controller_uac2_parse(s2_hs_config, sizeof(s2_hs_config), &fmt));
+    assert(fmt.uac2 && fmt.interface_num == 1 && fmt.alternate_setting == 1);
+    assert(fmt.endpoint_addr == 1 && fmt.max_packet_size == 112);
+    assert(fmt.feedback_endpoint == 0x81 && fmt.feedback_interval == 4);
+    assert(fmt.clock_source == 0x11 && fmt.control_interface == 0);
+    assert(fmt.channels == 4 && fmt.bits_per_sample == 24 && fmt.bytes_per_sample == 4);
+    for (size_t n = 0; n < sizeof(s2_hs_config); ++n)
+        assert(!controller_uac2_parse(s2_hs_config, n, &fmt));
+    uint8_t corrupt[sizeof(s2_hs_config)];
+    memcpy(corrupt, s2_hs_config, sizeof(corrupt)); corrupt[sizeof(corrupt)-1] = 1;
+    assert(!controller_uac2_parse(corrupt, sizeof(corrupt), &fmt));
+    memcpy(corrupt, s2_hs_config, sizeof(corrupt));
+    for (size_t off = 9; corrupt[off]; off += corrupt[off]) {
+        if (corrupt[off+1] == 5 && corrupt[off+2] == 0x81) {
+            corrupt[off+3] = 1; break; /* Missing explicit feedback. */
+        }
+    }
+    assert(!controller_uac2_parse(corrupt, sizeof(corrupt), &fmt));
+    const uint8_t range[] = {1,0, 0x80,0xbb,0,0, 0x80,0xbb,0,0, 0,0,0,0};
+    assert(controller_uac2_range_supports(range, sizeof(range), 48000));
+    assert(!controller_uac2_range_supports(range, sizeof(range), 44100));
+    assert(!controller_uac2_range_supports(range, sizeof(range)-1, 48000));
+    uint32_t feedback;
+    const uint8_t nominal[] = {0,0,6,0};
+    assert(controller_uac2_feedback(nominal, 4, 48000, &feedback) && feedback == 6u << 16);
+    assert(!controller_uac2_feedback(nominal, 3, 48000, &feedback));
+    const uint8_t wrong[] = {0xff,0xff,0xff,0xff};
+    assert(!controller_uac2_feedback(wrong, 4, 48000, &feedback));
+    const int16_t values[] = {32767, -32768, 1, -1};
+    const uint8_t expected[] = {0,0,0xff,0x7f, 0,0,0,0x80, 0,0,1,0, 0,0,0xff,0xff};
+    uint8_t packed[16];
+    assert(controller_uac2_pack_pcm(packed, 16, values, 1, 4, 24));
+    assert(memcmp(packed, expected, 16) == 0);
+    assert(!controller_uac2_pack_pcm(packed, 15, values, 1, 4, 24));
+
+    assert(controller_usb_audio_stream_is_quiesced());
+    assert(controller_usb_audio_stream_set_policy(false, false, false) == ESP_OK);
+    assert(!select_stream_format(s2_hs_config, sizeof(s2_hs_config), &fmt));
+    assert(controller_usb_audio_stream_set_policy(false, false, true) == ESP_OK);
+    assert(controller_usb_audio_stream_start((void *)1, (void *)2,
+        s2_hs_config, sizeof(s2_hs_config), (void *)3, 10, 5) == ESP_OK);
+    assert(s_control_step == 4 && s_configuring);
+    usb_setup_packet_t *setup = (usb_setup_packet_t *)s_control->data_buffer;
+    assert(setup->bmRequestType == 0xa1 && setup->bRequest == 2 &&
+           setup->wValue == 0x0100 && setup->wIndex == 0x1100 && setup->wLength == 2);
+    memcpy(s_control->data_buffer + 8, range, 2);
+    s_control->actual_num_bytes = 10;
+    s_control->status = USB_TRANSFER_STATUS_COMPLETED;
+    control_callback(s_control);
+    assert(s_control_step == 7 && setup->wLength == sizeof(range));
+    memcpy(s_control->data_buffer + 8, range, sizeof(range));
+    s_control->actual_num_bytes = 8 + sizeof(range);
+    s_control->status = USB_TRANSFER_STATUS_COMPLETED;
+    control_callback(s_control);
+    assert(s_control_step == 5 && setup->wLength == 4 && setup->bmRequestType == 0x21);
+    assert(s_control->data_buffer[8] == 0x80 && s_control->data_buffer[9] == 0xbb);
+    s_control->actual_num_bytes = 12;
+    control_callback(s_control);
+    assert(s_control_step == 6 && setup->bmRequestType == 0xa1 && setup->bRequest == 1);
+    memcpy(s_control->data_buffer + 8, range + 2, 4);
+    s_control->actual_num_bytes = 12;
+    control_callback(s_control);
+    assert(s_control_step == 8 && setup->wValue == 0x0200 && setup->wLength == 1);
+    s_control->data_buffer[8] = 1;
+    s_control->actual_num_bytes = 9;
+    control_callback(s_control);
+    assert(s_control_step == 1 && setup->bRequest == 11);
+    s_control->actual_num_bytes = 8;
+    control_callback(s_control);
+    assert(s_streaming && s_feedback_active && s_target_rate == 48000);
+    for (unsigned i = 0; i < STREAM_TRANSFER_COUNT; ++i) {
+        assert(s_isoc[i]->num_isoc_packets == 32 && s_isoc[i]->num_bytes == 3072);
+        for (unsigned p = 0; p < 32; ++p) assert(s_isoc[i]->isoc_packet_desc[p].num_bytes == 96);
+    }
+    memcpy(s_feedback->data_buffer, nominal, 4);
+    s_feedback->status = USB_TRANSFER_STATUS_COMPLETED;
+    s_feedback->isoc_packet_desc[0].status = USB_TRANSFER_STATUS_COMPLETED;
+    s_feedback->isoc_packet_desc[0].actual_num_bytes = 4;
+    uint32_t before = s_feedback_updates;
+    feedback_callback(s_feedback);
+    assert(s_feedback_active && s_feedback_updates == before + 1);
+    memcpy(s_feedback->data_buffer, wrong, 4);
+    before = s_feedback_invalid;
+    feedback_callback(s_feedback);
+    assert(s_feedback_active && s_feedback_invalid == before + 1);
+    /* Fractional HS feedback must carry into future packets without bias. */
+    s_feedback_q16 = (6u << 16) + 32768u;
+    s_feedback_phase = 0;
+    assert(prepare_and_submit(s_isoc[0]) == ESP_OK);
+    for (unsigned p = 0; p < 32; ++p)
+        assert(s_isoc[0]->isoc_packet_desc[p].num_bytes == (p % 2 ? 112 : 96));
+    review_ticks += 500;
+    assert(!controller_usb_audio_stream_poll_cleanup() && s_faulted);
+    retire_transfers(); finish_cleanup();
+    assert(controller_usb_audio_stream_is_quiesced() && !s_feedback);
+
+    /* Malformed range cannot reach SET_CUR, stream priming or feedback. */
+    assert(controller_usb_audio_stream_start((void *)1, (void *)2,
+        s2_hs_config, sizeof(s2_hs_config), (void *)3, 10, 5) == ESP_OK);
+    s_control->actual_num_bytes = 9;
+    s_control->status = USB_TRANSFER_STATUS_COMPLETED;
+    control_callback(s_control);
+    assert(s_faulted && !s_streaming && !s_feedback);
+    finish_cleanup();
+    assert(controller_usb_audio_stream_is_quiesced());
+    /* An explicitly invalid clock cannot start the endpoints. */
+    assert(controller_usb_audio_stream_start((void *)1, (void *)2,
+        s2_hs_config, sizeof(s2_hs_config), (void *)3, 10, 5) == ESP_OK);
+    s_control_step = 8;
+    s_control->data_buffer[8] = 0;
+    s_control->actual_num_bytes = 9;
+    s_control->status = USB_TRANSFER_STATUS_COMPLETED;
+    control_callback(s_control);
+    assert(s_faulted && !s_streaming && !s_feedback);
+    finish_cleanup();
+    assert(controller_usb_audio_stream_is_quiesced());
+    puts("PASS UAC2 captured HS descriptor, clock RANGE/CUR, feedback, packing and teardown");
 }
 
 int main(void)
@@ -360,6 +487,7 @@ int main(void)
     test_generic_pacing_and_timeout();
     test_generic_fixed_16bit(44100);
     test_generic_fixed_16bit(48000);
+    test_uac2();
     puts("PASS UAC 16/24-bit, consumer pacing, bounded timeout, ownership, reconnect and channel routing");
     return 0;
 }

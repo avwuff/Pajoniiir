@@ -1,5 +1,35 @@
 # Traktor Kontrol S2 MK3 profile preparation
 
+## Performance candidate implementation (2026-10-08)
+
+The [separate performance profile](../../controllers/ni_traktor_s2_mk3_full/README.md)
+now contains 80 inputs and 26 outputs in a 1624-byte S3CP v4 binary. The basic
+928-byte profile remains unchanged. Source-backed mixer, inverted pitch, jog,
+shifted actions, Hot Cue LEDs and Note On meters use the common runtime.
+Compiler/parser/storage validators support raw 10 with preserved v2/v3 bytes.
+
+The shared USB audio runtime adds bounded descriptor-driven HS UAC2:
+four-channel 48-kHz PCM, direct programmable clock RANGE/CUR/validity checks,
+explicit feedback, fractional packetization, 24-in-32 packing and callback-owned
+teardown. FS/FLX4 regressions remain mandatory. S2 headphone output, jog
+sensitivity and newly mapped physical controls are NOT RUN on this candidate.
+
+At the operator's request, physical checks are combined: one stopped-controls
+batch, then one short dual-playback/transport/loop/MAIN/headphone batch. Only
+failed or ambiguous checks are repeated. Final soak is last. Experimental
+USB roles remain S2 USB3/HS, storage USB2/FS; production FLX4 defaults remain.
+Prior basic-profile physical results below do not qualify this new image.
+
+Software verification: the complete default P4 host suite exited 0, including
+the new UAC2 regression and both S2 profile navigation fixtures. Focused profile
+tests validate all 128 mixer/pitch values, replay exclusion for pitch, source
+LED routing and malformed raw-10 rejection by both parser and upload validator.
+Focused audio tests cover the captured configuration, clock RANGE/CUR/validity,
+fractional feedback, PCM packing, stale feedback and ownership during teardown.
+FLX4 golden parity remains unchanged. Profile regeneration is byte-identical;
+documentation integrity and whitespace checks pass. M3 build/install and
+combined physical acceptance are pending at this source checkpoint.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.

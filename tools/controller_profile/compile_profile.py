@@ -49,6 +49,7 @@ RAW_CC7_ABS = 6
 RAW_NOTE_STATE_PAIR = 7
 RAW_CC7_TO14 = 8
 RAW_NOTE_SELECT = 9
+RAW_CC7_TO14_INVERTED = 10
 
 RAW_TYPE_NAMES = {
     RAW_NOTE_BUTTON: "note_button",
@@ -61,6 +62,7 @@ RAW_TYPE_NAMES = {
     RAW_NOTE_STATE_PAIR: "note_state_pair",
     RAW_CC7_TO14: "cc7_to14",
     RAW_NOTE_SELECT: "note_select",
+    RAW_CC7_TO14_INVERTED: "cc7_to14_inverted",
 }
 
 FLAG_REPLAY = 0x0001
@@ -164,6 +166,7 @@ LED_NAME_BY_ID = {v: k for k, v in LED_IDS.items()}
 for bank, (first, count) in LED_BANKS.items():
     for i in range(count):
         LED_NAME_BY_ID[first + i] = "%s[%d]" % (bank, i)
+        LED_IDS["%s[%d]" % (bank, i)] = first + i
 
 
 def num(v):
@@ -305,10 +308,11 @@ def compile_inputs(inputs):
             entries.append(Entry(num(item["status"]), num(item["lsb"]),
                                  RAW_CC14_LSB, t, i, pair_slot=slot,
                                  flags=flags))
-        elif kind in ("cc7_abs", "cc7_to14"):
+        elif kind in ("cc7_abs", "cc7_to14", "cc7_to14_inverted"):
             t, i = resolve_event(item["event"])
-            raw = RAW_CC7_TO14 if kind == "cc7_to14" else RAW_CC7_ABS
-            if raw == RAW_CC7_TO14 and (t != TYPE_PITCH or
+            raw = {"cc7_abs": RAW_CC7_ABS, "cc7_to14": RAW_CC7_TO14,
+                   "cc7_to14_inverted": RAW_CC7_TO14_INVERTED}[kind]
+            if raw in (RAW_CC7_TO14, RAW_CC7_TO14_INVERTED) and (t != TYPE_PITCH or
                                         num(item["status"]) & 0xF0 != 0xB0):
                 raise ValueError("cc7_to14 requires a CC message and PITCH semantic")
             flags = FLAG_REPLAY if item.get("replay") else 0
@@ -360,7 +364,11 @@ def compile_outputs(outputs):
             continue
 
         led_id = LED_IDS[item["led"]]
-        out_kind = OUT_CC_VALUE if kind == "cc_value" else OUT_NOTE_ONOFF
+        out_kind = OUT_CC_VALUE if kind in ("cc_value", "note_velocity") else OUT_NOTE_ONOFF
+        if kind == "note_velocity":
+            statuses = item.get("deck_status", [item.get("status", 0)])
+            if any(num(status) & 0xF0 != 0x90 for status in statuses):
+                raise ValueError("note_velocity requires Note On output")
         off = num(item.get("off", 0x00))
         on = num(item.get("on", 0x7F))
         blink = num(item.get("blink", 0x7F))
@@ -427,7 +435,7 @@ def compile_profile(profile):
                          (profile_size, MAX_PROFILE_SIZE))
     crc = zlib.crc32(tail + body) & 0xFFFFFFFF
     version = S3CP_SCALED_VERSION if any(e.raw_type == RAW_CC7_TO14 for e in entries) else S3CP_VERSION
-    if sysex or flags & PF_FILTER_ALWAYS or any(e.raw_type == RAW_NOTE_SELECT for e in entries) or any(o.value_scale for o in outputs):
+    if sysex or flags & PF_FILTER_ALWAYS or any(e.raw_type >= RAW_NOTE_SELECT for e in entries) or any(o.value_scale for o in outputs):
         version = S3CP_EXTENDED_VERSION
     header = S3CP_MAGIC + struct.pack("<HHII", version, HEADER_SIZE,
                                       profile_size, crc) + tail

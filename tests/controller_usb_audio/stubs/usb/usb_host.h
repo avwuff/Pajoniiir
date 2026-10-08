@@ -17,7 +17,7 @@ typedef struct usb_transfer {
     uint8_t bEndpointAddress;
     int num_bytes, actual_num_bytes, status, num_isoc_packets;
     void (*callback)(struct usb_transfer *);
-    usb_isoc_packet_desc_t isoc_packet_desc[4];
+    usb_isoc_packet_desc_t isoc_packet_desc[64];
 } usb_transfer_t;
 #define USB_TRANSFER_STATUS_COMPLETED 0
 #define USB_TRANSFER_STATUS_CANCELED 1

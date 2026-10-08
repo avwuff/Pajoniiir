@@ -1,5 +1,11 @@
 # P4 post-release development plan
 
+The [S2 performance candidate](../controllers/ni_traktor_s2_mk3_full/README.md)
+uses the shared runtime for 80 inputs/26 outputs and experimental HS UAC2.
+Complete one combined stopped-control batch and one short dual-playback/audio
+batch; repeat only failures or ambiguous results. The final exact-image soak
+is last. Remaining unmapped controls and physical gates are explicitly recorded.
+
 Shared-core/M3 implementation is tracked in
 [the integration ledger](SHARED_P4_CORE_INTEGRATION.md). Portable code now lives
 under `firmware/p4-core`; hardware providers live under `firmware/boards`.

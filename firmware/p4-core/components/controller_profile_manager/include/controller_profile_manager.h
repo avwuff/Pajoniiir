@@ -44,7 +44,7 @@ extern "C" {
 #define CPM_MAX_OUTPUTS       160
 #define CPM_MAX_PAIR_SLOTS    40
 #define CPM_PAIR_SLOT_NONE    0xFF
-#define CPM_MAX_RAW_TYPE      9
+#define CPM_MAX_RAW_TYPE      10
 #define CPM_MAX_OUTPUT_KIND   1
 
 typedef struct {

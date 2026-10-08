@@ -24,5 +24,12 @@ try {
         & $exe
         if ($LASTEXITCODE -ne 0) { throw "Test failed: $name" }
     }
+    $FullExe = Join-Path $BuildDir "test_s2_full.exe"
+    $Manager = Join-Path $Components "controller_profile_manager"
+    & gcc @Common -DCONTROLLER_PROFILE_MANAGER_PC_TEST "-I$Manager/include" test_s2_full.c $ProfileSource `
+        (Join-Path $Manager "controller_profile_manager.c") -o $FullExe
+    if ($LASTEXITCODE -ne 0) { throw "S2 full profile build failed" }
+    & $FullExe
+    if ($LASTEXITCODE -ne 0) { throw "S2 full profile test failed" }
 } finally { Pop-Location }
 exit 0

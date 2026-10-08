@@ -36,10 +36,15 @@ typedef struct {
     uint32_t sample_rate;
     uint8_t bits_per_sample;
     bool consumer_paced;
+    bool high_speed;
+    uint8_t subslot_bytes;
+    uint32_t feedback_updates;
+    uint32_t feedback_invalid;
 } controller_usb_audio_stream_stats_t;
 
 /* Owner task only; only while quiesced. FLX4 preserves its qualified format/gain. */
-esp_err_t controller_usb_audio_stream_set_policy(bool qualified_flx4, bool consumer_paced);
+esp_err_t controller_usb_audio_stream_set_policy(bool qualified_flx4, bool consumer_paced,
+                                                 bool high_speed);
 esp_err_t controller_usb_audio_stream_set_pacing(bool consumer_paced);
 bool controller_usb_audio_stream_consumer_paced(void);
 bool controller_usb_audio_stream_needs_recovery(void);

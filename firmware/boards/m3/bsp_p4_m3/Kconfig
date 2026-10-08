@@ -6,8 +6,8 @@ config BSP_M3_HS_CONTROLLER
     help
         Opt-in USB role swap for controllers whose MIDI interface requires
         High Speed, including the captured S2 MK3. This is not the accepted
-        FLX4 production topology. Keep controller USB audio disabled and
-        qualify FS storage throughput and recovery separately.
+        FLX4 production topology. Descriptor-validated UAC2 is experimental;
+        qualify controller audio, FS storage throughput and recovery separately.
 
 config BSP_PCM5102A_MAIN_OUT
     bool "Enable PCM5102A main I2S output"

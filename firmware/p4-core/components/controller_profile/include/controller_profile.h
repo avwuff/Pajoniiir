@@ -51,6 +51,7 @@ typedef enum {
     CP_IN_NOTE_STATE_PAIR = 7,
     CP_IN_CC7_TO14 = 8, /* v3: 0/64/127 -> 0/8192/16383 */
     CP_IN_NOTE_SELECT = 9, /* v4: base_value on press; release ignored */
+    CP_IN_CC7_TO14_INVERTED = 10, /* v4: 0/64/127 -> 16383/8192/0 */
 } cp_raw_type_t;
 
 /* Input entry flags. */

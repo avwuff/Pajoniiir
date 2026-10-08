@@ -2,6 +2,12 @@
 
 Status: **current documentation authority, reconciled 2026-10-06**.
 
+The 2026-10-08 [S2 performance candidate](../controllers/ni_traktor_s2_mk3_full/README.md)
+documents source-backed mixer/pitch/jog/LED coverage, raw-10 inversion and
+experimental HS UAC2. The [S2 evidence record](validation/S2_MK3_PROFILE_PREPARATION_20261007.md)
+separates prior basic-profile acceptance from the new combined physical checks.
+Full controller/headphone acceptance and the final candidate soak remain open.
+
 ## Shared-core migration authority
 
 Canonical source is `dvucinozd/Pajoniiir`, branch `codex/shared-p4-core-m3`.

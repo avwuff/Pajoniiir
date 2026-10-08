@@ -1,5 +1,11 @@
 # P4 operation and release checklist
 
+For the [S2 performance candidate](../controllers/ni_traktor_s2_mk3_full/README.md),
+keep S2 on USB3 HS and the stick on USB2 FS. Combine stopped mixer/pitch/jog/LOAD
+checks, then dual transport/loop/MAIN/headphone checks into two short batches.
+Run the final exact-image soak last. Do not treat source mappings, host tests
+or descriptor negotiation as physical control/headphone acceptance.
+
 For the shared-core/M3 development branch, use the exact target identity and
 [integration gates](SHARED_P4_CORE_INTEGRATION.md). Existing physical records
 remain image-specific; successful builds do not qualify the new M3 target.

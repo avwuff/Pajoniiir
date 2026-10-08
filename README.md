@@ -14,6 +14,12 @@ common startup; the M3 entrypoint is `firmware/main-deck-m3`.
 See the [integration ledger](docs/SHARED_P4_CORE_INTEGRATION.md). This work does
 not change the published M2.5 release or its accepted hardware scope.
 
+The [S2 MK3 performance candidate](controllers/ni_traktor_s2_mk3_full/README.md)
+adds source-backed mixer/pitch/jog/LED mappings and experimental descriptor-driven
+HS UAC2. Its M3 experiment uses S2 on USB3 and storage on USB2. Physical checks
+are combined into short control/playback batches; final soak remains last.
+This does not replace FLX4 production defaults or establish S2 hardware acceptance.
+
 The M3 shared-core candidate uses `main-deck-m3`, a separate M3 version line and
 `/m3` OTA channel. Its initial wired migration preserves the existing partition
 layout and settings. Build verification does not qualify the new image on

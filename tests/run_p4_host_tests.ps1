@@ -2623,6 +2623,7 @@ $tests = @(
             "-I../../firmware/p4-core/components/service_log/include",
             "-o", "test_controller_usb_audio_stream.exe",
             "test_controller_usb_audio_stream.c",
+            "../../firmware/p4-core/components/controller_usb_audio/controller_uac2.c",
             "../../firmware/p4-core/components/controller_usb_audio/controller_audio_ring.c",
             "../../firmware/p4-core/components/controller_usb_audio/controller_audio_resampler.c",
             "../../firmware/p4-core/components/controller_usb_audio/flx4_uac_packetizer.c",

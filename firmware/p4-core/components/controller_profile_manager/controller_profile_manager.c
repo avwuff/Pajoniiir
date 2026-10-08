@@ -102,7 +102,7 @@ esp_err_t controller_profile_meta_parse(const uint8_t *data, size_t len,
          i++, entry += CPM_INPUT_ENTRY_SIZE) {
         uint8_t raw_type = entry[2];
         uint8_t pair_slot = entry[3];
-        if (raw_type > CPM_MAX_RAW_TYPE || (version < 4 && raw_type == 9) ||
+        if (raw_type > CPM_MAX_RAW_TYPE || (version < 4 && raw_type >= 9) ||
             (version == CPM_VERSION_LEGACY && raw_type > 7)) {
             return ESP_ERR_INVALID_ARG;
         }
@@ -112,7 +112,7 @@ esp_err_t controller_profile_meta_parse(const uint8_t *data, size_t len,
                              rd_u16(entry + 8) > 32767)) {
             return ESP_ERR_INVALID_ARG;
         }
-        if (raw_type == 8 && ((entry[0] & 0xF0) != 0xB0 || entry[4] != 0x03 ||
+        if ((raw_type == 8 || raw_type == 10) && ((entry[0] & 0xF0) != 0xB0 || entry[4] != 0x03 ||
                              pair_slot != CPM_PAIR_SLOT_NONE ||
                              (rd_u16(entry + 6) & ~0x0001u) != 0)) {
             return ESP_ERR_INVALID_ARG;

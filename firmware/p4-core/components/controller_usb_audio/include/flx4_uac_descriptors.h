@@ -24,6 +24,11 @@ typedef struct {
     bool pcm;
     bool pcm_explicit;
     bool frequency_control;
+    bool uac2;
+    uint8_t control_interface;
+    uint8_t clock_source;
+    uint8_t feedback_endpoint;
+    uint8_t feedback_interval;
 } flx4_uac_playback_format_t;
 
 typedef struct {
