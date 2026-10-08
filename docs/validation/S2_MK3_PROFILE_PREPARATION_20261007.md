@@ -157,6 +157,25 @@ capture driver context before choosing a recovery or HAL change; the host
 currently exposes no serial ports. No further firmware fix or acceptance
 claim is made from this snapshot.
 
+### Input-only isolation prepared
+
+USB1/CH340 remained unavailable after the operator's cable/power reconnect;
+boot 361 is a POWERON boot of the same VALID `c45cab13` image. Investigation
+continues over Wi-Fi. Before changing HAL/recovery behavior, a temporary
+input-only profile was compiled from the checked-in JSON: identical inputs,
+zero outputs, `led_feedback=false`, `usb_audio=false`. The 832-byte binary
+has SHA-256 `714b7cb70bf158b87a513a97273ab3092abd577aa47829a07c167face83d7e0f`.
+Atomic replacement of `ni_traktor_s2_mk3_basic` returned HTTP 200 and the
+profile list confirms valid size 832. Both decks were stopped and the
+controller disconnected at replacement. No firmware change/build/OTA was
+needed. Evidence is in `.cache/s2-mk3/20261008-input-only/`.
+
+The operator was asked to repeat MIDI-mode reconnect and Browse rotation.
+Outcome remains pending. LED acceptance is not possible with this temporary
+profile; restore the checked-in 928-byte profile (SHA above) after the isolation.
+This test distinguishes operation without MIDI output from the earlier
+bidirectional setup; it does not itself establish an electrical or HAL cause.
+
 The M3 timing soak uses the exact clean `fb5cbca13f33d21dfb4e16e0ba667c340399eb0c`
 image with FLX4 on USB2, storage on USB3, PCM5102A MAIN and FLX4 headphones.
 During that soak, keep the S2 on a separate PC USB port. Do not change the M3
