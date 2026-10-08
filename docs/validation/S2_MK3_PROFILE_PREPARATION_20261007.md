@@ -194,6 +194,32 @@ New `midi_in_pipe_errors`, `midi_in_pipe_retries` and
 successful resubmission does not establish lossless MIDI or fix a link cause.
 Acceptance remains open pending build, installation and physical retest.
 
+Clean retry source `7c86016265e60b04d45e211f21cb75c88d1ece85` passed focused
+controller runtime/recovery tests (including the production retry budget),
+full default host suite, M3-only IDF 6.0.2 experimental build, unchanged lock,
+documentation and signed packaging checks. OTA HTTP 200 installed
+`M3-dev-g7c86016265e6`, VALID on `ota_1`, matching ELF
+`54f7568cbadbf7e9415e72255b4146b8abe2576d06158c99c648125a45a4d779`.
+Image: 2,576,240 bytes, SHA-256
+`b5be6955f51c325d8b9ad9484700bde78200f5255d289e3b53aacfe709820cec`.
+Original 928-byte S2 profile is installed; USB audio remains disabled.
+
+Operator-completed reconnect/Browse test **FAILS sustained connection**.
+Boot 364 connection/activation at 22,315/22,347 ms, disconnect at 24,899 ms.
+Status: three MIDI packets / 12 bytes, two IN pipe errors, one successful pipe
+clear, one clear failure, one fault epoch; final operation 6 / code 259
+(`ESP_ERR_INVALID_STATE`). IN/OUT submit failures and runtime queue failures
+are zero; storage remains mounted. Retrying the endpoint is insufficient;
+the budget was not exhausted and will not be increased to hide this result.
+Pinned HCD clear requires a halted pipe and enabled port; the returned code
+alone does not identify which precondition was lost. No physical disconnect,
+power/cable cause or HAL defect is asserted. Another data cable comparison
+was requested, with the same image/profile/topology, before further changes.
+Evidence: `in-retry-ota-install.json`, `status-7c86-browse.json`,
+`journal-7c86-browse.txt`; package `releases/m3-s2-in-retry-7c860162/`.
+No full audio/control/LED/reconnect acceptance or soak PASS applies to this
+experimental candidate. Other board builds and current hosted CI were not run.
+
 The M3 timing soak uses the exact clean `fb5cbca13f33d21dfb4e16e0ba667c340399eb0c`
 image with FLX4 on USB2, storage on USB3, PCM5102A MAIN and FLX4 headphones.
 During that soak, keep the S2 on a separate PC USB port. Do not change the M3
