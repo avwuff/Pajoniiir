@@ -45,6 +45,35 @@ allows the Wi-Fi status API to expose the fault. Startup health remains intact;
 FS/FLX4 behavior and production defaults are unchanged. This is an investigation
 configuration, not a production workaround or headphone acceptance.
 
+Diagnostic `949883fe325c6611c5f748ad2b92dc2641cecb9e` passed the M3
+IDF 6.0.2 build and signed OTA, and is confirmed clean/VALID in ota_1.
+Image: 2,599,088 bytes, SHA-256
+`b3f7be2be8c94a529557ca3e469c158203c4d05b272c26f9d9215c053f22367c`;
+bundle: 2,599,276 bytes, SHA-256
+`d9458614ec5ba0dff442c8ade89ed0d38759415ddf1d7022e9038bf2ad076f85`;
+ELF identity: `799e6641d087fd05bb2eb05188b5ae053790e2d6fc5e0a272c58fce85519fbb0`.
+Local configuration enables flash crash dump (eight tasks, 2048-byte dump stack)
+and the diagnostic HS deferral. Dependency lock is unchanged; no other board
+was rebuilt. Boot 372 completed startup without a panic; no crash dump is present.
+
+The 1624-byte performance profile was atomically uploaded with HTTP 200 over
+SD id `ni_traktor_s2_mk3_basic` and became active. Repository basic bytes remain
+unchanged. The deferred audio attempt succeeded: four channels, 48 kHz,
+24-bit in four-byte subslots, HS explicit feedback. At the prepared stopped
+snapshot, feedback_updates=148632 and feedback_invalid=0. This is negotiation
+and traffic evidence only. An earlier idle/startup snapshot recorded two ISO
+packet failures / 12 lost frames and pre-producer underflow; counters were not
+reset. Take fresh baselines for each physical workload and do not claim zero loss
+or clean headphones from these snapshots.
+
+D1 Casanova Action and D2 Noćas su pederi u điru are READY/stopped, pitch centered,
+loops/SYNC/MT off, stick mounted with 260 tracks, Wi-Fi available. Combined
+physical control/listening acceptance is pending. The immediate-start panic
+has not been reproduced or explained by this deferred configuration and remains
+an open startup investigation. Final soak remains last, on an accepted image.
+Evidence: `.cache/s2-mk3/20261008-m3-enumeration/performance-ota-install-949883fe325c.json`,
+the matching installed status/profile snapshots and `combined-prepared-*.json`.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
