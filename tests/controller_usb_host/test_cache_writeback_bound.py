@@ -28,11 +28,11 @@ static bool yielding=true,valid_range=true;
 static unsigned calls,fail_at;
 static uintptr_t expected;
 static size_t copied,maximum;
-static bool xPortCanYield(void) {return yielding;}
-static bool cache_hal_vaddr_to_cache_level_id(uint32_t p,size_t n,uint32_t *l,uint32_t *id) {
+static bool __attribute__((unused)) xPortCanYield(void) {return yielding;}
+static bool __attribute__((unused)) cache_hal_vaddr_to_cache_level_id(uint32_t p,size_t n,uint32_t *l,uint32_t *id) {
  (void)p;(void)n;*l=1;*id=0;return valid_range;
 }
-static size_t cache_hal_get_cache_line_size(uint32_t l,int type) {(void)l;(void)type;return 64;}
+static size_t __attribute__((unused)) cache_hal_get_cache_line_size(uint32_t l,int type) {(void)l;(void)type;return 64;}
 static void reset(uintptr_t p) {calls=0;copied=0;maximum=0;expected=p;fail_at=0;}
 '''
         harness = r'''
@@ -44,6 +44,10 @@ esp_err_t __real_esp_cache_msync(void *p,size_t n,int flags) {
  copied+=n;expected+=n;return ESP_OK;
 }
 int main(void) {
+#if !CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC
+ reset(0x1000);assert(__wrap_esp_cache_msync((void *)0x1000,16384,0)==0);
+ assert(calls==1 && maximum==16384 && copied==16384);
+#else
  reset(0x1000);assert(__wrap_esp_cache_msync((void *)0x1000,9000,2)==ESP_OK);
  assert(calls==3 && maximum==4096 && copied==9000 && expected==0x1000+9000);
  reset(0x1000);fail_at=2;assert(__wrap_esp_cache_msync((void *)0x1000,16384,0)==7);
@@ -53,16 +57,21 @@ int main(void) {
  reset(0x1000);yielding=false;assert(__wrap_esp_cache_msync((void *)0x1000,16384,0)==0);assert(calls==1);
  reset(0x1000);yielding=true;valid_range=false;
  assert(__wrap_esp_cache_msync((void *)0x1000,16384,0)==0);assert(calls==1);
+#endif
  return 0;
 }
 '''
         with tempfile.TemporaryDirectory(prefix='p4-cache-bound-') as directory:
             path = pathlib.Path(directory)
-            (path / 'bound.c').write_text(preamble + wrapper + harness)
-            exe = path / 'bound.exe'
-            subprocess.run(['gcc', '-std=c11', '-O2', '-Wall', '-Wextra', '-Werror',
-                            str(path / 'bound.c'), '-o', str(exe)], check=True)
-            subprocess.run([str(exe)], check=True)
+            for enabled in (1, 0):
+                text = (preamble + wrapper + harness).replace(
+                    '#define CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC 1',
+                    '#define CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC ' + str(enabled))
+                (path / 'bound.c').write_text(text)
+                exe = path / 'bound.exe'
+                subprocess.run(['gcc', '-std=c11', '-O2', '-Wall', '-Wextra', '-Werror',
+                                str(path / 'bound.c'), '-o', str(exe)], check=True)
+                subprocess.run([str(exe)], check=True)
 
 
 if __name__ == '__main__':

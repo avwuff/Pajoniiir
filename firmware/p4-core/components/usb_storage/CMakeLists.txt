@@ -8,6 +8,7 @@ idf_component_register(
          "usb_bus_trace.c"
     INCLUDE_DIRS "include"
     REQUIRES log usb usb_host_msc fatfs media_io_gate hal usb_host_manager board_adapter firmware_health esp_timer
+    PRIV_REQUIRES esp_mm
     WHOLE_ARCHIVE
 )
 
