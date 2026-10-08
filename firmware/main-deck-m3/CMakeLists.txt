@@ -10,6 +10,13 @@ if(PAJONIIIR_S2_HS_EXPERIMENT)
     list(APPEND SDKCONFIG_DEFAULTS "${CMAKE_CURRENT_LIST_DIR}/sdkconfig.s2_hs_controller")
 endif()
 
+if(PAJONIIIR_S2_HS_ONLY_DIAGNOSTIC)
+    if(NOT PAJONIIIR_S2_HS_EXPERIMENT)
+        message(FATAL_ERROR "HS-only diagnostic requires the S2 HS role experiment")
+    endif()
+    list(APPEND SDKCONFIG_DEFAULTS "${CMAKE_CURRENT_LIST_DIR}/sdkconfig.s2_hs_only")
+endif()
+
 set(EXTRA_COMPONENT_DIRS
     "${CMAKE_CURRENT_LIST_DIR}/../p4-core/components"
     "${CMAKE_CURRENT_LIST_DIR}/../boards/m3"
@@ -39,6 +46,9 @@ if(PAJONIIIR_LINK_EXPERIMENT)
 endif()
 include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 project(main-deck-m3)
+if(PAJONIIIR_S2_HS_ONLY_DIAGNOSTIC AND NOT CONFIG_USB_HOST_DIAGNOSTIC_HS_ONLY)
+    message(FATAL_ERROR "HS-only diagnostic requires a separate configured SDKCONFIG")
+endif()
 if(PAJONIIIR_S2_HS_EXPERIMENT AND NOT CONFIG_BSP_M3_HS_CONTROLLER)
     message(FATAL_ERROR "S2 HS experiment requires its role-swap sdkconfig; use a separate SDKCONFIG")
 endif()

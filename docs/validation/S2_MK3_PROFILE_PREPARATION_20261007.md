@@ -220,6 +220,24 @@ Evidence: `in-retry-ota-install.json`, `status-7c86-browse.json`,
 No full audio/control/LED/reconnect acceptance or soak PASS applies to this
 experimental candidate. Other board builds and current hosted CI were not run.
 
+The operator has no alternative USB cable; that comparison is **NOT RUN**.
+With the stick removed and S2 reconnected, the same image still fails:
+`status-s2-without-stick-final.json` shows mounted=false, 42 cumulative MIDI
+packets, five cumulative IN errors, three successful clears and two failed
+clears, final operation 6 / 259. Both decks are stopped. The observation
+also shows nine host recovery requests/successes, while controller recovery
+requests remain zero: the empty storage root keeps its recovery cadence.
+Root routing review confirms storage root 1 and controller root 0; no incorrect
+indexed route was found. The second FS host remains installed in this test.
+
+An opt-in HS-only diagnostic installs peripheral map 1, disables the FS PHY
+override and suppresses storage recovery requests. Controller root remains 0
+and the original S2 profile remains unchanged; FS storage is intentionally
+unavailable. `USB_HOST_DIAGNOSTIC_HS_ONLY` defaults off. The M3 CMake option
+`PAJONIIIR_S2_HS_ONLY_DIAGNOSTIC` requires the HS-role experiment and a separate
+SDKCONFIG. This isolates the second host's activity; it is not a product build
+or playback qualification. Build/installation/retest remain pending.
+
 The M3 timing soak uses the exact clean `fb5cbca13f33d21dfb4e16e0ba667c340399eb0c`
 image with FLX4 on USB2, storage on USB3, PCM5102A MAIN and FLX4 headphones.
 During that soak, keep the S2 on a separate PC USB port. Do not change the M3

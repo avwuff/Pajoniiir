@@ -1,0 +1,10 @@
+menu "USB host diagnostics"
+    config USB_HOST_DIAGNOSTIC_HS_ONLY
+        bool "Diagnostic: install only the HS USB host"
+        depends on IDF_TARGET_ESP32P4
+        default n
+        help
+            Isolate HS controller enumeration/transfer faults from the second
+            FS host. Storage on the FS root is unavailable. Bench diagnosis
+            only; never use this configuration for a product release.
+endmenu
