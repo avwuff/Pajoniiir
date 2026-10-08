@@ -32,7 +32,7 @@ class CacheOwnership(unittest.TestCase):
         original = function(source, 'static inline void cache_sync_data_buffer(')
         original += '\n' + function(source, 'urb_t *hcd_urb_dequeue(')
         patched = original
-        for block in ('sync', 'dequeue'):
+        for block in ('sync', 'declarations', 'dequeue'):
             old = re.search(r'set\(_hs_' + block + r'_original \[=\[\n(.*?)\]=\]\)', cmake, re.S)[1]
             new = re.search(r'set\(_hs_' + block + r'_bounded \[=\[\n(.*?)\]=\]\)', cmake, re.S)[1]
             self.assertEqual(patched.count(old), 1, 'Pinned dependency drift')
@@ -57,10 +57,11 @@ typedef struct {struct {unsigned bEndpointAddress,type;} ep_char; int num_urb_do
  struct {bool has_urb;} cs_flags; struct {unsigned buffer_num_to_exec,buffer_num_to_parse;} multi_buffer_control;port_t *port;} pipe_t;
 typedef pipe_t *hcd_pipe_handle_t;
 static urb_t owned;
+static pipe_t *closing_pipe;
 static bool locked;
 static unsigned calls,unsafe_calls,max_bytes;
 #define HCD_ENTER_CRITICAL() do {assert(!locked);locked=true;} while(0)
-#define HCD_EXIT_CRITICAL() do {assert(locked);locked=false;} while(0)
+#define HCD_EXIT_CRITICAL() do {assert(locked);locked=false; if(closing_pipe) {closing_pipe->ep_char.bEndpointAddress=1;closing_pipe->ep_char.type=2;}} while(0)
 #define TAILQ_FIRST(head) (&owned)
 #define TAILQ_REMOVE(head,item,field) ((void)0)
 #define TAILQ_INSERT_TAIL(head,item,field) ((void)0)
@@ -77,6 +78,7 @@ static int esp_cache_msync(void *address,size_t bytes,uint32_t flags) {
 int main(void) {
  uint8_t memory[8192];port_t port={.num_pipes_queued=1};
  pipe_t pipe={.ep_char={.bEndpointAddress=128,.type=2},.num_urb_done=1,.cs_flags={.has_urb=true},.port=&port};
+ closing_pipe=&pipe; /* Simulate endpoint retirement immediately after unlock. */
  owned=(urb_t){.transfer={.data_buffer=memory,.data_buffer_size=sizeof(memory)},.hcd_ptr=&pipe,.hcd_var=URB_HCD_STATE_DONE};
  assert(hcd_urb_dequeue(&pipe)==&owned);
  assert(!locked && pipe.num_urb_done==0 && !pipe.cs_flags.has_urb && port.num_pipes_idle==1 && port.num_pipes_queued==0);
