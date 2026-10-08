@@ -550,6 +550,27 @@ cycle alone does not qualify USB coexistence. A combined S2 MIDI reconnect
 and Browse comparison while Wi-Fi is off, followed by enabling Wi-Fi without
 cable changes, was requested. The USB coexistence result remains pending.
 
+That comparison fails USB coexistence on the same boot 391. Wi-Fi stopped at
+184745 ms; S2 connected/profile activated at 199764/199802 ms. Wi-Fi enable
+was requested at 211281 ms. The HS MIDI IN endpoint 0x85 reported excessive
+transaction error and root disconnect at 213537 ms, application disconnect
+at 213543 ms, and Wi-Fi started at 213687 ms. Thus the recorded link failure
+occurs during enable, not disable, without a reboot or host recovery request
+causing that transition. FS storage remained mounted. The operator reports
+that S2 could be enabled while Wi-Fi was off and disappeared on the subsequent
+Wi-Fi change. No MIDI packets were captured in the short OFF interval, so
+this confirms attachment/profile binding but not a Browse semantic PASS.
+Evidence: `next-gates-20261009/wifi-s2-coexistence-trace.log`.
+
+The local board schematic `5-Schematic/5_USB&485.png` connects USB1/USB2/USB3
+VBUS to the same USB5V_IN net. This is relevant to bus-powered S2/C6 coexistence
+but is not a voltage/current measurement or proof of power failure. No GPIO,
+clock, RF or supply root cause is claimed. A self-powered HS USB hub comparison
+was proposed to separate S2's power path while retaining Wi-Fi; available hub
+hardware is pending operator reply. Hub support is enabled in this image;
+enumeration/speed/topology must still be verified if a hub is used. The existing
+OFF->ON no-panic lifecycle PASS remains valid, while S2 coexistence is FAIL.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
