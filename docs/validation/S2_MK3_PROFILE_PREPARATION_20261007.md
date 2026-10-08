@@ -97,6 +97,27 @@ not run for this experiment.
 
 ## Bench isolation
 
+### First experimental S2 reconnect outcome
+
+On the same clean `1fea1fd16d8b` image, boot 359, the operator's reconnect
+enumerated `17CC:1710` at high speed on direct root 0. The probe reached
+`ready` / `ESP_OK`, with no interface-claim or transfer-allocation failure.
+The journal records `CONTROLLER_CONNECTED` at 36,526 ms and activation of
+`ni_traktor_s2_mk3_basic` at 36,558 ms. At 44,575 ms it records disconnection.
+The snapshot has one MIDI connect, one disconnect, one fault-recovery epoch
+and zero MIDI packets/bytes. Storage remains mounted on root 1 with 260 tracks;
+both decks remain stopped. No allocation failures were reported.
+
+Descriptor parsing, interface claim and initial profile activation are now
+observed successes, but sustained controller connection **FAILS** in this
+attempt. The transfer operation/status that triggered recovery is not exposed
+by the current HTTP snapshot; the eight-second interval alone does not prove
+an idle timeout. An immediate Browse-input reconnect comparison was requested.
+Evidence is preserved in `*-s2-replug-*.json`,
+`diagnostic-log-s2-fault.txt` and `resources-s2-fault.txt` in the enumeration
+evidence directory. Physical controls, LED behavior and playback acceptance
+remain open; this is not an S2 support PASS.
+
 The M3 timing soak uses the exact clean `fb5cbca13f33d21dfb4e16e0ba667c340399eb0c`
 image with FLX4 on USB2, storage on USB3, PCM5102A MAIN and FLX4 headphones.
 During that soak, keep the S2 on a separate PC USB port. Do not change the M3
