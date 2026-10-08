@@ -104,6 +104,30 @@ subsequent raw snapshots use `*-bus-review-*` in the enumeration directory.
 S2 fault capture on this diagnostic image remains pending the operator's
 MIDI-mode reconnect. No transfer fix or new physical support PASS is claimed.
 
+The operator subsequently completed the MIDI-mode reconnect/Browse test on
+boot 368. The trace now identifies the hardware event preceding application
+teardown. Root 0 connected at 6,405,805 ms, completed its enumeration resets
+at 6,406,144 ms, and the controller/profile activated at 6,406,185/6,406,217 ms.
+At 6,408,932 ms it recorded three channel errors on address 2, IN endpoint
+`0x85`, MPS 512: HCINT `0x1002` (excessive transaction error + halted),
+HPRT `0x1005` (connected/enabled/power), HCTSIZ `0x400000ff`. In the same
+millisecond a port DISCONN event followed with GINTSTS `0x2500002d` and
+HPRT `0x1008` (connection/enabled cleared, power still set; no suspend/reset
+or overcurrent). Application disconnect followed at 6,408,938 ms.
+
+59 MIDI packets / 236 bytes arrived before the failure. Two pipe retries
+succeeded; the third clear returned 259 after the port lost connection.
+Controller recovery requests stayed zero and total host recovery remained
+the single earlier storage-startup recovery. FS storage stayed mounted with
+no new root-1 events. Evidence:
+`usb-bus-trace-bus-review-20261008T153635Z.txt` and sibling snapshots.
+Thus application teardown follows a hardware-reported link disconnect;
+increasing retry count does not address its cause. This is not proof of
+physical unplugging, inadequate power, a cable defect, or a device/PHY defect.
+The HPRT power bit is not a VBUS voltage measurement. The operator reports
+M3 powered by a separate 67-W adapter; its actual 5-V supply path remains
+unmeasured. A compatible independent S2 supply comparison was requested.
+
 On installed clean `af4ca59007e3`, both decks stopped, the captured 928-byte
 profile installed with HTTP 201 and was listed valid as `17CC:1710`.
 It did not activate: the USB probe saw S2 but returned `ESP_ERR_NOT_FOUND`
