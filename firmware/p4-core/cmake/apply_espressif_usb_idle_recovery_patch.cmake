@@ -189,6 +189,73 @@ foreach(_pajoniiir_idle_source IN LISTS _pajoniiir_idle_usb_sources)
            "${_pajoniiir_idle_${_pajoniiir_idle_kind}_patched}"
            _pajoniiir_idle_contents "${_pajoniiir_idle_contents}")
 
+    if(_pajoniiir_idle_kind STREQUAL "hcd")
+        # Task-owned USB data only. Never change global cache/display policy.
+        set(_hs_sync_original [=[
+        esp_err_t ret = esp_cache_msync(urb->transfer.data_buffer, urb->transfer.data_buffer_size, flags);
+        assert(ret == ESP_OK);
+        (void)ret;
+]=])
+        set(_hs_sync_bounded [=[
+#if CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC
+        /* Keep HS interrupt masking bounded for completed IN and pending OUT.
+         * Buffers are caller-owned until submit/return, never live DMA data.
+         * 256 is a multiple of both P4 cache-line sizes; the allocated tail
+         * retains the same alignment/UNALIGNED contract as the original. */
+        uint8_t *address = urb->transfer.data_buffer;
+        size_t remaining = urb->transfer.data_buffer_size;
+        while (remaining) {
+            const size_t bytes = remaining > 256u ? 256u : remaining;
+            esp_err_t ret = esp_cache_msync(address, bytes, flags);
+            assert(ret == ESP_OK);
+            (void)ret;
+            address += bytes;
+            remaining -= bytes;
+        }
+#else
+        esp_err_t ret = esp_cache_msync(urb->transfer.data_buffer, urb->transfer.data_buffer_size, flags);
+        assert(ret == ESP_OK);
+        (void)ret;
+#endif
+]=])
+        set(_hs_dequeue_original [=[
+        // Sync user's data in memory to cache. For IN and CTRL transfers
+        CACHE_SYNC_DATA_BUFFER_M2C(pipe, urb);
+    } else {
+        // No more URBs to dequeue from this pipe
+        urb = NULL;
+    }
+    HCD_EXIT_CRITICAL();
+    return urb;
+]=])
+        set(_hs_dequeue_bounded [=[
+#if !CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC
+        // Sync user's data in memory to cache. For IN and CTRL transfers
+        CACHE_SYNC_DATA_BUFFER_M2C(pipe, urb);
+#endif
+    } else {
+        // No more URBs to dequeue from this pipe
+        urb = NULL;
+    }
+    HCD_EXIT_CRITICAL();
+#if CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC
+    /* The caller still owns this pipe and the dequeued URB until return.
+     * No completion callback has published the URB to its client yet. Cache
+     * maintenance must not hold the cross-root HCD queue/ISR lock. */
+    if (urb) CACHE_SYNC_DATA_BUFFER_M2C(pipe, urb);
+#endif
+    return urb;
+]=])
+        foreach(_hs_block IN ITEMS sync dequeue)
+            string(FIND "${_pajoniiir_idle_contents}" "${_hs_${_hs_block}_original}" _hs_at)
+            if(_hs_at EQUAL -1)
+                message(FATAL_ERROR "Pinned HCD no longer matches HS ${_hs_block} cache block")
+            endif()
+            string(REPLACE "${_hs_${_hs_block}_original}" "${_hs_${_hs_block}_bounded}"
+                _pajoniiir_idle_contents "${_pajoniiir_idle_contents}")
+        endforeach()
+    endif()
+
     set(_pajoniiir_idle_generated_source
         "${_pajoniiir_idle_generated_dir}/${_pajoniiir_idle_source_name}")
     file(WRITE "${_pajoniiir_idle_generated_source}"

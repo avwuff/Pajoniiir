@@ -366,6 +366,25 @@ sync performed in an ISR remains unchanged. M2C invalidation is unchanged.
 No cache sync is omitted, and production FLX4 defaults remain unchanged.
 Build/configuration and dense-input physical gates are pending on this change.
 
+Global chunk candidate `b664c38d0c424e101a230e9fcb565aac9be8d3ac` passed
+host/build/package and signed OTA, clean/VALID ota_0. The combined 60.127-s
+window received 1719 MIDI packets without ISO loss/disconnection, but is FAIL:
+2054 new UAC underflow frames, 9313 overflow frames, 231 dropped blocks and
+1126 output-late events. PCM underrun deltas were zero. The operator reported
+stutter of both main waveforms. Both decks were stopped automatically.
+Evidence: `playback-20261008T213145Z`. No physical/production PASS is claimed.
+
+Global cache chunking is removed. The next HS diagnostic applies 256-byte
+cache maintenance only to HCD USB data buffers. Completed IN maintenance is
+moved after the global HCD queue lock is released; the caller retains pipe
+ownership and the retired URB is not returned/published until sync finishes.
+Pending OUT maintenance already precedes submission. Descriptor sync, display
+and I2S retain prior cache behavior. The regression executes the actual pinned
+HCD functions with the CMake transformation, reproduces the upstream locked
+8-KiB maintenance, and checks bounded chunks, queue retirement/idle counts,
+empty dequeue, OUT-completion exclusion and partial final chunk handling.
+This remains a candidate pending full software and physical validation.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
