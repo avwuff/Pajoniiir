@@ -47,6 +47,55 @@
 #include "esp_idf_version.h"
 #include "hal/usb_dwc_hal.h"
 #include "hal/usb_dwc_ll.h"
+#include "esp_timer.h"
+#include "usb_bus_trace.h"
+#include "sdkconfig.h"
+
+/* Capture only port transitions and channel errors. Register reads have no
+ * side effects; the original decoder remains the sole interrupt acknowledger. */
+usb_dwc_hal_port_event_t __real_usb_dwc_hal_decode_intr(usb_dwc_hal_context_t *hal);
+usb_dwc_hal_port_event_t __wrap_usb_dwc_hal_decode_intr(usb_dwc_hal_context_t *hal)
+{
+#if CONFIG_USB_HOST_DIAGNOSTIC_BUS_TRACE
+    const uint32_t intr = hal->dev->gintsts_reg.val;
+    const uint32_t hprt = hal->dev->hprt_reg.val;
+    const usb_dwc_hal_port_event_t event = __real_usb_dwc_hal_decode_intr(hal);
+    if (event != USB_DWC_HAL_PORT_EVENT_NONE && event != USB_DWC_HAL_PORT_EVENT_CHAN) {
+        const usb_bus_trace_event_t record = {
+            .time_ms = (uint32_t)(esp_timer_get_time() / 1000),
+            .kind = USB_BUS_TRACE_PORT_EVENT, .intr = intr, .hprt = hprt,
+            .event = (uint32_t)event,
+        };
+        for (unsigned root = 0; root < USB_BUS_TRACE_ROOTS; ++root) {
+            if (hal->dev == USB_DWC_LL_GET_HW(root)) {
+                usb_bus_trace_record(root, &record);
+                break;
+            }
+        }
+    }
+    return event;
+#else
+    return __real_usb_dwc_hal_decode_intr(hal);
+#endif
+}
+
+#if CONFIG_USB_HOST_DIAGNOSTIC_BUS_TRACE
+static void record_channel_error(usb_dwc_hal_chan_t *chan, uint32_t intr)
+{
+    for (unsigned root = 0; root < USB_BUS_TRACE_ROOTS; ++root) {
+        usb_dwc_dev_t *dev = USB_DWC_LL_GET_HW(root);
+        if (chan->regs != &dev->host_chans[chan->flags.chan_idx]) continue;
+        const usb_bus_trace_event_t record = {
+            .time_ms = (uint32_t)(esp_timer_get_time() / 1000),
+            .kind = USB_BUS_TRACE_CHANNEL_ERROR, .intr = intr,
+            .hprt = dev->hprt_reg.val, .hcchar = chan->regs->hcchar_reg.val,
+            .hctsiz = chan->regs->hctsiz_reg.val, .event = (uint32_t)chan->error,
+        };
+        usb_bus_trace_record(root, &record);
+        break;
+    }
+}
+#endif
 
 #if (ESP_IDF_VERSION_MAJOR != 6) || (ESP_IDF_VERSION_MINOR != 0)
 #error "Re-read usb_dwc_hal_chan_decode_intr() in this ESP-IDF before building. \
@@ -102,6 +151,9 @@ usb_dwc_hal_chan_event_t __wrap_usb_dwc_hal_chan_decode_intr(
             error = USB_DWC_HAL_CHAN_ERROR_XCS_XACT;
         }
         chan_obj->error = error;
+#if CONFIG_USB_HOST_DIAGNOSTIC_BUS_TRACE
+        record_channel_error(chan_obj, chan_intrs);
+#endif
         chan_obj->flags.active = 0;
         return USB_DWC_HAL_CHAN_EVENT_ERROR;
     }

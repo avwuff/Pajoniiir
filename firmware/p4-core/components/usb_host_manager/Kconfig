@@ -1,4 +1,12 @@
 menu "USB host diagnostics"
+    config USB_HOST_DIAGNOSTIC_BUS_TRACE
+        bool "Diagnostic: capture bounded USB bus fault history"
+        depends on IDF_TARGET_ESP32P4
+        default n
+        help
+            Record the last eight port transitions/channel errors per root
+            in RAM, without logging or changing USB recovery. Read through
+            /api/usb-bus-trace. Bench diagnosis only; disabled in production.
     config USB_HOST_DIAGNOSTIC_HS_ONLY
         bool "Diagnostic: install only the HS USB host"
         depends on IDF_TARGET_ESP32P4

@@ -11,6 +11,78 @@ S2 MK3 support and its physical acceptance are **NOT RUN**.
 
 ## M3 enumeration investigation (2026-10-08)
 
+### Latest control: HS stick and native S2 reconnect
+
+On restored clean `7c86016265e6`, VALID in `ota_1`, a known stick
+`18A5:0302` successfully enumerated on USB3/root 0 at high speed. Its
+bulk endpoints have 512-byte maximum packets. Storage mounting was correctly
+rejected there because this experimental image assigns storage to USB2/root 1.
+This confirms HS enumeration for that stick; it does not qualify S2.
+
+The operator then returned the stick to USB2 and connected S2 to USB3 without
+holding FLX (native mode). A fresh live snapshot at uptime 366374 ms still
+showed only two topology observations, the last probe belonging to the stick
+on root 0, zero S2 MIDI connections, and storage unmounted. Neither the
+reported stick return nor the S2 attachment produced a new observed device
+event. The descriptor endpoint explicitly reports `last_probe_not_live_attachment`;
+its stick descriptor must not be attributed to S2. Native-mode S2 enumeration
+is therefore unconfirmed, not a MIDI-parser rejection. Host lifecycle state
+and physical connection remain unresolved; cold power restart is the next
+isolation step before another firmware change.
+
+Evidence: `status-known-stick-usb3-control.json`,
+`usb-controller-descriptors-known-stick-usb3-control.json`,
+`status-s2-native-control.json`, and timestamped `*-native-fresh-*` snapshots
+in `.cache/s2-mk3/20261008-m3-enumeration/`. Both decks remained stopped.
+
+A subsequent operator-confirmed cold power restart produced journal boot 367
+(`POWERON`) with the same VALID image. At uptime 36569 ms, the only newly
+enumerated device was again stick `18A5:0302`, address 1, speed 2, direct
+root 0. Storage remained unmounted (`ESP_ERR_NOT_SUPPORTED`); no S2 probe
+occurred. This is fresh boot evidence, not the previous last-probe snapshot.
+The reported physical placement and observed root disagree, so port placement
+must be established by a single-device removal before interpreting S2 mode
+or modifying firmware. Timestamped `*-native-cold-*` snapshots retain this
+observation.
+
+The subsequent code review corrected the removal-counter interpretation:
+the MSC driver only publishes `MSC_DEVICE_DISCONNECTED` for an installed
+device handle. A route-rejected stick has no such handle. Therefore unchanged
+storage disconnect counters do **not** establish that the operator did not
+remove it, nor do they establish a stalled USB daemon. The topology client
+does receive `DEV_REMOVED`, but this installed status API does not expose
+its removal counter. Last-probe information remains historical.
+
+The controlled comparison then moved only the stick into the receptacle
+previously occupied by S2, with S2 disconnected. It enumerated at full speed,
+root 1, address 2, and mounted successfully. Keeping the stick there and
+connecting S2 with left FLX into the other receptacle reproduced the original
+transfer failure on boot 367: S2 `17CC:1710`, root 0, configuration 318,
+profile active, 39 MIDI packets/156 bytes, three IN errors, two successful
+pipe clears, then clear failure 259 and disconnect. Storage remained mounted;
+host recovery counts stayed at the preceding one startup recovery. Evidence:
+`*-stick-in-s2-port-*` and `s2-corrected-ports-20261008T115511Z.jsonl`.
+This restores a reproducible transfer-level failure with verified root routing.
+
+### Opt-in bus fault trace
+
+`CONFIG_USB_HOST_DIAGNOSTIC_BUS_TRACE` (default off) records only port events
+and channel errors into an eight-entry RAM ring per USB root. No logs, NVS,
+allocation, reset, or recovery action occurs in the recorder. Normal channel
+completions are not recorded. The port decoder delegates to the pinned HAL;
+the existing channel decoder retains its established error behavior.
+
+Read-only `GET /api/usb-bus-trace` returns bounded coherent snapshots with
+boot-relative milliseconds, raw interrupt/HPRT/HCCHAR/HCTSIZ values and
+decoded HAL event. Kind 1 is a channel error; kind 2 is a port event. Event
+numbers follow ESP-IDF 6.0.2 `usb_dwc_hal.h`. HPRT bits 0/2/4/7/8/12 indicate
+connection/enabled/overcurrent/suspend/reset/power. Snapshot availability is
+explicit; unavailable is not evidence of zero faults. The ring is diagnostic
+history, not a continuous USB traffic capture. Production defaults leave
+recording off. Focused host tests exercise ring wrap, per-root isolation and
+concurrent reader/writer coherence. Full host suite, M3 diagnostic build and
+physical fault capture are tracked separately; this is not a fix/PASS claim.
+
 On installed clean `af4ca59007e3`, both decks stopped, the captured 928-byte
 profile installed with HTTP 201 and was listed valid as `17CC:1710`.
 It did not activate: the USB probe saw S2 but returned `ESP_ERR_NOT_FOUND`

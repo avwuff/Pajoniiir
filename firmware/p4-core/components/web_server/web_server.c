@@ -44,6 +44,7 @@
 #include "p4_local_controller.h"
 #include "usb_host_manager.h"
 #include "usb_storage.h"
+#include "usb_bus_trace.h"
 #if CONFIG_CONTROLLER_PROFILE_MANAGER
 #include "controller_profile_manager.h"
 #endif
@@ -57,6 +58,39 @@
 
 static const char *TAG = "web_server";
 static bool api_request_allowed(httpd_req_t *req, bool mutation);
+static esp_err_t api_usb_bus_trace_handler(httpd_req_t *req)
+{
+    if (!api_request_allowed(req, false)) return ESP_FAIL;
+    usb_bus_trace_snapshot_t snapshot;
+    char buf[320];
+    httpd_resp_set_type(req, "application/json");
+    httpd_resp_set_hdr(req, "Cache-Control", "no-store");
+    esp_err_t rc = httpd_resp_sendstr_chunk(req,
+        "{\"schema\":1,\"scope\":\"bounded_isr_history\",\"roots\":[");
+    for (unsigned root = 0; rc == ESP_OK && root < USB_BUS_TRACE_ROOTS; ++root) {
+        const bool available = usb_bus_trace_snapshot(root, &snapshot);
+        snprintf(buf, sizeof(buf),
+            "%s{\"root\":%u,\"available\":%s,\"total\":%lu,\"events\":[",
+            root ? "," : "", root, available ? "true" : "false",
+            available ? (unsigned long)snapshot.total : 0ul);
+        rc = httpd_resp_sendstr_chunk(req, buf);
+        for (uint32_t i = 0; available && rc == ESP_OK && i < snapshot.count; ++i) {
+            const usb_bus_trace_event_t *e = &snapshot.events[i];
+            snprintf(buf, sizeof(buf),
+                "%s{\"ms\":%lu,\"kind\":%lu,\"intr\":%lu,\"hprt\":%lu,"
+                "\"hcchar\":%lu,\"hctsiz\":%lu,\"event\":%lu}",
+                i ? "," : "", (unsigned long)e->time_ms, (unsigned long)e->kind,
+                (unsigned long)e->intr, (unsigned long)e->hprt,
+                (unsigned long)e->hcchar, (unsigned long)e->hctsiz,
+                (unsigned long)e->event);
+            rc = httpd_resp_sendstr_chunk(req, buf);
+        }
+        if (rc == ESP_OK) rc = httpd_resp_sendstr_chunk(req, "]}");
+    }
+    if (rc == ESP_OK) rc = httpd_resp_sendstr_chunk(req, "]}");
+    if (rc == ESP_OK) rc = httpd_resp_send_chunk(req, NULL, 0);
+    return rc;
+}
 static esp_err_t api_usb_probe_descriptor_handler(httpd_req_t *req)
 {
     if (!api_request_allowed(req, false)) return ESP_FAIL;
@@ -2567,7 +2601,7 @@ esp_err_t web_server_start(void)
     /* Must stay above the number of register_uri_or_stop() calls below: a single
      * failed registration stops the whole server, so an over-tight limit takes
      * every endpoint (including OTA) down with it. */
-    config.max_uri_handlers = 31; /* includes last-probe USB descriptor route */
+    config.max_uri_handlers = 32; /* includes USB descriptor and bus trace routes */
     config.task_priority = 3;
     config.core_id = 0;
 
@@ -2799,6 +2833,14 @@ esp_err_t web_server_start(void)
         .handler = api_usb_probe_descriptor_handler,
     };
     rc = register_uri_or_stop(s_web_server, &probe_descriptor_uri);
+    if (rc != ESP_OK) return rc;
+
+    httpd_uri_t bus_trace_uri = {
+        .uri = "/api/usb-bus-trace",
+        .method = HTTP_GET,
+        .handler = api_usb_bus_trace_handler,
+    };
+    rc = register_uri_or_stop(s_web_server, &bus_trace_uri);
     if (rc != ESP_OK) return rc;
 
     httpd_uri_t controller_profile_upload_uri = {

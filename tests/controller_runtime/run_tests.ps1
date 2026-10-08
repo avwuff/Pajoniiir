@@ -125,4 +125,12 @@ gcc @CommonArgs -DCONTROLLER_PROFILE_RUNTIME_PC_TEST `
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 & $S2Exe (Join-Path $RepoRoot "controllers/ni_traktor_s2_mk3_basic/profile.s3bin")
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+$BusTraceExe = Join-Path $BuildDir "test_usb_bus_trace.exe"
+$UsbStorage = Join-Path $RepoRoot "firmware/p4-core/components/usb_storage"
+gcc @CommonArgs "-I$(Join-Path $UsbStorage 'include')" `
+    (Join-Path $UsbStorage "usb_bus_trace.c") `
+    (Join-Path $PSScriptRoot "test_usb_bus_trace.c") -o $BusTraceExe
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+& $BusTraceExe
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 exit 0

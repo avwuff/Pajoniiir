@@ -5,8 +5,9 @@ idf_component_register(
          "usb_storage_session.c" "usb_storage_recovery.c"
          "usb_media_partition.c" "usb_media_mount.c"
          "usb_dwc_hal_compat.c"
+         "usb_bus_trace.c"
     INCLUDE_DIRS "include"
-    REQUIRES log usb usb_host_msc fatfs media_io_gate hal usb_host_manager board_adapter firmware_health
+    REQUIRES log usb usb_host_msc fatfs media_io_gate hal usb_host_manager board_adapter firmware_health esp_timer
     WHOLE_ARCHIVE
 )
 
@@ -21,4 +22,5 @@ idf_component_register(
 # pipe-error path; every other missing-halt case still aborts, and HAL assertions
 # stay enabled everywhere else in the system.
 target_link_options(${COMPONENT_LIB} INTERFACE
-    "-Wl,--wrap=usb_dwc_hal_chan_decode_intr")
+    "-Wl,--wrap=usb_dwc_hal_chan_decode_intr"
+    "-Wl,--wrap=usb_dwc_hal_decode_intr")
