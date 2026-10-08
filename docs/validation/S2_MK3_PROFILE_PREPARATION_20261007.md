@@ -128,7 +128,21 @@ is not limited to the zero-input attempt. Read-only status now adds
 4 OUT transfer, 5 UAC stream), `last_fault_code` and existing submit-failure
 counters. Transfer codes are raw `usb_transfer_status_t`; submit/UAC codes are
 `esp_err_t`. Publication happens only on first fault of a recovery epoch, with
-no new periodic logging or writes. New-image installation/retest is pending.
+no new periodic logging or writes.
+
+Clean diagnostic source `c45cab13e0238d42811e9275cde95bbc4428cb4d`
+passed full default host tests, M3-only IDF 6.0.2 experimental build,
+unchanged dependency lock, documentation integrity and signed packaging.
+Local OTA HTTP 200 installed `M3-dev-gc45cab13e023`, VALID on `ota_0`,
+with matching ELF `884599bb4ca7c485d3ed3ab5a7f32ee0de876fe9281d060ca8705d4b3332659c`.
+Image: 2,575,872 bytes, SHA-256
+`fa4189218f62853dfa9fae5fd1a3c7e075810865cb4449e35f109efd492099fe`.
+Bundle: 2,576,060 bytes, SHA-256
+`94e2e66f303ecdaef435723e7a192c7a2fef57adb75892d98938550492cbc96c`.
+The post-startup status exposes the new fault fields, initially zero; storage
+is mounted and S2 requires another MIDI-mode reconnect. Fault diagnosis/retest
+remains pending. Evidence: `fault-diagnostic-ota-install.json` and
+`*-s2-fault-installed.json`. Package: `releases/m3-s2-fault-c45cab13/`.
 
 The M3 timing soak uses the exact clean `fb5cbca13f33d21dfb4e16e0ba667c340399eb0c`
 image with FLX4 on USB2, storage on USB3, PCM5102A MAIN and FLX4 headphones.
