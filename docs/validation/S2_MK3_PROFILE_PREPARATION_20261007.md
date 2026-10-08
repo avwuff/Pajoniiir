@@ -347,6 +347,25 @@ registers and verifies pre-activation sampling, post-activation publication,
 and exclusion of IN, bulk and the other root. Production configurations call
 the original HAL directly through the wrapper without diagnostic work.
 
+Scheduler diagnostic `8b235e53a8f0cf0c6bca070624fe3a1de21341fe` passed
+the host suite/M3 build and signed OTA, clean/VALID ota_1. Initial captures
+showed planned OUT descriptor index 8 with current microframe index 10 and
+planned 24 with current 26: activation was already two microframes late.
+The following untouched-controls playback completed 60.432 s without a new
+ISO packet failure and stopped both decks (`playback-20261008T212314Z`).
+This does not qualify dense controls or establish which critical section
+caused the measured lateness. The earlier flash crash dump remains historical.
+
+Pinned IDF `esp_cache_msync` writeback holds a critical section across the
+entire buffer when C2M chunking is disabled, as it was in these candidates.
+The S2 HS experimental defaults now enable the IDF's supported task-context
+C2M chunking with a 256-byte bound instead of one whole OUT-buffer writeback.
+USB OUT data is still caller-owned until submit; the HCD performs that data
+writeback before entering its queue lock or activating DMA. Descriptor-list
+sync performed in an ISR remains unchanged. M2C invalidation is unchanged.
+No cache sync is omitted, and production FLX4 defaults remain unchanged.
+Build/configuration and dense-input physical gates are pending on this change.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.

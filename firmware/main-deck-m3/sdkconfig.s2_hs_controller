@@ -1,3 +1,8 @@
 # Experimental controller on USB3 (HS), MSC on USB2 (FS).
 # Use a separate build directory and SDKCONFIG; never overwrite the FLX4 default.
 CONFIG_BSP_M3_HS_CONTROLLER=y
+
+# HS audio slots are 125 us. USB OUT buffers remain caller-owned until submit;
+# permit ISR service between cache writeback chunks before handing them to DMA.
+CONFIG_ESP_MM_CACHE_MSYNC_C2M_CHUNKED_OPS=y
+CONFIG_ESP_MM_CACHE_MSYNC_C2M_CHUNKED_OPS_MAX_LEN=0x100
