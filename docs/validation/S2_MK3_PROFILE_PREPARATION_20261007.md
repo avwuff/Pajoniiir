@@ -205,6 +205,29 @@ control step, last status, returned length and first four payload bytes, retaine
 after audio cleanup. No periodic diagnostic logging is added. This separates
 MIDI acceptance from the still-open S2 headphone setup/listening gate.
 
+Candidate `01f9075155b0e9f3a80f62d5bbb1ffc2869e1a5d` passes the complete
+default host suite (exit 0), including production owner isolation/cleanup and
+FS/FLX4/UAC2 regressions; documentation integrity passes. Only M3 was built
+with IDF 6.0.2 and unchanged locks. Packaging rejected the initial incremental
+build's stale source identity; explicit reconfigure/build regenerated the clean
+identity before signing. No stale image was uploaded.
+
+Signed `M3-dev-g01f9075155b0` is installed VALID in ota_1 (HTTP 200), full
+1624-byte profile retained. Image 2,600,720 bytes:
+`54014220d877c13720580679ea9c06962e6f9d2bd74acec03371b1d6909b995e`;
+bundle 2,600,908 bytes:
+`c94bade414bf71a31507f19720afceb719df65c87322f97efc362920cc706974`;
+ELF `c3758cf64f858bf6ab43346e8338b80b747fb165c9d7977db5eb365ed9276155`.
+With S2 left physically attached during OTA, the installed snapshot shows
+MIDI In/Out connected, full profile active and actual 48-kHz 24-in-32 UAC2
+streaming. Feedback updates 8280, invalid 0, faulted/configuration_fault false,
+one MIDI connection and no disconnect/pipe errors. Storage is mounted and
+decks are stopped. This is negotiation evidence, not listening, jog, reconnect
+or soak acceptance. Audio fault isolation has not yet been physically exercised
+on this image; the prior hot-attachment failure's exact audio stage remains open.
+Evidence: `performance-ota-install-01f9075155b0.json`, matching installed API
+snapshots and `audio-isolation-*` build/test/package/install logs.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
