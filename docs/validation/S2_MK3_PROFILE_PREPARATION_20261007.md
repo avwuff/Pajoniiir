@@ -385,6 +385,26 @@ HCD functions with the CMake transformation, reproduces the upstream locked
 empty dequeue, OUT-completion exclusion and partial final chunk handling.
 This remains a candidate pending full software and physical validation.
 
+USB-local candidate `e44659c9f543fdc00971d3b875f2ee1b7ae9d30c` passed
+full host/M3 build/package, clean/VALID ota_1. Combined playback stopped after
+10.423 s on new ISO loss, with no new PCM/output-late or UAC ring errors at the
+stopped snapshot. This is still FAIL for the strict ISO gate.
+Evidence: `playback-20261008T214300Z` and `hs-usb-cache-after` bus snapshots.
+The actual scheduler trace again contains late starts. Large task-context
+display/PPA C2M writebacks also mask the HS interrupt and were not bounded by
+the USB-local change.
+
+The next diagnostic wraps C2M maintenance at the cache API boundary: valid
+task-context writebacks over 4 KiB run as bounded calls without the IDF global
+whole-operation mutex. Full range/alignment are checked before the first chunk;
+M2C, instruction cache, ISR/critical-section contexts and invalid requests
+delegate intact to the original API. Errors stop immediately and retain their
+original result. No caller may publish DMA ownership until the wrapper returns.
+The option is HS-diagnostic only; production builds delegate unchanged.
+The actual-wrapper regression checks address progression, the final partial
+chunk, early errors, invalid alignment/range delegation and context exclusion.
+Software and physical acceptance are pending for this broader writeback bound.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
