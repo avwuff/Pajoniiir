@@ -297,6 +297,23 @@ Evidence: `performance-ota-install-1f53a68e7f96.json`,
 `playback-20261008T205835Z/{baseline.json,status.jsonl,result.json,final-stopped.json}`,
 and `heap-isolation-*` build/test/package/install logs.
 
+The dense jog/Browse playback retest stopped after 20.083 seconds on one new
+ISO packet failure, with 898 MIDI packets, no underflow and the controller still
+connected; both decks were automatically stopped. Thus heap-walk isolation
+improves ordinary playback but does not close the dense-input gate.
+Evidence: `playback-20261008T210059Z` and its verified stopped snapshot.
+
+The pinned HCD double-buffers periodic transfers in 64-microframe descriptor
+lists (three entries reserved as scheduling margin). The shared UAC2 OUT batch
+is raised from 32 to 56 packets: seven milliseconds per hardware buffer rather
+than four, while retaining three application transfers and bounded storage.
+This gives 14 ms of hardware-scheduled runway; it does not change the USB rate,
+packet format, DSP or FS/FLX4 four-packet batches. Each transfer allocates at
+most 6272 bytes (112-byte maximum packet), and tests check descriptor bounds,
+nominal/fractional bytes and ownership. This adds up to nine milliseconds of
+queued OUT work compared with the previous three-batch limit; cue latency and
+dense MIDI timing must be physically rechecked, not inferred from the tests.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.

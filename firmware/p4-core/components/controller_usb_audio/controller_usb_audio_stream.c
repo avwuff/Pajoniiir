@@ -17,6 +17,11 @@
 #define STREAM_RING_FRAMES 2048u
 #define STREAM_TRANSFER_COUNT 3u
 #define STREAM_PACKETS_PER_TRANSFER 4
+/* Pinned HCD has two hardware buffers and 64 microframe descriptors, with
+ * three reserved for scheduling margin. 56 packets gives each HS buffer 7 ms
+ * of work (14 ms double-buffer runway) through dense MIDI callback bursts.
+ * FS remains four 1-ms packets. Keep below 64 - 3, never allocate unboundedly. */
+#define STREAM_HS_PACKETS_PER_TRANSFER 56
 #define RESAMPLE_INPUT_FRAMES 128u
 #define RESAMPLE_OUTPUT_FRAMES 142u
 #if defined(CONFIG_PAJONIIIR_BOARD_JC1060) || defined(CONTROLLER_USB_AUDIO_PC_TEST)
@@ -528,7 +533,7 @@ static void control_callback(usb_transfer_t *transfer)
             return;
         }
     }
-    const int packets = s_format.uac2 ? 32 : STREAM_PACKETS_PER_TRANSFER;
+    const int packets = s_format.uac2 ? STREAM_HS_PACKETS_PER_TRANSFER : STREAM_PACKETS_PER_TRANSFER;
     for (unsigned i = 0u; i < STREAM_TRANSFER_COUNT; ++i) {
         const size_t bytes =
             (size_t)s_format.max_packet_size * packets;

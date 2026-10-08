@@ -381,8 +381,10 @@ static void test_uac2(void)
     control_callback(s_control);
     assert(s_streaming && s_feedback_active && s_target_rate == 48000);
     for (unsigned i = 0; i < STREAM_TRANSFER_COUNT; ++i) {
-        assert(s_isoc[i]->num_isoc_packets == 32 && s_isoc[i]->num_bytes == 3072);
-        for (unsigned p = 0; p < 32; ++p) assert(s_isoc[i]->isoc_packet_desc[p].num_bytes == 96);
+        assert(s_isoc[i]->num_isoc_packets == 56 && s_isoc[i]->num_bytes == 5376);
+        assert(s_isoc[i]->data_buffer_size == 6272);
+        assert(s_isoc[i]->num_isoc_packets <= 64 - 3);
+        for (unsigned p = 0; p < 56; ++p) assert(s_isoc[i]->isoc_packet_desc[p].num_bytes == 96);
     }
     memcpy(s_feedback->data_buffer, nominal, 4);
     s_feedback->status = USB_TRANSFER_STATUS_COMPLETED;
@@ -399,7 +401,7 @@ static void test_uac2(void)
     s_feedback_q16 = (6u << 16) + 32768u;
     s_feedback_phase = 0;
     assert(prepare_and_submit(s_isoc[0]) == ESP_OK);
-    for (unsigned p = 0; p < 32; ++p)
+    for (unsigned p = 0; p < 56; ++p)
         assert(s_isoc[0]->isoc_packet_desc[p].num_bytes == (p % 2 ? 112 : 96));
     review_ticks += 500;
     assert(!controller_usb_audio_stream_poll_cleanup() && s_faulted);
