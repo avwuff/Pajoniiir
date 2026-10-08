@@ -21,7 +21,13 @@ def function(source, signature):
 
 class CacheOwnership(unittest.TestCase):
     def test_pinned_functions(self):
-        source = (ROOT / 'firmware/main-deck-m3/managed_components/usb/src/hcd_dwc.c').read_text()
+        source = (ROOT / 'tests/controller_usb_host/fixtures/hcd_cache_functions.c').read_text()
+        live = ROOT / 'firmware/main-deck-m3/managed_components/usb/src/hcd_dwc.c'
+        if live.exists():
+            dependency = live.read_text()
+            for signature in ('static inline void cache_sync_data_buffer(', 'urb_t *hcd_urb_dequeue('):
+                self.assertEqual(function(source, signature), function(dependency, signature),
+                                 'Pinned fixture/dependency drift')
         cmake = (ROOT / 'firmware/p4-core/cmake/apply_espressif_usb_idle_recovery_patch.cmake').read_text()
         original = function(source, 'static inline void cache_sync_data_buffer(')
         original += '\n' + function(source, 'urb_t *hcd_urb_dequeue(')
