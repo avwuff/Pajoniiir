@@ -496,6 +496,35 @@ S2 cable, device power, controller or marginal HS signal integrity. Storage
 return to USB2 and an S2-side USB-B power disconnect/adapter orientation
 comparison were requested; their outcomes remain pending.
 
+### Wi-Fi toggle panic and shared SDMMC lifecycle (2026-10-09)
+
+The operator reports S2 enumeration with Wi-Fi off and reboot when toggling
+Wi-Fi. Fresh evidence identifies a new panic, not the old USB close dump:
+`assert failed: bus_init_internal sdio_drv.c:1530 (sdio_handle)`, task
+`wifi_link`, dump size 8288 bytes. The journal shows boot 389's
+`WIFI_ENABLE_REQUESTED` at 43812 ms, then boot 390 with reset reason PANIC.
+Thus the captured panic follows enable; a separate disable-side panic is not
+established by these records. Evidence: `next-gates-20261009/wifi-toggle-trace.log`
+and `wifi-status.json`. On boot 390 Wi-Fi started at 3556 ms, followed by S2
+MIDI IN transaction errors at 4500/4501 ms and root disconnect at 4501 ms.
+The correlation is important but does not yet prove the USB failure's cause.
+
+M3 microSD slot 0 remains mounted when Hosted releases SDIO slot 1. The pinned
+Hosted port always calls `sdmmc_host_init()` on re-entry, while IDF 6's legacy
+implementation attempts to create/claim the already-owned physical controller.
+The candidate configure-time patch queries `sdmmc_host_get_state()` and reuses
+an initialized host, preserving the other slot. A fresh host still initializes
+normally; query and initialization errors are propagated unchanged. Only M3
+includes this fail-closed generated-source patch; dependency locks and upstream
+sources remain unchanged. Older IDF behavior in the patched block is preserved.
+
+The executable regression runs the exact CMake replacement block: it reproduces
+re-init failure with the other owner retained, then verifies ten restart cycles,
+fresh initialization, error propagation and older-IDF delegation. It passes.
+Full host/M3 build and installed Wi-Fi OFF->ON acceptance are pending. This
+candidate is not yet installed and does not establish a resolution of S2 link
+loss or MT/loop acceptance. No further Wi-Fi toggles were triggered remotely.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.

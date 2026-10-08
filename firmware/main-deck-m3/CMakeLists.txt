@@ -63,6 +63,7 @@ include("${CMAKE_CURRENT_LIST_DIR}/../p4-core/cmake/apply_espressif_usb_fifo_pat
 include("${CMAKE_CURRENT_LIST_DIR}/../p4-core/cmake/apply_espressif_usb_idle_recovery_patch.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/../p4-core/cmake/apply_espressif_usb_control_retirement_patch.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/../p4-core/cmake/apply_usb_host_msc_teardown_patch.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../p4-core/cmake/apply_esp_hosted_shared_sdmmc_patch.cmake")
 
 # Enlarge LVGL's per-display invalidate-area buffer (default 32). When many
 # small widgets invalidate in one refresh (e.g. the deck VU meters plus

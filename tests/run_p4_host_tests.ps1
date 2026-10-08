@@ -3978,6 +3978,8 @@ Invoke-Step -Name "run pinned HCD cache ownership regression" -WorkingDirectory 
     -Executable $pythonSource -Arguments @("tests/controller_usb_host/test_usb_cache_ownership.py")
 Invoke-Step -Name "run task-context cache writeback bound regression" -WorkingDirectory $RepoRoot `
     -Executable $pythonSource -Arguments @("tests/controller_usb_host/test_cache_writeback_bound.py")
+Invoke-Step -Name "run Hosted shared SDMMC restart regression" -WorkingDirectory $RepoRoot `
+    -Executable $pythonSource -Arguments @("tests/controller_usb_host/test_hosted_shared_sdmmc.py")
 if (-not $pythonSource) { throw "Python is required for firmware lifecycle regression" }
 Invoke-Step -Name "run firmware lifecycle regression" -WorkingDirectory $RepoRoot `
     -Executable $pythonSource -Arguments @("tests/audio_fw_runtime/test_firmware_lifecycle.py")
