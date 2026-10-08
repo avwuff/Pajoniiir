@@ -228,6 +228,39 @@ on this image; the prior hot-attachment failure's exact audio stage remains open
 Evidence: `performance-ota-install-01f9075155b0.json`, matching installed API
 snapshots and `audio-isolation-*` build/test/package/install logs.
 
+### Short controls and dual-playback observations on 01f90751
+
+The operator confirmed jog/Browse responsiveness. The 119.489-second stopped
+capture contains 216 samples, zero HTTP errors/reboots, 29 MIDI packets and 25
+semantic events, with no disconnect, MIDI pipe/queue failures or output-late
+delta. Its initial samples overlap track preparation: four packet failures /
+24 lost frames and 160522 underflow frames occurred before both decks reached
+READY and the producer settled. After the prepared snapshot at uptime 75543 ms,
+those counters remained constant during the stopped-controls window. This is
+a short responsiveness observation, not full jog calibration or reconnect PASS.
+
+The subsequent dual-playback window was stopped by the operator agent after
+29.062 seconds because ISO packet loss increased. The final verified stopped
+snapshot has packet failure delta 17 / lost frame delta 102, underflow/overflow/
+dropped block and both PCM underrun deltas zero, MIDI disconnect delta zero and
+605 MIDI packets. No reset occurred. The operator confirmed clean MAIN and S2
+headphones and responsive controls. The strict USB audio data-loss gate fails
+despite the clean listening result; the intended 90-second window is incomplete.
+
+Baseline already contained 152 ISO failures / 912 lost frames accumulated since
+boot; no counters were reset. Do not treat that idle history as zero-loss.
+Heap-walk warnings (including whole-query durations 1689/1768 us) are present;
+the measured query duration includes preemption and does not prove IRQ-disabled
+duration or causality. The code's internal/DMA largest-block TLSF walks remain
+a candidate for an explicit HS diagnostic isolation, alongside periodic HCD
+scheduling. The heap free/low-water counters, packet-loss accounting and final
+stopped evidence must remain available in that investigation. No new firmware
+is justified solely by these warning durations without an isolation result.
+
+Evidence: `combined-controls-20261008T204137Z.jsonl`,
+`playback-20261008T204722Z/{baseline.json,status.jsonl,result.json,final-stopped.json}`,
+`audio-isolation-jog-success-review.txt` and `audio-isolation-playback-loss-review.txt`.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
