@@ -1,7 +1,10 @@
 # Traktor Kontrol S2 MK3: basic transport profile
 
-Status: experimental; basic inputs/navigation observed on a PC, remaining
-controls and LED outputs source-derived. M3 physical acceptance is NOT RUN.
+Status: experimental; basic inputs/navigation observed on a PC. M3 short
+dual-Browse, one stopped-deck reconnect and dedicated D2 LOAD checks passed
+on diagnostic image `af340dd8` after an adapter swap and M3 power-on. Complete
+M3 controller acceptance remains open; other controls and LED outputs are
+source-derived pending physical checks.
 This is a limited S3CP v2 profile, compatible with v91 and the earlier M2.4
 runtime. Do not advertise full S2 MK3 support based on SD installation.
 

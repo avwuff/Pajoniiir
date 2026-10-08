@@ -11,6 +11,65 @@ S2 MK3 support and its physical acceptance are **NOT RUN**.
 
 ## M3 enumeration investigation (2026-10-08)
 
+### Latest result: Browse traffic survives after adapter swap and power-on
+
+On unchanged clean `af340dd8266ba65921cdafc3409205e5b1b4bf39`, VALID in
+`ota_0`, the operator reported swapping the USB-C adapters and subsequently
+reconnecting S2 in MIDI mode. The journal also records a new M3 `POWERON`
+boot 369; this is not an adapter-only controlled comparison. The working-PC
+comparison used USB-A directly, without a USB-C adapter.
+
+At uptime 48915 ms, S2 was connected on HS/root 0 with the basic profile
+active and zero MIDI packets. After the requested approximately 20-second
+dual-Browse exercise, uptime 90882 ms showed 210 packets / 840 bytes,
+203 total semantic events, one connection and zero disconnects. IN pipe
+errors, retries, retry failures, IN/OUT submit failures, runtime queue
+failures and controller recovery requests were all zero. Both roots retained
+only their four enumeration trace events, with no new channel errors or
+disconnect. The FS/root 1 stick remained mounted; boot library count was 260.
+
+This short input-traffic check passed telemetry and exceeds the earlier
+approximately three-second failing attachment. It does not establish the
+root cause, complete controller acceptance, or prove visible Browse routing
+and LED behavior. Physical navigation confirmation and reconnect regression
+remain open. No firmware change or audio test was performed in this check.
+
+Evidence: `*-bus-review-20261008T185358Z.txt` and
+`*-bus-review-20261008T185440Z.txt` under
+`.cache/s2-mk3/20261008-m3-enumeration/`.
+
+The operator subsequently confirmed that both Browse encoders moved the
+visible selection. One requested unplug/replug cycle also passed on the
+same boot 369, without resetting M3: controller disconnect at 182213 ms,
+reconnect at 194146 ms, and profile reactivation at 194178 ms. At uptime
+219174 ms, counters showed two connects, one expected disconnect, 472 MIDI
+packets / 1888 bytes and 441 semantic events. All MIDI pipe error/retry,
+submit-failure and runtime queue-failure counters remained zero, with no
+controller recovery request. Storage remained mounted with no disconnect.
+The operator confirmed both Browse encoders worked after reconnect.
+Evidence: `*-bus-review-20261008T185648Z.txt` in the same directory.
+This qualifies one stopped-deck reconnect and basic Browse operation only;
+LOAD/transport/LED checks, extended reconnect qualification and audio remain
+open. Adapter causality is still unproven.
+
+The subsequent operator-confirmed D1 load produced `TRACK_LOAD_DONE` for
+track 35, "Casanova Action {320}" by Latin Lover at 331898 ms. At uptime
+352490 ms D1 was READY at position zero, D2 still had No Track, and both
+were stopped. MIDI packet count was 494, with no new disconnect, pipe error,
+retry or submit failure. The preceding operator instruction incorrectly
+called the Browse encoder press LOAD; the profile maps separate LOAD
+buttons (`91/93 13`) and Browse push (`91/93 18`) to different actions.
+The snapshot confirms the resulting deck state; the exact physical button
+used in this step was not independently captured. Further LOAD checks must
+explicitly use the dedicated LOAD buttons.
+
+The dedicated D2 LOAD check was operator-confirmed. At uptime 420900 ms,
+D2 contained track 26, "Kuzma & Shaka Zulu - Noćas su pederi u điru", while
+D1 retained "Casanova Action {320}". Both decks remained READY, stopped at
+position zero. The journal completed the load at 404051 ms. Counters reached
+608 MIDI packets / 2432 bytes with no new disconnect or MIDI fault; storage
+remained mounted. Evidence: `*-bus-review-20261008T190010Z.txt`.
+
 ### Latest control: HS stick and native S2 reconnect
 
 On restored clean `7c86016265e6`, VALID in `ota_1`, a known stick
