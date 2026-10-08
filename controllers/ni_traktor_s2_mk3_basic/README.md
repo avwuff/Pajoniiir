@@ -7,6 +7,9 @@ and short solo/dual PCM5102A MAIN/waveform checks passed
 on diagnostic image `af340dd8` after an adapter swap and M3 power-on. Complete
 M3 controller acceptance remains open; other controls and LED outputs are
 source-derived pending physical checks.
+Stopped-deck SYNC on/off and PFL-on indicators/LEDs, and loop encoder
+double/halve/exit/re-entry also passed on both decks; playback qualification
+of SYNC and loop changes remains open.
 This is a limited S3CP v2 profile, compatible with v91 and the earlier M2.4
 runtime. Do not advertise full S2 MK3 support based on SD installation.
 
@@ -91,7 +94,8 @@ configuration. Configure fails if the requested experiment is not actually on.
   wrong range. v91 supports `cc7_to14` scaling (v3/v4), but this fixture still
   omits them; map and qualify the controller-specific inversion before enabling.
 - Browser rotation uses the observed offset-binary values `0x41` (+1) and
-  `0x3F` (-1). Actual on-device list direction remains unqualified. Tempo is
+  `0x3F` (-1). Both encoders moved the M3 selection in the short operator
+  check; exact direction and Browse push still need explicit qualification. Tempo is
   marked `flipped` in the source and remains disabled pending qualification.
 - Jog relative encoding is documented by the source, but its sensitivity and
   acceleration differ from the FLX4 path. Jog controls remain disabled pending

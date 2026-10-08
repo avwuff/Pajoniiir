@@ -120,6 +120,65 @@ remained mounted. Evidence: `*-bus-review-20261008T190705Z.txt`.
 This is a short operator-confirmed dual-deck MAIN/UI smoke at 44100/44100 Hz,
 zero pitch and MT off; it is not the planned worst-case mixed-rate/MT soak.
 
+The stopped-deck SYNC-on check was confirmed by the operator for both the
+screen indicators and physical LEDs. At uptime 984748 ms both decks had
+`sync_enabled=true` and remained stopped; D2 reported +1.22 percent pitch
+after alignment. MIDI totals were 654 packets and 511 semantic events,
+with no new disconnect or pipe/submit/queue error, and storage mounted.
+Evidence: `*-bus-review-20261008T190934Z.txt`. SYNC-off and acoustic/phase
+behavior under playback remain separate checks.
+
+The operator confirmed SYNC indicators/LEDs off and both PFL indicators/LEDs
+on. At uptime 1069508 ms API states were `sync_enabled=false` on both decks
+and `pfl1=true`, `pfl2=true`, with both decks stopped. MIDI totals were 662
+packets / 2648 bytes and 519 semantic events; no new disconnect or MIDI/queue
+fault occurred. Evidence: `*-bus-review-20261008T191059Z.txt`. This qualifies
+PFL control/LED state only, not S2 headphone sound (USB audio is disabled).
+
+To prepare loop encoder checks, the shared `loop_4` web action was issued
+once per stopped deck. Both loops became active without starting playback:
+D1 1829..3653 ms (1824 ms), D2 1031..2879 ms (1848 ms). Evidence:
+`loop-prepare-20261008T191138Z.json` in the same evidence directory.
+
+One clockwise LOOP encoder step per deck was operator-confirmed to display
+eight beats. At uptime 1176506 ms, D1 loop was 1829..5477 ms (3648 ms) and
+D2 1031..4727 ms (3696 ms), exactly twice their prepared lengths, with both
+decks stopped. MIDI totals were 672 packets and 523 semantic events, with
+no new disconnect, pipe/retry/submit/queue fault and storage mounted.
+Evidence: `*-bus-review-20261008T191246Z.txt`. Reverse-size and loop encoder
+press exit/reloop behavior remain open.
+
+The operator confirmed one counterclockwise step returned each loop display
+to four beats, then one encoder press per deck exited the loop. At uptime
+1251837 ms both decks were stopped with `loop_active=false`; the inactive
+status intentionally published zero loop bounds, so the intermediate four-
+beat length is operator evidence, not a post-exit length measurement. MIDI
+totals were 684 packets and 529 semantic events; no new disconnect or MIDI/
+queue fault occurred and storage stayed mounted. Evidence:
+`*-bus-review-20261008T191401Z.txt`. Remembered-loop re-entry remains open.
+
+The operator confirmed a further encoder press re-entered each remembered
+four-beat loop. At uptime 1297168 ms, the active bounds exactly matched
+the prepared loops: D1 1829..3653 ms and D2 1031..2879 ms. Both decks
+remained stopped. MIDI totals were 692 packets and 533 semantic events,
+with no new disconnect or MIDI/queue fault; PCM underrun counters, output-
+late count and service-log drops remained zero, and storage stayed mounted.
+Evidence: `*-bus-review-20261008T191446Z.txt`. Stopped-deck loop doubling,
+halving, exit and remembered re-entry are accepted on both decks. Resizing
+and exiting loops during playback remain separate gates.
+
+Remaining basic-profile acceptance groups:
+
+1. Hot Cue pad recall and shifted clear, preserving existing local cue data.
+2. Dedicated D1 LOAD recheck, LOAD LOCK, Browse push, screensaver wake and
+   PFL-off, using the S2 semantic path rather than inherited FLX4 acceptance.
+3. Loop resize/exit/re-entry and SYNC behavior during playback.
+4. Further USB lifecycle qualification and final exact-image timing soak.
+
+Mixer/tempo scaling, jog/touch behavior and S2 USB headphone audio are
+additional implementation work outside this limited basic profile. Do not
+interpret completion of these four acceptance groups as full S2 support.
+
 ### Latest control: HS stick and native S2 reconnect
 
 On restored clean `7c86016265e6`, VALID in `ota_1`, a known stick
