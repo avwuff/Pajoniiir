@@ -74,6 +74,28 @@ an open startup investigation. Final soak remains last, on an accepted image.
 Evidence: `.cache/s2-mk3/20261008-m3-enumeration/performance-ota-install-949883fe325c.json`,
 the matching installed status/profile snapshots and `combined-prepared-*.json`.
 
+### Combined stopped-control window
+
+On the exact diagnostic 949883fe image and performance profile, the first
+combined window collected 279 status samples across 149.609 seconds. Both
+decks remained stopped throughout; HTTP errors=0. MIDI packets increased by
+6135 and semantic events by 5474. All observed new disconnect, MIDI pipe/output
+submit error, queue failure, PCM underrun, output-late, UAC dropped block,
+overflow/underflow and ISO packet/lost-frame deltas were zero. Feedback advanced
+149606 times with no invalid feedback. Counters were not reset.
+
+Both pitch controls traversed 0..16383 and finished at 8192; headphone mix also
+traversed 0..16383 and finished at 8192. All declared channel mixer controls and
+crossfader changed; the sampled window does not capture both endpoints of every
+knob/fader, so it is not a full physical endpoint qualification. Both track
+positions remained zero: touch-jog/shifted-search behavior requires the
+operator's description before assigning a result. Operator confirmation and
+the combined playback/listening block are pending. D2 volume, trim/EQ/filter
+and crossfader were not all at neutral in the final sample; request restoration
+before playback rather than silently overriding the physical controls.
+Evidence: `combined-controls-20261008T200142Z.jsonl` and its `.summary.json`
+under the same enumeration evidence directory.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
