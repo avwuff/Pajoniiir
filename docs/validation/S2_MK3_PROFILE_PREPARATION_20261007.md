@@ -144,6 +144,19 @@ is mounted and S2 requires another MIDI-mode reconnect. Fault diagnosis/retest
 remains pending. Evidence: `fault-diagnostic-ota-install.json` and
 `*-s2-fault-installed.json`. Package: `releases/m3-s2-fault-c45cab13/`.
 
+The operator repeated the MIDI-mode reconnect/Browse input on this diagnostic
+image. `status-c45-browse-reconnect.json` reports 19 packets / 76 bytes,
+16 semantic events, one connect/disconnect and fault epoch 1. The captured
+first fault is operation 3 (MIDI IN transfer), raw USB status 1
+(`USB_TRANSFER_STATUS_ERROR`), with IN/OUT submit-failure counters both zero.
+The pinned HCD maps this generic transfer error to an excessive transaction
+error; it is not STALL, OVERFLOW or the separate timeout status. This does
+not distinguish electrical/no-response/CRC causes or prove a driver defect.
+Storage remains mounted. A USB1/CH340 serial connection was requested to
+capture driver context before choosing a recovery or HAL change; the host
+currently exposes no serial ports. No further firmware fix or acceptance
+claim is made from this snapshot.
+
 The M3 timing soak uses the exact clean `fb5cbca13f33d21dfb4e16e0ba667c340399eb0c`
 image with FLX4 on USB2, storage on USB3, PCM5102A MAIN and FLX4 headphones.
 During that soak, keep the S2 on a separate PC USB port. Do not change the M3
