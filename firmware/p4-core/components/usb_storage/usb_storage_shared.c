@@ -75,7 +75,15 @@ static esp_err_t shared_storage_host_install(const usb_host_config_t *ignored)
         .intr_flags = ESP_INTR_FLAG_LEVEL1,
         .daemon_stack_size = 4096u,
         .daemon_priority = 4u,
+#if CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC
+        /* usb_host_install allocates both host interrupts on the calling core.
+         * Keep the HS diagnostic scheduler away from core-0 audio/decode
+         * critical sections; an unpinned installer makes IRQ placement depend
+         * on startup scheduling. Production topology remains unchanged. */
+        .daemon_core_id = 1,
+#else
         .daemon_core_id = tskNO_AFFINITY,
+#endif
     };
     return usb_host_manager_init(&config);
 }

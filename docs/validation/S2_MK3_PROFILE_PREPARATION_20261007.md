@@ -314,6 +314,22 @@ nominal/fractional bytes and ownership. This adds up to nine milliseconds of
 queued OUT work compared with the previous three-batch limit; cue latency and
 dense MIDI timing must be physically rechecked, not inferred from the tests.
 
+The 56-packet candidate `7a2182258ec531dd3b03eeb8be0c2e7268601b64`
+passed the full host suite, IDF 6.0.2 M3 build, unchanged lock and signed OTA.
+It is VALID in ota_1, ELF
+`b866c1ce64af4543b69b58154af052fd1d7090032f0b8d816d81e560ca54b9be`.
+The combined playback window failed after 5.753 s: five new skipped ISO packets
+(30 frames), 16 MIDI packets, no output-late, controller retained, both decks
+automatically stopped. Larger batches did not close the loss gate.
+Evidence: `playback-20261008T210651Z` and the subsequent bus-review snapshots.
+
+The next diagnostic isolates IRQ placement: `usb_host_install` allocates the
+host interrupts on its caller's core. The previously unpinned installer can
+share core 0 with audio/output/decode critical sections. Only the HS diagnostic
+configuration now pins that installer/daemon to core 1; batch size, priorities,
+profile and production defaults are retained. This is a hypothesis test, not
+an accepted production fix. Dense playback and listening are pending.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
