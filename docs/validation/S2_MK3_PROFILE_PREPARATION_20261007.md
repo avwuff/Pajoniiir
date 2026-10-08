@@ -259,6 +259,25 @@ Evidence: `hs-only-ota-install.json`, `status-s2-hs-only-installed.json`;
 package `releases/m3-s2-hs-only-37882557/`. The operator was also asked for
 the M3 5-V source/current specification; no power diagnosis is inferred yet.
 
+The operator subsequently reported connection and a repeat. On boot 365,
+HS-only snapshots still show zero topology observations, zero probes and zero
+daemon iterations; descriptor API remains 503. Thus no IN-transfer comparison
+was obtained. Known-stick USB3 control enumeration was requested, but the
+repeat message did not establish which device/port was used. Do not attribute
+this absence to the S2 or claim a valid isolation result. The HS-only setup
+remains unqualified and its enumeration issue is separate from the original
+dual-host IN ERROR.
+
+Without a new build, the previously verified signed `7c860162` dual-host package
+was restored by local OTA HTTP 200 and reached exact clean VALID on `ota_1`.
+Runtime confirms map 3; the first post-boot snapshot enumerates `18A5:0302`
+on FS root 1 and mounts storage. It is the USB stick, not S2. Original valid
+928-byte S2 profile remains installed. A fresh S2 USB3 MIDI-mode reconnect
+with green-flash confirmation was requested. Evidence:
+`*-hs-only-connected-*.txt`, `*-hs-only-repeat-*.txt`,
+`restore-dual-host-ota-install.json`, `*-dual-host-restored.json`.
+No new firmware fix or S2 support acceptance is claimed by restoration.
+
 The M3 timing soak uses the exact clean `fb5cbca13f33d21dfb4e16e0ba667c340399eb0c`
 image with FLX4 on USB2, storage on USB3, PCM5102A MAIN and FLX4 headphones.
 During that soak, keep the S2 on a separate PC USB port. Do not change the M3
