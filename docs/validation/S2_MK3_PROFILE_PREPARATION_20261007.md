@@ -70,6 +70,34 @@ position zero. The journal completed the load at 404051 ms. Counters reached
 608 MIDI packets / 2432 bytes with no new disconnect or MIDI fault; storage
 remained mounted. Evidence: `*-bus-review-20261008T190010Z.txt`.
 
+The operator confirmed a short D1 PLAY/start-stop check: only D1 played,
+its waveform and PCM5102A MAIN audio were clean, and the PLAY LED followed
+the playback state. At uptime 498303 ms D1 was stopped at 8703 ms and D2
+was still stopped at zero, with both loaded titles unchanged. The four new
+MIDI packets matched the requested two button press/release cycles; all
+pipe-error, retry, submit-failure and queue-failure counters remained zero.
+S2 remained connected and storage mounted. Evidence:
+`*-bus-review-20261008T190127Z.txt`. This is a short D1 transport/PLAY LED
+and MAIN smoke result, not dual-deck, S2 headphone or soak qualification.
+
+The same short PLAY/start-stop, PLAY LED, waveform and clean MAIN check
+was operator-confirmed for D2. At uptime 551002 ms D2 was stopped at
+7557 ms, D1 remained stopped at 8703 ms, and loaded titles were unchanged.
+Four additional MIDI packets brought the total to 616 / 2464 bytes, with
+473 semantic events. No new disconnect, pipe error, retry, submit failure
+or queue failure occurred; storage remained mounted. Evidence:
+`*-bus-review-20261008T190220Z.txt`. Both short solo transport checks passed;
+this does not yet qualify simultaneous playback or S2 headphone audio.
+
+The operator then confirmed CUE behavior on both decks: CUE during playback
+stopped and returned to the initial cue; a held CUE preview played only while
+held and returned to the cue on release. MAIN audio and CUE LEDs were reported
+clean/correct. At uptime 658296 ms both decks were stopped at position zero,
+with titles unchanged. There were 12 additional MIDI packets (628 total,
+2512 bytes) and 485 semantic events, no new disconnect or MIDI/queue fault,
+and storage remained mounted. Evidence: `*-bus-review-20261008T190407Z.txt`.
+CUE-to-PLAY handoff and simultaneous playback remain to be checked.
+
 ### Latest control: HS stick and native S2 reconnect
 
 On restored clean `7c86016265e6`, VALID in `ota_1`, a known stick
