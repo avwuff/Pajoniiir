@@ -405,6 +405,14 @@ The actual-wrapper regression checks address progression, the final partial
 chunk, early errors, invalid alignment/range delegation and context exclusion.
 Software and physical acceptance are pending for this broader writeback bound.
 
+Source inspection also found PPA SRM task-context M2C maintenance of the
+output strip before DMA starts. That large invalidation masks the same ISR,
+so the bound covers valid task-context data maintenance in both directions.
+M2C still requires strict alignment and rejects UNALIGNED/both-direction flags
+by delegating the complete original request. Instruction-cache and ISR/outer
+critical contexts remain unchanged. The regression covers aligned M2C chunks,
+invalid M2C flags and the non-diagnostic original one-call path.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.

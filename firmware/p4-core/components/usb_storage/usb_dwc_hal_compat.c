@@ -62,14 +62,16 @@ esp_err_t __wrap_esp_cache_msync(void *address, size_t bytes, int flags)
 #if CONFIG_ESP_MM_CACHE_MSYNC_C2M_CHUNKED_OPS
 #error "HS bounded writeback requires the global C2M mutex option disabled"
 #endif
-    /* Large display/PPA writebacks can mask the same HS interrupt as USB data.
-     * Bound task-context C2M without IDF's whole-operation mutex, which caused
+    /* Large display/PPA cache operations can mask the same HS interrupt as USB data.
+     * Bound task-context data sync without IDF's whole-operation mutex, which caused
      * audio/display contention in the previous diagnostic. DMA ownership and
      * publication remain with each caller until the complete sync returns. */
     uint32_t level, cache_id;
     uintptr_t end;
     if (address && bytes > 4096u && xPortCanYield() &&
-        !(flags & (ESP_CACHE_MSYNC_FLAG_DIR_M2C | ESP_CACHE_MSYNC_FLAG_TYPE_INST)) &&
+        !(flags & ESP_CACHE_MSYNC_FLAG_TYPE_INST) &&
+        !((flags & ESP_CACHE_MSYNC_FLAG_DIR_M2C) &&
+          (flags & (ESP_CACHE_MSYNC_FLAG_UNALIGNED | ESP_CACHE_MSYNC_FLAG_DIR_C2M))) &&
         !__builtin_add_overflow((uintptr_t)address, bytes, &end) &&
         cache_hal_vaddr_to_cache_level_id((uint32_t)(uintptr_t)address, bytes, &level, &cache_id)) {
         const size_t line = cache_hal_get_cache_line_size(level, CACHE_TYPE_DATA);

@@ -20,6 +20,7 @@ class WritebackBound(unittest.TestCase):
 #define CONFIG_ESP_MM_CACHE_MSYNC_C2M_CHUNKED_OPS 0
 #define ESP_CACHE_MSYNC_FLAG_DIR_M2C 1
 #define ESP_CACHE_MSYNC_FLAG_TYPE_INST 4
+#define ESP_CACHE_MSYNC_FLAG_DIR_C2M 8
 #define ESP_CACHE_MSYNC_FLAG_UNALIGNED 2
 #define CACHE_TYPE_DATA 0
 #define ESP_OK 0
@@ -39,6 +40,7 @@ static void reset(uintptr_t p) {calls=0;copied=0;maximum=0;expected=p;fail_at=0;
 esp_err_t __real_esp_cache_msync(void *p,size_t n,int flags) {
  calls++;assert((uintptr_t)p==expected);
  if (fail_at==calls)return 7;
+ if ((flags&ESP_CACHE_MSYNC_FLAG_DIR_M2C) && (flags&(ESP_CACHE_MSYNC_FLAG_UNALIGNED|ESP_CACHE_MSYNC_FLAG_DIR_C2M)))return 7;
  if(!(flags & ESP_CACHE_MSYNC_FLAG_UNALIGNED) && (((uintptr_t)p%64) || (n%64))) return 7;
  if(n>maximum)maximum=n;
  copied+=n;expected+=n;return ESP_OK;
@@ -53,7 +55,9 @@ int main(void) {
  reset(0x1000);fail_at=2;assert(__wrap_esp_cache_msync((void *)0x1000,16384,0)==7);
  assert(calls==2 && copied==4096);
  reset(0x1000);assert(__wrap_esp_cache_msync((void *)0x1000,9000,0)==7);assert(calls==1 && copied==0);
- reset(0x1000);assert(__wrap_esp_cache_msync((void *)0x1000,8192,1)==0);assert(calls==1 && maximum==8192);
+ reset(0x1000);assert(__wrap_esp_cache_msync((void *)0x1000,8192,1)==0);assert(calls==2 && maximum==4096);
+ reset(0x1000);assert(__wrap_esp_cache_msync((void *)0x1000,8192,3)==7);assert(calls==1 && copied==0);
+ reset(0x1000);assert(__wrap_esp_cache_msync((void *)0x1000,8192,9)==7);assert(calls==1 && copied==0);
  reset(0x1000);yielding=false;assert(__wrap_esp_cache_msync((void *)0x1000,16384,0)==0);assert(calls==1);
  reset(0x1000);yielding=true;valid_range=false;
  assert(__wrap_esp_cache_msync((void *)0x1000,16384,0)==0);assert(calls==1);
