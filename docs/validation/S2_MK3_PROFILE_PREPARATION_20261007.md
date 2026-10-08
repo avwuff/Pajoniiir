@@ -525,6 +525,31 @@ Full host/M3 build and installed Wi-Fi OFF->ON acceptance are pending. This
 candidate is not yet installed and does not establish a resolution of S2 link
 loss or MT/loop acceptance. No further Wi-Fi toggles were triggered remotely.
 
+Candidate `dbe206a78f6b4b1ad63fc955cd7b2fa696f1ca6d` subsequently passed the
+full host suite and ESP-IDF 6.0.2 M3 reconfigure/build with unchanged dependency
+locks. Signed packaging passed; image size 2,601,056 bytes, SHA-256
+`d8066cff997921d29538c2112e30517a860921563b5234d7b938b21d5e7ec5dd`.
+Signed OTA returned HTTP 200, and the exact clean image is VALID in ota_1,
+version `M3-dev-gdbe206a78f6b`, ELF SHA-256
+`5ef716815061534a28953cf84ce3949783db167636065d80d77de174d702919a`.
+The full 1624-byte S2 profile was restored atomically (HTTP 200). Evidence:
+`performance-ota-install-dbe206a78f6b.json`, plus `next-gates-20261009/`
+`wifi-shared-{host,build,package,install}.log`. Both decks are stopped; storage
+is mounted. S2 is not enumerated in the installation snapshot. Operator Wi-Fi
+OFF->ON without cable changes was requested; physical lifecycle and S2 USB
+outcomes are still pending. No public channel or remote Git update was made.
+
+The operator confirmed the first OFF->ON cycle on this candidate completed
+without reboot and the AP returned. The journal independently confirms boot
+391 throughout: WIFI_STOPPED at 89592 ms, WIFI_ENABLE_REQUESTED at 95884 ms,
+WIFI_STARTED at 98291 ms. Evidence:
+`next-gates-20261009/wifi-shared-off-on-trace.log`. This is a PASS for one
+stopped-deck Wi-Fi lifecycle cycle, not extended cycling or playback stress.
+S2 was absent and root 0 recorded no connect events in that snapshot; this
+cycle alone does not qualify USB coexistence. A combined S2 MIDI reconnect
+and Browse comparison while Wi-Fi is off, followed by enabling Wi-Fi without
+cable changes, was requested. The USB coexistence result remains pending.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
