@@ -83,6 +83,27 @@ recording off. Focused host tests exercise ring wrap, per-root isolation and
 concurrent reader/writer coherence. Full host suite, M3 diagnostic build and
 physical fault capture are tracked separately; this is not a fix/PASS claim.
 
+Clean source `af340dd8266ba65921cdafc3409205e5b1b4bf39` passed the full default
+host suite, documentation integrity and the M3-only IDF 6.0.2 experimental
+build. Dependency locks remained unchanged. The local HS-role SDKCONFIG enables
+the bus trace and retains both hosts; HS-only isolation is off. The signed
+package passed board identity, budget and signature checks. Image size is
+2,577,984 bytes, SHA-256
+`6e30e9a82d31b451656111148b005ffa87b7ea1536e087c895541d67346031b9`;
+bundle size is 2,578,172 bytes, SHA-256
+`aed26a58e07b997a266bf5727b523bd9a5ad3669bddad1cefe932e6a90ec24f2`.
+
+Local OTA returned HTTP 200. Boot 368 reports `M3-dev-gaf340dd8266b`, clean,
+VALID in `ota_0`, matching ELF
+`07bc1f9e3fc7567635dfb3cd43cd0e6c7d8714971d8bd142d2e784eab9fa19b6`.
+Both decks are stopped, Wi-Fi remains enabled, and storage is mounted on FS
+root 1 with 260 tracks. Initial trace correctly contains root-1 connection,
+reset/enable transitions, with no root-0 event before the requested S2
+reconnect. Exact installation evidence is `bus-trace-ota-install.json`;
+subsequent raw snapshots use `*-bus-review-*` in the enumeration directory.
+S2 fault capture on this diagnostic image remains pending the operator's
+MIDI-mode reconnect. No transfer fix or new physical support PASS is claimed.
+
 On installed clean `af4ca59007e3`, both decks stopped, the captured 928-byte
 profile installed with HTTP 201 and was listed valid as `17CC:1710`.
 It did not activate: the USB probe saw S2 but returned `ESP_ERR_NOT_FOUND`
