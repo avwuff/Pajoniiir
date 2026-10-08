@@ -486,6 +486,16 @@ profile matching or DSP playback. A same-adapter known-stick enumeration
 comparison on the HS root was requested to distinguish port recovery from
 the S2 connection path. No firmware change or OTA was made for these probes.
 
+The same-adapter known-stick comparison succeeded without another M3 reset:
+root 0 connected at 78144 ms, completed HS enumeration at 78486 ms and
+reported `18A5:0302`, address 2, speed 2. Evidence:
+`next-gates-20261009/known-stick-hs-trace.log`. Its expected storage mount
+rejection on the controller root is not a USB enumeration failure. This
+rules out a completely stranded host/receptacle, but does not qualify the
+S2 cable, device power, controller or marginal HS signal integrity. Storage
+return to USB2 and an S2-side USB-B power disconnect/adapter orientation
+comparison were requested; their outcomes remain pending.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
