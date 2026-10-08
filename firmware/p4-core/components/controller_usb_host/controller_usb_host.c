@@ -13,6 +13,11 @@
 #include "usb_host_manager.h"
 #ifdef ESP_PLATFORM
 #include "firmware_resources.h"
+#if CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC
+#include "esp_ota_ops.h"
+#include "esp_system.h"
+#include "esp_timer.h"
+#endif
 #endif
 
 static const char *TAG = "controller_usb";
@@ -51,6 +56,7 @@ typedef struct {
     bool out_generation_closed;
     bool midi_flush_attempted;
     bool uac_recovery_requested;
+    bool pending_hs_audio;
     controller_usb_recovery_gate_t recovery_gate;
 } controller_state_t;
 
@@ -333,6 +339,7 @@ static void midi_out_callback(usb_transfer_t *transfer)
 
 static void close_step(controller_state_t *state)
 {
+    state->pending_hs_audio = false;
     state->closing = true;
     __atomic_store_n(&s_accepting_out, false, __ATOMIC_RELEASE);
     if (!state->out_generation_closed) {
@@ -578,6 +585,14 @@ static esp_err_t probe_device(controller_state_t *state, uint8_t address)
                                state->identity.pid == FLX4_USB_PID;
     if (state->identity.direct_root_child &&
         (info.speed == USB_SPEED_FULL || info.speed == USB_SPEED_HIGH)) {
+#if CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC
+        if (info.speed == USB_SPEED_HIGH) {
+            state->pending_hs_audio = esp_reset_reason() != ESP_RST_PANIC;
+            ESP_LOGW(TAG, "HS audio diagnostic: %s", state->pending_hs_audio ?
+                     "deferred until validated boot" : "quarantined after panic");
+        } else
+#endif
+        {
         (void)controller_usb_audio_stream_set_policy(qualified_flx4,
                     controller_usb_audio_stream_consumer_paced(), info.speed == USB_SPEED_HIGH);
         const esp_err_t audio_rc = controller_usb_audio_stream_start(
@@ -589,6 +604,7 @@ static esp_err_t probe_device(controller_state_t *state, uint8_t address)
                      esp_err_to_name(audio_rc));
         } else {
             state->identity.usb_audio_active = true;
+        }
         }
     }
 
@@ -674,6 +690,27 @@ static void controller_task(void *arg)
             close_step(&s_state);
             continue;
         }
+#if CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC
+        if (s_state.opened && s_state.pending_hs_audio && esp_timer_get_time() >= 10000000) {
+            esp_ota_img_states_t image_state;
+            const esp_err_t image_rc = esp_ota_get_state_partition(
+                esp_ota_get_running_partition(), &image_state);
+            if (image_rc == ESP_OK && image_state == ESP_OTA_IMG_VALID) {
+                s_state.pending_hs_audio = false; /* One attempt per attachment. */
+                const usb_config_desc_t *config = NULL;
+                esp_err_t audio_rc = usb_host_get_active_config_descriptor(s_state.device, &config);
+                if (audio_rc == ESP_OK)
+                    audio_rc = controller_usb_audio_stream_set_policy(false,
+                        controller_usb_audio_stream_consumer_paced(), true);
+                if (audio_rc == ESP_OK)
+                    audio_rc = controller_usb_audio_stream_start(s_state.client, s_state.device,
+                        (const uint8_t *)config, config->wTotalLength, xTaskGetCurrentTaskHandle(),
+                        CONTROLLER_USB_ACTIVE_PRIORITY, s_state.config.task_priority);
+                s_state.identity.usb_audio_active = audio_rc == ESP_OK;
+                ESP_LOGW(TAG, "Deferred HS audio start: %s", esp_err_to_name(audio_rc));
+            }
+        }
+#endif
         if (!s_state.opened) {
             submit_deferred_controller_recovery(&s_state);
         }

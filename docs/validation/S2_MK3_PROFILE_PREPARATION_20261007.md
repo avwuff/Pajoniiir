@@ -30,6 +30,21 @@ FLX4 golden parity remains unchanged. Profile regeneration is byte-identical;
 documentation integrity and whitespace checks pass. M3 build/install and
 combined physical acceptance are pending at this source checkpoint.
 
+Candidate `40af1514925e60b5a17400e0e624c11737af32ec` built successfully
+with IDF 6.0.2, unchanged lock and 2,581,648-byte image (SHA-256
+`779d3f8ab3eebbad04b81087c04fa13cf1a46678b55784450b3fb15d358cadc9`).
+Signed OTA returned HTTP 200 and boot 370 entered this image in ota_1, but
+reset with PANIC before USB connection/startup readiness. Boot 371 rolled back
+to the previous VALID af340dd8 image. The full profile was not uploaded.
+This candidate is FAIL, not installed/accepted. Crash dump was disabled, so
+the journal alone does not establish the panic cause.
+
+A bench-only diagnostic option defers HS audio until ten seconds and OTA
+validation, then quarantines it for a boot following PANIC. Flash crash dump
+allows the Wi-Fi status API to expose the fault. Startup health remains intact;
+FS/FLX4 behavior and production defaults are unchanged. This is an investigation
+configuration, not a production workaround or headphone acceptance.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.

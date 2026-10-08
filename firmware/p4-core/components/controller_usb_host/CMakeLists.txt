@@ -6,4 +6,5 @@ idf_component_register(
          "controller_usb_recovery_gate.c"
     INCLUDE_DIRS "include"
     REQUIRES log usb usb_host_manager controller_usb_audio board_capabilities firmware_health
+    PRIV_REQUIRES app_update esp_timer esp_system
 )
