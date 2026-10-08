@@ -413,8 +413,24 @@ static void test_uac2(void)
     s_control->status = USB_TRANSFER_STATUS_COMPLETED;
     control_callback(s_control);
     assert(s_faulted && !s_streaming && !s_feedback);
+    assert(controller_usb_audio_stream_fault_isolatable());
+    controller_usb_audio_stream_stats_t failed;
+    controller_usb_audio_stream_get_stats(&failed);
+    assert(failed.configuration_fault && failed.fault_control_step == 4);
+    assert(failed.last_control_status == USB_TRANSFER_STATUS_COMPLETED && failed.last_control_bytes == 1);
+    s_control_expired = true;
+    assert(!controller_usb_audio_stream_fault_isolatable());
+    s_control_expired = false;
+    s_device_gone = true;
+    assert(!controller_usb_audio_stream_fault_isolatable());
+    s_device_gone = false;
+    s_high_speed = false;
+    assert(!controller_usb_audio_stream_fault_isolatable());
+    s_high_speed = true;
     finish_cleanup();
     assert(controller_usb_audio_stream_is_quiesced());
+    controller_usb_audio_stream_get_stats(&failed);
+    assert(failed.configuration_fault && failed.fault_control_step == 4);
     /* An explicitly invalid clock cannot start the endpoints. */
     assert(controller_usb_audio_stream_start((void *)1, (void *)2,
         s2_hs_config, sizeof(s2_hs_config), (void *)3, 10, 5) == ESP_OK);

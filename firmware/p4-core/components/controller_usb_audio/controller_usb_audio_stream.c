@@ -56,6 +56,10 @@ static bool s_stopping;
 static bool s_device_gone;
 static bool s_flush_attempted;
 static bool s_faulted;
+static bool s_configuration_fault;
+static uint8_t s_fault_control_step;
+static int32_t s_last_control_status = -1, s_last_control_bytes = -1;
+static uint32_t s_last_control_word;
 /* Admission and in-flight ownership share one atomic word. Cleanup never waits
  * at USB priority for the lower-priority output owner; it polls on later turns. */
 #define WRITE_ACCEPTING 1u
@@ -219,6 +223,10 @@ static bool has_active_isoc(void)
 
 static void mark_fault(bool configuration_failure)
 {
+    if (!s_faulted) {
+        s_configuration_fault = configuration_failure;
+        s_fault_control_step = s_control_step;
+    }
     s_faulted = true;
     set_accepting(false);
     s_streaming = false;
@@ -408,6 +416,12 @@ static esp_err_t submit_feedback(void)
     return rc;
 }
 
+bool controller_usb_audio_stream_fault_isolatable(void)
+{
+    return s_high_speed && s_faulted && s_configuration_fault &&
+           !s_control_expired && !s_device_gone;
+}
+
 static void feedback_callback(usb_transfer_t *transfer)
 {
     s_feedback_active = false;
@@ -438,6 +452,16 @@ static void control_callback(usb_transfer_t *transfer)
     s_control_active = false;
     if (!transfer) {
         return;
+    }
+    if (!s_stopping) {
+        s_last_control_status = (int32_t)transfer->status;
+        s_last_control_bytes = transfer->actual_num_bytes - (int)sizeof(usb_setup_packet_t);
+        s_last_control_word = 0;
+        if (s_last_control_bytes > 0 && transfer->status == USB_TRANSFER_STATUS_COMPLETED) {
+            const unsigned bytes = s_last_control_bytes > 4 ? 4u : (unsigned)s_last_control_bytes;
+            for (unsigned i = 0; i < bytes; ++i)
+                s_last_control_word |= (uint32_t)transfer->data_buffer[sizeof(usb_setup_packet_t) + i] << (8u * i);
+        }
     }
     if (transfer->status == USB_TRANSFER_STATUS_CANCELED ||
         transfer->status == USB_TRANSFER_STATUS_NO_DEVICE) {
@@ -573,6 +597,11 @@ esp_err_t controller_usb_audio_stream_start(
     s_control_expired = false;
     s_alt_zero_sent = false;
     s_faulted = false;
+    s_configuration_fault = false;
+    s_fault_control_step = 0;
+    s_last_control_status = -1;
+    s_last_control_bytes = -1;
+    s_last_control_word = 0;
     s_stopping = false;
     s_configuring = true;
     s_streaming = false;
@@ -840,6 +869,11 @@ void controller_usb_audio_stream_get_stats(
     out_stats->configuring = s_configuring;
     out_stats->streaming = s_streaming;
     out_stats->faulted = s_faulted;
+    out_stats->configuration_fault = s_configuration_fault;
+    out_stats->fault_control_step = s_fault_control_step;
+    out_stats->last_control_status = s_last_control_status;
+    out_stats->last_control_bytes = s_last_control_bytes;
+    out_stats->last_control_word = s_last_control_word;
     out_stats->sample_rate = __atomic_load_n(&s_target_rate, __ATOMIC_ACQUIRE);
     out_stats->bits_per_sample = __atomic_load_n(&s_sample_bits, __ATOMIC_ACQUIRE);
     out_stats->high_speed = s_high_speed;

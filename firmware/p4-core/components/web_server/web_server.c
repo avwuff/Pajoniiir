@@ -1866,7 +1866,7 @@ static esp_err_t api_status_handler(httpd_req_t *req)
         "\"sd_metrics\":{\"idle_waits\":%u,\"idle_polls\":%u,\"idle_timeouts\":%u,\"idle_errors\":%u,\"idle_max_us\":%u,"
         "\"reads\":%u,\"writes\":%u,\"transfer_errors\":%u,\"read_max_us\":%u,\"write_max_us\":%u,"
         "\"gate_waits\":%u,\"gate_timeouts\":%u,\"gate_wait_max_us\":%u,\"gate_hold_max_us\":%u,\"activity\":%u},"
-        "\"uac_format\":{\"sample_rate\":%u,\"bits\":%u,\"consumer_paced\":%s,\"queued_us\":%u,\"high_speed\":%s,\"subslot_bytes\":%u,\"feedback_updates\":%u,\"feedback_invalid\":%u},"
+        "\"uac_format\":{\"sample_rate\":%u,\"bits\":%u,\"consumer_paced\":%s,\"queued_us\":%u,\"high_speed\":%s,\"subslot_bytes\":%u,\"feedback_updates\":%u,\"feedback_invalid\":%u,\"streaming\":%s,\"faulted\":%s,\"configuration_fault\":%s,\"fault_control_step\":%u,\"last_control_status\":%ld,\"last_control_bytes\":%ld,\"last_control_word\":%u},"
         "\"deck1\":{"
         "\"title\":\"%s\","
         "\"artist\":\"%s\","
@@ -2021,6 +2021,10 @@ static esp_err_t api_status_handler(httpd_req_t *req)
         uac_format.sample_rate ? (unsigned)((uint64_t)uac_format.ring_queued_frames * 1000000u / uac_format.sample_rate) : 0u,
         uac_format.high_speed ? "true" : "false", (unsigned)uac_format.subslot_bytes,
         (unsigned)uac_format.feedback_updates, (unsigned)uac_format.feedback_invalid,
+        uac_format.streaming ? "true" : "false", uac_format.faulted ? "true" : "false",
+        uac_format.configuration_fault ? "true" : "false", (unsigned)uac_format.fault_control_step,
+        (long)uac_format.last_control_status, (long)uac_format.last_control_bytes,
+        (unsigned)uac_format.last_control_word,
         title1_esc, artist1_esc, (unsigned)current_bpm1, p1, state1.pitch, (unsigned)state1.position_ms, (unsigned)duration1_ms, state1.playing ? "true" : "false",
         state1.master_tempo ? "true" : "false", loop1.active ? "true" : "false", (unsigned)loop1.start_ms, (unsigned)loop1.end_ms,
         state1.sync_enabled ? "true" : "false", state1.sync_master ? "true" : "false", (unsigned)state1.network_sync,(unsigned)state1.network_player,(double)state1.network_phase_error,state1.sink_latency_calibrated?"true":"false",state_text1,

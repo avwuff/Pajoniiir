@@ -57,6 +57,7 @@ typedef struct {
     bool midi_flush_attempted;
     bool uac_recovery_requested;
     bool pending_hs_audio;
+    bool audio_fault_isolated;
     controller_usb_recovery_gate_t recovery_gate;
 } controller_state_t;
 
@@ -445,6 +446,32 @@ static void close_step(controller_state_t *state)
     submit_deferred_controller_recovery(state);
 }
 
+/* A rejected HS setup is local to audio. Never retire MIDI interfaces or its
+ * epoch for it. A stuck cleanup or live-stream fault retains full recovery. */
+static bool handle_audio_fault(controller_state_t *state,
+                               const controller_usb_audio_stream_stats_t *stats)
+{
+    if (!state->opened) return false;
+    const bool cleanup_stuck = state->audio_fault_isolated &&
+        controller_usb_audio_stream_needs_recovery();
+    if (!cleanup_stuck && !(state->identity.usb_audio_active && stats->faulted))
+        return false;
+    if (!cleanup_stuck && !state->device_gone &&
+        controller_usb_audio_stream_fault_isolatable()) {
+        state->identity.usb_audio_active = false;
+        state->audio_fault_isolated = true;
+        controller_usb_audio_stream_request_stop(false);
+        ESP_LOGW(TAG, "HS audio configuration failed; preserving MIDI (step=%u status=%ld bytes=%ld)",
+                 stats->fault_control_step, (long)stats->last_control_status,
+                 (long)stats->last_control_bytes);
+        return false;
+    }
+    begin_controller_fault_recovery(state, CONTROLLER_USB_FAULT_UAC_STREAM,
+                                    "UAC stream", ESP_FAIL);
+    close_step(state);
+    return true;
+}
+
 static esp_err_t probe_device(controller_state_t *state, uint8_t address)
 {
     count_inc(&s_devices_probed);
@@ -518,6 +545,7 @@ static esp_err_t probe_device(controller_state_t *state, uint8_t address)
 
     state->device = device;
     state->opened = true;
+    state->audio_fault_isolated = false;
     state->closing = false;
     state->device_gone = false;
     state->midi_flush_attempted = false;
@@ -716,14 +744,7 @@ static void controller_task(void *arg)
         }
         controller_usb_audio_stream_stats_t audio_stats = {0};
         controller_usb_audio_stream_get_stats(&audio_stats);
-        if (s_state.opened && s_state.identity.usb_audio_active &&
-            audio_stats.faulted) {
-            begin_controller_fault_recovery(&s_state, CONTROLLER_USB_FAULT_UAC_STREAM,
-                                             "UAC stream",
-                                             ESP_FAIL);
-            close_step(&s_state);
-            continue;
-        }
+        if (handle_audio_fault(&s_state, &audio_stats)) continue;
         (void)controller_usb_audio_stream_poll_cleanup();
         uint8_t address = 0u;
         while (!s_state.closing && s_state.probe_queue &&

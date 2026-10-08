@@ -160,6 +160,51 @@ control acceptance, headphone listening and final soak are still open.
 Evidence: `performance-ota-install-27d4abedb7fe.json`, matching installed API
 snapshots, `control-retirement-host-suite-rerun.log` and M3 build/package logs.
 
+The operator's next MIDI-mode reconnect was unresponsive from the start.
+On boot 376 (SW reset for this OTA), the 119.978-second capture has 218 samples,
+zero HTTP errors and no observed reboot, but also zero S2 connections/MIDI
+packets. HS/root 0 has zero trace events; FS/root 1 enumerated the mounted
+stick. This is an absent attachment, not a reproduced jog-transfer failure or
+a physical PASS for the retirement fix. The existing core dump still describes
+the older boot's assertion; its presence alone is not a new panic. A same-port,
+same-adapter stick enumeration check is pending without another M3 reset.
+Evidence: `combined-controls-20261008T202308Z.jsonl` and
+`control-retirement-jog-failure-review.txt` in the local evidence directory.
+
+Without resetting M3, the operator moved the stick through the same adapter
+into S2's port. Root 0 observed attach at uptime 204632 ms and enumerated
+VID/PID 18A5:0302 at High Speed (descriptor speed 2, bulk MPS 512), address 2.
+This confirms the tested physical port maps to HS/root 0 and the adapter/port
+can carry data in this configuration. It does not prove the S2 cable/controller
+path or exclude intermittent power/signal problems. A normal-mode S2 attach
+check follows with storage returned to root 1 and no M3 reset.
+Evidence: `control-retirement-stick-hs-review.txt` and matching API snapshots.
+
+The reported reset during the next S2 connection is journal boot 377 POWERON,
+not PANIC/WDT. The operator confirmed touching USB1 or the power-adapter
+connection. Boot 378 is another POWERON after restoring the physical setup.
+The old dump is unchanged; these events do not reproduce the USBH assertion.
+They also do not establish a voltage/current fault caused by S2.
+
+After power restoration, boot 378 enumerated S2 on HS/root 0 at uptime
+74731 ms and activated the full profile at 74768 ms, then closed the controller
+at 74798 ms with UAC_STREAM/ESP_FAIL. There are no MIDI packets, MIDI IN errors
+or physical root-disconnect events; one recovery is suppressed because the
+root remains attached. This is a software audio-fault teardown, with its exact
+audio stage unavailable in the older API, distinct from the absent attachment
+and POWERON events. Playback remains stopped.
+Evidence: `control-retirement-normal-attach-reset-review.txt`,
+`control-retirement-power-restored-connected-review.txt` and
+`control-retirement-active-review.txt`.
+
+The common owner now isolates an HS audio configuration failure while keeping
+MIDI interface/epoch ownership. An expired control cleanup, actual device loss
+or a live-stream fault retains full recovery; FS/FLX4 behavior is unchanged.
+The status API exposes actual streaming/fault state and the first fault's
+control step, last status, returned length and first four payload bytes, retained
+after audio cleanup. No periodic diagnostic logging is added. This separates
+MIDI acceptance from the still-open S2 headphone setup/listening gate.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.

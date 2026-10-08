@@ -33,6 +33,11 @@ typedef struct {
     bool configuring;
     bool streaming;
     bool faulted;
+    bool configuration_fault;
+    uint8_t fault_control_step;
+    int32_t last_control_status;
+    int32_t last_control_bytes;
+    uint32_t last_control_word;
     uint32_t sample_rate;
     uint8_t bits_per_sample;
     bool consumer_paced;
@@ -48,6 +53,8 @@ esp_err_t controller_usb_audio_stream_set_policy(bool qualified_flx4, bool consu
 esp_err_t controller_usb_audio_stream_set_pacing(bool consumer_paced);
 bool controller_usb_audio_stream_consumer_paced(void);
 bool controller_usb_audio_stream_needs_recovery(void);
+/* HS configuration rejection may stop audio while preserving MIDI ownership. */
+bool controller_usb_audio_stream_fault_isolatable(void);
 /* Producer waits for actual ring free space, bounded and cancellation-aware. */
 esp_err_t controller_usb_audio_stream_wait_room(uint32_t source_frames,
                                                uint32_t source_rate, uint32_t timeout_ms);
