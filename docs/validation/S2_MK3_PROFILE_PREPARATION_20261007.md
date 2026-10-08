@@ -413,6 +413,43 @@ by delegating the complete original request. Instruction-cache and ISR/outer
 critical contexts remain unchanged. The regression covers aligned M2C chunks,
 invalid M2C flags and the non-diagnostic original one-call path.
 
+### Bounded DMA cache candidate: combined physical retest
+
+Source `21de25bf515d9b9e63beacaa170b8da43f1ec112` passed the full host suite,
+ESP-IDF 6.0.2 M3 build, unchanged dependency locks, image budget, packaging and
+signature checks. The clean signed `M3-dev-g21de25bf515d` image is installed
+and VALID in ota_0. Image size is 2,600,960 bytes; image SHA-256 is
+`b0f4223ef835032165af6d403152b0a4694113edc95b88e068d8a5beacbad8bc`.
+ELF SHA-256 is
+`468e3e247ffd804079731d768432f24408c0722a41806ec02681a1d797e125d0`.
+
+The combined dual-playback retest completed 60.206 seconds with 102 status
+samples and 1712 incoming MIDI packets while the operator exercised both
+jogs/Browse for the first 20 seconds. There were zero new ISO packet failures,
+lost frames, PCM underruns, UAC underflow/overflow frames, dropped blocks,
+controller disconnections and output-late events. The pre-existing underflow
+counter was 2697806 at both baseline and completion; it is not a zero absolute
+counter. Source identity remained clean and unchanged, uptime advanced without
+reboot, and both decks were verified stopped by the automatic cleanup.
+
+The operator confirmed that everything was normal while observing MAIN,
+S2 headphones, controls and both waveforms. This is a PASS for this short
+combined physical regression on this exact image/profile, following the
+earlier failed candidates. Evidence is under
+`.cache/s2-mk3/20261008-m3-enumeration/playback-20261008T215933Z/`:
+`baseline.json`, `status.jsonl`, `result.json` and `final-stopped.json`.
+Installation evidence is `performance-ota-install-21de25bf515d.json` in the
+parent directory. The active full profile is 1624 bytes with SHA-256
+`ab9259c51c2b18cf5b67e2e279e3a0fbf9ee167a489f345b813a9ef37f40725f`.
+
+Scope: S2 on USB3 HS, storage on USB2 FS, 48-kHz four-channel USB output,
+PCM5102A MAIN, two 44.1-kHz MP3 sources, pitch zero, MT and loops off.
+The bounded cache policy remains an HS diagnostic configuration. Production
+integration, remaining control/calibration and reconnect acceptance, mixed-rate
+MT/loop stress and the final extended soak remain open. This short test does
+not qualify production support or replace those gates. FLX4 production USB
+defaults are unchanged; no release, public OTA update or push was performed.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
