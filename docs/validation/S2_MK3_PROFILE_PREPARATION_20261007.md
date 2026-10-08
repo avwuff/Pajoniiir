@@ -128,6 +128,20 @@ The HPRT power bit is not a VBUS voltage measurement. The operator reports
 M3 powered by a separate 67-W adapter; its actual 5-V supply path remains
 unmeasured. A compatible independent S2 supply comparison was requested.
 
+The operator has no S2 DC supply, so that comparison is NOT RUN. A normal-mode
+S2 reconnect on the same confirmed HS receptacle produced no new hardware
+connect event (`*-bus-review-20261008T154115Z.txt`); it is not a successful
+native-mode control. To test whether the host was stranded after the preceding
+disconnect, the operator removed S2 and moved the known stick from FS to that
+same HS receptacle, without resetting M3. Root 0 immediately recorded connect
+at 6,834,468 ms, completed resets at 6,834,810 ms and enumerated `18A5:0302`,
+address 3, high speed. Evidence: `*-bus-review-20261008T154335Z.txt`.
+This demonstrates post-fault HS host recovery for the known stick. It does
+not distinguish the S2 cable/adapter, device behavior, supply path or HS
+interoperability. The exact cable/adapter combination used for the successful
+PC test is the next comparison. Current stick placement is HS, so storage is
+intentionally unmounted under the experimental FS-storage role policy.
+
 On installed clean `af4ca59007e3`, both decks stopped, the captured 928-byte
 profile installed with HTTP 201 and was listed valid as `17CC:1710`.
 It did not activate: the USB probe saw S2 but returned `ESP_ERR_NOT_FOUND`
