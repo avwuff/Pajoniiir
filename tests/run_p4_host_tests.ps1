@@ -2937,6 +2937,20 @@ $tests = @(
         )
     },
     @{
+        Name = "audio_engine_memory_hs_isolation"
+        Dir = "tests/audio_engine_memory"
+        Target = "test_audio_engine_memory_hs.exe"
+        Args = @(
+            "-std=c11", "-Wall", "-Wextra", "-Werror", "-O2",
+            "-DCONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC=1",
+            "-Istubs", "-I../support/stubs",
+            "-I../../firmware/p4-core/components/audio_engine/include",
+            "-I../../firmware/p4-core/components/service_log/include",
+            "-o", "test_audio_engine_memory_hs.exe", "test_audio_engine_memory.c",
+            "../../firmware/p4-core/components/audio_engine/audio_engine_memory.c"
+        )
+    },
+    @{
         Name = "ui_psram_allocator"
         Dir = "tests/ui_psram_allocator"
         Target = "test_ui_psram_allocator.exe"

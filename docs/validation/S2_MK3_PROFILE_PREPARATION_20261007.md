@@ -261,6 +261,19 @@ Evidence: `combined-controls-20261008T204137Z.jsonl`,
 `playback-20261008T204722Z/{baseline.json,status.jsonl,result.json,final-stopped.json}`,
 `audio-isolation-jog-success-review.txt` and `audio-isolation-playback-loss-review.txt`.
 
+### HS heap-walk isolation candidate
+
+The existing bench HS diagnostic configuration now omits internal/DMA
+largest-block walks as well as the already omitted PSRAM walk. These are null
+in status, not measured zero values. Constant-time free/minimum counters and
+all MIDI/UAC strict loss counters remain enabled. Production defaults retain
+the prior memory observations. This isolates one timing suspect without
+changing DSP, USB queue size/priority, periodic scheduling or the profile.
+Focused tests execute both the original production snapshot and the diagnostic
+variant, asserting no TLSF walk in repeated diagnostic snapshots. Physical
+results are pending; the change alone does not prove the cause of skipped ISO
+transactions or close the S2 audio gate.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.

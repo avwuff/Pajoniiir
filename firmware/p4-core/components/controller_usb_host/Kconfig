@@ -8,4 +8,6 @@ config CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC
         waits at least ten seconds and for OTA validation. After a panic, HS
         audio remains disabled for that boot so Wi-Fi can expose the crash dump.
         Does not bypass startup health or change the FS/FLX4 audio path.
+        Diagnostic memory snapshots omit internal/DMA largest-block walks
+        (reported as null); free and low-water counters remain available.
 endmenu

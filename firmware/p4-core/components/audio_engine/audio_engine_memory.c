@@ -4,6 +4,7 @@
 #include "esp_timer.h"
 #include "service_log.h"
 
+#if !defined(CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC) || !CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC
 static uint32_t s_walk_max_us[3];
 static uint32_t s_walk_records;
 
@@ -33,6 +34,7 @@ static uint32_t measured_largest(uint32_t caps, unsigned index, uint32_t *max_us
     }
     return largest;
 }
+#endif
 
 void audio_engine_snapshot_memory(audio_engine_diagnostics_snapshot_t *out)
 {
@@ -40,11 +42,25 @@ void audio_engine_snapshot_memory(audio_engine_diagnostics_snapshot_t *out)
     out->heap_free = esp_get_free_heap_size();
     out->internal_free = heap_caps_get_free_size(MALLOC_CAP_INTERNAL);
     out->internal_min_free = heap_caps_get_minimum_free_size(MALLOC_CAP_INTERNAL);
+#if defined(CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC) && CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC
+    /* Bench isolation: largest-block TLSF walks mask IRQs for their duration.
+     * HS periodic transactions run every 125 us, including idle silence.
+     * Retain constant-time free/low-water counters; expose missing walks as
+     * unavailable in the API. This is not a measured zero or cached result. */
+    out->internal_largest_free = 0;
+    out->heap_walk_max_us[0] = 0;
+#else
     out->internal_largest_free = measured_largest(MALLOC_CAP_INTERNAL, 0, &out->heap_walk_max_us[0]);
+#endif
     const uint32_t dma_caps = MALLOC_CAP_INTERNAL | MALLOC_CAP_DMA;
     out->dma_free = heap_caps_get_free_size(dma_caps);
     out->dma_min_free = heap_caps_get_minimum_free_size(dma_caps);
+#if defined(CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC) && CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC
+    out->dma_largest_free = 0;
+    out->heap_walk_max_us[1] = 0;
+#else
     out->dma_largest_free = measured_largest(dma_caps, 1, &out->heap_walk_max_us[1]);
+#endif
     out->psram_free = heap_caps_get_free_size(MALLOC_CAP_SPIRAM);
     out->psram_min_free = heap_caps_get_minimum_free_size(MALLOC_CAP_SPIRAM);
     /* IDF's largest-block query walks every TLSF block under an IRQ-masking
