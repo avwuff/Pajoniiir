@@ -118,6 +118,18 @@ Evidence is preserved in `*-s2-replug-*.json`,
 evidence directory. Physical controls, LED behavior and playback acceptance
 remain open; this is not an S2 support PASS.
 
+The second operator reconnect with immediate Browse rotation received 24 MIDI
+packets (96 bytes), with runtime semantic-event count 25 and no queue failures.
+Journal connection/profile activation occurred at 223,660/223,691 ms and
+disconnection at 226,431 ms on boot 359. The fault epoch advanced to 2 while
+storage remained mounted. Thus active MIDI input works briefly; disconnection
+is not limited to the zero-input attempt. Read-only status now adds
+`last_fault_operation` (0 none, 1 IN submit, 2 OUT submit, 3 IN transfer,
+4 OUT transfer, 5 UAC stream), `last_fault_code` and existing submit-failure
+counters. Transfer codes are raw `usb_transfer_status_t`; submit/UAC codes are
+`esp_err_t`. Publication happens only on first fault of a recovery epoch, with
+no new periodic logging or writes. New-image installation/retest is pending.
+
 The M3 timing soak uses the exact clean `fb5cbca13f33d21dfb4e16e0ba667c340399eb0c`
 image with FLX4 on USB2, storage on USB3, PCM5102A MAIN and FLX4 headphones.
 During that soak, keep the S2 on a separate PC USB port. Do not change the M3

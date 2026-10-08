@@ -73,6 +73,8 @@ static uint32_t s_midi_out_submit_failures;
 static uint32_t s_midi_out_queue_drops;
 static uint32_t s_probe_event_drops;
 static uint32_t s_recovery_requests;
+static uint32_t s_last_fault_operation;
+static int32_t s_last_fault_code;
 static int32_t s_last_probe_result = ESP_ERR_INVALID_STATE;
 static uint16_t s_last_seen_vid;
 static uint16_t s_last_seen_pid;
@@ -97,6 +99,7 @@ static void record_probe_result(controller_usb_probe_stage_t stage,
 }
 
 static void begin_controller_fault_recovery(controller_state_t *state,
+                                            controller_usb_fault_operation_t fault,
                                             const char *operation,
                                             esp_err_t error)
 {
@@ -104,6 +107,10 @@ static void begin_controller_fault_recovery(controller_state_t *state,
             &state->recovery_gate)) {
         return;
     }
+    /* Fault-only publication: transfer faults retain the USB status rather
+     * than collapsing STALL/OVERFLOW/ERROR into ESP_FAIL. No periodic I/O. */
+    __atomic_store_n(&s_last_fault_code, (int32_t)error, __ATOMIC_RELEASE);
+    __atomic_store_n(&s_last_fault_operation, (uint32_t)fault, __ATOMIC_RELEASE);
     ESP_LOGW(TAG, "%s fault (%s); closing controller before one recovery request",
              operation ? operation : "controller USB", esp_err_to_name(error));
     __atomic_store_n(&s_accepting_out, false, __ATOMIC_RELEASE);
@@ -178,7 +185,8 @@ static esp_err_t submit_in_if_idle(controller_state_t *state)
         state->in_active = true;
     } else {
         count_inc(&s_midi_in_submit_failures);
-        begin_controller_fault_recovery(state, "MIDI IN submit", rc);
+        begin_controller_fault_recovery(state, CONTROLLER_USB_FAULT_IN_SUBMIT,
+                                         "MIDI IN submit", rc);
     }
     return rc;
 }
@@ -217,7 +225,8 @@ static esp_err_t submit_out_if_idle(controller_state_t *state)
         state->out_active = true;
     } else {
         count_inc(&s_midi_out_submit_failures);
-        begin_controller_fault_recovery(state, "MIDI OUT submit", rc);
+        begin_controller_fault_recovery(state, CONTROLLER_USB_FAULT_OUT_SUBMIT,
+                                         "MIDI OUT submit", rc);
     }
     return rc;
 }
@@ -263,8 +272,8 @@ static void midi_in_callback(usb_transfer_t *transfer)
     } else if (transfer->status != USB_TRANSFER_STATUS_NO_DEVICE &&
                transfer->status != USB_TRANSFER_STATUS_CANCELED) {
         ESP_LOGW(TAG, "MIDI IN transfer status=%d", (int)transfer->status);
-        begin_controller_fault_recovery(state, "MIDI IN transfer",
-                                         ESP_FAIL);
+        begin_controller_fault_recovery(state, CONTROLLER_USB_FAULT_IN_TRANSFER,
+                                         "MIDI IN transfer", (esp_err_t)transfer->status);
     }
 
     if (!state->closing && !terminal) {
@@ -299,8 +308,8 @@ static void midi_out_callback(usb_transfer_t *transfer)
         transfer->status != USB_TRANSFER_STATUS_NO_DEVICE &&
         transfer->status != USB_TRANSFER_STATUS_CANCELED) {
         ESP_LOGW(TAG, "MIDI OUT transfer status=%d", (int)transfer->status);
-        begin_controller_fault_recovery(state, "MIDI OUT transfer",
-                                         ESP_FAIL);
+        begin_controller_fault_recovery(state, CONTROLLER_USB_FAULT_OUT_TRANSFER,
+                                         "MIDI OUT transfer", (esp_err_t)transfer->status);
     }
     if (!state->closing && !terminal) {
         (void)submit_out_if_idle(state);
@@ -653,7 +662,8 @@ static void controller_task(void *arg)
         controller_usb_audio_stream_get_stats(&audio_stats);
         if (s_state.opened && s_state.identity.usb_audio_active &&
             audio_stats.faulted) {
-            begin_controller_fault_recovery(&s_state, "UAC stream",
+            begin_controller_fault_recovery(&s_state, CONTROLLER_USB_FAULT_UAC_STREAM,
+                                             "UAC stream",
                                              ESP_FAIL);
             close_step(&s_state);
             continue;
@@ -811,6 +821,10 @@ void controller_usb_host_get_diagnostics(
                 &s_state.recovery_gate),
         .last_probe_result =
             __atomic_load_n(&s_last_probe_result, __ATOMIC_ACQUIRE),
+        .last_fault_operation =
+            __atomic_load_n(&s_last_fault_operation, __ATOMIC_ACQUIRE),
+        .last_fault_code =
+            __atomic_load_n(&s_last_fault_code, __ATOMIC_ACQUIRE),
         .last_seen_vid =
             __atomic_load_n(&s_last_seen_vid, __ATOMIC_ACQUIRE),
         .last_seen_pid =

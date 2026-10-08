@@ -1616,7 +1616,7 @@ static esp_err_t api_status_handler(httpd_req_t *req)
 
     /* Keep the bounded USB status text off the 8 KiB HTTP task stack. The
      * single request owns this PSRAM buffer through response formatting. */
-    const size_t p4_usb_json_size = 2048u;
+    const size_t p4_usb_json_size = 2304u;
     char *p4_usb_json = heap_caps_calloc(1, p4_usb_json_size,
                                        MALLOC_CAP_SPIRAM | MALLOC_CAP_8BIT);
     if (!p4_usb_json) {
@@ -1662,6 +1662,8 @@ static esp_err_t api_status_handler(httpd_req_t *req)
             "\"midi_packets\":%u,\"midi_bytes\":%u,"
             "\"probe_event_drops\":%u,\"recovery_requests\":%u,"
             "\"fault_recovery_epochs\":%u,"
+            "\"last_fault_operation\":%u,\"last_fault_code\":%d,"
+            "\"midi_in_submit_failures\":%u,\"midi_out_submit_failures\":%u,"
             "\"last_probe_stage\":%u,"
             "\"last_probe_stage_name\":\"%s\","
             "\"last_probe_result\":%d,"
@@ -1724,6 +1726,10 @@ static esp_err_t api_status_handler(httpd_req_t *req)
             (unsigned)controller_diag.probe_event_drops,
             (unsigned)controller_diag.recovery_requests,
             (unsigned)controller_diag.fault_recovery_epochs,
+            (unsigned)controller_diag.last_fault_operation,
+            (int)controller_diag.last_fault_code,
+            (unsigned)controller_diag.midi_in_submit_failures,
+            (unsigned)controller_diag.midi_out_submit_failures,
             (unsigned)controller_diag.last_probe_stage,
             controller_usb_probe_stage_name(controller_diag.last_probe_stage),
             (int)controller_diag.last_probe_result,

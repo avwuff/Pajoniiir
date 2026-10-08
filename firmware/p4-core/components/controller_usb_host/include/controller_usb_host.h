@@ -56,6 +56,15 @@ typedef enum {
     CONTROLLER_USB_PROBE_READY,
 } controller_usb_probe_stage_t;
 
+typedef enum {
+    CONTROLLER_USB_FAULT_NONE = 0,
+    CONTROLLER_USB_FAULT_IN_SUBMIT,
+    CONTROLLER_USB_FAULT_OUT_SUBMIT,
+    CONTROLLER_USB_FAULT_IN_TRANSFER,
+    CONTROLLER_USB_FAULT_OUT_TRANSFER,
+    CONTROLLER_USB_FAULT_UAC_STREAM,
+} controller_usb_fault_operation_t;
+
 typedef struct {
     uint32_t devices_probed;
     uint32_t descriptor_rejects;
@@ -73,6 +82,8 @@ typedef struct {
     uint32_t probe_event_drops;
     uint32_t recovery_requests;
     uint32_t fault_recovery_epochs;
+    uint32_t last_fault_operation;
+    int32_t last_fault_code;
     int32_t last_probe_result;
     uint16_t last_seen_vid;
     uint16_t last_seen_pid;
