@@ -2,7 +2,8 @@
 
 Status: experimental; basic inputs/navigation observed on a PC. M3 short
 dual-Browse, one stopped-deck reconnect, dedicated D2 LOAD and short D1/D2
-PLAY/start-stop, CUE return/hold/release, PLAY/CUE LED and PCM5102A MAIN checks passed
+PLAY/start-stop, CUE return/hold/release and PLAY handoff, PLAY/CUE LED,
+and short solo/dual PCM5102A MAIN/waveform checks passed
 on diagnostic image `af340dd8` after an adapter swap and M3 power-on. Complete
 M3 controller acceptance remains open; other controls and LED outputs are
 source-derived pending physical checks.

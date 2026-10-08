@@ -96,7 +96,29 @@ clean/correct. At uptime 658296 ms both decks were stopped at position zero,
 with titles unchanged. There were 12 additional MIDI packets (628 total,
 2512 bytes) and 485 semantic events, no new disconnect or MIDI/queue fault,
 and storage remained mounted. Evidence: `*-bus-review-20261008T190407Z.txt`.
-CUE-to-PLAY handoff and simultaneous playback remain to be checked.
+CUE-to-PLAY handoff and simultaneous playback were still open at this point.
+
+The operator subsequently confirmed CUE-to-PLAY handoff on both decks:
+PLAY while holding CUE committed playback, releasing CUE did not stop it,
+and the final CUE returned to the cue with clean MAIN audio. At uptime
+742984 ms both decks were stopped at zero with unchanged titles. Counters
+showed 640 MIDI packets and 497 semantic events, with no new disconnect,
+pipe error, retry, submit failure or queue failure. PCM underrun counters
+for both decks, output-late count and service-log drops were all zero at this
+snapshot. Both loaded sources were 44100 Hz, with 48000 Hz PCM5102A output.
+Evidence: `*-bus-review-20261008T190532Z.txt`. Simultaneous playback remains
+open; S2 USB headphone audio remains unavailable by profile configuration.
+
+The operator confirmed the requested approximately 20-second simultaneous
+PLAY D1/D2 check, followed by CUE on each deck: both waveforms were fluid,
+MAIN audio clean and controller response normal. At uptime 835460 ms both
+decks were stopped at zero with unchanged titles. MIDI totals were 648
+packets and 505 semantic events; no extra disconnect, pipe error, retry,
+submit failure or runtime queue failure occurred. PCM underrun counters,
+output-late count and service-log drops remained zero, and the FS stick
+remained mounted. Evidence: `*-bus-review-20261008T190705Z.txt`.
+This is a short operator-confirmed dual-deck MAIN/UI smoke at 44100/44100 Hz,
+zero pitch and MT off; it is not the planned worst-case mixed-rate/MT soak.
 
 ### Latest control: HS stick and native S2 reconnect
 
