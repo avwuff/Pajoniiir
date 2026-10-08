@@ -125,7 +125,7 @@ disconnection at 226,431 ms on boot 359. The fault epoch advanced to 2 while
 storage remained mounted. Thus active MIDI input works briefly; disconnection
 is not limited to the zero-input attempt. Read-only status now adds
 `last_fault_operation` (0 none, 1 IN submit, 2 OUT submit, 3 IN transfer,
-4 OUT transfer, 5 UAC stream), `last_fault_code` and existing submit-failure
+4 OUT transfer, 5 UAC stream, 6 IN pipe clear), `last_fault_code` and existing submit-failure
 counters. Transfer codes are raw `usb_transfer_status_t`; submit/UAC codes are
 `esp_err_t`. Publication happens only on first fault of a recovery epoch, with
 no new periodic logging or writes.
@@ -175,6 +175,24 @@ Outcome remains pending. LED acceptance is not possible with this temporary
 profile; restore the checked-in 928-byte profile (SHA above) after the isolation.
 This test distinguishes operation without MIDI output from the earlier
 bidirectional setup; it does not itself establish an electrical or HAL cause.
+
+The operator completed this test on boot 363: the 832-byte upload at 153,571 ms
+preceded profile activation at 184,623 ms; disconnection followed at 187,303 ms.
+The read-only observation captured a connected profile and additional MIDI
+packets before the same IN ERROR/fault epoch increment. Thus the observed
+failure also occurs with zero profile output bindings. Original 928-byte
+profile restoration returned HTTP 200 (`restore.json`). No USB audio was used.
+
+The next candidate bounds HS generic IN-error recovery to three host-pipe
+clear/resubmit attempts per attachment, without resetting that budget after
+successful packets. It preserves the endpoint PID, uses the existing retired
+single IN URB, clears outside the callback and never consumes failed-URB bytes.
+FS controllers and terminal/STALL/OVERFLOW statuses retain the existing close
+path. Clear/submit failure or exhausted budget closes the connection as before.
+New `midi_in_pipe_errors`, `midi_in_pipe_retries` and
+`midi_in_pipe_retry_failures` counters retain visibility of all attempts;
+successful resubmission does not establish lossless MIDI or fix a link cause.
+Acceptance remains open pending build, installation and physical retest.
 
 The M3 timing soak uses the exact clean `fb5cbca13f33d21dfb4e16e0ba667c340399eb0c`
 image with FLX4 on USB2, storage on USB3, PCM5102A MAIN and FLX4 headphones.

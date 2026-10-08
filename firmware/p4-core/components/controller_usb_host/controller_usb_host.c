@@ -44,6 +44,7 @@ typedef struct {
     bool opened;
     bool claimed;
     bool in_active;
+    bool in_retry_pending;
     bool out_active;
     bool closing;
     bool device_gone;
@@ -67,6 +68,9 @@ static uint32_t s_midi_connects;
 static uint32_t s_midi_disconnects;
 static uint32_t s_midi_packets;
 static uint32_t s_midi_bytes;
+static uint32_t s_midi_in_pipe_errors;
+static uint32_t s_midi_in_pipe_retries;
+static uint32_t s_midi_in_pipe_retry_failures;
 static uint32_t s_midi_parse_rejects;
 static uint32_t s_midi_in_submit_failures;
 static uint32_t s_midi_out_submit_failures;
@@ -173,7 +177,7 @@ static void publish_connection(bool connected)
 static esp_err_t submit_in_if_idle(controller_state_t *state)
 {
     if (!state->opened || !state->claimed || state->closing ||
-        !state->in_transfer || state->in_active) {
+        !state->in_transfer || state->in_active || state->in_retry_pending) {
         return ESP_OK;
     }
     state->in_transfer->device_handle = state->device;
@@ -271,6 +275,17 @@ static void midi_in_callback(usb_transfer_t *transfer)
         }
     } else if (transfer->status != USB_TRANSFER_STATUS_NO_DEVICE &&
                transfer->status != USB_TRANSFER_STATUS_CANCELED) {
+        count_inc(&s_midi_in_pipe_errors);
+        if (!state->closing && controller_usb_recovery_gate_take_in_retry(
+                &state->recovery_gate, state->identity.speed == USB_SPEED_HIGH,
+                transfer->status == USB_TRANSFER_STATUS_ERROR)) {
+            /* Only one IN URB exists and this callback retired it. Clear the
+             * halted host pipe from the task loop, then resubmit. Preserve
+             * endpoint PID; do not issue device CLEAR_FEATURE or reset root.
+             * Never parse bytes from an unsuccessful URB. */
+            state->in_retry_pending = true;
+            return;
+        }
         ESP_LOGW(TAG, "MIDI IN transfer status=%d", (int)transfer->status);
         begin_controller_fault_recovery(state, CONTROLLER_USB_FAULT_IN_TRANSFER,
                                          "MIDI IN transfer", (esp_err_t)transfer->status);
@@ -411,6 +426,7 @@ static void close_step(controller_state_t *state)
     state->out_generation_closed = false;
     state->midi_flush_attempted = false;
     state->uac_recovery_requested = false;
+    state->in_retry_pending = false;
     if (was_connected) {
         count_inc(&s_midi_disconnects);
         if (state->config.connection_cb) {
@@ -499,6 +515,8 @@ static esp_err_t probe_device(controller_state_t *state, uint8_t address)
     state->device_gone = false;
     state->midi_flush_attempted = false;
     controller_usb_recovery_gate_cancel(&state->recovery_gate);
+    controller_usb_recovery_gate_reset_in_retries(&state->recovery_gate);
+    state->in_retry_pending = false;
     state->identity = (controller_usb_identity_t) {
         .vid = device_desc->idVendor,
         .pid = device_desc->idProduct,
@@ -679,6 +697,18 @@ static void controller_task(void *arg)
                          esp_err_to_name(probe_rc));
             }
         }
+        if (!s_state.closing && s_state.opened && s_state.in_retry_pending) {
+            const esp_err_t clear_rc = usb_host_endpoint_clear(s_state.device,
+                s_state.identity.midi.in_ep_addr);
+            s_state.in_retry_pending = false;
+            if (clear_rc == ESP_OK) {
+                count_inc(&s_midi_in_pipe_retries);
+            } else {
+                count_inc(&s_midi_in_pipe_retry_failures);
+                begin_controller_fault_recovery(&s_state,
+                    CONTROLLER_USB_FAULT_IN_PIPE_CLEAR, "MIDI IN pipe clear", clear_rc);
+            }
+        }
         (void)submit_in_if_idle(&s_state);
         (void)submit_out_if_idle(&s_state);
     }
@@ -804,6 +834,12 @@ void controller_usb_host_get_diagnostics(
             __atomic_load_n(&s_midi_packets, __ATOMIC_ACQUIRE),
         .midi_bytes =
             __atomic_load_n(&s_midi_bytes, __ATOMIC_ACQUIRE),
+        .midi_in_pipe_errors =
+            __atomic_load_n(&s_midi_in_pipe_errors, __ATOMIC_ACQUIRE),
+        .midi_in_pipe_retries =
+            __atomic_load_n(&s_midi_in_pipe_retries, __ATOMIC_ACQUIRE),
+        .midi_in_pipe_retry_failures =
+            __atomic_load_n(&s_midi_in_pipe_retry_failures, __ATOMIC_ACQUIRE),
         .midi_parse_rejects =
             __atomic_load_n(&s_midi_parse_rejects, __ATOMIC_ACQUIRE),
         .midi_in_submit_failures =

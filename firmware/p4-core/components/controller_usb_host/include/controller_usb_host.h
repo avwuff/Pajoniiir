@@ -63,6 +63,7 @@ typedef enum {
     CONTROLLER_USB_FAULT_IN_TRANSFER,
     CONTROLLER_USB_FAULT_OUT_TRANSFER,
     CONTROLLER_USB_FAULT_UAC_STREAM,
+    CONTROLLER_USB_FAULT_IN_PIPE_CLEAR,
 } controller_usb_fault_operation_t;
 
 typedef struct {
@@ -75,6 +76,9 @@ typedef struct {
     uint32_t midi_disconnects;
     uint32_t midi_packets;
     uint32_t midi_bytes;
+    uint32_t midi_in_pipe_errors;
+    uint32_t midi_in_pipe_retries;
+    uint32_t midi_in_pipe_retry_failures;
     uint32_t midi_parse_rejects;
     uint32_t midi_in_submit_failures;
     uint32_t midi_out_submit_failures;

@@ -11,7 +11,13 @@ extern "C" {
 typedef struct {
     bool pending;
     uint32_t fault_epochs;
+    uint8_t in_pipe_retries;
 } controller_usb_recovery_gate_t;
+
+/* Budget is per attachment, not reset by successful packets. */
+void controller_usb_recovery_gate_reset_in_retries(controller_usb_recovery_gate_t *gate);
+bool controller_usb_recovery_gate_take_in_retry(controller_usb_recovery_gate_t *gate,
+                                                bool high_speed, bool generic_error);
 
 void controller_usb_recovery_gate_init(controller_usb_recovery_gate_t *gate);
 bool controller_usb_recovery_gate_begin_fault(

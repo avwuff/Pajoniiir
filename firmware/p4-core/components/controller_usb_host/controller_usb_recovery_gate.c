@@ -8,6 +8,21 @@ void controller_usb_recovery_gate_init(controller_usb_recovery_gate_t *gate)
     }
     gate->pending = false;
     gate->fault_epochs = 0u;
+    gate->in_pipe_retries = 0u;
+}
+
+void controller_usb_recovery_gate_reset_in_retries(controller_usb_recovery_gate_t *gate)
+{
+    if (gate) gate->in_pipe_retries = 0u;
+}
+
+bool controller_usb_recovery_gate_take_in_retry(controller_usb_recovery_gate_t *gate,
+                                                bool high_speed, bool generic_error)
+{
+    if (!gate || gate->pending || !high_speed || !generic_error ||
+        gate->in_pipe_retries >= 3u) return false;
+    gate->in_pipe_retries++;
+    return true;
 }
 
 bool controller_usb_recovery_gate_begin_fault(

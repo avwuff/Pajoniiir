@@ -1660,6 +1660,8 @@ static esp_err_t api_status_handler(httpd_req_t *req)
             "\"transfer_alloc_failures\":%u,"
             "\"midi_connects\":%u,\"midi_disconnects\":%u,"
             "\"midi_packets\":%u,\"midi_bytes\":%u,"
+            "\"midi_in_pipe_errors\":%u,\"midi_in_pipe_retries\":%u,"
+            "\"midi_in_pipe_retry_failures\":%u,"
             "\"probe_event_drops\":%u,\"recovery_requests\":%u,"
             "\"fault_recovery_epochs\":%u,"
             "\"last_fault_operation\":%u,\"last_fault_code\":%d,"
@@ -1723,6 +1725,9 @@ static esp_err_t api_status_handler(httpd_req_t *req)
             (unsigned)controller_diag.midi_disconnects,
             (unsigned)controller_diag.midi_packets,
             (unsigned)controller_diag.midi_bytes,
+            (unsigned)controller_diag.midi_in_pipe_errors,
+            (unsigned)controller_diag.midi_in_pipe_retries,
+            (unsigned)controller_diag.midi_in_pipe_retry_failures,
             (unsigned)controller_diag.probe_event_drops,
             (unsigned)controller_diag.recovery_requests,
             (unsigned)controller_diag.fault_recovery_epochs,

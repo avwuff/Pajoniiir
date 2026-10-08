@@ -42,6 +42,23 @@ int main(void)
     CHECK(!controller_usb_recovery_gate_pending(NULL));
     CHECK(controller_usb_recovery_gate_fault_epochs(NULL) == 0u);
 
+    controller_usb_recovery_gate_init(&gate);
+    CHECK(!controller_usb_recovery_gate_take_in_retry(&gate, false, true));
+    CHECK(!controller_usb_recovery_gate_take_in_retry(&gate, true, false));
+    CHECK(gate.in_pipe_retries == 0u);
+    for (unsigned i = 0; i < 3u; i++) {
+        CHECK(controller_usb_recovery_gate_take_in_retry(&gate, true, true));
+        CHECK(gate.in_pipe_retries == i + 1u);
+    }
+    CHECK(!controller_usb_recovery_gate_take_in_retry(&gate, true, true));
+    controller_usb_recovery_gate_reset_in_retries(&gate);
+    CHECK(controller_usb_recovery_gate_begin_fault(&gate));
+    CHECK(!controller_usb_recovery_gate_take_in_retry(&gate, true, true));
+    controller_usb_recovery_gate_complete(&gate);
+    CHECK(controller_usb_recovery_gate_take_in_retry(&gate, true, true));
+    CHECK(!controller_usb_recovery_gate_take_in_retry(NULL, true, true));
+    controller_usb_recovery_gate_reset_in_retries(NULL);
+
     printf("TESTS_RUN=%u\n", tests_run);
     return failures == 0 ? 0 : 1;
 }
