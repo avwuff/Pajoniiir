@@ -49,6 +49,7 @@ if(NOT CONFIG_ESPTOOLPY_FLASHSIZE_16MB AND NOT CONFIG_ESPTOOLPY_FLASHSIZE_32MB
 endif()
 include("${CMAKE_CURRENT_LIST_DIR}/../p4-core/cmake/apply_espressif_usb_fifo_patch.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/../p4-core/cmake/apply_espressif_usb_idle_recovery_patch.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../p4-core/cmake/apply_espressif_usb_control_retirement_patch.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/../p4-core/cmake/apply_usb_host_msc_teardown_patch.cmake")
 idf_build_set_property(COMPILE_DEFINITIONS "LV_INV_BUF_SIZE=64" APPEND)
 add_custom_target(jc1060_binary_budget ALL

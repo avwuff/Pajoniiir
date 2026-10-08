@@ -38,6 +38,7 @@ project(main-deck-p4)
 # fail-closed patch after Component Manager has materialized esp-usb.
 include("${CMAKE_CURRENT_LIST_DIR}/../p4-core/cmake/apply_espressif_usb_fifo_patch.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/../p4-core/cmake/apply_espressif_usb_idle_recovery_patch.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../p4-core/cmake/apply_espressif_usb_control_retirement_patch.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/../p4-core/cmake/apply_usb_host_msc_teardown_patch.cmake")
 
 # Enlarge LVGL's per-display invalidate-area buffer (default 32). When many

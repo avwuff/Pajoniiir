@@ -96,6 +96,46 @@ before playback rather than silently overriding the physical controls.
 Evidence: `combined-controls-20261008T200142Z.jsonl` and its `.summary.json`
 under the same enumeration evidence directory.
 
+The operator then reported loss of controller responsiveness while turning
+the jogs. Subsequent live evidence on boot 372 shows HS/root 0 MIDI IN endpoint
+0x85 (MPS 512) with three excessive-transaction events at uptime 469371 ms,
+followed by a root disconnect at the same timestamp. The application reported
+controller disconnect at 469377 ms. MIDI IN retry counts are 2 successful /
+1 failed, fault operation IN_PIPE_CLEAR, code ESP_ERR_INVALID_STATE. No M3
+reset occurred; Wi-Fi/API and FS storage remained available. Host recovery
+requests did not advance, so this trace does not show an application-requested
+power cycle preceding the disconnect. The cause of the bus loss is unproven;
+do not label the complete physical controls batch PASS.
+
+Evidence: `*-bus-review-20261008T*.txt` captured by
+`.cache/s2-mk3/jog-unresponsive-review.txt`; trace events identify uptime 469371 ms.
+A temporary 1312-byte variant retains all 80 inputs and audio capability but
+has zero LED outputs. It was atomically uploaded with HTTP 200 over the same
+SD id. This isolates LED output during a short reconnect/jog/Browse check,
+without changing firmware or USB topology. The full repository profile remains
+unchanged and will be restored after isolation. Playback/listening remains pending.
+
+The no-LED reconnect/jog/Browse check also reset M3 (operator-confirmed).
+Boot 373 reports PANIC with a valid 13,312-byte flash core dump:
+`assert failed: usbh_dev_close usbh.c:1334
+(dev_obj->dynamic.num_ctrl_xfers_inflight == 0)`, task `controller_usb`.
+PC `0x4ff0cbbc`, RA `0x4ff0c754`, SP `0x4ff93a60`, mcause 2.
+This rules out LED output as the sole cause. The no-LED capture spans a reboot;
+negative counter differences are invalid, not zero-loss/PASS evidence.
+The diagnostic next-boot audio quarantine preserves API/crash access. Neither
+this crash nor its dump establishes the cause of the earlier bus disconnect.
+
+The pinned USBH EP0 handler publishes completed transfers (waking the client)
+before subtracting their in-flight ownership. A client can therefore retire
+its callback-owned transfers and close the device before the daemon updates
+the counter. The common fail-closed dependency patch retires each dequeued
+transfer under the USBH lock before publication, preserving close assertions.
+Freeing remains deferred to the USBH process after the handler; callback
+resubmission owns a new count. The executable regression reproduces the
+upstream assertion with a client scheduled during publication and checks
+single, batched, resubmitted and empty completion handling in the patched code.
+Physical reconnect/jog and headphone acceptance remain open until retested.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
