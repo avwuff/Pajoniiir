@@ -274,6 +274,29 @@ variant, asserting no TLSF walk in repeated diagnostic snapshots. Physical
 results are pending; the change alone does not prove the cause of skipped ISO
 transactions or close the S2 audio gate.
 
+Clean `1f53a68e7f968ba4e9972824623c2b254099ce1c` passed the full default
+host suite, both memory-snapshot variants, documentation integrity and M3
+IDF 6.0.2 build with unchanged dependency lock. Signed OTA returned HTTP 200;
+`M3-dev-g1f53a68e7f96` is VALID in ota_0 with the full profile active and HS
+audio streaming. Image 2,600,464 bytes SHA-256
+`de1c73bebf70fb06f4e2b2205f88d3971061af5dc372bbfba15ff15790c81729`;
+bundle 2,600,652 bytes SHA-256
+`5cd1e12efced61b914ae63ed0b6ebc4d8e47b1500f3c1253f815643699449603`;
+ELF `ff50cb26ea08dc407d4e94009e0aeeea63e122a1ea3454ee0722c1887e021670`.
+
+The same prepared tracks completed a 90.426-second dual-playback window.
+Baseline ISO failures were zero, and final ISO failures/lost frames, underflow,
+both PCM underruns and output-late deltas were zero. No HTTP errors, reset or
+controller fault interrupted the test; both decks are verified stopped.
+Internal/DMA largest fields were null as intended. This controlled software
+change strongly implicates heap-walk interference in the prior regression,
+but the installed image remains diagnostic, with audio deferral enabled.
+Dense jog/Browse under playback, physical listening and final soak remain
+separate gates. No public channel or other-board release was changed.
+Evidence: `performance-ota-install-1f53a68e7f96.json`,
+`playback-20261008T205835Z/{baseline.json,status.jsonl,result.json,final-stopped.json}`,
+and `heap-isolation-*` build/test/package/install logs.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
