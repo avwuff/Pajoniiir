@@ -136,6 +136,30 @@ upstream assertion with a client scheduled during publication and checks
 single, batched, resubmitted and empty completion handling in the patched code.
 Physical reconnect/jog and headphone acceptance remain open until retested.
 
+Fix candidate `27d4abedb7fef87de5c273dc3251ed80ebdbd974` passed the
+complete default host suite (exit 0), including the executable USBH race,
+real CMake source transformation/fail-closed check, controller/UAC2 and FLX4
+parity suites. The first host attempt overlapped a manual run of the new test
+and hit a Windows executable file lock; process-specific build directories
+remove that test-harness collision, and the full rerun passed. Documentation
+integrity passed. Only M3 was built with ESP-IDF 6.0.2; locks remain unchanged.
+
+Clean signed `M3-dev-g27d4abedb7fe` is installed and confirmed VALID in
+ota_0 after HTTP 200 and startup health validation. Image 2,599,296 bytes:
+`d8647b2a5e62fd04cd610dcd9874b6598806a5a1dc7e23ee19120cedcd116ebb`;
+bundle 2,599,484 bytes:
+`db35d7d9e2f937576eeaad3dd2372e20581baff935bef3ddba0afe38ca99191d`;
+ELF `fbe68aacb1d42a33b1291c02fdaeec8a92b506c6a2448a0f7890ec3c6781584d`.
+The initial read after the operator's power/cable change timed out before any
+upload; a subsequent read confirmed the old VALID image before installing.
+The full 1624-byte profile was restored atomically with HTTP 200. Both decks
+are stopped, storage mounted and Wi-Fi available; S2 is absent at the installed
+snapshot and requires MIDI-mode reconnect for the short jog/Browse retest.
+The diagnostic audio deferral/crash dump remain enabled; physical root stability,
+control acceptance, headphone listening and final soak are still open.
+Evidence: `performance-ota-install-27d4abedb7fe.json`, matching installed API
+snapshots, `control-retirement-host-suite-rerun.log` and M3 build/package logs.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
