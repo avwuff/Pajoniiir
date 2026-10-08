@@ -450,6 +450,42 @@ MT/loop stress and the final extended soak remain open. This short test does
 not qualify production support or replace those gates. FLX4 production USB
 defaults are unchanged; no release, public OTA update or push was performed.
 
+The next combined MT/loop test on the same installed source did **not** pass.
+Both 44.1-kHz decks had MT enabled, four-beat loops near 30 seconds, -5/+5%
+pitch and zoom eight. The strict runner stopped after 24.189 seconds when S2
+disappeared, and verified both decks stopped. The operator confirmed no cable
+or power manipulation. Evidence: `mt-loop-playback-20261008T220621Z` in the
+same enumeration evidence directory; the subsequent bus snapshot is retained
+under `.cache/s2-mk3/next-gates-20261009/mt-loop-fault-trace.log`.
+
+At uptime 652959 ms the HS trace reports two excessive transaction errors on
+MIDI IN endpoint 0x85, followed by a root disconnect at the same millisecond.
+No new ISO packet failures, lost frames, PCM underruns or output-late events
+were observed before the disconnect; this does not establish clean headphone
+delivery after loss of the device. The UAC underflow counter reset on teardown
+and must not be interpreted as a negative loss delta or a clean full window.
+M3 uptime advanced without reboot and storage remained mounted. The flash
+panic dump is historical, not evidence of a new panic. The root cause of the
+link loss remains unresolved; the earlier short zero-pitch combined PASS
+does not qualify MT/loop stress or sustained controller connectivity.
+
+An operator-confirmed MIDI-mode unplug/replug then produced no new root connect
+event or controller binding. The idle/solo/dual isolation runner refused its
+precondition before any playback; it is **NOT RUN**, not a second MT failure.
+The read-only post-replug snapshot is `next-gates-20261009/replug-fault-trace.log`.
+The service reboot API requires a healthy controller/audio attachment, so it
+cannot recover this state. A physical cold-power recovery was requested;
+the test outcome remains pending.
+
+The operator completed cold-power recovery with S2 left on USB3 and storage
+on USB2. The new boot mounts storage, but root 0 has zero captured events,
+zero MIDI connects and no active audio stream. Installed source/ELF remain
+unchanged and VALID. Evidence: `next-gates-20261009/cold-recovery-trace.log`.
+Thus playback isolation is still NOT RUN; current failure occurs before
+profile matching or DSP playback. A same-adapter known-stick enumeration
+comparison on the HS root was requested to distinguish port recovery from
+the S2 connection path. No firmware change or OTA was made for these probes.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
