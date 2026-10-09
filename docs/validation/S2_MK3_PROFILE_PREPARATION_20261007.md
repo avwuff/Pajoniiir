@@ -862,6 +862,25 @@ ESP-IDF 6.0.2 M3 experimental HS build, documentation checker and
 debugging step. Logs: `next-gates-20261009/iso-pool-host.log`,
 `iso-pool-build.log` and `iso-pool-docs.log`.
 
+Clean repair `2f3947732718e1e5d7526d93801ec7dc1543034e` was rebuilt with
+ESP-IDF 6.0.2, signed and installed by local OTA (HTTP 200). Exact
+`M3-dev-g2f3947732718` is VALID in `ota_0`, with ELF SHA-256
+`65aaa5f4468b01b00bb6f143284c68d77f60ef605f90959d2e5f3bbdaf73e3c9`.
+Image: 2603760 bytes, SHA-256
+`02e1ea298e4d032232561b439ac6ef5b496f5072e8d4378b02a72c6b37e626bd`.
+Signed bundle: 2603948 bytes, SHA-256
+`38814ad45b46d3308a43f492db8db9b60786fbfff4ad8e7a3783e425cf8f01d8`.
+Package: `releases/m3-s2-iso-pool-2f394773/`.
+The full 1624-byte profile was restored by HTTP 200. Initial attachment is
+streaming at verified 48000 Hz, 24 bits in four-byte subslots, with zero prime
+fault provenance. Both reference tracks were then loaded successfully and
+verified READY/stopped while S2 audio remained healthy. This qualifies
+installation and preparation only; physical reconnect and playback remain
+pending. The existing retained Wi-Fi SDIO crash dump is historical and is
+not evidence of a new panic during this installation. Evidence:
+`next-gates-20261009/iso-pool-{clean-build,package,install,prepare}.log`,
+`iso-pool-reconnect-baseline.log` and the timestamped baseline JSON.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
