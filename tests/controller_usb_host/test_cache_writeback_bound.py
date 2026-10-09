@@ -51,11 +51,14 @@ int main(void) {
  assert(calls==1 && maximum==16384 && copied==16384);
 #else
  reset(0x1000);assert(__wrap_esp_cache_msync((void *)0x1000,9000,2)==ESP_OK);
- assert(calls==3 && maximum==4096 && copied==9000 && expected==0x1000+9000);
+ assert(calls==9 && maximum==1024 && copied==9000 && expected==0x1000+9000);
  reset(0x1000);fail_at=2;assert(__wrap_esp_cache_msync((void *)0x1000,16384,0)==7);
- assert(calls==2 && copied==4096);
+ assert(calls==2 && copied==1024);
  reset(0x1000);assert(__wrap_esp_cache_msync((void *)0x1000,9000,0)==7);assert(calls==1 && copied==0);
- reset(0x1000);assert(__wrap_esp_cache_msync((void *)0x1000,8192,1)==0);assert(calls==2 && maximum==4096);
+ reset(0x1000);assert(__wrap_esp_cache_msync((void *)0x1000,8192,1)==0);assert(calls==8 && maximum==1024);
+ /* Previously delegated 2-KiB operations must also release the lock between chunks. */
+ reset(0x1000);assert(__wrap_esp_cache_msync((void *)0x1000,2048,0)==0);assert(calls==2 && maximum==1024);
+ reset(0x1000);assert(__wrap_esp_cache_msync((void *)0x1000,1024,1)==0);assert(calls==1 && copied==1024);
  reset(0x1000);assert(__wrap_esp_cache_msync((void *)0x1000,8192,3)==7);assert(calls==1 && copied==0);
  reset(0x1000);assert(__wrap_esp_cache_msync((void *)0x1000,8192,9)==7);assert(calls==1 && copied==0);
  reset(0x1000);yielding=false;assert(__wrap_esp_cache_msync((void *)0x1000,16384,0)==0);assert(calls==1);

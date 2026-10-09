@@ -1180,6 +1180,29 @@ all ten focused monitor regressions pass (`normal-tx-soak-stop-tests.log`).
 the installed firmware is unchanged. The heartbeat is paused, no replacement
 soak was started, and the ISO loss root cause remains unproven.
 
+### ISO rearm investigation after the failed soak
+
+The saved post-failure journal `diagnostic-log-after-failure.txt` contains
+boot-401 `UAC_PACKET_FAULT` at uptime 1303779 ms: status 6 (`SKIPPED`),
+actual 0, wanted 96 bytes and callback gap 7 ticks (7 ms at 1000-Hz tick).
+The preceding root-0 bus trace at 1303772 ms is kind 3 (`ISOC_LATE_START`),
+HFNUM 177815195 and start index 27. HFNUM modulo 64 is also 27: the hardware
+channel was activated in the intended first packet's microframe. The pinned
+HCD maps `NOT_EXECUTED` to `SKIPPED`. This establishes a missed rearm deadline,
+not a UAC ring shortage or a controller disconnect; it does not identify which
+interrupt-masking operation delayed activation.
+
+The next experimental candidate reduces task-context cache-maintenance chunks
+from 4096 to 1024 bytes, including previously unsplit 2-KiB operations. This
+reduces an existing source of interrupt masking without changing the S2 clock,
+USB roles, retained PSRAM DMA pools or production FLX4 configuration. Complete
+range/alignment validation, ownership until all chunks complete, early error
+return and ISR/outer-critical-section delegation are preserved. The actual
+wrapper regression covers 1-KiB/2-KiB boundaries, partial tails, both cache
+directions, invalid requests and non-diagnostic delegation. This bounds bytes,
+not measured microseconds; it is a mitigation candidate pending exact-image
+physical timing validation, not proof that cache maintenance caused the loss.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.

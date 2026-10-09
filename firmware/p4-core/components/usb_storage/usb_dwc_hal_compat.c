@@ -56,6 +56,7 @@
 #include "freertos/task.h"
 
 esp_err_t __real_esp_cache_msync(void *address, size_t bytes, int flags);
+#define HS_CACHE_SYNC_CHUNK_BYTES 1024u
 esp_err_t __wrap_esp_cache_msync(void *address, size_t bytes, int flags)
 {
 #if CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC
@@ -63,24 +64,28 @@ esp_err_t __wrap_esp_cache_msync(void *address, size_t bytes, int flags)
 #error "HS bounded writeback requires the global C2M mutex option disabled"
 #endif
     /* Large display/PPA cache operations can mask the same HS interrupt as USB data.
+     * HS ISO has a 125-us rearm deadline. The previous 4-KiB bound did not
+     * prevent same-microframe activation and a skipped packet during the
+     * normal-power mixed-rate soak; reduce uninterrupted operations to 1 KiB. This
+     * bounds bytes, not elapsed time: physical timing qualification is required.
      * Bound task-context data sync without IDF's whole-operation mutex, which caused
      * audio/display contention in the previous diagnostic. DMA ownership and
      * publication remain with each caller until the complete sync returns. */
     uint32_t level, cache_id;
     uintptr_t end;
-    if (address && bytes > 4096u && xPortCanYield() &&
+    if (address && bytes > HS_CACHE_SYNC_CHUNK_BYTES && xPortCanYield() &&
         !(flags & ESP_CACHE_MSYNC_FLAG_TYPE_INST) &&
         !((flags & ESP_CACHE_MSYNC_FLAG_DIR_M2C) &&
           (flags & (ESP_CACHE_MSYNC_FLAG_UNALIGNED | ESP_CACHE_MSYNC_FLAG_DIR_C2M))) &&
         !__builtin_add_overflow((uintptr_t)address, bytes, &end) &&
         cache_hal_vaddr_to_cache_level_id((uint32_t)(uintptr_t)address, bytes, &level, &cache_id)) {
         const size_t line = cache_hal_get_cache_line_size(level, CACHE_TYPE_DATA);
-        if (line && (4096u % line) == 0 &&
+        if (line && (HS_CACHE_SYNC_CHUNK_BYTES % line) == 0 &&
             ((flags & ESP_CACHE_MSYNC_FLAG_UNALIGNED) ||
              (((uintptr_t)address % line) == 0 && (bytes % line) == 0))) {
             uint8_t *cursor = address;
             while (bytes) {
-                const size_t count = bytes > 4096u ? 4096u : bytes;
+                const size_t count = bytes > HS_CACHE_SYNC_CHUNK_BYTES ? HS_CACHE_SYNC_CHUNK_BYTES : bytes;
                 const esp_err_t rc = __real_esp_cache_msync(cursor, count, flags);
                 if (rc != ESP_OK) return rc;
                 cursor += count;
