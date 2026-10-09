@@ -52,6 +52,8 @@ static uint16_t s_clock_range_bytes;
 static TickType_t s_clock_change_tick, s_clock_retry_tick;
 static uint8_t s_clock_retry_step;
 static uint32_t s_clock_readback_retries, s_clock_reported_rate;
+static uint8_t s_prime_fault_stage, s_prime_fault_index;
+static int32_t s_prime_fault_code;
 static bool s_clock_44100_supported;
 static usb_transfer_t *s_isoc[STREAM_TRANSFER_COUNT];
 static bool s_isoc_active[STREAM_TRANSFER_COUNT];
@@ -249,6 +251,15 @@ static void mark_fault(bool configuration_failure)
         s_transfer_failures++;
     }
     lower_to_transition_priority();
+}
+
+static void mark_prime_fault(uint8_t stage, uint8_t index, esp_err_t rc)
+{
+    s_prime_fault_stage = stage;
+    s_prime_fault_index = index;
+    s_prime_fault_code = rc;
+    ESP_LOGW(TAG, "UAC prime stage=%u index=%u error=%s", stage, index, esp_err_to_name(rc));
+    mark_fault(true);
 }
 
 static esp_err_t prepare_and_submit(usb_transfer_t *transfer)
@@ -569,14 +580,16 @@ static void control_callback(usb_transfer_t *transfer)
 
     bool all_submitted = true;
     if (s_format.uac2) {
-        if (usb_host_transfer_alloc(4u, 1, &s_feedback) != ESP_OK) {
-            mark_fault(true);
+        const esp_err_t alloc_rc = usb_host_transfer_alloc(4u, 1, &s_feedback);
+        if (alloc_rc != ESP_OK) {
+            mark_prime_fault(1u, 0u, alloc_rc);
             return;
         }
         s_feedback->callback = feedback_callback;
         s_feedback_tick = xTaskGetTickCount();
-        if (submit_feedback() != ESP_OK) {
-            mark_fault(true);
+        const esp_err_t submit_rc = submit_feedback();
+        if (submit_rc != ESP_OK) {
+            mark_prime_fault(2u, 0u, submit_rc);
             return;
         }
     }
@@ -584,20 +597,24 @@ static void control_callback(usb_transfer_t *transfer)
     for (unsigned i = 0u; i < STREAM_TRANSFER_COUNT; ++i) {
         const size_t bytes =
             (size_t)s_format.max_packet_size * packets;
-        if (!s_isoc[i] && usb_host_transfer_alloc(
-                bytes, packets, &s_isoc[i]) != ESP_OK) {
-            all_submitted = false;
-            break;
+        if (!s_isoc[i]) {
+            const esp_err_t rc = usb_host_transfer_alloc(bytes, packets, &s_isoc[i]);
+            if (rc != ESP_OK) {
+                mark_prime_fault(3u, (uint8_t)i, rc);
+                all_submitted = false;
+                break;
+            }
         }
         s_isoc[i]->callback = isoc_callback;
-        if (prepare_and_submit(s_isoc[i]) != ESP_OK) {
+        const esp_err_t submit_rc = prepare_and_submit(s_isoc[i]);
+        if (submit_rc != ESP_OK) {
+            mark_prime_fault(4u, (uint8_t)i, submit_rc);
             all_submitted = false;
             break;
         }
     }
     if (!all_submitted) {
         ESP_LOGW(TAG, "failed to prime UAC isochronous queue");
-        mark_fault(true);
         return;
     }
 
@@ -668,6 +685,8 @@ esp_err_t controller_usb_audio_stream_start(
     s_clock_change_tick = xTaskGetTickCount();
     s_clock_readback_retries = 0;
     s_clock_reported_rate = 0;
+    s_prime_fault_stage = s_prime_fault_index = 0;
+    s_prime_fault_code = ESP_OK;
     memset(s_isoc_active, 0, sizeof(s_isoc_active));
     memset(&s_resampler, 0, sizeof(s_resampler));
     flx4_uac_packetizer_init(&s_packetizer, s_target_rate,
@@ -946,6 +965,9 @@ void controller_usb_audio_stream_get_stats(
     out_stats->last_control_word = s_last_control_word;
     out_stats->clock_readback_retries = s_clock_readback_retries;
     out_stats->clock_reported_rate = s_clock_reported_rate;
+    out_stats->prime_fault_stage = s_prime_fault_stage;
+    out_stats->prime_fault_index = s_prime_fault_index;
+    out_stats->prime_fault_code = s_prime_fault_code;
     out_stats->sample_rate = __atomic_load_n(&s_target_rate, __ATOMIC_ACQUIRE);
     out_stats->bits_per_sample = __atomic_load_n(&s_sample_bits, __ATOMIC_ACQUIRE);
     out_stats->high_speed = s_high_speed;

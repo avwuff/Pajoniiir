@@ -3,6 +3,7 @@
 
 unsigned review_submits;
 unsigned review_ticks;
+int review_fail_alloc_packets = -1, review_fail_submit_endpoint = -1;
 /* Compile the actual stream owner against USB/RTOS boundary stubs. A critical
  * section hook deterministically pauses the producer before ring publication. */
 #define CONTROLLER_USB_AUDIO_PC_TEST
@@ -582,6 +583,35 @@ static void test_uac2_44100_fallback(void)
     puts("PASS UAC2 advertised 44.1-kHz fallback, exact readback, fractional HS cadence and resampling");
 }
 
+static void test_prime_fault_evidence(void)
+{
+    for (unsigned stage = 1; stage <= 4; ++stage) {
+        start_clock_readback(); clock_reply(48000);
+        s_control->data_buffer[8] = 1; s_control->actual_num_bytes = 9;
+        control_callback(s_control);
+        assert(s_control_step == 1);
+        review_fail_alloc_packets = stage == 1 ? 1 : stage == 3 ? 56 : -1;
+        review_fail_submit_endpoint = stage == 2 ? 0x81 : stage == 4 ? 1 : -1;
+        s_control->actual_num_bytes = 8; control_callback(s_control);
+        assert(s_faulted && !s_streaming && !s_control_active);
+        controller_usb_audio_stream_stats_t stats;
+        controller_usb_audio_stream_get_stats(&stats);
+        assert(stats.prime_fault_stage == stage && stats.prime_fault_index == 0);
+        assert(stats.prime_fault_code == ((stage & 1) ? ESP_ERR_NO_MEM : ESP_ERR_INVALID_STATE));
+        review_fail_alloc_packets = review_fail_submit_endpoint = -1;
+        retire_transfers(); finish_cleanup();
+        controller_usb_audio_stream_get_stats(&stats);
+        assert(stats.prime_fault_stage == stage); /* Teardown preserves the evidence. */
+    }
+    start_clock_readback();
+    assert(s_prime_fault_stage == 0 && s_prime_fault_code == ESP_OK);
+    controller_usb_audio_stream_request_stop(true);
+    s_control->status = USB_TRANSFER_STATUS_NO_DEVICE;
+    control_callback(s_control);
+    assert(controller_usb_audio_stream_poll_cleanup());
+    puts("PASS UAC startup alloc/submit fault provenance and ownership cleanup");
+}
+
 int main(void)
 {
     uint8_t d[sizeof(descriptor)];
@@ -643,6 +673,7 @@ int main(void)
     test_uac2();
     test_clock_settle();
     test_uac2_44100_fallback();
+    test_prime_fault_evidence();
     puts("PASS UAC 16/24-bit, consumer pacing, bounded timeout, ownership, reconnect and channel routing");
     return 0;
 }

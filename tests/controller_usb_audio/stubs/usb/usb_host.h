@@ -31,13 +31,16 @@ typedef struct usb_transfer {
 #define USB_BM_REQUEST_TYPE_RECIP_ENDPOINT 2
 #define USB_B_REQUEST_SET_INTERFACE 11
 extern unsigned review_submits;
+extern int review_fail_alloc_packets, review_fail_submit_endpoint;
 static inline int usb_host_transfer_submit(usb_transfer_t *t) {
-    (void)t; ++review_submits; return ESP_OK;
+    if ((int)t->bEndpointAddress == review_fail_submit_endpoint) return ESP_ERR_INVALID_STATE;
+    ++review_submits; return ESP_OK;
 }
 static inline int usb_host_transfer_submit_control(void *c, usb_transfer_t *t) {
     (void)c; (void)t; return ESP_OK;
 }
 static inline int usb_host_transfer_alloc(size_t n, int packets, usb_transfer_t **out) {
+    if (packets == review_fail_alloc_packets) return ESP_ERR_NO_MEM;
     *out = calloc(1, sizeof(**out));
     (*out)->data_buffer = calloc(1, n);
     (*out)->data_buffer_size = n;

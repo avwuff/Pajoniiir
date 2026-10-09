@@ -40,6 +40,10 @@ typedef struct {
     uint32_t last_control_word;
     uint32_t clock_readback_retries;
     uint32_t clock_reported_rate;
+    /* Startup: 1 feedback alloc, 2 feedback submit, 3 ISO alloc, 4 ISO submit. */
+    uint8_t prime_fault_stage;
+    uint8_t prime_fault_index;
+    int32_t prime_fault_code;
     uint32_t sample_rate;
     uint8_t bits_per_sample;
     bool consumer_paced;

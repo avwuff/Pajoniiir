@@ -801,6 +801,36 @@ The operator confirmed clean MAIN/S2 headphones and fluid waveforms during
 this MT/loop test: **short MT/loop physical PASS** on the exact `efa028ad`
 image. Reconnect, Wi-Fi OFF/ON and extended soak remain open.
 
+### Reconnect startup failure investigation (2026-10-09)
+
+On unchanged `efa028ad`, with decks stopped and Wi-Fi on, the operator
+unplugged only S2 for ten seconds and reattached in MIDI mode. Both Browse
+encoders were operator-confirmed responsive. The journal records disconnect
+at boot-397 uptime 788923 ms, reconnect at 802340 ms and profile activation
+at 802377 ms. MIDI connect/disconnect deltas are +1/+1 and 18 MIDI packets
+were received. FS storage stayed mounted with no removal or remount; M3 did
+not reboot. The transaction errors near 788919 ms belong to the requested
+unplug and are not an independent spontaneous failure. Controller recovery
+and host recovery requests each increased once during that unplug.
+
+**Audio reconnect FAIL:** at uptime 832626 ms the stream reported confirmed
+44100 Hz after four retries, then configuration failure at control step 1
+(SET_INTERFACE completed successfully: status 0, zero data bytes). ISO was
+not streaming. That narrows the failure to feedback/ISO allocation or initial
+submit after SET_INTERFACE, but the previous telemetry does not distinguish
+those cases. One invalid feedback completion was counted; it is not enough
+to diagnose allocation versus enqueue. Evidence:
+`next-gates-20261009/fallback-reconnect-baseline-20261009T194817Z.json`,
+`fallback-reconnect-after.json` and `fallback-reconnect-trace.log`.
+
+The next candidate records `uac_format.prime_fault_stage`, `prime_fault_index`
+and the exact ESP error in `prime_fault_code`. Stages are 1 feedback allocation,
+2 feedback submit, 3 ISO allocation and 4 ISO submit. Evidence survives teardown
+and clears only at a new stream start. Actual stream-owner tests inject each
+allocation/submit failure and verify retained provenance plus ownership-safe
+cleanup. This is diagnostic work; it does not claim a reconnect repair.
+The Wi-Fi OFF/ON test is deferred until a valid USB audio baseline is restored.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
