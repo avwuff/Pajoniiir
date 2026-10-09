@@ -2,9 +2,10 @@
 
 ## Current bench checkpoint (2026-10-09)
 
-Clean `ac864bdcd6fad480b9e981058c086ce46bbe66be` is installed VALID in
-`ota_0` as `M3-dev-gac864bdcd6fa`, with normal 20-dBm Wi-Fi power, S2 on
-USB3 HS and storage on USB2 FS. Full host/M3 build and signed packaging pass.
+Clean `00a1ca90b929a85ae7b79314b73ac3bda1be5393` is installed VALID in
+`ota_1` as `M3-dev-g00a1ca90b929`, with the normal-power S2 HS configuration,
+S2 on USB3 HS and storage on USB2 FS. Full host/M3 build and signed packaging pass.
+The following earlier physical checks belong to `ac864bdc`:
 Three loaded-track stopped reconnects, short dual MT/loop audio/visual
 playback and active jog/Browse playback passed with operator confirmation.
 The attempted final exact-image soak failed on one ISO packet / six lost frames
@@ -1202,6 +1203,26 @@ wrapper regression covers 1-KiB/2-KiB boundaries, partial tails, both cache
 directions, invalid requests and non-diagnostic delegation. This bounds bytes,
 not measured microseconds; it is a mitigation candidate pending exact-image
 physical timing validation, not proof that cache maintenance caused the loss.
+
+Clean source `00a1ca90b929a85ae7b79314b73ac3bda1be5393` passed the complete
+host runner, actual cache/start-wrapper regressions, ESP-IDF 6.0.2 M3 build,
+experimental board identity/isolation check, fixed image budget and signed
+packaging. No JC build was run during this investigation. Dependencies remain
+unchanged. The 2603360-byte image SHA-256 is
+`48f38ca164937c1af54f7750744915e8039b628653b0afff771b59088181589c`;
+the 2603548-byte signed bundle SHA-256 is
+`f51bd9a3e5c94ce43a2693a347f8907bf28a3055f1ebf5b05b407c08cd9dda77`.
+ELF SHA-256 is
+`73db8d8d0f791de56a5926b2a147d2dad06539adad741ed2c122288564d5744a`.
+Local signed OTA returned HTTP 200; the device confirmed clean source,
+`M3-dev-g00a1ca90b929`, VALID `ota_1` and idle OTA state. Records are
+`next-gates-20261009/iso-rearm-{host-tests,m3-build,package,install}.log` and
+`iso-rearm-ota-install-00a1ca90.json`. Both mixed-rate tracks, +5/-5% pitch
+and loops are prepared and stopped. Initial S2 clock is verified 48000 Hz;
+operator reconnect is requested to reproduce the prior 44100-Hz stream,
+followed by MT/zoom setup and a short physical retest. No new soak has started.
+Physical acceptance of this candidate remains **NOT RUN**. No push or public
+OTA publication was performed.
 
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).

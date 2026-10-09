@@ -12,7 +12,7 @@ supplement passed with operator confirmation and zero new strict audio/USB
 counter deltas. These checks used the diagnostic 2-dBm Wi-Fi limit and retain
 that image/configuration scope.
 
-The next clean candidate `ac864bdc` is installed VALID in `ota_0`; boot 401
+The prior clean candidate `ac864bdc` was installed VALID in `ota_0`; boot 401
 records the normal 20-dBm Wi-Fi maximum. Its full host/M3 build and signed
 package checks pass. Three normal-power loaded-track stopped reconnects,
 60-second MT/loop audio/visual playback and a 30-second active jog/Browse
@@ -30,7 +30,14 @@ Preserved evidence and the checkpoint annotation are linked in the S2 record.
 The host monitor now exits TimingSoak immediately on a hard failure and records
 actual elapsed time. The heartbeat is paused. One isolated 11297-us output-late
 event remains a separate monitoring finding. ISO root cause and exact-image
-requalification remain open; no new firmware or soak was started.
+requalification remain open; no replacement soak was started at that checkpoint.
+
+The subsequent ISO-rearm investigation confirms a same-microframe hardware
+activation preceding the skipped packet. Mitigation candidate `00a1ca90`
+reduces diagnostic task-context cache chunks to 1 KiB. Full host/M3 build,
+board identity and signed package checks pass; it is installed VALID in
+`ota_1`. Short physical retest and the new exact-image soak are NOT RUN.
+The failed `ac864bdc` soak is retained; it does not qualify this candidate.
 
 ## Shared-core migration authority
 
