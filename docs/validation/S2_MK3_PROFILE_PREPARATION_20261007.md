@@ -2129,3 +2129,27 @@ first strict fault and safely stops both decks. No resources/heap walk is
 performed during playback. Checkpoints are scheduled every 15 minutes.
 Status is **RUNNING**, not final acceptance. The user report of working controls
 is retained separately from the prior untouched-control telemetry window.
+
+### Final soak interrupted by missing observer: INCOMPLETE
+
+At the 01:13 local checkpoint on 2026-10-10, no process with the runner's full
+command line existed and no `result.json` was present. Last recorded sample:
+1032.793 seconds, timestamp 00:59:00 local. The prior checkpoint at 965.669 s
+had verified a live Python launcher/child process chain and fresh records.
+The last three elapsed samples advanced normally before recording stopped.
+All recorded strict deltas and output-late delta were zero at the last sample.
+The cause of the host observer's disappearance is not established.
+
+Live read-only status still showed the exact source and running device at
+uptime 2785021 ms; both decks were safely stopped using marked control POSTs.
+`checkpoint-live-stopped.json` confirms both stopped. Live PCM, ISO packet/lost
+frame, UAC underflow/overflow and output-late deltas also remain zero, but the
+unobserved interval does not establish a completed 3600-second qualification.
+Classification is **INCOMPLETE**, not a firmware hard-loss FAIL or PASS.
+
+Evidence in the same run directory: `checkpoint-incomplete.json`,
+`checkpoint-live-before-stop.json`, `checkpoint-live-stopped.json`,
+`checkpoint-diagnostic-log.json`, `checkpoint-usb-bus-trace.json`.
+No automatic restart was made. The heartbeat is PAUSED. The earlier exact-image
+ten-minute playback PASS remains valid within its scope. A fresh final soak
+requires a host runner with durable lifetime and a new, explicit run record.
