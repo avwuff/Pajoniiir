@@ -51,8 +51,11 @@ Boot 403 reports PANIC after the old image's `ota_reboot` cache writeback path;
 MIDI is present but the intended audio quarantine prevents preparation.
 Operator reset restored boot 404 POWERON, healthy S2 44100-Hz streaming and
 normal Wi-Fi. After operator MT/zoom/readiness confirmation, the 600-second
-IRQ retest started around 00:14:36 Europe/Zagreb on 2026-10-10. It is RUNNING,
-not PASS, with the existing 15-minute checkpoint heartbeat and automatic stop.
+IRQ retest started around 00:14:36 Europe/Zagreb on 2026-10-10 and failed after
+90.586 seconds on two skipped ISO packets / 11 lost frames. Cleanup stopped
+both decks and the heartbeat is paused. Packets 1/2 of the same 56-packet block
+were skipped without a captured late activation. The next candidate isolates
+ISO descriptor lists in a fixed 2-KiB internal pool; qualification is pending.
 No playback/IRQ physical PASS is asserted;
 the restart failure and sustained ISO-loss gate remain open.
 

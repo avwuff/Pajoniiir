@@ -82,6 +82,7 @@ endif()
 string(REPLACE "${_pajoniiir_fifo_upstream}" "${_pajoniiir_fifo_patched}"
        _pajoniiir_hcd_contents "${_pajoniiir_hcd_contents}")
 
+include("${CMAKE_CURRENT_LIST_DIR}/apply_espressif_usb_isoc_descriptor_patch.cmake")
 set(_pajoniiir_generated_dir "${CMAKE_BINARY_DIR}/pajoniiir_usb")
 set(_pajoniiir_generated_hcd "${_pajoniiir_generated_dir}/hcd_dwc.c")
 file(MAKE_DIRECTORY "${_pajoniiir_generated_dir}")

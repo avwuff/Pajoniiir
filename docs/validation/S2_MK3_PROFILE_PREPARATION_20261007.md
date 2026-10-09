@@ -7,8 +7,8 @@ Clean `17f75286bdc1a2b35ee0c9d641ae5d29ad230c91` is installed VALID in
 S2 on USB3 HS and storage on USB2 FS. Full host/M3 build and signed packaging pass.
 Boot 403 reported PANIC after the previous image's OTA restart. Operator reset
 restored boot 404 POWERON with healthy S2 44100-Hz audio and normal Wi-Fi.
-The operator confirmed MT on both decks and zoom 8. The 600-second retest
-started on boot 404 and is RUNNING, not PASS.
+The operator confirmed MT on both decks and zoom 8. The 600-second IRQ retest
+failed after 90.586 seconds on boot 404; both decks were automatically stopped.
 The following earlier physical checks belong to `ac864bdc`:
 Three loaded-track stopped reconnects, short dual MT/loop audio/visual
 playback and active jog/Browse playback passed with operator confirmation.
@@ -1328,6 +1328,38 @@ absolute packet failures/lost frames. This is an initial checkpoint only,
 not a completed gate. The existing 15-minute heartbeat is reused; there is one
 runner process chain and no additional monitor. Safe-stop cleanup remains
 armed and the final 60-minute qualification is still open.
+
+The IRQ-priority run failed after 90.586 seconds (133 samples): two skipped
+ISO packets / 11 lost frames, zero other strict deltas and zero output-late
+events. Cleanup confirmed both decks stopped, source unchanged, and no USB
+disconnect. Boot 404 fault records identify packet indices 1 and 2 of 56 on
+transfer index 2, actual 0, wanted 80/96 bytes, callback gap 7 ticks. Post-enable
+activation trace contains no late-start event. Thus raising IRQ priority did
+not eliminate loss, and the preceding first-packet late-start mechanism cannot
+be assumed for this run. The heartbeat is paused; no replacement test started.
+Post-failure journal and USB trace are retained in that run directory.
+
+### Fixed internal ISO descriptor candidate, 2026-10-10
+
+The next isolation keeps only ISO scheduling descriptor lists in a fixed
+internal-RAM pool: four 512-byte lists, two for the audio OUT pipe and two for
+feedback IN. Audio payload buffers and bulk/control endpoint lists retain the
+PSRAM policy. This separates scheduling metadata from external-memory traffic
+without reverting the reconnect fix or requiring fragmented 512-aligned heap
+allocations. Pool slots are atomically claimed, zeroed before reuse and released
+only through the pinned HCD pipe-retirement free path. Exhaustion fails closed;
+it never substitutes a live slot or silently falls back to PSRAM. Production
+FLX4 and JC allocation policies remain unchanged. The generated dependency
+patch verifies pinned allocation/free/cache-alignment anchors and descriptor
+layout; managed component sources remain unmodified.
+
+The executable helper regression verifies 1000 allocation/retirement cycles,
+alignment, exclusive ownership, exhaustion, zeroing on reuse, independent bulk
+allocation and the three non-candidate policy combinations. This is an
+external-memory contention hypothesis, not proof that PSRAM caused the loss.
+The level-3 IRQ and 1-KiB task-cache policy remain as in `17f75286` so this
+candidate changes descriptor placement alone. Software/build and physical
+qualification remain pending; no PASS or publication is asserted.
 
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
