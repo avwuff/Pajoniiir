@@ -3,6 +3,12 @@
 Status: host-qualified Pajoniiir controller profile; physical Inpulse 500 MIDI,
 LED, reconnect and USB-audio acceptance is still pending.
 
+The [2026-10-10 M3 preparation record](validation/HERCULES_INPULSE_500_PREPARATION_20261010.md)
+adds measured Windows identity and jog-touch addresses, current offline
+fixture verification, audio-rate/native-hardware-control audit findings and
+the short combined post-S2-soak activation sequence. The existing fixture
+remains a reference candidate; preparation does not imply an M3 install.
+
 Authoritative mapping sources:
 
 - [Hercules DJControl Inpulse 500 MIDI Commands](https://ts.hercules.com/download/sound/manuals/DJC_Inpulse500/DJControlInpulse500_MIDI_Commands.pdf)

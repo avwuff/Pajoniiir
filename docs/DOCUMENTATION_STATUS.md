@@ -2,6 +2,13 @@
 
 Status: **current documentation authority, reconciled 2026-10-06**.
 
+The [Hercules preparation record](validation/HERCULES_INPULSE_500_PREPARATION_20261010.md)
+documents PC VID/PID and jog-touch capture, exact fixture regeneration and
+profile/registry host checks. Native output-control policy, filter gate and
+descriptor-driven audio startup require resolution before M3 activation.
+Hercules M3 audio/MIDI/LED/lifecycle acceptance remains NOT RUN. This offline
+work does not change the concurrent S2 exact-image soak.
+
 The 2026-10-08 [S2 performance candidate](../controllers/ni_traktor_s2_mk3_full/README.md)
 documents source-backed mixer/pitch/jog/LED coverage, raw-10 inversion and
 experimental HS UAC2. The [S2 evidence record](validation/S2_MK3_PROFILE_PREPARATION_20261007.md)
