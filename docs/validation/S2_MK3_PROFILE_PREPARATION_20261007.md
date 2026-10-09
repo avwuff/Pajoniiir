@@ -2075,3 +2075,21 @@ part of this preparation. Mandatory new-device physical gates remain open.
 - Live MIDI recording, full descriptors, controller output and S2 physical
   control/audio acceptance: **NOT RUN**. Firmware builds are unnecessary for
   these tools/tests/docs changes; the installed soak image remains unchanged.
+
+### Internal ISO pool ten-minute test started, 2026-10-10
+
+The operator confirmed S2 reconnect, both Master Tempo switches and zoom 8.
+The first preflight (`internal-isoc-mt-loop-20261009T222940Z`) stopped before
+PLAY because S2 retained 48000 Hz rather than the previously expected 44100 Hz.
+The running test records the actual 48000-Hz S2 clock and requires it to stay
+unchanged. This differs from the prior 44100-Hz candidate tests and must remain
+explicit when comparing results.
+
+One 600-second runner started at approximately 00:29:57 Europe/Zagreb on clean
+`3f3605a7ba7fb2ce891b703aae1b69864bce6468`, VALID `ota_1`, boot 405.
+Records: `.cache/s2-mk3/next-gates-20261009/internal-isoc-mt-loop-20261009T222957Z/`;
+exec session 94490. D1/D2 sources are 44100/48000 Hz, pitch +5/-5 percent,
+both MT and loops active, zoom 8, MAIN 48000 Hz and S2 UAC2 HS 48000 Hz.
+The runner stops at the first strict fault and safely stops both decks in
+`finally`. Status is **RUNNING**, with no completed telemetry or physical PASS.
+The 15-minute checkpoint automation follows this exact run; no second monitor.

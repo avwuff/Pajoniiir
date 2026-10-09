@@ -233,3 +233,5 @@ Do not transfer historical passes to new code or claim waived tests were run.
 The [documentation audit](validation/DOCUMENTATION_RECONCILIATION_20261006.md)
 records this reconciliation. A documentation-only update does not reflash,
 requalify or republish firmware.
+
+The 3f3605a7 internal ISO pool ten-minute test is RUNNING (2026-10-10 00:29:57 local). S2 retained 48000 Hz after reconnect; prior candidates used 44100 Hz. This clock difference is recorded explicitly in the S2 evidence record. Completion, strict-counter results and operator confirmation remain pending.
