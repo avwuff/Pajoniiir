@@ -735,6 +735,38 @@ recorded at 569742 ms. The offline interval was about 15 seconds, not a
 confirmed 30-second dual-audio test; no operator audio PASS is inferred.
 Evidence: `next-gates-20261009/clock-current-trace.log`.
 
+Candidate `efa028ad50fd4d4ff646d31a36a6dca0c7601799` passed the full host
+suite, IDF 6.0.2 M3 build and documentation checks. Signed OTA returned
+HTTP 200, but the initial post-upload verification timed out while disconnected.
+A subsequent independent package/ELF check confirmed the exact clean image
+VALID in ota_0, version `M3-dev-gefa028ad50fd`, ELF SHA-256
+`ace9b58fbdccc8ab3e6bc7519e9289cb7249646444925137617f00124e2e642c`.
+Image: 2,603,120 bytes, SHA-256
+`02319e06dd13c28c2de612676bb663affffdd3077788070993c2bebcfc81cb19`.
+Full profile upload returned HTTP 200. Boot 397 reports POWERON; no assumption
+is made about the intervening boot from the timed-out installer alone.
+Evidence: `next-gates-20261009/clock-fallback-late-verified.json`.
+
+After the requested MIDI-mode replug with Wi-Fi already on, S2 successfully
+negotiated 44100 Hz after four readback retries, with 24-in-32 audio streaming
+and valid feedback. The API's older `controller.usb_audio` field remained
+false despite the live `uac_format.streaming` and increasing feedback;
+this inconsistent identity field remains a telemetry follow-up.
+
+A bounded dual-playback check completed **60.355 seconds / 105 samples** with
+both 44100-Hz sources, zero pitch, MT/loops off, MAIN output 48000 Hz, S2 USB
+output 44100 Hz and Wi-Fi on at the diagnostic 2-dBm limit. All deltas were
+zero: PCM1/2 underruns, UAC packet failures/lost frames/underflow/overflow/
+dropped blocks, MIDI pipe errors/disconnects and output-late events. Both
+decks were verified stopped afterward. There were zero new MIDI packets,
+so this does not qualify dense controller input. Operator audio/visual
+confirmation was requested separately and remains pending at this entry.
+This short telemetry PASS does not close MT, reconnect, Wi-Fi-toggle or
+extended coexistence gates. Evidence:
+`20261008-m3-enumeration/playback-20261009T193939Z/`,
+`next-gates-20261009/clock-fallback-playback.log` and
+`clock-fallback-current-trace.log` under `.cache/s2-mk3/`.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
