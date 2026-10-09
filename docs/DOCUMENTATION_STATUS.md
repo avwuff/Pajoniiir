@@ -6,7 +6,12 @@ The 2026-10-08 [S2 performance candidate](../controllers/ni_traktor_s2_mk3_full/
 documents source-backed mixer/pitch/jog/LED coverage, raw-10 inversion and
 experimental HS UAC2. The [S2 evidence record](validation/S2_MK3_PROFILE_PREPARATION_20261007.md)
 separates prior basic-profile acceptance from the new combined physical checks.
-Full controller/headphone acceptance and the final candidate soak remain open.
+On clean installed `0729221a`, stopped-deck reconnect and Wi-Fi OFF/ON,
+60-second dual MT/loop audio/visual playback and a 20-second active jog/Browse
+supplement passed with operator confirmation and zero new strict audio/USB
+counter deltas. These checks used the diagnostic 2-dBm Wi-Fi limit. Normal
+TX-power coexistence, extended reconnect coverage, full controller acceptance
+and the final exact-image soak remain open.
 
 ## Shared-core migration authority
 

@@ -965,13 +965,65 @@ with four readback retries, zero feedback-invalid count and zero prime fault
 provenance. Allocation and critical-allocation counts remain zero; internal
 DMA free is 35683 bytes. Both reference tracks remain READY/stopped. This is
 **one stopped-deck MIDI reconnect and audio-startup telemetry PASS**; audible
-audio, Wi-Fi OFF/ON and extended reconnect/soak acceptance remain open on
+audio and extended reconnect/soak acceptance remain open on
 this exact image. The cached `controller.usb_audio` flag is false after
 deferred startup, while live `uac_format.streaming=true`; this known status
 flag limitation must not be interpreted as a failed stream. Evidence:
 `next-gates-20261009/dma-psram-reconnect-after.log`,
 `dma-psram-reconnect-verified.log` and
 `dma-psram-reconnect-baseline-20261009T202940Z.json`.
+
+The subsequent operator Wi-Fi OFF->ON cycle on the same image and boot 400
+passed without a reboot. The journal records WIFI_STOPPED at 397792 ms,
+ENABLE_REQUESTED at 405598 ms and STARTED at 408051 ms; the recorded stopped
+interval is approximately 7.8 seconds, not an asserted ten seconds. The
+diagnostic TX limit was reapplied (requested/actual 8/8 quarter-dBm). Both
+Browse encoders remained operator-confirmed responsive. MIDI packets rose
+from 16 to 36 and semantic events from 15 to 29, without new USB disconnect,
+claim/allocation, queue or recovery faults. The live 44100-Hz audio stream
+remained healthy with zero prime-fault and invalid-feedback counts, while
+both decks remained READY/stopped. This establishes **stopped-deck Wi-Fi
+OFF/ON, GUI/Browse physical acceptance and audio-stream telemetry PASS** on
+the diagnostic 2-dBm candidate; it does not establish audible playback or
+normal/default TX-power coexistence. Evidence:
+`next-gates-20261009/dma-psram-wifi-cycle-{after,verified}.log` and
+`dma-psram-reconnect-baseline-20261009T203302Z.json`.
+
+The following bounded dual playback window completed in 60.893 seconds,
+with 79 status samples, unchanged VALID `ota_1` identity and no reboot
+(uptime 712921 to 774593 ms including final stop). Both 44100-Hz sources used
+MT, active four-beat loops and -5/+5 percent pitch, zoom 8, 48000-Hz MAIN and
+the live 44100-Hz S2 stream. Both PFL paths were enabled. All 23 monitored
+strict counter deltas were zero, including PCM underruns, UAC packet/frame
+loss, underflow/overflow/drop, invalid feedback, service-log drops, USB
+disconnect/recovery, claim/allocation, MIDI pipe/submit and runtime queue
+faults. Output-late delta was also zero. The pre-existing UAC underflow count
+remained 1023; this is a zero-delta window, not a zero-since-boot claim.
+Both decks were automatically stopped, with MT/loops and zoom 8 preserved.
+The operator confirmed clean MAIN/S2 headphones and fluid waveforms.
+**Short MT/loop audio/visual playback PASS** applies only to this image and
+diagnostic TX-power configuration. MIDI packets remained 55 throughout the
+window; the operator clarified that only audio/display were monitored.
+Active jog/Browse exercise under playback requires a focused retest. Evidence:
+`20261008-m3-enumeration/dma-psram-mt-loop-20261009T203731Z/`
+(`firmware.json`, `baseline.json`, `status.jsonl`, `result.json`,
+`final-stopped.json`, `final-firmware.json`, `final-ui-timing.json`).
+
+A focused control supplement then completed in 20.330 seconds / 27 samples
+on the same image and boot, with both decks using the same MT/loop/opposite
+pitch workload. It recorded 543 new MIDI packets and 536 semantic events,
+all 23 strict counter deltas zero and no output-late event. Zoom was 4 at
+admission and 16 in the final UI snapshot during the operator control
+exercise; this is not a fixed-zoom-8 regression window. The operator confirmed
+both jogs and both Browse encoders responded as expected, with clean MAIN/S2
+headphones and orderly waveforms. Both decks were stopped automatically.
+**Short active-jog/Browse playback physical and telemetry PASS** is therefore
+established separately from the preceding 60-second fixed-zoom-8 test.
+Evidence: `20261008-m3-enumeration/dma-psram-mt-loop-20261009T204019Z/`.
+
+Remaining qualification includes normal/default Wi-Fi TX power, extended
+reconnect coverage and the exact-final-image soak (scheduled last). Neither
+these short windows nor previous-image acceptance qualifies those gates.
 
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
