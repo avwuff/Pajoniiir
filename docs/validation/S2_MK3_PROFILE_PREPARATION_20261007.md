@@ -767,6 +767,11 @@ extended coexistence gates. Evidence:
 `next-gates-20261009/clock-fallback-playback.log` and
 `clock-fallback-current-trace.log` under `.cache/s2-mk3/`.
 
+The operator subsequently confirmed that MAIN, S2 headphones and both
+waveforms were normal throughout this 60-second check. This closes physical
+acceptance for that short, zero-pitch/MT-off workload only; dense jog/Browse,
+MT, reconnect and extended coexistence remain unqualified on this image.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
