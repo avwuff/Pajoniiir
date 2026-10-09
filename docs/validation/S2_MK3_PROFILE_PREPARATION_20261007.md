@@ -2115,3 +2115,17 @@ jog/Browse acceptance. Earlier failed candidates ran S2 at 44100 Hz, so this
 and does not qualify the 44100-Hz path. The final exact-image 60-minute soak,
 active-control and remaining lifecycle gates stay open. The checkpoint
 automation is PAUSED after recording the completed result.
+
+### Final internal ISO pool soak started, 2026-10-10
+
+The operator reported that everything works and explicitly requested the final
+soak. One 3600-second strict runner started around 00:41:46 Europe/Zagreb on
+unchanged clean `3f3605a7ba7fb2ce891b703aae1b69864bce6468`.
+Records: `.cache/s2-mk3/next-gates-20261009/internal-isoc-soak-20261009T224146Z/`;
+exec session 6479, runner `.cache/run_s2_internal_isoc_soak.py 3600`.
+Preflight verified both MT/loops, zoom 8, +5/-5 percent pitch, 44100/48000-Hz
+source tracks, MAIN 48000 Hz and S2 streaming at 48000 Hz. The runner stops at
+first strict fault and safely stops both decks. No resources/heap walk is
+performed during playback. Checkpoints are scheduled every 15 minutes.
+Status is **RUNNING**, not final acceptance. The user report of working controls
+is retained separately from the prior untouched-control telemetry window.
