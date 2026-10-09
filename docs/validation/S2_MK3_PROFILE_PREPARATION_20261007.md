@@ -831,6 +831,37 @@ allocation/submit failure and verify retained provenance plus ownership-safe
 cleanup. This is diagnostic work; it does not claim a reconnect repair.
 The Wi-Fi OFF/ON test is deferred until a valid USB audio baseline is restored.
 
+On clean diagnostic `170e8b353f34279e915891a264a3dc89328d1088`, VALID in
+`ota_1`, the next requested reconnect on boot 398 confirmed the failure:
+`prime_fault_stage=3`, index 0, code 257 (`ESP_ERR_NO_MEM`). SET_INTERFACE
+had completed successfully, the verified fallback clock was 44100 Hz, and
+allocation of the first 6272-byte / 56-packet ISO transfer failed. MIDI and
+Browse returned; M3 did not reboot and FS storage remained mounted. This
+proves an allocation failure, not a clock-control failure; it does not by
+itself distinguish total heap exhaustion from fragmentation. Evidence:
+`next-gates-20261009/prime-reconnect-baseline.json` and
+`prime-reconnect-after.json` under `.cache/s2-mk3/`.
+
+The repair retains the existing three HS ISO URBs after cancellation callbacks
+and the producer have retired. Cleanup still releases the interface, control
+and feedback transfers and clears device/endpoint and completion references
+from idle ISO URBs. The next attachment reuses only a compatible immutable
+packet count and sufficient buffer capacity. An incompatible format or an FS
+attachment frees the reservation; FS teardown remains unchanged. At the S2
+format this reserves 18816 data bytes plus URB descriptors, without a second
+pool or an active USB device claim. Actual stream-owner regressions block new
+56-packet allocations, execute repeated HS reconnects, prove cleanup waits
+for old callbacks and verify switching back to the four-packet FS lifecycle.
+Hardware repair acceptance remains pending until the exact new image is
+installed and tested; previous `efa028ad` smokes do not qualify this repair.
+
+Software validation for this repair passed: full P4 host runner (including
+mandatory fixture integrity and the actual stream-owner reconnect regression),
+ESP-IDF 6.0.2 M3 experimental HS build, documentation checker and
+`git diff --check`. JC4880/JC1060 builds were not repeated during this M3
+debugging step. Logs: `next-gates-20261009/iso-pool-host.log`,
+`iso-pool-build.log` and `iso-pool-docs.log`.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.

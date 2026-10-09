@@ -586,6 +586,9 @@ static void test_uac2_44100_fallback(void)
 static void test_prime_fault_evidence(void)
 {
     for (unsigned stage = 1; stage <= 4; ++stage) {
+        /* These cases model a cold allocation, not a retained HS pool. */
+        assert(controller_usb_audio_stream_is_quiesced());
+        for (unsigned i = 0; i < STREAM_TRANSFER_COUNT; ++i) assert(release_idle_isoc(i));
         start_clock_readback(); clock_reply(48000);
         s_control->data_buffer[8] = 1; s_control->actual_num_bytes = 9;
         control_callback(s_control);
@@ -610,6 +613,69 @@ static void test_prime_fault_evidence(void)
     control_callback(s_control);
     assert(controller_usb_audio_stream_poll_cleanup());
     puts("PASS UAC startup alloc/submit fault provenance and ownership cleanup");
+}
+
+static void test_hs_reconnect_under_heap_pressure(void)
+{
+    usb_transfer_t *pool[STREAM_TRANSFER_COUNT] = {0};
+    for (unsigned cycle = 0; cycle < 3; ++cycle) {
+        start_clock_readback(); clock_reply(48000);
+        s_control->data_buffer[8] = 1; s_control->actual_num_bytes = 9;
+        control_callback(s_control);
+        s_control->actual_num_bytes = 8; control_callback(s_control);
+        assert(s_streaming && s_prime_fault_stage == 0);
+        for (unsigned i = 0; i < STREAM_TRANSFER_COUNT; ++i) {
+            if (!cycle) pool[i] = s_isoc[i];
+            assert(s_isoc[i] == pool[i] && s_isoc[i]->device_handle == (void *)2);
+        }
+        controller_usb_audio_stream_request_stop(cycle != 1);
+        assert(!controller_usb_audio_stream_poll_cleanup());
+        assert(!controller_usb_audio_stream_is_quiesced());
+        /* No reuse or detach while the old USB callbacks still own the URBs. */
+        assert(s_isoc[0]->device_handle == (void *)2);
+        retire_transfers(); finish_cleanup();
+        assert(controller_usb_audio_stream_is_quiesced() && !s_feedback && !s_control);
+        for (unsigned i = 0; i < STREAM_TRANSFER_COUNT; ++i) {
+            assert(s_isoc[i] == pool[i] && !s_isoc[i]->device_handle);
+            assert(!s_isoc[i]->num_bytes && !s_isoc[i]->bEndpointAddress);
+            for (int p = 0; p < 56; ++p) assert(!s_isoc[i]->isoc_packet_desc[p].actual_num_bytes);
+        }
+        /* Exact bench failure: no new 56-packet DMA buffer can be allocated. */
+        review_fail_alloc_packets = 56;
+    }
+    review_fail_alloc_packets = -1;
+    /* A larger, valid HS endpoint must not reuse an undersized reservation. */
+    uint8_t larger[sizeof(s2_hs_config)];
+    memcpy(larger, s2_hs_config, sizeof(larger));
+    for (size_t off = 9; larger[off]; off += larger[off]) {
+        if (larger[off + 1] == 5 && larger[off + 2] == 1) {
+            larger[off + 4] = 128; larger[off + 5] = 0;
+            break;
+        }
+    }
+    assert(controller_usb_audio_stream_start((void *)1, (void *)2,
+        larger, sizeof(larger), (void *)3, 10, 5) == ESP_OK);
+    assert(s_format.max_packet_size == 128);
+    for (unsigned i = 0; i < STREAM_TRANSFER_COUNT; ++i) assert(!s_isoc[i]);
+    controller_usb_audio_stream_request_stop(true);
+    s_control->status = USB_TRANSFER_STATUS_CANCELED; control_callback(s_control);
+    assert(controller_usb_audio_stream_poll_cleanup());
+    /* Recreate a HS pool before exercising the FS switch. */
+    start_clock_readback(); clock_reply(48000);
+    s_control->data_buffer[8] = 1; s_control->actual_num_bytes = 9;
+    control_callback(s_control);
+    s_control->actual_num_bytes = 8; control_callback(s_control);
+    assert(s_streaming);
+    controller_usb_audio_stream_request_stop(true);
+    retire_transfers(); finish_cleanup();
+    /* Switching to FS releases the HS reservation and uses four-packet URBs. */
+    start();
+    for (unsigned i = 0; i < STREAM_TRANSFER_COUNT; ++i)
+        assert(s_isoc[i]->num_isoc_packets == 4 && s_isoc[i]->data_buffer_size == 1440);
+    controller_usb_audio_stream_request_stop(true);
+    retire_transfers(); finish_cleanup();
+    for (unsigned i = 0; i < STREAM_TRANSFER_COUNT; ++i) assert(!s_isoc[i]);
+    puts("PASS HS reconnect reuses detached DMA buffers under heap pressure; FS lifecycle preserved");
 }
 
 int main(void)
@@ -674,6 +740,7 @@ int main(void)
     test_clock_settle();
     test_uac2_44100_fallback();
     test_prime_fault_evidence();
+    test_hs_reconnect_under_heap_pressure();
     puts("PASS UAC 16/24-bit, consumer pacing, bounded timeout, ownership, reconnect and channel routing");
     return 0;
 }

@@ -109,6 +109,32 @@ static TickType_t s_control_started;
 static bool s_control_expired;
 static bool s_alt_zero_sent;
 
+/* HS DMA buffers must survive a stopped-deck reconnect: tracks can consume
+ * the large contiguous internal-heap blocks after the initial attachment.
+ * Retain only the three idle URBs, never a device/interface claim or an active
+ * transfer. Immutable packet count/capacity are checked at the next start. FS
+ * keeps its existing allocation/free lifecycle. */
+static bool release_idle_isoc(unsigned index)
+{
+    if (!s_isoc[index]) return true;
+    if (usb_host_transfer_free(s_isoc[index]) != ESP_OK) return false;
+    s_isoc[index] = NULL;
+    return true;
+}
+
+static void detach_idle_isoc(usb_transfer_t *transfer)
+{
+    transfer->device_handle = NULL;
+    transfer->bEndpointAddress = 0;
+    transfer->num_bytes = transfer->actual_num_bytes = 0;
+    transfer->status = USB_TRANSFER_STATUS_COMPLETED;
+    for (int p = 0; p < transfer->num_isoc_packets; ++p) {
+        transfer->isoc_packet_desc[p].num_bytes = 0;
+        transfer->isoc_packet_desc[p].actual_num_bytes = 0;
+        transfer->isoc_packet_desc[p].status = USB_TRANSFER_STATUS_COMPLETED;
+    }
+}
+
 bool controller_usb_audio_stream_consumer_paced(void)
 { return __atomic_load_n(&s_consumer_paced, __ATOMIC_ACQUIRE); }
 bool controller_usb_audio_stream_needs_recovery(void) { return s_control_expired; }
@@ -656,6 +682,15 @@ esp_err_t controller_usb_audio_stream_start(
         return ESP_ERR_NOT_SUPPORTED;
     }
 
+    const int packets = s_format.uac2 ? STREAM_HS_PACKETS_PER_TRANSFER : STREAM_PACKETS_PER_TRANSFER;
+    const size_t bytes = (size_t)s_format.max_packet_size * packets;
+    for (unsigned i = 0; i < STREAM_TRANSFER_COUNT; ++i) {
+        if (s_isoc[i] && (!s_format.uac2 ||
+            s_isoc[i]->num_isoc_packets != packets || s_isoc[i]->data_buffer_size < bytes)) {
+            if (!release_idle_isoc(i)) return ESP_ERR_INVALID_STATE;
+        }
+    }
+
     s_client = client;
     s_device = device;
     s_owner_task = owner_task;
@@ -798,10 +833,8 @@ bool controller_usb_audio_stream_poll_cleanup(void)
     }
     for (unsigned i = 0u; i < STREAM_TRANSFER_COUNT; ++i) {
         if (s_isoc[i]) {
-            if (usb_host_transfer_free(s_isoc[i]) != ESP_OK) {
-                return false;
-            }
-            s_isoc[i] = NULL;
+            if (s_format.uac2) detach_idle_isoc(s_isoc[i]);
+            else if (!release_idle_isoc(i)) return false;
         }
     }
     if (s_control) {
