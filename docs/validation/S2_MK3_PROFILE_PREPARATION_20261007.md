@@ -786,6 +786,17 @@ or an extended soak. Evidence:
 `20261008-m3-enumeration/playback-20261009T194304Z/` and
 `next-gates-20261009/clock-fallback-controls-playback.log` under `.cache/s2-mk3/`.
 
+The subsequent MT/loop workload on `efa028ad` completed 60.822 seconds / 84
+samples: both 44100-Hz source decks with MT on, four-beat loops around 30 s,
+D1 -5% / D2 +5%, zoom 8, MAIN 48000 Hz, S2 44100 Hz and Wi-Fi on. Exact
+source and workload assertions held throughout. PCM1/2, UAC packet/lost-frame/
+underflow/overflow/drop, invalid feedback, MIDI pipe/disconnect and output-late
+deltas were zero. Both decks were verified stopped with the workload settings
+retained. This is a short telemetry PASS; operator audio/waveform confirmation
+was requested and is pending at this entry. Evidence:
+`20261008-m3-enumeration/mt-loop-playback-20261009T194606Z/` and
+`next-gates-20261009/fallback-mt-loop-playback.log` under `.cache/s2-mk3/`.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
