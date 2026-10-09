@@ -1233,12 +1233,25 @@ This is a short physical PASS; MIDI delta is zero because controls were left
 untouched. Evidence: `next-gates-20261009/iso-rearm-mt-loop-20261009T213809Z/`.
 
 A separate 600-second test then started with the same source and workload to
-exceed the prior 306.865-second failure window. It is **RUNNING, not PASS**;
+exceed the prior 306.865-second failure window. It is **FAIL**;
 records: `next-gates-20261009/iso-rearm-mt-loop-20261009T213958Z/` and
 `iso-rearm-ten-minute-test.log`. The host runner stops both decks in `finally`
 on completion or first strict failure. The existing heartbeat is reused with
-15-minute checkpoints; no second monitor is started. Neither the short PASS
+15-minute checkpoints; no second monitor was started. Neither the short PASS
 nor this intermediate test replaces the final exact-image 60-minute soak.
+
+The runner detected two new skipped ISO packets / 11 lost frames after
+514.981 seconds (702 samples), exited immediately and confirmed both decks
+stopped. All other 21 strict deltas were zero, including PCM/UAC ring loss,
+controller disconnect and service-log drops. Two output-late events are
+separate monitoring findings. Boot 402 journal records both skipped packets
+at uptime 759686 ms, actual 0, wanted 80/96 bytes, callback gap 7 ticks.
+The user reported that playback was no longer active; saved result/cleanup
+confirm the automatic failure stop. No physical confirmation of this entire
+window is asserted. Additional post-failure journal and bus trace are saved in
+the same directory. The heartbeat is paused; no restart was performed.
+The 1-KiB cache bound did not eliminate ISO loss and must not be described
+as a completed repair. The short physical PASS remains limited to its 60-s run.
 
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).

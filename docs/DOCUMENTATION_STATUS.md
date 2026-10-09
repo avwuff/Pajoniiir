@@ -38,8 +38,10 @@ reduces diagnostic task-context cache chunks to 1 KiB. Full host/M3 build,
 board identity and signed package checks pass; it is installed VALID in
 `ota_1`. The 60-second mixed-rate MT/loop retest passed with operator-confirmed
 clean MAIN/S2 headphones and fluid waveforms, zero strict deltas and zero new
-output-late events. A separate 600-second same-workload test is RUNNING to
-exceed the prior failure window; the final 60-minute soak remains NOT RUN.
+output-late events. The separate 600-second same-workload test failed after
+514.981 seconds on two skipped ISO packets / 11 lost frames. Both decks were
+automatically stopped; the heartbeat is paused. The 1-KiB bound did not
+eliminate the fault. The final 60-minute soak remains NOT RUN.
 The failed `ac864bdc` soak is retained; it does not qualify this candidate.
 
 ## Shared-core migration authority
