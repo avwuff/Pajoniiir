@@ -694,6 +694,18 @@ Evidence: `next-gates-20261009/clock-settle-{host,build,clean-build,docs,package
 The retained crash dump is the historical boot-389 Wi-Fi SDIO assertion,
 not evidence of a new boot-395 panic. No public release or OTA channel changed.
 
+Follow-up on the same boot corrects the earlier point-in-time reconnect
+observation: S2 subsequently attached at 262005 ms and the profile activated
+at 262043 ms. At uptime 515943 ms it remained MIDI-connected, but audio
+configuration had failed at step 6 after four readback retries; the reported
+clock was still 44100. Thus the 500-ms settling experiment did not resolve
+the hot-attachment rate mismatch. Both decks were still stopped. Evidence:
+`next-gates-20261009/clock-settle-followup-trace.log` and
+`clock-followup-20261009T145811Z.json`. The recent journal contains no new
+Wi-Fi OFF/ON cycle; operator confirmation of the proposed offline playback
+comparison is pending. Playback comparison must not proceed as an audio
+coexistence test while UAC configuration is faulted.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
