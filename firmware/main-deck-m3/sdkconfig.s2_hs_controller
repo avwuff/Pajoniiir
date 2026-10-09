@@ -8,6 +8,10 @@ CONFIG_BSP_M3_HS_CONTROLLER=y
 CONFIG_USB_HOST_DWC_DMA_CAP_MEMORY_IN_PSRAM=y
 CONFIG_PAJONIIIR_SD_INTERNAL_BOUNCE=y
 
+# Qualify coexistence at the C6's normal TX power, not the earlier 2-dBm bench
+# comparison. Existing SDKCONFIG files must explicitly clear the diagnostic.
+# CONFIG_WIFI_LINK_DIAGNOSTIC_LOW_TX_POWER is not set
+
 # Global cache chunking also affects display/I2S and is deliberately disabled.
 # The HS diagnostic data-buffer policy is applied only inside the USB HCD.
 # CONFIG_ESP_MM_CACHE_MSYNC_C2M_CHUNKED_OPS is not set

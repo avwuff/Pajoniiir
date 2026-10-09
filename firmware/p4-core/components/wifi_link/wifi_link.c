@@ -202,6 +202,17 @@ static esp_err_t apply_diagnostic_tx_limit(void)
                       3u, (uint32_t)before, 8u, (uint32_t)actual, 0u,
                       "quarter-dBm before/request/actual");
     if (actual != 8) return ESP_ERR_INVALID_RESPONSE;
+#elif CONFIG_PAJONIIIR_BOARD_M3 && CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC
+    /* One startup read proves the S2 coexistence workload uses normal radio
+     * power. Do not alter the C6 default or make diagnostics block AP startup. */
+    int8_t actual = 0;
+    esp_err_t rc = esp_wifi_get_max_tx_power(&actual);
+    service_log_event(SERVICE_LOG_WIFI_TX_POWER,
+                      rc == ESP_OK ? SERVICE_LOG_INFO : SERVICE_LOG_ERROR,
+                      1u, rc == ESP_OK ? (uint32_t)actual : (uint32_t)rc,
+                      0u, 0u, 0u,
+                      rc == ESP_OK ? "normal TX power quarter-dBm readback"
+                                   : "normal TX power readback failed");
 #endif
     return ESP_OK;
 }
