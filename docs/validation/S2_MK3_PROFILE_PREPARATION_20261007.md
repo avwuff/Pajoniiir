@@ -647,6 +647,53 @@ deadline failure, disconnect/reconnect and truncated replies. This tests a
 clock-settling hypothesis; a successful build alone cannot prove the S2
 honors SET_CUR late or resolve the Wi-Fi/USB coexistence failure.
 
+Source `c6c215356a143a952b3bd315e5232cdcb0d2e5cf` passed the full host
+suite (no SKIP), IDF 6.0.2 M3 build and documentation integrity. Dependency
+locks are unchanged. The clean signed candidate was installed with HTTP 200
+and verified VALID in ota_1, version `M3-dev-gc6c215356a14`, ELF SHA-256
+`9993f9544b8c2283c0ae5a93ff1a8677ee3bf2840b7ee9e0c25b6bb0762a97ca`.
+Image: 2,602,736 bytes, SHA-256
+`484eb9eb911c2f13f8fb34c9a9a75ac4a330aa3daa68928f529f67b8aa7e0968`.
+Package: `releases/m3-s2-clock-settle-c6c21535/`. Windows did not reconnect
+automatically after OTA; reconnecting the saved `Pajoniiir-M3` WLAN profile
+restored API access without another firmware upload. Full profile upload
+returned HTTP 200.
+
+On boot 395 the S2 started four-channel 24-in-32 UAC2 at confirmed 48000 Hz
+with valid feedback and **zero clock readback retries**. Thus this attachment
+does not prove the settling change fixed the prior mismatch. Wi-Fi TX power
+was again read back as 8 quarter-dBm (2 dBm); Wi-Fi and the 260-track library
+were available. Both decks were loaded with 44100-Hz sources, pitch zero,
+MT off and loops off for a bounded 60-second dual-playback check.
+
+**FAIL:** the check stopped after 2.080 seconds because S2 disconnected.
+At uptime 195818 ms, HS root 0 records XCS_XACT on MIDI IN endpoint 0x85
+(address 2, MPS 512), followed in the same millisecond by a port disconnect
+with HPRT 0x1008: connected and enabled clear, power bit set, overcurrent
+clear. The application disconnect journal agrees. Host recovery requests
+did not increase from the startup baseline. M3 did not reboot; FS storage
+remained mounted. PCM underrun, ISO packet loss and output-late counters
+had no new events in the collected snapshots, but this does not turn the
+disconnect into a PASS. Ring counters reset during teardown and must not be
+interpreted as negative deltas. Both decks were verified stopped afterward.
+There is no operator audio/visual acceptance for this attempt.
+
+The operator subsequently replugged only S2 into the same port in MIDI mode,
+leaving Wi-Fi, storage and M3 power untouched. At uptime 252176 ms no new
+root connect or application attachment had occurred. No further playback
+was started. This active-audio failure at 2 dBm means the low-TX experiment
+has not solved coexistence. Physical bus disconnect is observed; electrical
+power integrity, cable/adapter/RF effects and host/PHY behavior remain
+unresolved. A power-status register bit is not a VBUS voltage measurement.
+The operator currently has no independent S2 supply or self-powered hub.
+
+Evidence: `next-gates-20261009/clock-settle-{host,build,clean-build,docs,package,install}.log`,
+`clock-settle-playback-fault-trace.log`, `clock-settle-replug-trace.log`,
+`performance-ota-install-c6c215356a14.json`, and
+`20261008-m3-enumeration/playback-20261009T145249Z/` under `.cache/s2-mk3/`.
+The retained crash dump is the historical boot-389 Wi-Fi SDIO assertion,
+not evidence of a new boot-395 panic. No public release or OTA channel changed.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
