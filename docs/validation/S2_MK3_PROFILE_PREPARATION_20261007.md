@@ -921,6 +921,34 @@ and ordinary build classes; actual packaging-reader tests cover default
 rejection, explicit admission and each missing prerequisite. No public
 channel, tag, published artifact or production default is changed.
 
+Clean candidate `0729221ac2c03b4f71aefdec9867296c44d812ac` passed the full
+P4 host suite, new configure/verifier and packaging admission regressions,
+documentation checker, ESP-IDF 6.0.2 M3 build and explicit S2 board verifier.
+Ordinary JC4880/JC1060 builds were not repeated in this debugging step.
+Local signed OTA returned HTTP 200; exact `M3-dev-g0729221ac2c0` is VALID in
+`ota_1`, ELF SHA-256
+`ea016235db105173a5a5ca1b6b7eb92ae2ef786acf868c8eeb5b1942e3ef4af5`.
+Image: 2604080 bytes, SHA-256
+`3c20dbe39573bfbb373b80f79ba3104fce4b3216898249001ad7f37b53abf572`.
+Bundle: 2604268 bytes, SHA-256
+`8b59cc9476c5143be67c08191e0db6059730a9fdcd26932aaa19b315d7d9e86b`.
+Package: `releases/m3-s2-dma-psram-0729221a/`.
+
+Initial attachment and full profile restoration succeeded: S2 streams at
+verified 48000 Hz / 24-in-32 with zero feedback-invalid or prime fault counts.
+The original preparation helper's 15-second first-load deadline expired;
+D1 subsequently reached READY without a firmware load error. The extended
+preparation then loaded D2 successfully. Both reference tracks are READY and
+stopped on boot 400 at uptime 133027 ms. The loaded-track baseline has zero
+allocation/critical allocation failures, internal free 75263 bytes, internal
+DMA free 35683 bytes and DMA low-water 30983 bytes. Largest blocks remain
+unmeasured. Current zoom is 12; no playback/zoom-8 acceptance is inferred.
+Physical reconnect and subsequent playback remain pending. Evidence:
+`next-gates-20261009/dma-psram-final-{host,build,docs}.log`,
+`dma-psram-{package,install,prepare,prepare-extended}.log`,
+`dma-psram-reconnect-baseline.log` and
+`dma-psram-reconnect-baseline-20261009T202753Z.json`.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
