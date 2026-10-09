@@ -2177,3 +2177,30 @@ S2 48000 Hz, MAIN 48000 Hz, source tracks 44100/48000 Hz, both MT/loops,
 The runner currently extracts 22 strict counter paths; prior prose calling
 these 23 was a counting error, not a missing telemetry value in this schema.
 Status is RUNNING. Fifteen-minute checkpoints now follow this new record.
+
+### Independent final soak: strict ISO FAIL, 2026-10-10
+
+The durable host runner completed its safe-stop/final-result path with exit 1
+at 01:37:26 local. Duration 1336.174 seconds, 2185 samples; classification is
+**FAIL** for strict ISO loss (the runner's broad `failed_or_incomplete` label
+is refined using the explicit loss evidence). Two packets / 12 audio frames
+were lost. Both decks are confirmed stopped. All other 20 strict deltas were
+zero; output-late delta zero, MIDI packet delta zero. Exact clean source/ELF,
+VALID `ota_1` and S2 48000-Hz streaming remained unchanged. The operator noticed
+no physical audio/display/controller disturbance; strict loss still fails.
+
+At boot 405 uptime 4214711 ms, bounded journal pairs report status 6,
+actual 0 / wanted 96 bytes, callback gap 7 ticks, packet indices 1 and 2 in
+one 56-packet block (transfer 2). Bounded USB bus history contains no kind-3
+late activation record for this run. This repeats the previous inner-block
+skip pattern despite internal descriptor placement; that change has not
+eliminated the fault. Missing late trace is not proof of an unrestricted
+no-latency condition, and the cause remains under investigation.
+
+Evidence remains in `internal-isoc-soak-durable-20261009T231506Z/`:
+`result.json`, final snapshots, stdout/stderr, `wrapper-exit.json`,
+`after-failure-diagnostic-log.json`, `after-failure-usb-bus-trace.json`,
+`after-failure-firmware.json`. The one-time scheduled task was removed only
+after completion and process exit; heartbeat PAUSED. No automatic rerun or
+firmware update. Prior ten-minute PASS stays scoped and does not override
+this longer strict FAIL. The final soak gate remains open.
