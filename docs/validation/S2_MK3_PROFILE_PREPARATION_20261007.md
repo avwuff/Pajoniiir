@@ -949,6 +949,30 @@ Physical reconnect and subsequent playback remain pending. Evidence:
 `dma-psram-reconnect-baseline.log` and
 `dma-psram-reconnect-baseline-20261009T202753Z.json`.
 
+The requested stopped-deck reconnect on unchanged `0729221a` succeeded.
+Boot 400 records the requested unplug at 197994 ms and reconnect at 210642 ms,
+followed by profile activation at 210680 ms. Both Browse encoders were
+operator-confirmed responsive; 16 MIDI packets / 64 bytes and 14 additional
+semantic events were observed. Interface-claim and transfer-allocation failure
+counts remain zero. The three IN transaction trace records at 197988 ms all
+belong to the requested unplug, before the new attachment; they are not
+post-reconnect spontaneous faults. Controller/host recovery each increased
+once across that unplug, and completed without resetting M3 or disturbing FS
+storage (still one mount, zero media disconnects).
+
+At uptime 240547 ms the verified advertised 44100-Hz fallback is streaming,
+with four readback retries, zero feedback-invalid count and zero prime fault
+provenance. Allocation and critical-allocation counts remain zero; internal
+DMA free is 35683 bytes. Both reference tracks remain READY/stopped. This is
+**one stopped-deck MIDI reconnect and audio-startup telemetry PASS**; audible
+audio, Wi-Fi OFF/ON and extended reconnect/soak acceptance remain open on
+this exact image. The cached `controller.usb_audio` flag is false after
+deferred startup, while live `uac_format.streaming=true`; this known status
+flag limitation must not be interpreted as a failed stream. Evidence:
+`next-gates-20261009/dma-psram-reconnect-after.log`,
+`dma-psram-reconnect-verified.log` and
+`dma-psram-reconnect-baseline-20261009T202940Z.json`.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
