@@ -49,7 +49,9 @@ priority and improves bounded packet/activation context. Full host/M3 build,
 identity and signed packaging pass; it is installed VALID in `ota_0`.
 Boot 403 reports PANIC after the old image's `ota_reboot` cache writeback path;
 MIDI is present but the intended audio quarantine prevents preparation.
-A physical RESET is requested. No playback/IRQ physical PASS is asserted;
+Operator reset restored boot 404 POWERON, healthy S2 44100-Hz streaming and
+normal Wi-Fi. Tracks are prepared/stopped; the 600-second IRQ retest awaits
+operator MT/zoom setup. No playback/IRQ physical PASS is asserted;
 the restart failure and sustained ISO-loss gate remain open.
 
 ## Shared-core migration authority

@@ -5,8 +5,10 @@
 Clean `17f75286bdc1a2b35ee0c9d641ae5d29ad230c91` is installed VALID in
 `ota_0` as `M3-dev-g17f75286bdc1`, with the normal-power S2 HS configuration,
 S2 on USB3 HS and storage on USB2 FS. Full host/M3 build and signed packaging pass.
-Boot 403 reports PANIC after the previous image's OTA restart. MIDI is present,
-but HS audio is quarantined; a physical RESET is requested before preparation.
+Boot 403 reported PANIC after the previous image's OTA restart. Operator reset
+restored boot 404 POWERON with healthy S2 44100-Hz audio and normal Wi-Fi.
+Both mixed-rate tracks/pitch/loops are prepared and stopped; MT/zoom setup and
+the 10-minute physical retest are pending.
 The following earlier physical checks belong to `ac864bdc`:
 Three loaded-track stopped reconnects, short dual MT/loop audio/visual
 playback and active jog/Browse playback passed with operator confirmation.
@@ -1305,6 +1307,17 @@ erase, playback test, second OTA or public publication was performed. The
 restart failure remains a separate open reliability finding. Saved evidence:
 `irq-priority-after-ota-journal.txt`, `irq-priority-live-status.json` and
 `irq-priority-live-firmware.json`. Physical IRQ/playback acceptance is NOT RUN.
+
+The operator then completed RESET/recovery. Boot 404 reports POWERON, not
+PANIC, with normal 20-dBm readback. S2 MIDI/full profile and verified
+44100-Hz UAC2 streaming returned, without stream/configuration faults; stored
+crash data is retained. The exact clean `17f75286` image remains VALID `ota_0`.
+D1 Casanova Action 44100 Hz and D2 Ritam moj 48000 Hz are prepared with
++5/-5% pitch and loops, both stopped. Initial zoom is 12; operator MT/zoom-8
+setup is requested before one 600-second test. Evidence:
+`irq-priority-after-reset-{status,firmware,journal}.json/txt`,
+`irq-priority-prepared-17f75286.json` and `irq-priority-after-reset-prepared.log`.
+No playback was started before readiness confirmation.
 
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
