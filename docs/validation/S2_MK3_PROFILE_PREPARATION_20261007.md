@@ -628,6 +628,25 @@ and `wifi-low-tx-replug-trace.log` in `next-gates-20261009/`. Both decks remain
 stopped. Clock negotiation is the next software investigation; headphone,
 playback, MT and extended coexistence acceptance remain open.
 
+### Bounded UAC2 clock readback experiment (2026-10-09)
+
+Both low-TX attachments returned a successful four-byte GET_CUR containing
+44100 immediately after SET_CUR requested 48000. The current stream owner
+faulted on that first mismatch. A new candidate retains the exact-rate gate
+but allows asynchronous readback retries, at least 50 ms apart, within one
+500-ms window after SET_CUR completes. A temporarily invalid clock shares
+that same budget. No sleep is added to the USB callback; SET_CUR is not
+repeated and neither feedback nor audio transfers start until the requested
+rate and clock validity are confirmed. Truncated replies and USB errors still
+fail immediately. Disconnect cancels pending retries. UAC1 is unchanged.
+
+`uac_format.clock_readback_retries` and `clock_reported_rate` retain evidence
+for each attachment, including configuration failures. Actual-module tests
+cover delayed 44100-to-48000 convergence, validity settling, timer wrap,
+deadline failure, disconnect/reconnect and truncated replies. This tests a
+clock-settling hypothesis; a successful build alone cannot prove the S2
+honors SET_CUR late or resolve the Wi-Fi/USB coexistence failure.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.

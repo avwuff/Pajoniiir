@@ -433,18 +433,96 @@ static void test_uac2(void)
     assert(controller_usb_audio_stream_is_quiesced());
     controller_usb_audio_stream_get_stats(&failed);
     assert(failed.configuration_fault && failed.fault_control_step == 4);
-    /* An explicitly invalid clock cannot start the endpoints. */
+    /* An invalid clock cannot start endpoints, even after the settle budget. */
     assert(controller_usb_audio_stream_start((void *)1, (void *)2,
         s2_hs_config, sizeof(s2_hs_config), (void *)3, 10, 5) == ESP_OK);
     s_control_step = 8;
     s_control->data_buffer[8] = 0;
     s_control->actual_num_bytes = 9;
     s_control->status = USB_TRANSFER_STATUS_COMPLETED;
+    review_ticks += 500;
     control_callback(s_control);
     assert(s_faulted && !s_streaming && !s_feedback);
     finish_cleanup();
     assert(controller_usb_audio_stream_is_quiesced());
     puts("PASS UAC2 captured HS descriptor, clock RANGE/CUR, feedback, packing and teardown");
+}
+
+static void start_clock_readback(void)
+{
+    const uint8_t range[] = {1, 0, 0x80, 0xbb, 0, 0, 0x80, 0xbb, 0, 0, 0, 0, 0, 0};
+    assert(controller_usb_audio_stream_start((void *)1, (void *)2,
+        s2_hs_config, sizeof(s2_hs_config), (void *)3, 10, 5) == ESP_OK);
+    memcpy(s_control->data_buffer + 8, range, 2);
+    s_control->actual_num_bytes = 10;
+    s_control->status = USB_TRANSFER_STATUS_COMPLETED;
+    control_callback(s_control);
+    memcpy(s_control->data_buffer + 8, range, sizeof(range));
+    s_control->actual_num_bytes = 8 + sizeof(range);
+    control_callback(s_control);
+    assert(s_control_step == 5);
+    s_control->actual_num_bytes = 12;
+    control_callback(s_control);
+    assert(s_control_step == 6 && s_control_active);
+}
+
+static void clock_reply(uint32_t rate)
+{
+    for (unsigned i = 0; i < 4; ++i) s_control->data_buffer[8 + i] = rate >> (8u * i);
+    s_control->actual_num_bytes = 12;
+    control_callback(s_control);
+}
+
+static void test_clock_settle(void)
+{
+    /* Exact bench failure: SET_CUR succeeds, first GET_CUR still says 44100.
+     * A later correct reply may advance; no USB callback delay or premature ISO. */
+    review_ticks = UINT32_MAX - 20u;
+    start_clock_readback();
+    clock_reply(44100);
+    assert(!s_faulted && !s_streaming && !s_control_active && s_clock_retry_step == 6);
+    review_ticks += 49;
+    assert(!controller_usb_audio_stream_poll_cleanup() && !s_control_active);
+    review_ticks++;
+    assert(!controller_usb_audio_stream_poll_cleanup() && s_control_active);
+    assert(s_clock_readback_retries == 1);
+    clock_reply(48000);
+    assert(s_control_step == 8 && s_clock_reported_rate == 48000);
+    s_control->actual_num_bytes = 9;
+    s_control->data_buffer[8] = 0;
+    control_callback(s_control);
+    assert(s_clock_retry_step == 8 && !s_faulted && !s_feedback);
+    review_ticks += 50;
+    assert(!controller_usb_audio_stream_poll_cleanup() && s_control_active);
+    s_control->data_buffer[8] = 1;
+    control_callback(s_control);
+    assert(s_control_step == 1 && s_clock_readback_retries == 2);
+    s_control->actual_num_bytes = 8;
+    control_callback(s_control);
+    assert(s_streaming && s_feedback_active);
+    controller_usb_audio_stream_request_stop(false);
+    retire_transfers(); finish_cleanup();
+
+    start_clock_readback();
+    clock_reply(44100);
+    review_ticks += 500;
+    assert(!controller_usb_audio_stream_poll_cleanup());
+    assert(s_faulted && s_fault_control_step == 6 && !s_streaming && !s_feedback);
+    finish_cleanup();
+
+    start_clock_readback();
+    clock_reply(44100);
+    controller_usb_audio_stream_request_stop(true);
+    review_ticks += 50;
+    assert(controller_usb_audio_stream_poll_cleanup());
+    assert(!s_clock_retry_step && !s_control && s_clock_readback_retries == 0);
+    start_clock_readback();
+    assert(s_clock_reported_rate == 0 && s_clock_readback_retries == 0);
+    s_control->actual_num_bytes = 11; /* Truncated reply is not a settling clock. */
+    control_callback(s_control);
+    assert(s_faulted && !s_clock_retry_step);
+    finish_cleanup();
+    puts("PASS UAC2 bounded asynchronous clock settle, wrap, timeout and disconnect");
 }
 
 int main(void)
@@ -506,6 +584,7 @@ int main(void)
     test_generic_fixed_16bit(44100);
     test_generic_fixed_16bit(48000);
     test_uac2();
+    test_clock_settle();
     puts("PASS UAC 16/24-bit, consumer pacing, bounded timeout, ownership, reconnect and channel routing");
     return 0;
 }

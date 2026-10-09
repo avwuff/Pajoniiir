@@ -38,6 +38,8 @@ typedef struct {
     int32_t last_control_status;
     int32_t last_control_bytes;
     uint32_t last_control_word;
+    uint32_t clock_readback_retries;
+    uint32_t clock_reported_rate;
     uint32_t sample_rate;
     uint8_t bits_per_sample;
     bool consumer_paced;

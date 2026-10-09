@@ -47,6 +47,11 @@ static uint32_t s_feedback_q16, s_feedback_phase;
 static uint32_t s_feedback_updates, s_feedback_invalid;
 static TickType_t s_feedback_tick;
 static uint16_t s_clock_range_bytes;
+/* Rate changes may complete after SET_CUR's status stage. Never sleep in the
+ * USB callback or stream at an unverified rate: poll within one bounded window. */
+static TickType_t s_clock_change_tick, s_clock_retry_tick;
+static uint8_t s_clock_retry_step;
+static uint32_t s_clock_readback_retries, s_clock_reported_rate;
 static usb_transfer_t *s_isoc[STREAM_TRANSFER_COUNT];
 static bool s_isoc_active[STREAM_TRANSFER_COUNT];
 static TaskHandle_t s_owner_task;
@@ -501,13 +506,23 @@ static void control_callback(usb_transfer_t *transfer)
             if (valid) s_clock_range_bytes = (uint16_t)(2u + 12u * count);
         } else if (s_control_step == 7u)
             valid = valid && controller_uac2_range_supports(payload, (size_t)actual, s_target_rate);
-        else if (s_control_step == 6u)
+        else if (s_control_step == 6u) {
+            if (actual == 4) s_clock_reported_rate = s_last_control_word;
             valid = actual == 4 && payload[0] == (uint8_t)s_target_rate &&
                 payload[1] == (uint8_t)(s_target_rate >> 8) &&
                 payload[2] == (uint8_t)(s_target_rate >> 16) &&
                 payload[3] == (uint8_t)(s_target_rate >> 24);
+        }
         else if (s_control_step == 8u) valid = actual == 1 && payload[0] == 1u;
         else valid = actual == 4;
+        if (s_control_step == 5u && valid) s_clock_change_tick = xTaskGetTickCount();
+        if (!valid && ((s_control_step == 6u && actual == 4) ||
+                      (s_control_step == 8u && actual == 1 && payload[0] == 0u)) &&
+            (TickType_t)(xTaskGetTickCount() - s_clock_change_tick) < pdMS_TO_TICKS(500u)) {
+            s_clock_retry_step = s_control_step;
+            s_clock_retry_tick = xTaskGetTickCount();
+            return;
+        }
         if (!valid || submit_control_step(next) != ESP_OK) mark_fault(true);
         return;
     }
@@ -616,6 +631,10 @@ esp_err_t controller_usb_audio_stream_start(
     s_feedback_q16 = (48000u / 8000u) << 16;
     s_feedback_active = false;
     s_clock_range_bytes = 0;
+    s_clock_retry_step = 0;
+    s_clock_change_tick = xTaskGetTickCount();
+    s_clock_readback_retries = 0;
+    s_clock_reported_rate = 0;
     memset(s_isoc_active, 0, sizeof(s_isoc_active));
     memset(&s_resampler, 0, sizeof(s_resampler));
     flx4_uac_packetizer_init(&s_packetizer, s_target_rate,
@@ -660,6 +679,7 @@ esp_err_t controller_usb_audio_stream_start(
 
 void controller_usb_audio_stream_request_stop(bool device_gone)
 {
+    s_clock_retry_step = 0;
     set_accepting(false);
     s_streaming = false;
     s_configuring = false;
@@ -670,6 +690,18 @@ void controller_usb_audio_stream_request_stop(bool device_gone)
 
 bool controller_usb_audio_stream_poll_cleanup(void)
 {
+    if (s_clock_retry_step && s_configuring && !s_stopping && !s_control_active) {
+        const TickType_t now = xTaskGetTickCount();
+        if ((TickType_t)(now - s_clock_change_tick) >= pdMS_TO_TICKS(500u)) {
+            s_clock_retry_step = 0;
+            mark_fault(true);
+        } else if ((TickType_t)(now - s_clock_retry_tick) >= pdMS_TO_TICKS(50u)) {
+            const uint8_t step = s_clock_retry_step;
+            s_clock_retry_step = 0;
+            ++s_clock_readback_retries;
+            if (submit_control_step(step) != ESP_OK) mark_fault(true);
+        }
+    }
     if (s_streaming && s_format.uac2 &&
         (TickType_t)(xTaskGetTickCount() - s_feedback_tick) >= pdMS_TO_TICKS(500u)) {
         mark_fault(false); /* A stale clock estimate must not run indefinitely. */
@@ -879,6 +911,8 @@ void controller_usb_audio_stream_get_stats(
     out_stats->last_control_status = s_last_control_status;
     out_stats->last_control_bytes = s_last_control_bytes;
     out_stats->last_control_word = s_last_control_word;
+    out_stats->clock_readback_retries = s_clock_readback_retries;
+    out_stats->clock_reported_rate = s_clock_reported_rate;
     out_stats->sample_rate = __atomic_load_n(&s_target_rate, __ATOMIC_ACQUIRE);
     out_stats->bits_per_sample = __atomic_load_n(&s_sample_bits, __ATOMIC_ACQUIRE);
     out_stats->high_speed = s_high_speed;
