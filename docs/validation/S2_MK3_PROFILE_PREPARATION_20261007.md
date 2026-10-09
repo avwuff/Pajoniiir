@@ -772,6 +772,20 @@ waveforms were normal throughout this 60-second check. This closes physical
 acceptance for that short, zero-pitch/MT-off workload only; dense jog/Browse,
 MT, reconnect and extended coexistence remain unqualified on this image.
 
+The next combined jog/Browse dual-playback check on the same `efa028ad` image
+completed 60.409 seconds / 106 samples, with 1138 MIDI packets and 1132
+semantic events. The operator exercised both jogs and Browse for the initial
+portion, then listened and observed. PCM1/2, UAC packet/lost-frame/underflow/
+overflow/drop, MIDI pipe/submit errors, runtime queue failures, disconnect
+and output-late deltas were all zero. USB remained streaming at confirmed
+44100 Hz; MAIN remained at 48000 Hz, Wi-Fi on, pitch zero and MT/loops off.
+Both decks were verified stopped. The operator explicitly confirmed clean
+MAIN/S2 headphones, normal waveforms and responsive controls: **short combined
+control/playback PASS**. This does not qualify MT, Wi-Fi-toggle, reconnect
+or an extended soak. Evidence:
+`20261008-m3-enumeration/playback-20261009T194304Z/` and
+`next-gates-20261009/clock-fallback-controls-playback.log` under `.cache/s2-mk3/`.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
