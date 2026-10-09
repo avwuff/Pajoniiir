@@ -55,7 +55,11 @@ IRQ retest started around 00:14:36 Europe/Zagreb on 2026-10-10 and failed after
 90.586 seconds on two skipped ISO packets / 11 lost frames. Cleanup stopped
 both decks and the heartbeat is paused. Packets 1/2 of the same 56-packet block
 were skipped without a captured late activation. The next candidate isolates
-ISO descriptor lists in a fixed 2-KiB internal pool; qualification is pending.
+ISO descriptor lists in a fixed 2-KiB internal pool. Clean candidate `3f3605a7`
+passes full host/M3 build, identity and signed packaging and is installed VALID
+in `ota_1`. Boot 405 is a normal SW reset, with healthy MIDI/audio and Wi-Fi.
+The descriptor pool is confirmed in internal BSS. Tracks are prepared/stopped;
+operator reconnect/MT/zoom setup and physical retest are pending.
 No playback/IRQ physical PASS is asserted;
 the restart failure and sustained ISO-loss gate remain open.
 

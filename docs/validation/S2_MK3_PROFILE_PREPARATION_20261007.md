@@ -2,13 +2,12 @@
 
 ## Current bench checkpoint (2026-10-09)
 
-Clean `17f75286bdc1a2b35ee0c9d641ae5d29ad230c91` is installed VALID in
-`ota_0` as `M3-dev-g17f75286bdc1`, with the normal-power S2 HS configuration,
+Clean `3f3605a7ba7fb2ce891b703aae1b69864bce6468` is installed VALID in
+`ota_1` as `M3-dev-g3f3605a7ba7f`, with the normal-power S2 HS configuration,
 S2 on USB3 HS and storage on USB2 FS. Full host/M3 build and signed packaging pass.
-Boot 403 reported PANIC after the previous image's OTA restart. Operator reset
-restored boot 404 POWERON with healthy S2 44100-Hz audio and normal Wi-Fi.
-The operator confirmed MT on both decks and zoom 8. The 600-second IRQ retest
-failed after 90.586 seconds on boot 404; both decks were automatically stopped.
+The prior IRQ retest failed after 90.586 seconds on boot 404. The new boot 405
+reports normal SW reset, healthy S2 audio and normal Wi-Fi. Mixed-rate tracks,
+pitch and loops are prepared/stopped; reconnect/MT/zoom and the new test are pending.
 The following earlier physical checks belong to `ac864bdc`:
 Three loaded-track stopped reconnects, short dual MT/loop audio/visual
 playback and active jog/Browse playback passed with operator confirmation.
@@ -1360,6 +1359,28 @@ external-memory contention hypothesis, not proof that PSRAM caused the loss.
 The level-3 IRQ and 1-KiB task-cache policy remain as in `17f75286` so this
 candidate changes descriptor placement alone. Software/build and physical
 qualification remain pending; no PASS or publication is asserted.
+
+Clean source `3f3605a7ba7fb2ce891b703aae1b69864bce6468` passed the full host
+suite, ESP-IDF 6.0.2 M3 build, experimental board/isolation check and signed
+packaging. No JC build was run; dependencies remain unchanged. Linker placement
+confirms the 2048-byte pool in internal BSS at `0x4FF69000`, 512-byte aligned.
+The generated HCD uses the pool allocator/free/cache-capability hooks in the
+actual buffer lifecycle. Image is 2603824 bytes with SHA-256
+`7bf603045a3d39c398668dd3a6eea7e42b5b581a740e46cd675d6d87590a8e1a`;
+signed bundle is 2604012 bytes with SHA-256
+`691c9a8c9d14651d87611fc3ea0b96bc8aa25284a8359615334fc986a9bc0b6c`;
+ELF SHA-256 is
+`5f70083d0c64ec66ca38b049845e6eb6f9e3960a341e63c7b8cb54a55e052488`.
+
+Local OTA returned HTTP 200 and confirmed clean `M3-dev-g3f3605a7ba7f`, VALID
+`ota_1` and idle OTA state. Boot 405 reports SW reset and normal 20-dBm Wi-Fi;
+the stored `ota_reboot` crash summary is unchanged historical evidence. MIDI
+and S2 audio are live at 48000 Hz. Both mixed-rate tracks, +5/-5% pitch and
+loops are prepared and stopped. Operator reconnect is requested to reproduce
+44100-Hz S2 playback, with MT on both and zoom 8 before a 600-second retest.
+Physical acceptance is NOT RUN; no new monitor, release or public OTA started.
+Evidence: `next-gates-20261009/internal-isoc-*` software/build/package/install
+logs, `internal-isoc-ota-install-3f3605a7.json`, prepared JSON and post-OTA journal.
 
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
