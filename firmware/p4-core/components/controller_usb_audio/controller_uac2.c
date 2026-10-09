@@ -124,8 +124,8 @@ bool controller_uac2_range_supports(const uint8_t *data, size_t length, uint32_t
 bool controller_uac2_feedback(const uint8_t *data, size_t length, uint32_t rate,
                               uint32_t *frames_q16)
 {
-    if (!data || !frames_q16 || length != 4 || rate != 48000) return false;
-    uint32_t v = r32(data), nominal = (rate / 8000u) << 16;
+    if (!data || !frames_q16 || length != 4 || (rate != 48000 && rate != 44100)) return false;
+    uint32_t v = r32(data), nominal = (uint32_t)(((uint64_t)rate << 16) / 8000u);
     if (v < nominal - nominal / 20 || v > nominal + nominal / 20) return false;
     *frames_q16 = v;
     return true;

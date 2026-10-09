@@ -448,9 +448,13 @@ static void test_uac2(void)
     puts("PASS UAC2 captured HS descriptor, clock RANGE/CUR, feedback, packing and teardown");
 }
 
-static void start_clock_readback(void)
+static void start_clock_readback_ranges(bool include_44100)
 {
-    const uint8_t range[] = {1, 0, 0x80, 0xbb, 0, 0, 0x80, 0xbb, 0, 0, 0, 0, 0, 0};
+    uint8_t range[] = {1, 0, 0x80, 0xbb, 0, 0, 0x80, 0xbb, 0, 0, 0, 0, 0, 0};
+    if (include_44100) {
+        range[2] = 0x44; range[3] = 0xac;
+        range[10] = 0x3c; range[11] = 0x0f; /* 3900-Hz step: 44100 and 48000. */
+    }
     assert(controller_usb_audio_stream_start((void *)1, (void *)2,
         s2_hs_config, sizeof(s2_hs_config), (void *)3, 10, 5) == ESP_OK);
     memcpy(s_control->data_buffer + 8, range, 2);
@@ -465,6 +469,8 @@ static void start_clock_readback(void)
     control_callback(s_control);
     assert(s_control_step == 6 && s_control_active);
 }
+
+static void start_clock_readback(void) { start_clock_readback_ranges(false); }
 
 static void clock_reply(uint32_t rate)
 {
@@ -523,6 +529,57 @@ static void test_clock_settle(void)
     assert(s_faulted && !s_clock_retry_step);
     finish_cleanup();
     puts("PASS UAC2 bounded asynchronous clock settle, wrap, timeout and disconnect");
+}
+
+static void test_uac2_44100_fallback(void)
+{
+    start_clock_readback_ranges(true);
+    clock_reply(44100);
+    review_ticks += 500;
+    assert(!controller_usb_audio_stream_poll_cleanup());
+    assert(s_control_step == 5 && s_control_active && !s_faulted && !s_streaming);
+    assert(s_target_rate == 44100 && s_ring.sample_rate == 44100);
+    assert(s_control->data_buffer[8] == 0x44 && s_control->data_buffer[9] == 0xac);
+    s_control->actual_num_bytes = 12;
+    control_callback(s_control);
+    clock_reply(44100);
+    assert(s_control_step == 8);
+    s_control->data_buffer[8] = 1; s_control->actual_num_bytes = 9;
+    control_callback(s_control);
+    s_control->actual_num_bytes = 8; control_callback(s_control);
+    assert(s_streaming && s_target_rate == 44100);
+    const uint8_t nominal[] = {0x33, 0x83, 5, 0};
+    uint32_t feedback;
+    assert(controller_uac2_feedback(nominal, 4, 44100, &feedback));
+    assert(!controller_uac2_feedback(nominal, 4, 48000, &feedback));
+    const uint8_t rate48[] = {0, 0, 6, 0};
+    assert(!controller_uac2_feedback(rate48, 4, 44100, &feedback));
+    uint64_t frames = 0;
+    s_feedback_phase = 0;
+    for (unsigned i = 0; i < 1000; ++i) {
+        s_isoc_active[0] = false;
+        assert(prepare_and_submit(s_isoc[0]) == ESP_OK);
+        for (unsigned p = 0; p < 56; ++p) {
+            int bytes = s_isoc[0]->isoc_packet_desc[p].num_bytes;
+            assert(bytes == 80 || bytes == 96);
+            frames += bytes / 16;
+        }
+    }
+    assert(frames >= 308699 && frames <= 308700); /* Seven seconds of HS packets. */
+    assert(controller_usb_audio_stream_write(pcm, pcm, 256, 48000) == ESP_OK);
+    assert(s_resampler.source_rate == 48000 && s_resampler.target_rate == 44100);
+    controller_usb_audio_stream_request_stop(false);
+    retire_transfers(); finish_cleanup();
+
+    /* A fallback which also refuses its requested rate must fail, not loop. */
+    start_clock_readback_ranges(true); clock_reply(44100);
+    review_ticks += 500; assert(!controller_usb_audio_stream_poll_cleanup());
+    s_control->actual_num_bytes = 12; control_callback(s_control);
+    clock_reply(48000); review_ticks += 500;
+    assert(!controller_usb_audio_stream_poll_cleanup());
+    assert(s_faulted && !s_streaming && !s_feedback);
+    finish_cleanup();
+    puts("PASS UAC2 advertised 44.1-kHz fallback, exact readback, fractional HS cadence and resampling");
 }
 
 int main(void)
@@ -585,6 +642,7 @@ int main(void)
     test_generic_fixed_16bit(48000);
     test_uac2();
     test_clock_settle();
+    test_uac2_44100_fallback();
     puts("PASS UAC 16/24-bit, consumer pacing, bounded timeout, ownership, reconnect and channel routing");
     return 0;
 }

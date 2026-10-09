@@ -52,6 +52,7 @@ static uint16_t s_clock_range_bytes;
 static TickType_t s_clock_change_tick, s_clock_retry_tick;
 static uint8_t s_clock_retry_step;
 static uint32_t s_clock_readback_retries, s_clock_reported_rate;
+static bool s_clock_44100_supported;
 static usb_transfer_t *s_isoc[STREAM_TRANSFER_COUNT];
 static bool s_isoc_active[STREAM_TRANSFER_COUNT];
 static TaskHandle_t s_owner_task;
@@ -426,6 +427,30 @@ static esp_err_t submit_feedback(void)
     return rc;
 }
 
+/* Only called before stream admission, with no audio transfers in flight.
+ * MAIN keeps its board-owned rate; the existing resampler targets this clock. */
+static void configure_uac2_rate(uint32_t rate)
+{
+    __atomic_store_n(&s_target_rate, rate, __ATOMIC_RELEASE);
+    s_feedback_q16 = (uint32_t)(((uint64_t)rate << 16) / 8000u);
+    s_feedback_phase = 0;
+    flx4_uac_packetizer_init(&s_packetizer, rate, STREAM_CHANNELS, s_format.bytes_per_sample);
+    portENTER_CRITICAL(&s_mux);
+    controller_audio_ring_reset(&s_ring, rate);
+    portEXIT_CRITICAL(&s_mux);
+}
+
+static bool try_uac2_rate_fallback(void)
+{
+    if (s_control_step != 6u || s_target_rate != 48000u ||
+        !s_clock_44100_supported || s_clock_reported_rate != 44100u) return false;
+    /* One explicit fallback attempt, still requiring SET/CUR and validity.
+     * Never relabel 48-kHz packets as a 44.1-kHz device clock. */
+    configure_uac2_rate(44100u);
+    if (submit_control_step(5u) != ESP_OK) mark_fault(true);
+    return true;
+}
+
 bool controller_usb_audio_stream_fault_isolatable(void)
 {
     return s_high_speed && s_faulted && s_configuration_fault &&
@@ -504,8 +529,14 @@ static void control_callback(usb_transfer_t *transfer)
             unsigned count = actual == 2 ? payload[0] | (unsigned)payload[1] << 8 : 0u;
             valid = count > 0 && count <= 8;
             if (valid) s_clock_range_bytes = (uint16_t)(2u + 12u * count);
-        } else if (s_control_step == 7u)
+        } else if (s_control_step == 7u) {
+            s_clock_44100_supported = valid && controller_uac2_range_supports(payload, (size_t)actual, 44100u);
             valid = valid && controller_uac2_range_supports(payload, (size_t)actual, s_target_rate);
+            if (!valid && s_clock_44100_supported) {
+                configure_uac2_rate(44100u);
+                valid = true;
+            }
+        }
         else if (s_control_step == 6u) {
             if (actual == 4) s_clock_reported_rate = s_last_control_word;
             valid = actual == 4 && payload[0] == (uint8_t)s_target_rate &&
@@ -523,6 +554,7 @@ static void control_callback(usb_transfer_t *transfer)
             s_clock_retry_tick = xTaskGetTickCount();
             return;
         }
+        if (!valid && actual == 4 && try_uac2_rate_fallback()) return;
         if (!valid || submit_control_step(next) != ESP_OK) mark_fault(true);
         return;
     }
@@ -631,6 +663,7 @@ esp_err_t controller_usb_audio_stream_start(
     s_feedback_q16 = (48000u / 8000u) << 16;
     s_feedback_active = false;
     s_clock_range_bytes = 0;
+    s_clock_44100_supported = false;
     s_clock_retry_step = 0;
     s_clock_change_tick = xTaskGetTickCount();
     s_clock_readback_retries = 0;
@@ -694,7 +727,7 @@ bool controller_usb_audio_stream_poll_cleanup(void)
         const TickType_t now = xTaskGetTickCount();
         if ((TickType_t)(now - s_clock_change_tick) >= pdMS_TO_TICKS(500u)) {
             s_clock_retry_step = 0;
-            mark_fault(true);
+            if (!try_uac2_rate_fallback()) mark_fault(true);
         } else if ((TickType_t)(now - s_clock_retry_tick) >= pdMS_TO_TICKS(50u)) {
             const uint8_t step = s_clock_retry_step;
             s_clock_retry_step = 0;

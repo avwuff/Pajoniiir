@@ -706,6 +706,35 @@ Wi-Fi OFF/ON cycle; operator confirmation of the proposed offline playback
 comparison is pending. Playback comparison must not proceed as an audio
 coexistence test while UAC configuration is faulted.
 
+### Advertised-rate fallback candidate (2026-10-09)
+
+The next shared UAC2 candidate preserves 48000 as the first choice but allows
+44100 when explicitly advertised by the device's validated clock RANGE. If
+48000 is advertised yet GET_CUR remains 44100 after the bounded settle window,
+the owner makes one explicit SET_CUR(44100) attempt and requires matching
+GET_CUR plus clock validity before starting audio. A second mismatch fails;
+unsupported or malformed ranges never authorize fallback. A 44100-only RANGE
+selects that rate directly. UAC1 and the M3 MAIN 48000-Hz policy are unchanged.
+
+The USB ring, resampler target and initial feedback estimate follow the actual
+negotiated rate. HS feedback nominal calculation preserves the fractional
+44100/8000 frames per microframe; packet generation carries fractional frames
+across packets rather than truncating to five frames. Host tests execute the
+production owner, require exact 44.1-kHz readback, reject cross-rate feedback,
+check seven seconds of 5/6-frame HS packets, verify 48000-to-44100 resampling,
+and reject a second rate mismatch without another fallback loop. This permits
+a valid audio workload after hot attachment; it is not evidence that the
+separate Wi-Fi/USB disconnect is fixed.
+
+Before installation, the previous image's boot-395 journal also recorded
+Wi-Fi stop at 520721 ms, enable request at 532963 ms, a 97871-us audio output
+outlier at 534830 ms and controller disconnect at 535260 ms, before Wi-Fi
+started at 535418 ms. TX power was limited only at 535398 ms, so the startup
+interval was not covered by the 2-dBm cap. A subsequent MIDI attachment was
+recorded at 569742 ms. The offline interval was about 15 seconds, not a
+confirmed 30-second dual-audio test; no operator audio PASS is inferred.
+Evidence: `next-gates-20261009/clock-current-trace.log`.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
