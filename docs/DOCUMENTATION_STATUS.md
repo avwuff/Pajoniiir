@@ -50,8 +50,10 @@ identity and signed packaging pass; it is installed VALID in `ota_0`.
 Boot 403 reports PANIC after the old image's `ota_reboot` cache writeback path;
 MIDI is present but the intended audio quarantine prevents preparation.
 Operator reset restored boot 404 POWERON, healthy S2 44100-Hz streaming and
-normal Wi-Fi. Tracks are prepared/stopped; the 600-second IRQ retest awaits
-operator MT/zoom setup. No playback/IRQ physical PASS is asserted;
+normal Wi-Fi. After operator MT/zoom/readiness confirmation, the 600-second
+IRQ retest started around 00:14:36 Europe/Zagreb on 2026-10-10. It is RUNNING,
+not PASS, with the existing 15-minute checkpoint heartbeat and automatic stop.
+No playback/IRQ physical PASS is asserted;
 the restart failure and sustained ISO-loss gate remain open.
 
 ## Shared-core migration authority

@@ -7,8 +7,8 @@ Clean `17f75286bdc1a2b35ee0c9d641ae5d29ad230c91` is installed VALID in
 S2 on USB3 HS and storage on USB2 FS. Full host/M3 build and signed packaging pass.
 Boot 403 reported PANIC after the previous image's OTA restart. Operator reset
 restored boot 404 POWERON with healthy S2 44100-Hz audio and normal Wi-Fi.
-Both mixed-rate tracks/pitch/loops are prepared and stopped; MT/zoom setup and
-the 10-minute physical retest are pending.
+The operator confirmed MT on both decks and zoom 8. The 600-second retest
+started on boot 404 and is RUNNING, not PASS.
 The following earlier physical checks belong to `ac864bdc`:
 Three loaded-track stopped reconnects, short dual MT/loop audio/visual
 playback and active jog/Browse playback passed with operator confirmation.
@@ -1318,6 +1318,16 @@ setup is requested before one 600-second test. Evidence:
 `irq-priority-after-reset-{status,firmware,journal}.json/txt`,
 `irq-priority-prepared-17f75286.json` and `irq-priority-after-reset-prepared.log`.
 No playback was started before readiness confirmation.
+
+After operator MT/zoom/readiness confirmation, the 600-second same-workload
+test started on 2026-10-10 at approximately 00:14:36 Europe/Zagreb. Records:
+`next-gates-20261009/irq-priority-mt-loop-20261009T221436Z/` and
+`irq-priority-ten-minute-test.log`. At elapsed 41.205 seconds the saved status
+confirms both decks playing, both MT enabled, verified S2 44100 Hz and zero
+absolute packet failures/lost frames. This is an initial checkpoint only,
+not a completed gate. The existing 15-minute heartbeat is reused; there is one
+runner process chain and no additional monitor. Safe-stop cleanup remains
+armed and the final 60-minute qualification is still open.
 
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
