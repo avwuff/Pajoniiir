@@ -2093,3 +2093,25 @@ both MT and loops active, zoom 8, MAIN 48000 Hz and S2 UAC2 HS 48000 Hz.
 The runner stops at the first strict fault and safely stops both decks in
 `finally`. Status is **RUNNING**, with no completed telemetry or physical PASS.
 The 15-minute checkpoint automation follows this exact run; no second monitor.
+
+### Internal ISO pool ten-minute result: PASS at 48 kHz, 2026-10-10
+
+The exact clean installed `3f3605a7ba7fb2ce891b703aae1b69864bce6468`
+completed 600.408 seconds with 983 samples, no errors and both decks confirmed
+stopped. All 23 strict counter deltas were zero, including ISO packet failures,
+lost frames, PCM underruns, UAC underflow/overflow/drop and USB lifecycle errors.
+Output-late delta was zero. Final firmware remained VALID in `ota_1`, with
+ELF `5f70083d0c64ec66ca38b049845e6eb6f9e3960a341e63c7b8cb54a55e052488`.
+S2 remained streaming, non-faulted at 48000 Hz throughout this test.
+Evidence: `internal-isoc-mt-loop-20261009T222957Z/result.json` and final snapshots
+under `.cache/s2-mk3/next-gates-20261009/`.
+
+The operator explicitly confirmed clean MAIN and S2 headphones, fluid dual
+waveforms and stable display for the entire ten-minute window. Thus this
+specific playback test has telemetry and physical PASS. MIDI packet delta was
+zero because controls were deliberately left untouched; this is not an active
+jog/Browse acceptance. Earlier failed candidates ran S2 at 44100 Hz, so this
+48-kHz result does not isolate descriptor placement as the proven sole cause
+and does not qualify the 44100-Hz path. The final exact-image 60-minute soak,
+active-control and remaining lifecycle gates stay open. The checkpoint
+automation is PAUSED after recording the completed result.
