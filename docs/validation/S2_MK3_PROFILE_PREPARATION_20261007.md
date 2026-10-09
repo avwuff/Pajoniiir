@@ -2204,3 +2204,42 @@ Evidence remains in `internal-isoc-soak-durable-20261009T231506Z/`:
 after completion and process exit; heartbeat PAUSED. No automatic rerun or
 firmware update. Prior ten-minute PASS stays scoped and does not override
 this longer strict FAIL. The final soak gate remains open.
+
+### Internal ISO payload candidate, 2026-10-10
+
+Implemented clean source `fc4ed60878c99212033a5d2872de1d6395b3185c`.
+The measured failure affects packet indices 1/2 following a completed packet,
+with the normal seven-tick callback gap and no captured late-enable event.
+A pure activation-delay explanation is not established. Internal descriptors
+alone did not remove the loss; DMA payloads still used external PSRAM.
+This candidate removes that periodic payload dependency, without claiming the
+external-memory path is already the proven sole cause.
+
+The generated pinned `usb_private.c` selects DMA/cache-aligned INTERNAL memory
+for ISO URBs only under M3 + HS diagnostic + PSRAM configuration. Bulk/control
+retain their original policy. Alignment is queried using the selected caps;
+allocation failure has no PSRAM fallback. Existing retained idle URB ownership,
+56-packet blocks, scheduler, FIFO/ring and diagnostics are unchanged. Three
+112-byte-MPS x 56-packet OUT buffers require roughly 19 KiB plus feedback.
+Managed dependencies are not edited. Production allocator regression executes
+the transformed pinned function with capability/alignment and allocation-failure
+cleanup checks across four configurations. Full host suite, ESP-IDF 6.0.2 M3
+build, board identity/budget and signed-package checks completed with exit 0.
+
+Image 2603824 B SHA-256:
+`f3aaaecf27b72283c6cf6f28ca7dcb23140ce2b13dd974f74e12f2b1d9cc3861`.
+Signed bundle 2604012 B SHA-256:
+`21803e5189133f3277b4753d6ae010386bb2106b0bce5d3830d875ffc28187dc`.
+ELF `fb7ad3e0f8d758fc071730bd88bd3027b84b2f0770abb43738645ce0c99137d4`.
+Package: `releases/m3-s2-internal-payload-fc4ed608/pajoniiir-m3-M3-dev-gfc4ed60878c9/`.
+Local signed OTA returned HTTP 200; exact new image is VALID `ota_0`, OTA idle.
+
+Boot 406 reports PANIC after the old `3f3605a7` image's OTA restart. The new
+boot preserves the HS-audio panic quarantine: MIDI/profile/library/Wi-Fi are
+available but audio startup is not attempted, with zero prime fault indicators.
+This is not evidence of payload allocation failure. Startup status/crash
+summary retained in `internal-payload-startup-status.json`; installed metadata
+in `internal-payload-ota-install-fc4ed608.json`, under the next-gates directory.
+The prior OTA-restart risk remains separately open. Operator RESET is requested
+before testing this candidate. No playback or new soak has been started.
+Physical/strict-loss acceptance remains NOT RUN on this image. No push/release.
