@@ -1,5 +1,17 @@
 # Traktor Kontrol S2 MK3 profile preparation
 
+## Current bench checkpoint (2026-10-09)
+
+Clean `ac864bdcd6fad480b9e981058c086ce46bbe66be` is installed VALID in
+`ota_0` as `M3-dev-gac864bdcd6fa`, with normal 20-dBm Wi-Fi power, S2 on
+USB3 HS and storage on USB2 FS. Full host/M3 build and signed packaging pass.
+Three loaded-track stopped reconnects, short dual MT/loop audio/visual
+playback and active jog/Browse playback passed with operator confirmation.
+The final exact-image soak and complete controller/reliability qualification
+remain open. Earlier entries below are historical, image-scoped checkpoints;
+their original pending/FAIL statements are not the current installed state.
+See [normal-power evidence](#normal-wi-fi-tx-power-candidate-2026-10-09).
+
 ## Performance candidate implementation (2026-10-08)
 
 The [separate performance profile](../../controllers/ni_traktor_s2_mk3_full/README.md)
@@ -1024,6 +1036,113 @@ Evidence: `20261008-m3-enumeration/dma-psram-mt-loop-20261009T204019Z/`.
 Remaining qualification includes normal/default Wi-Fi TX power, extended
 reconnect coverage and the exact-final-image soak (scheduled last). Neither
 these short windows nor previous-image acceptance qualifies those gates.
+
+### Normal Wi-Fi TX-power candidate, 2026-10-09
+
+Clean source `ac864bdcd6fad480b9e981058c086ce46bbe66be` explicitly disables
+the earlier 2-dBm comparison in the S2 configuration. PSRAM USB DMA, SD internal
+bounce buffers and all existing controller/audio policies remain enabled.
+An S2/M3-only startup read logs the unmodified C6 maximum TX power once per AP
+start. A readback error is recorded without blocking AP startup; the ordinary
+board path performs no additional query. Production-function host tests cover
+both the limiter and normal readback, API failure, and non-S2 board isolation.
+
+The full host suite, ESP-IDF 6.0.2 M3 build, documentation integrity and
+explicit S2 signed packaging checks passed. The committed dependency lock is
+unchanged. JC4880/JC1060 were not rebuilt during this M3 qualification.
+Signed local OTA returned HTTP 200, passed the startup health gate and
+independently verified clean `M3-dev-gac864bdcd6fa`, VALID `ota_0`, boot 401.
+The PC was reconnected to the saved Wi-Fi profile after the OTA reboot.
+At 3554 ms the journal records `WIFI_TX_POWER a0=80`, i.e. the normal 20-dBm
+maximum, rather than the prior 8-quarter-dBm limit. Initial live S2 audio is
+48000 Hz, 24-bit in 32-bit subslots, with no prime fault or invalid feedback.
+Both reference tracks were subsequently loaded READY/stopped; the library
+contains 260 tracks and the persisted full profile is active. The historical
+stored Wi-Fi SDIO panic is retained as evidence and is not a new boot-401
+failure; this boot's reset reason is the expected OTA software reset.
+
+| Artifact | Size | SHA-256 |
+|---|---:|---|
+| Inner image | 2603360 | `3cdb35f8332c865a2233b0a7339d1124cf2495eb99322cf7021df5cf1bc6279e` |
+| Signed bundle | 2603548 | `efda6f5bc8189d3356287ec3ea3b73ca11f981dc8a440cbc36ecbf2eccdf08c1` |
+| ELF identity | - | `564118e89e328f361771435a48fd3f9708a9e5e70a24c1cfe1e192e098325028` |
+
+Package: `releases/m3-s2-normal-tx-ac864bdc/pajoniiir-m3-M3-dev-gac864bdcd6fa/`.
+Evidence: `next-gates-20261009/normal-tx-{host,build,docs,package,install,prepare}.log`,
+`normal-tx-install-ac864bdcd6fa.json` and
+`normal-tx-diagnostic-log-ac864bdcd6fa.txt`.
+Normal-power physical reconnect/playback and the final exact-image soak remain
+pending; the earlier diagnostic-power passes do not close these gates.
+
+The normal-power stopped-deck reconnect batch then completed three physical
+unplug/replug cycles in 106.702 seconds. Both reference tracks stayed loaded
+and storage remained mounted without a media disconnect or M3 reboot. All
+three connections returned MIDI and healthy S2 audio; the operator confirmed
+both Browse encoders responsive after the batch. The capture recorded 55 new
+MIDI packets / 49 semantic events, zero new interface-claim or transfer-allocation
+failures, and three requested recovery operations with no recovery failure.
+Initial 48000-Hz S2 audio switched to the advertised verified 44100-Hz reconnect
+fallback, with zero prime faults and invalid feedback at the final snapshot.
+Internal DMA free was 35675 bytes, minimum 30967 bytes. This establishes
+**three loaded-track stopped reconnects at normal Wi-Fi power PASS**; it is
+not the full 30-cycle reliability campaign or playback-under-disconnect test.
+
+The MIDI IN pipe-error counter rose by 12. All increments occurred at the
+three observed connected-to-disconnected transitions (four each at 154904,
+176101 and 204934 ms), not in the intervening attached windows. The retained
+HS trace's final three transaction records at 204905 ms coincide with the
+last requested unplug. These intentional removal events are preserved in
+the record and are not relabelled as zero-error lifecycle evidence.
+Final ten-second attached stability and audio readiness passed.
+Evidence: `next-gates-20261009/normal-tx-reconnect-20261009T205115Z/`
+(`baseline.json`, `firmware.json`, `status.jsonl`, `final.json`,
+`final-firmware.json`, `usb-bus-trace.json`, `result.json`).
+
+Normal-power dual playback after those reconnects completed in 60.460 seconds
+/ 75 status samples on the same installed image. Both decks used MT, active
+four-beat loops and -5/+5 percent pitch; admission zoom was 8, both sources
+44100 Hz, MAIN 48000 Hz and S2's verified reconnect stream 44100 Hz. All 23
+strict counter deltas and the output-late delta were zero. Both decks were
+automatically stopped. The operator confirmed clean MAIN/S2 headphones and
+orderly waveforms, and clarified that controls were not moved during this
+window (MIDI delta zero). **Normal-power short MT/loop audio/visual playback
+PASS** is established; this window does not establish active jog/Browse load.
+Evidence: `20261008-m3-enumeration/normal-tx-mt-loop-20261009T205357Z/`.
+
+The control supplement completed in 30.487 seconds / 38 samples, recording
+1743 MIDI packets and 1737 semantic events. Both decks retained MT, loops
+and opposite pitch; initial and final UI snapshots both report zoom 8.
+All 23 strict counter deltas and output-late delta remained zero, and both
+decks were automatically stopped. Existing UAC underflows remained 1072;
+only the new delta is zero. The operator confirmed both jogs/Browse behaved
+as expected with clean MAIN/S2 headphones and orderly waveforms.
+**Normal-power active-jog/Browse short playback physical and telemetry PASS**
+is established separately from the preceding audio/visual-only window.
+Evidence: `20261008-m3-enumeration/normal-tx-mt-loop-20261009T205556Z/`.
+
+Wi-Fi OFF/ON at normal power then passed on unchanged boot 401. The operator
+confirmed no GUI reboot and both Browse encoders responsive. Journal times
+are WIFI_STOPPED 534151 ms, ENABLE_REQUESTED 541243 ms and STARTED 543667 ms;
+the recorded stopped-to-enable interval is 7.092 seconds, not an asserted
+ten seconds. Restart readback again reports 80 quarter-dBm (20 dBm).
+All 23 monitored controller/host/storage/audio/service-log deltas were zero,
+with 25 additional MIDI packets / 21 semantic events. S2 audio stayed healthy
+at 44100 Hz and both decks stayed stopped. **Normal-power stopped-deck Wi-Fi
+OFF/ON GUI/Browse physical and stream-telemetry PASS** applies to this image.
+Evidence: `next-gates-20261009/normal-tx-wifi-{before,after,result}.json`,
+`normal-tx-wifi-after-journal.txt` and `normal-tx-wifi-verified.log`.
+
+Final soak preparation uses D1 Casanova Action at 44100 Hz and D2 Dino Dvornik
+Ritam moj at 48000 Hz, verified through the live decoder diagnostics, D1 +5
+and D2 -5 percent pitch, both MT/loops, zoom 8, MAIN 48000 Hz, S2 44100 Hz and
+normal-power Wi-Fi. The exact image and 260-track catalog remain unchanged.
+The common host monitor now prefers live UAC streaming/fault status over the
+known stale connection-time flag, while preserving legacy-image readiness.
+It also treats newly exported ISO packet/frame loss as strict failure, even
+without ring loss. All nine monitor regression tests passed, including stale
+capability, stopped/faulted/missing live state, packet loss and the previous
+identity/workload/late-event rules. This changes the host observer only and
+does not require another firmware build. No final soak PASS is asserted here.
 
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).

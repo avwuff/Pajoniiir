@@ -5,6 +5,10 @@ keep S2 on USB3 HS and the stick on USB2 FS. Combine stopped mixer/pitch/jog/LOA
 checks, then dual transport/loop/MAIN/headphone checks into two short batches.
 Run the final exact-image soak last. Do not treat source mappings, host tests
 or descriptor negotiation as physical control/headphone acceptance.
+For normal-power S2 qualification, verify the startup TX-power journal and
+exact installed image, keep Wi-Fi enabled, and perform stopped-deck reconnects
+after loading both tracks. Retain PSRAM USB DMA and the SD internal bounce
+policy; record the live negotiated S2 rate separately from the MAIN rate.
 
 For the shared-core/M3 development branch, use the exact target identity and
 [integration gates](SHARED_P4_CORE_INTEGRATION.md). Existing physical records

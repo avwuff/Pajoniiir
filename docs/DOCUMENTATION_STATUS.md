@@ -9,9 +9,17 @@ separates prior basic-profile acceptance from the new combined physical checks.
 On clean installed `0729221a`, stopped-deck reconnect and Wi-Fi OFF/ON,
 60-second dual MT/loop audio/visual playback and a 20-second active jog/Browse
 supplement passed with operator confirmation and zero new strict audio/USB
-counter deltas. These checks used the diagnostic 2-dBm Wi-Fi limit. Normal
-TX-power coexistence, extended reconnect coverage, full controller acceptance
-and the final exact-image soak remain open.
+counter deltas. These checks used the diagnostic 2-dBm Wi-Fi limit and retain
+that image/configuration scope.
+
+The next clean candidate `ac864bdc` is installed VALID in `ota_0`; boot 401
+records the normal 20-dBm Wi-Fi maximum. Its full host/M3 build and signed
+package checks pass. Three normal-power loaded-track stopped reconnects,
+60-second MT/loop audio/visual playback and a 30-second active jog/Browse
+supplement passed with operator confirmation and zero new strict playback
+counter deltas. Normal-power stopped-deck Wi-Fi OFF/ON also passed on boot 401
+with preserved MIDI/audio readiness and repeated 20-dBm readback. Full
+controller/reliability coverage and the final exact-image soak remain open.
 
 ## Shared-core migration authority
 

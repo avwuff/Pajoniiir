@@ -90,6 +90,28 @@ class MonitorTest(unittest.TestCase):
         record=self.run_monitor(lambda s:s['deck1'].update(master_tempo=False))
         self.assertEqual(record['result'],'fail',record)
 
+    def test_live_stream_overrides_stale_capability_but_faults_do_not_pass(self):
+        def deferred(s):
+            s['controller']['usb_audio']=False
+            s['uac_format']=dict(streaming=True,faulted=False)
+        record=self.run_monitor(initial=deferred)
+        self.assertEqual(record['result'],'pass',record)
+        for change in (lambda s:s['uac_format'].update(streaming=False),
+                       lambda s:s['uac_format'].update(faulted=True),
+                       lambda s:s['uac_format'].pop('faulted')):
+            with self.subTest(change=change):
+                record=self.run_monitor(change,initial=deferred)
+                self.assertEqual(record['result'],'fail',record)
+
+    def test_iso_loss_is_strict_even_without_ring_loss(self):
+        def counters(s):
+            s['diagnostics']['usb_headphones'].update(packet_failures=0,packet_lost_frames=0)
+        for counter in ('packet_failures','packet_lost_frames'):
+            with self.subTest(counter=counter):
+                record=self.run_monitor(lambda s:s['diagnostics']['usb_headphones'].update({counter:1}),initial=counters)
+                self.assertEqual(record['result'],'fail',record)
+                self.assertIn('UAC '+counter+' counter changed',record['hard_failures'])
+
     def test_observe_accepts_installed_compact_status_but_soak_requires_workload_telemetry(self):
         def compact(s):
             for deck in ('deck1','deck2'):

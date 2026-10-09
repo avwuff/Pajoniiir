@@ -5,6 +5,9 @@ uses the shared runtime for 80 inputs/26 outputs and experimental HS UAC2.
 Complete one combined stopped-control batch and one short dual-playback/audio
 batch; repeat only failures or ambiguous results. The final exact-image soak
 is last. Remaining unmapped controls and physical gates are explicitly recorded.
+Qualify the S2 PSRAM-DMA candidate at normal Wi-Fi TX power before that soak:
+loaded-track stopped reconnects, then a short combined MT/loop/control/audio
+window. Earlier 2-dBm diagnostic acceptance remains scoped to that setting.
 
 Shared-core/M3 implementation is tracked in
 [the integration ledger](SHARED_P4_CORE_INTEGRATION.md). Portable code now lives

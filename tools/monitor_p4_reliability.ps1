@@ -127,6 +127,20 @@ function Get-LibraryCount($Record) {
     return $property.Value.Count
 }
 
+function Test-ControllerAudioReady($Record) {
+    # Deferred HS startup can leave the connection-time capability flag stale.
+    # Prefer live stream ownership when exported; legacy images retain their
+    # original capability-based readiness contract.
+    $format = $Record.PSObject.Properties['uac_format']
+    if ($null -ne $format -and $null -ne $format.Value -and
+        $null -ne $format.Value.PSObject.Properties['streaming']) {
+        $streaming = Require-Value $Record 'uac_format.streaming'
+        $faulted = Require-Value $Record 'uac_format.faulted'
+        return [bool]$streaming -and -not [bool]$faulted
+    }
+    return [bool](Require-Value $Record 'controller.usb_audio')
+}
+
 function ConvertTo-CsvField {
     param([AllowNull()]$Value)
     if ($null -eq $Value) { return '""' }
@@ -441,16 +455,26 @@ try {
             $controllerReady = [bool]$status.controller.present -and
                 [bool]$status.controller.midi_in -and
                 [bool]$status.controller.midi_out -and
-                [bool]$status.controller.usb_audio
+                (Test-ControllerAudioReady $status)
             if ($controllerReady -and $null -eq $firstControllerReadyS) {
                 $firstControllerReadyS = $runWatch.Elapsed.TotalSeconds
             }
             if ($Mode -eq 'TimingSoak' -and -not $controllerReady) {
-                $message = "FLX4 lost MIDI In/Out or UAC readiness"
+                $message = "Controller lost MIDI In/Out or UAC readiness"
                 if (-not $hardFailures.Contains($message)) { $hardFailures.Add($message) }
             }
 
             if ($Mode -eq 'TimingSoak') {
+                foreach ($counter in @('packet_failures','packet_lost_frames')) {
+                    if ($null -ne $baseline.diagnostics.usb_headphones.PSObject.Properties[$counter]) {
+                        $beforeCount = Require-Value $baseline "diagnostics.usb_headphones.$counter"
+                        $nowCount = Require-Value $status "diagnostics.usb_headphones.$counter"
+                        if ([uint64]$nowCount -ne [uint64]$beforeCount) {
+                            $message = "UAC $counter counter changed"
+                            if (-not $hardFailures.Contains($message)) { $hardFailures.Add($message) }
+                        }
+                    }
+                }
                 $timingWorkloadSamples++
                 $ratePairOk =
                     (([uint32]$status.diagnostics.deck_sample_rate1 -eq 44100 -and

@@ -19,6 +19,9 @@ adds source-backed mixer/pitch/jog/LED mappings and experimental descriptor-driv
 HS UAC2. Its M3 experiment uses S2 on USB3 and storage on USB2. Physical checks
 are combined into short control/playback batches; final soak remains last.
 This does not replace FLX4 production defaults or establish S2 hardware acceptance.
+The current S2 qualification retains PSRAM USB DMA and uses normal Wi-Fi TX
+power; prior 2-dBm diagnostic results and current-image acceptance are separated
+in the [bench evidence](docs/validation/S2_MK3_PROFILE_PREPARATION_20261007.md).
 
 The M3 shared-core candidate uses `main-deck-m3`, a separate M3 version line and
 `/m3` OTA channel. Its initial wired migration preserves the existing partition
