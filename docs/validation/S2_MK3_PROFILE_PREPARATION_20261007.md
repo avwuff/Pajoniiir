@@ -586,6 +586,18 @@ The actual-function regression covers set/get failures, mismatched readback
 and zero remote calls with the diagnostic disabled. It passes; full software
 checks, install, power readback and physical USB results are pending.
 
+Low-TX source `75a01ab6be4a` passed the full host suite, IDF 6.0.2 M3 build,
+documentation integrity and signed packaging; dependency locks are unchanged.
+Image size is 2,602,176 bytes, SHA-256
+`89c3c80c83eac765ec3a3692299e42d7741ac654a0def3f7e54507121b99fcfc`.
+Package: `releases/m3-s2-wifi-low-tx-75a01ab6/`.
+The initial installer and retry timed out at the pre-upload firmware read;
+no OTA request was sent. Windows showed an AP association but only a
+169.254.105.143 address. WLAN reconnect did not obtain DHCP; ipconfig renew
+reported a nonfunctioning attached device, and Restart-NetAdapter was denied
+by Windows permissions. Operator PC Wi-Fi off/on was requested. Installation
+and actual TX readback remain pending; do not call this candidate installed.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
