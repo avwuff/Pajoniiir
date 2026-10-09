@@ -598,6 +598,36 @@ reported a nonfunctioning attached device, and Restart-NetAdapter was denied
 by Windows permissions. Operator PC Wi-Fi off/on was requested. Installation
 and actual TX readback remain pending; do not call this candidate installed.
 
+After the operator restored PC connectivity, installation succeeded: signed
+OTA HTTP 200, exact clean `75a01ab6be4a1e439b3ff714174fcc9efe6125c0` VALID
+in ota_0, version `M3-dev-g75a01ab6be4a`, ELF SHA-256
+`494d8d247585c1622a90c5dabe38150893ee8069fda70c69b90d722ee225c434`.
+The full S2 profile upload also returned HTTP 200. On boot 394, WIFI_TX_POWER
+at 3583 ms records before/request/actual 80/8/8 quarter-dBm (20/2/2 dBm),
+followed by WIFI_STARTED at 3598 ms. The AP and HTTP are reachable and the
+stick is mounted; S2 was intentionally disconnected during installation.
+Evidence: `performance-ota-install-75a01ab6be4a.json` and
+`next-gates-20261009/wifi-low-tx-installed-trace.log`. An S2 MIDI attachment
+and 20-second Browse check with Wi-Fi already running was requested; USB
+coexistence remains pending, not PASS from TX readback alone.
+
+The operator confirmed responsive Browse with Wi-Fi already running at the
+verified 2-dBm limit, both on the first attachment and a requested replug.
+However, both attachments failed UAC2 clock setup: step 6 GET_CUR completed
+with four bytes reporting 44100 rather than requested 48000. MIDI remains
+connected through the existing audio-configuration fault isolation; audio is
+not streaming. This is not a successful full-load coexistence comparison and
+does not establish that reduced TX power fixes the earlier disconnects.
+At uptime 227810 ms, counters show two attachments, one operator-requested
+disconnect, 16 MIDI packets and 15 semantic events. Two transaction errors
+at 182078 ms immediately precede that unplug's disconnect at 182079 ms;
+they must not be counted as an independently reproduced spontaneous failure.
+The second attachment occurred at 198914 ms and remained present in the
+snapshot. Evidence: `wifi-low-tx-attach.log`, `wifi-low-tx-replug-status.json`
+and `wifi-low-tx-replug-trace.log` in `next-gates-20261009/`. Both decks remain
+stopped. Clock negotiation is the next software investigation; headphone,
+playback, MT and extended coexistence acceptance remain open.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
