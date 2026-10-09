@@ -19,7 +19,7 @@ config PAJONIIIR_SD_INTERNAL_BOUNCE
     default n
     help
         Use one persistent 8 KiB internal aligned buffer for all SD sector reads
-        and writes. Required when testing JC1060 USB DMA in PSRAM; mount fails
+        and writes. Required when testing USB DMA in PSRAM; mount fails
         safely if this buffer cannot be allocated. JC4880 USB DMA policy stays
         internal. This does not change SD or media locking.
 endmenu

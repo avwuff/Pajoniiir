@@ -3,9 +3,11 @@ if(CONFIG_PAJONIIIR_DJ_LINK_SERVICE AND NOT CONFIG_PAJONIIIR_BOARD_JC1060 AND
     message(FATAL_ERROR "Network service requires an explicit non-production Link experiment")
 endif()
 if(CONFIG_USB_HOST_DWC_DMA_CAP_MEMORY_IN_PSRAM AND
-   (NOT CONFIG_PAJONIIIR_BOARD_JC1060 OR NOT CONFIG_PAJONIIIR_SD_INTERNAL_BOUNCE OR
-    NOT PAJONIIIR_STORAGE_EXPERIMENT))
-    message(FATAL_ERROR "USB PSRAM DMA requires a JC1060 storage experiment and internal SD bounce")
+   (NOT CONFIG_PAJONIIIR_SD_INTERNAL_BOUNCE OR NOT
+    ((CONFIG_PAJONIIIR_BOARD_JC1060 AND PAJONIIIR_STORAGE_EXPERIMENT) OR
+     (CONFIG_PAJONIIIR_BOARD_M3 AND CONFIG_BSP_M3_HS_CONTROLLER AND
+      CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC AND PAJONIIIR_S2_HS_EXPERIMENT))))
+    message(FATAL_ERROR "USB PSRAM DMA requires a qualified board experiment and internal SD bounce")
 endif()
 idf_component_register(SRCS "board_sd_dma.c" "board_build_identity.c" INCLUDE_DIRS "include"
     REQUIRES board_capabilities esp_lcd esp_lcd_touch esp_codec_dev esp_driver_i2c

@@ -6,11 +6,13 @@ param(
     [string]$SigningKey = "keys/ota_signing_private.pem",
     [string]$PublicKey = "firmware/common/ota_manifest/keys/ddj_ota_release_public.der",
     [string]$KeyId = "rel-001",
-    [switch]$DevelopmentCandidate
+    [switch]$DevelopmentCandidate,
+    [switch]$S2HsDmaCandidate
 )
 
 $ErrorActionPreference = "Stop"
 if ($DevelopmentCandidate -and $Project -ne 'main-deck-m3') { throw 'DevelopmentCandidate is reserved for the M3 migration image' }
+if ($S2HsDmaCandidate -and (-not $DevelopmentCandidate -or $Project -ne 'main-deck-m3')) { throw 'S2HsDmaCandidate requires an M3 DevelopmentCandidate' }
 $RepoRoot = Split-Path -Parent $PSScriptRoot
 if ($KeyId -ne "rel-001") {
     throw "Firmware currently trusts only OTA signing key ID 'rel-001'"
@@ -59,8 +61,16 @@ function Read-TargetBuild {
     if ($configText -match '(?m)^#define CONFIG_(AUDIO_RECORDER_ENABLED|AUDIO_RECORDER_EXPERIMENTAL_BUILD|PAJONIIIR_SD_IDLE_WAIT) 1\r?$') {
         throw "Storage experiment images cannot be packaged as a production OTA release"
     }
-    if ($configText -match '(?m)^#define CONFIG_(PAJONIIIR_DJ_OVERVIEW|USB_HOST_DWC_DMA_CAP_MEMORY_IN_PSRAM) 1\r?$') {
+    if ($configText -match '(?m)^#define CONFIG_PAJONIIIR_DJ_OVERVIEW 1\r?$') {
         throw "Preview or DMA experiment images cannot be packaged as ordinary OTA candidates"
+    }
+    if ($configText -match '(?m)^#define CONFIG_USB_HOST_DWC_DMA_CAP_MEMORY_IN_PSRAM 1\r?$') {
+        if (-not $S2HsDmaCandidate -or -not $DevelopmentCandidate -or $ExpectedProject -ne 'main-deck-m3') {
+            throw "Preview or DMA experiment images cannot be packaged as ordinary OTA candidates"
+        }
+        foreach ($flag in @('PAJONIIIR_BOARD_M3','BSP_M3_HS_CONTROLLER','CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC','PAJONIIIR_SD_INTERNAL_BOUNCE')) {
+            if ($configText -notmatch "(?m)^#define CONFIG_$flag 1\r?`$") { throw "S2 DMA candidate requires CONFIG_$flag" }
+        }
     }
     if ($description.project_name -ne $ExpectedProject) {
         throw "Wrong project in ${descriptionPath}: $($description.project_name)"
@@ -133,7 +143,9 @@ $p4 = Read-TargetBuild `
     -ExpectedProject $Project `
     -ExpectedChipId 0x0012 `
     -SlotSize 0x400000
-& $Python (Join-Path $PSScriptRoot 'check_board_build.py') --build (Join-Path $RepoRoot "firmware/$Project/$BuildName") --project $Project
+$boardCheckArgs = @('--build', (Join-Path $RepoRoot "firmware/$Project/$BuildName"), '--project', $Project)
+if ($S2HsDmaCandidate) { $boardCheckArgs += '--experimental-s2' }
+& $Python (Join-Path $PSScriptRoot 'check_board_build.py') @boardCheckArgs
 if ($LASTEXITCODE -ne 0) { throw 'Board build verification failed before packaging' }
 if ($p4.SourceVersion -ne $p4.Version) {
     Write-Warning "ESP application version truncated to 31 UTF-8 bytes: '$($p4.Version)'"

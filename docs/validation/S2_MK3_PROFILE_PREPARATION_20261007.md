@@ -904,6 +904,23 @@ fails if an existing S2 SDKCONFIG leaves this policy disabled, because defaults
 do not override stored configurations. Production FLX4 and other target
 defaults are unchanged. This configuration is a candidate, not a physical PASS.
 
+The first configure correctly rejected the existing JC1060-only PSRAM DMA
+admission. The shared guard is extended only to the explicit M3 S2 HS bench,
+and still requires internal SD bounce. M3 `bsp_sd_init` now invokes the same
+bounded 8-KiB read/write bounce provider as JC1060 before mounting microSD;
+failure leaves `/sd` unavailable while preserving USB playback. USB/C6 SDIO
+host ownership and locking are unchanged. S2 defaults explicitly enable the
+bounce policy; existing SDKCONFIGs must be updated to match.
+
+Ordinary OTA packaging still rejects PSRAM DMA. Local signing requires both
+`-DevelopmentCandidate -S2HsDmaCandidate`, project `main-deck-m3`, the M3 HS
+role configuration, HS audio diagnostic and internal SD bounce. Board build
+verification requires the corresponding `--experimental-s2` flag. Actual
+CMake admission and verifier tests reject missing capabilities, wrong targets
+and ordinary build classes; actual packaging-reader tests cover default
+rejection, explicit admission and each missing prerequisite. No public
+channel, tag, published artifact or production default is changed.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.

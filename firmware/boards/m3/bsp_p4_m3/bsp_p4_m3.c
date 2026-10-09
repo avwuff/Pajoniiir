@@ -26,6 +26,7 @@
 #include "sdmmc_cmd.h"
 #include "sd_pwr_ctrl_by_on_chip_ldo.h"
 #include "driver/sdmmc_host.h"
+#include "board_sd_dma.h"
 #include "ff.h"
 
 #include <string.h>
@@ -816,6 +817,12 @@ esp_err_t bsp_sd_init(void)
     sdmmc_host_t host = SDMMC_HOST_DEFAULT();
     host.slot = SDMMC_HOST_SLOT_0;
     host.max_freq_khz = SDMMC_FREQ_DEFAULT;
+#if CONFIG_PAJONIIIR_SD_INTERNAL_BOUNCE
+    if (board_sd_dma_configure(&host, true) != ESP_OK) {
+        ESP_LOGE(TAG, "SD internal bounce allocation failed; /sd remains unavailable");
+        return ESP_OK; /* Keep USB playback; never mount with unsafe DMA buffers. */
+    }
+#endif
 #if defined(CONFIG_ESP_HOSTED_SDIO_HOST_INTERFACE) && \
     ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(6, 0, 0)
     host.init = bsp_sdmmc_host_already_initialized;

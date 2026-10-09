@@ -6,6 +6,7 @@ CONFIG_BSP_M3_HS_CONTROLLER=y
 # 512-aligned endpoint descriptor lists must not fragment scarce internal DMA
 # memory after track loading. This policy applies only to the S2 bench image.
 CONFIG_USB_HOST_DWC_DMA_CAP_MEMORY_IN_PSRAM=y
+CONFIG_PAJONIIIR_SD_INTERNAL_BOUNCE=y
 
 # Global cache chunking also affects display/I2S and is deliberately disabled.
 # The HS diagnostic data-buffer policy is applied only inside the USB HCD.

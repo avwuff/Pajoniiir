@@ -60,6 +60,31 @@ try {
         }
         if (-not $rejected) { throw "Production packager accepted CONFIG_$flag" }
     }
+    $s2Flags = @('USB_HOST_DWC_DMA_CAP_MEMORY_IN_PSRAM','PAJONIIIR_BOARD_M3','BSP_M3_HS_CONTROLLER','CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC','PAJONIIIR_SD_INTERNAL_BOUNCE')
+    $dmaCases = @(
+        @{dev=$false;s2=$false;project='main-deck-m3';flags=$s2Flags;error='ordinary OTA candidates'},
+        @{dev=$true;s2=$false;project='main-deck-m3';flags=$s2Flags;error='ordinary OTA candidates'},
+        @{dev=$false;s2=$true;project='main-deck-m3';flags=$s2Flags;error='ordinary OTA candidates'},
+        @{dev=$true;s2=$true;project='main-deck-p4';flags=$s2Flags;error='ordinary OTA candidates'},
+        @{dev=$true;s2=$true;project='main-deck-m3';flags=$s2Flags;error='Missing application binary'},
+        @{dev=$true;s2=$true;project='main-deck-m3';flags=($s2Flags + 'PAJONIIIR_DJ_OVERVIEW');error='ordinary OTA candidates'}
+    )
+    foreach ($flag in $s2Flags | Where-Object {$_ -ne 'USB_HOST_DWC_DMA_CAP_MEMORY_IN_PSRAM'}) {
+        $dmaCases += @{dev=$true;s2=$true;project='main-deck-m3';flags=($s2Flags | Where-Object {$_ -ne $flag});error="requires CONFIG_$flag"}
+    }
+    foreach ($case in $dmaCases) {
+        (@{project_name=$case.project;app_bin='missing.bin'} | ConvertTo-Json) | Set-Content -LiteralPath (Join-Path $buildFixture 'project_description.json')
+        ($case.flags | ForEach-Object {"#define CONFIG_$_ 1"}) | Set-Content -LiteralPath (Join-Path $buildFixture 'config/sdkconfig.h')
+        $rejected = $false
+        try {
+            & { param($RepoRoot,$definition,$case)
+                $BuildName='build_test'; $DevelopmentCandidate=$case.dev; $S2HsDmaCandidate=$case.s2
+                . $definition
+                Read-TargetBuild -RelativeProjectDir 'firmware/main-deck-p4' -ExpectedProject $case.project -ExpectedChipId 0x12 -SlotSize 0x380000
+            } $tempRoot $definition $case | Out-Null
+        } catch { $rejected = $_.Exception.Message -match [regex]::Escape($case.error) }
+        if (-not $rejected) { throw "S2 DMA packaging policy failed: $($case | ConvertTo-Json -Compress)" }
+    }
     $releaseDir = Join-Path $tempRoot "directory-name-must-not-be-the-release"
     New-Item -ItemType Directory -Path $releaseDir -Force | Out-Null
     $privateKey = Join-Path $tempRoot "private.pem"

@@ -7,8 +7,21 @@ import re
 import subprocess
 
 
+def verify_usb_dma_policy(config: str, project: str, experimental_recorder: bool = False,
+                          experimental_s2: bool = False) -> None:
+    def enabled(name): return f"#define CONFIG_{name} 1" in config
+    psram = enabled("USB_HOST_DWC_DMA_CAP_MEMORY_IN_PSRAM")
+    if experimental_s2:
+        assert project == "main-deck-m3" and enabled("PAJONIIIR_BOARD_M3"), "S2 DMA candidate requires M3"
+        assert enabled("BSP_M3_HS_CONTROLLER") and enabled("CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC"), "S2 DMA candidate requires the HS controller bench"
+        assert psram, "S2 DMA candidate requires PSRAM USB DMA"
+    if psram:
+        assert (experimental_recorder and project == "main-deck-jc1060") or experimental_s2, "PSRAM DMA is an unqualified experiment"
+        assert enabled("PAJONIIIR_SD_INTERNAL_BOUNCE"), "PSRAM USB DMA requires internal SD bounce"
+
+
 def verify(build: Path, project: str, experimental_recorder: bool = False,
-           experimental_link: bool = False) -> None:
+           experimental_link: bool = False, experimental_s2: bool = False) -> None:
     description = json.loads((build / "project_description.json").read_text())
     assert description["project_name"] == project, "wrong configured project"
     assert description["target"] == "esp32p4", "wrong silicon target"
@@ -46,11 +59,7 @@ def verify(build: Path, project: str, experimental_recorder: bool = False,
     assert recorder == experiment == experimental_recorder, "experimental recorder in wrong build class"
     if not experimental_recorder:
         assert "#define CONFIG_PAJONIIIR_SD_IDLE_WAIT 1" not in config, "unqualified SD experiment in ordinary build"
-    psram_dma = "#define CONFIG_USB_HOST_DWC_DMA_CAP_MEMORY_IN_PSRAM 1" in config
-    if psram_dma:
-        assert experimental_recorder, "PSRAM DMA is an unqualified storage experiment"
-        assert jc1060, "JC4880 USB DMA policy must stay internal"
-        assert "#define CONFIG_PAJONIIIR_SD_INTERNAL_BOUNCE 1" in config, "PSRAM USB DMA requires internal SD bounce"
+    verify_usb_dma_policy(config, project, experimental_recorder, experimental_s2)
     assert ("#define CONFIG_PAJONIIIR_BOARD_JC1060 1" in config) == jc1060
     assert ("#define CONFIG_PAJONIIIR_BOARD_M3 1" in config) == m3
     assert ("#define CONFIG_AUDIO_ANTIALIAS_CACHE 1" in config) == m3, "wrong persistent FIR memory policy"
@@ -89,5 +98,6 @@ if __name__ == "__main__":
     parser.add_argument("--project", choices=["main-deck-p4", "main-deck-jc1060", "main-deck-m3"], required=True)
     parser.add_argument("--experimental-recorder", action="store_true")
     parser.add_argument("--experimental-link", action="store_true")
+    parser.add_argument("--experimental-s2", action="store_true")
     args = parser.parse_args()
-    verify(args.build, args.project, args.experimental_recorder, args.experimental_link)
+    verify(args.build, args.project, args.experimental_recorder, args.experimental_link, args.experimental_s2)

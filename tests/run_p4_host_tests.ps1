@@ -3508,6 +3508,9 @@ if ($pythonSource) {
     Invoke-Step -Name "run board-aware project version qualification" `
         -WorkingDirectory $RepoRoot -Executable $pythonSource `
         -Arguments @("tests/board_adapter/test_project_version.py")
+    Invoke-Step -Name "run explicit S2 DMA policy admission" `
+        -WorkingDirectory $RepoRoot -Executable $pythonSource `
+        -Arguments @("tests/board_adapter/test_s2_dma_policy.py")
     Invoke-Step -Name "run ota_signing" `
         -WorkingDirectory (Join-Path $RepoRoot "tests/ota_signing") `
         -Executable $pythonSource `

@@ -103,6 +103,8 @@ producer admission closes on loss, and timeout retains writer-owned resources.
 The producer performs no filesystem work. SD idle yielding is a default-off
 IDF 6.0.2 experiment; JC1060 PSRAM USB DMA requires internal SD bounce for both
 read/write. Saturating SD transfer/gate snapshots are optional Web status fields.
+The M3 S2 HS bench also requires internal SD bounce when using USB DMA in
+PSRAM, with explicit configure/build-verifier and local OTA candidate admission.
 See [G bounds and physical gates](validation/FORK_IMPROVEMENTS_PACKAGE_G_SOFTWARE_20261004.md).
 
 Package E adds `main-deck-jc1060` with an explicit shared-component
