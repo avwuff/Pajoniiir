@@ -2,9 +2,11 @@
 
 ## Current bench checkpoint (2026-10-09)
 
-Clean `00a1ca90b929a85ae7b79314b73ac3bda1be5393` is installed VALID in
-`ota_1` as `M3-dev-g00a1ca90b929`, with the normal-power S2 HS configuration,
+Clean `17f75286bdc1a2b35ee0c9d641ae5d29ad230c91` is installed VALID in
+`ota_0` as `M3-dev-g17f75286bdc1`, with the normal-power S2 HS configuration,
 S2 on USB3 HS and storage on USB2 FS. Full host/M3 build and signed packaging pass.
+Boot 403 reports PANIC after the previous image's OTA restart. MIDI is present,
+but HS audio is quarantined; a physical RESET is requested before preparation.
 The following earlier physical checks belong to `ac864bdc`:
 Three loaded-track stopped reconnects, short dual MT/loop audio/visual
 playback and active jog/Browse playback passed with operator confirmation.
@@ -1272,6 +1274,37 @@ critical sections and is a mitigation hypothesis, not proof that another ISR
 caused the loss. Actual-installer regressions execute four board/diagnostic
 combinations and verify unchanged topology/core placement plus error propagation.
 No new physical PASS or long soak is asserted for this candidate.
+
+Clean `17f75286bdc1a2b35ee0c9d641ae5d29ad230c91` passed actual-installer,
+activation-boundary and UAC stream regressions, the complete host runner,
+ESP-IDF 6.0.2 M3 build and experimental board identity/isolation check. Locks
+remain unchanged. The 2603408-byte image SHA-256 is
+`4fe792bafbd03d5a0fc6bc85a5ee2dde0a29214a92b9aae13234f88c56026737`;
+the 2603596-byte signed bundle SHA-256 is
+`2204029fa22698d6243087519bedb33ff5baee75aad67ff088f491e73266bb1c`.
+ELF SHA-256 is
+`adc4d9a47ee3d4cd3be8c4c417280cb9ae2e4a3b83e7537bc2608fbf9c9f489c`.
+Local OTA returned HTTP 200 and the new image confirmed VALID `ota_0`, clean
+identity and idle OTA state. Evidence: `next-gates-20261009/irq-priority-*`
+build/host/package/install logs and `irq-priority-ota-install-17f75286.json`.
+
+Preparation then refused its audio-readiness precondition before loading or
+playing either deck. Boot 403 journal reports reset PANIC. The preserved crash
+summary names `ota_reboot`, PC `0x4FF0C624`, RA `0x4FF00B70`, store-access fault
+`mcause=7`, `mtval=0x3FF1009C`. The prior boot-402 image `00a1ca90` recorded
+OTA verified immediately before this boot. Current ELF symbolization maps
+these addresses to `Cache_WriteBack_All` and `esp_restart_noos_inner`; the old
+ELF was not retained, so this symbolization is provisional. The restart-task
+identity and OTA chronology place the crash in the previous image's restart
+path, rather than establishing a new-candidate USB playback crash.
+
+The new image stays up with MIDI but intentionally quarantines deferred HS
+audio after PANIC. A physical RESET without BOOT is requested to recover normal
+startup, with USB roles/cables unchanged. No unsafe bypass of quarantine,
+erase, playback test, second OTA or public publication was performed. The
+restart failure remains a separate open reliability finding. Saved evidence:
+`irq-priority-after-ota-journal.txt`, `irq-priority-live-status.json` and
+`irq-priority-live-firmware.json`. Physical IRQ/playback acceptance is NOT RUN.
 
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).

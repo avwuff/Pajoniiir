@@ -44,6 +44,14 @@ automatically stopped; the heartbeat is paused. The 1-KiB bound did not
 eliminate the fault. The final 60-minute soak remains NOT RUN.
 The failed `ac864bdc` soak is retained; it does not qualify this candidate.
 
+The subsequent `17f75286` candidate raises only M3 HS-diagnostic USB IRQ
+priority and improves bounded packet/activation context. Full host/M3 build,
+identity and signed packaging pass; it is installed VALID in `ota_0`.
+Boot 403 reports PANIC after the old image's `ota_reboot` cache writeback path;
+MIDI is present but the intended audio quarantine prevents preparation.
+A physical RESET is requested. No playback/IRQ physical PASS is asserted;
+the restart failure and sustained ISO-loss gate remain open.
+
 ## Shared-core migration authority
 
 Canonical source is `dvucinozd/Pajoniiir`, branch `codex/shared-p4-core-m3`.
