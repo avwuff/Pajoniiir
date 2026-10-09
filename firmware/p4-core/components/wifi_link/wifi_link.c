@@ -191,6 +191,21 @@ static esp_err_t ensure_wifi_stack(void)
     return ESP_OK;
 }
 
+static esp_err_t apply_diagnostic_tx_limit(void)
+{
+#if CONFIG_WIFI_LINK_DIAGNOSTIC_LOW_TX_POWER
+    int8_t before = 0, actual = 0;
+    ESP_RETURN_ON_ERROR(esp_wifi_get_max_tx_power(&before), TAG, "read initial TX power");
+    ESP_RETURN_ON_ERROR(esp_wifi_set_max_tx_power(8), TAG, "set diagnostic TX power");
+    ESP_RETURN_ON_ERROR(esp_wifi_get_max_tx_power(&actual), TAG, "verify diagnostic TX power");
+    service_log_event(SERVICE_LOG_WIFI_TX_POWER, actual == 8 ? SERVICE_LOG_INFO : SERVICE_LOG_ERROR,
+                      3u, (uint32_t)before, 8u, (uint32_t)actual, 0u,
+                      "quarter-dBm before/request/actual");
+    if (actual != 8) return ESP_ERR_INVALID_RESPONSE;
+#endif
+    return ESP_OK;
+}
+
 static esp_err_t start_web_ap(void)
 {
     if (!s_ap_netif) {
@@ -273,6 +288,8 @@ static esp_err_t start_web_ap(void)
         ESP_LOGE(TAG, "AP start event timed out");
         return ESP_ERR_TIMEOUT;
     }
+
+    ESP_RETURN_ON_ERROR(apply_diagnostic_tx_limit(), TAG, "diagnostic TX power limit");
 
     /* Our AP_START callback is registered before the default esp-netif AP
      * callback, so the event bit may wake this task while DHCPS is legitimately

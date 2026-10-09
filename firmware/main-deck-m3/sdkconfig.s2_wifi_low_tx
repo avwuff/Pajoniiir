@@ -1,0 +1,3 @@
+# Apply explicitly to the isolated S2 bench SDKCONFIG after the HS role setup.
+# This limits the running AP, not the C6's earliest startup transmissions.
+CONFIG_WIFI_LINK_DIAGNOSTIC_LOW_TX_POWER=y

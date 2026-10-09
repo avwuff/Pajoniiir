@@ -3980,6 +3980,8 @@ Invoke-Step -Name "run task-context cache writeback bound regression" -WorkingDi
     -Executable $pythonSource -Arguments @("tests/controller_usb_host/test_cache_writeback_bound.py")
 Invoke-Step -Name "run Hosted shared SDMMC restart regression" -WorkingDirectory $RepoRoot `
     -Executable $pythonSource -Arguments @("tests/controller_usb_host/test_hosted_shared_sdmmc.py")
+Invoke-Step -Name "run diagnostic Wi-Fi TX limit regression" -WorkingDirectory $RepoRoot `
+    -Executable $pythonSource -Arguments @("tests/controller_usb_host/test_wifi_tx_limit.py")
 if (-not $pythonSource) { throw "Python is required for firmware lifecycle regression" }
 Invoke-Step -Name "run firmware lifecycle regression" -WorkingDirectory $RepoRoot `
     -Executable $pythonSource -Arguments @("tests/audio_fw_runtime/test_firmware_lifecycle.py")

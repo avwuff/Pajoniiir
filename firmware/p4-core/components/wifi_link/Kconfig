@@ -1,0 +1,10 @@
+menu "Pajoniiir Wi-Fi diagnostics"
+config WIFI_LINK_DIAGNOSTIC_LOW_TX_POWER
+    bool "Limit SoftAP TX power to 2 dBm for S2 coexistence comparison"
+    depends on PAJONIIIR_BOARD_M3 && CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC
+    default n
+    help
+        Bench-only comparison. After AP_START, set and read back an 8-quarter-dBm
+        maximum. The earliest startup transmissions are not covered. Normal
+        builds retain the C6 default. Does not change SDIO or USB timing.
+endmenu

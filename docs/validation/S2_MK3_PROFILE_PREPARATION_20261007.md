@@ -571,6 +571,21 @@ hardware is pending operator reply. Hub support is enabled in this image;
 enumeration/speed/topology must still be verified if a hub is used. The existing
 OFF->ON no-panic lifecycle PASS remains valid, while S2 coexistence is FAIL.
 
+The operator has no self-powered hub or suitable independent S2 power source.
+An explicitly authorized diagnostic now limits the running AP to 2 dBm
+(8 quarter-dBm), verifies remote readback, and journals previous/requested/
+actual values as WIFI_TX_POWER. CONFIG_WIFI_LINK_DIAGNOSTIC_LOW_TX_POWER is
+default-off and requires the M3 HS diagnostic; its explicit bench overlay is
+`firmware/main-deck-m3/sdkconfig.s2_wifi_low_tx`. Production defaults, SDIO,
+USB, profile, cache policy and audio timing are unchanged. This API applies
+after AP_START and does not constrain the earliest radio startup bursts.
+Therefore the first comparison attaches S2 only after the reduced-power AP
+is confirmed running. A good result would support further RF/supply-path
+investigation, not distinguish RF coupling from voltage droop on its own.
+The actual-function regression covers set/get failures, mismatched readback
+and zero remote calls with the diagnostic disabled. It passes; full software
+checks, install, power readback and physical USB results are pending.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
