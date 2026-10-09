@@ -36,7 +36,10 @@ The subsequent ISO-rearm investigation confirms a same-microframe hardware
 activation preceding the skipped packet. Mitigation candidate `00a1ca90`
 reduces diagnostic task-context cache chunks to 1 KiB. Full host/M3 build,
 board identity and signed package checks pass; it is installed VALID in
-`ota_1`. Short physical retest and the new exact-image soak are NOT RUN.
+`ota_1`. The 60-second mixed-rate MT/loop retest passed with operator-confirmed
+clean MAIN/S2 headphones and fluid waveforms, zero strict deltas and zero new
+output-late events. A separate 600-second same-workload test is RUNNING to
+exceed the prior failure window; the final 60-minute soak remains NOT RUN.
 The failed `ac864bdc` soak is retained; it does not qualify this candidate.
 
 ## Shared-core migration authority

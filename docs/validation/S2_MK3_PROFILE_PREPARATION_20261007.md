@@ -1224,6 +1224,22 @@ followed by MT/zoom setup and a short physical retest. No new soak has started.
 Physical acceptance of this candidate remains **NOT RUN**. No push or public
 OTA publication was performed.
 
+The subsequent operator reconnect restored verified S2 44100-Hz streaming.
+The 60.136-second mixed-rate MT/loop retest on `00a1ca90` completed 80 samples
+with all 23 strict audio/USB/service deltas zero, output-late delta zero and
+confirmed stopped cleanup. Zoom remained 8 and image identity was unchanged.
+The operator confirmed clean MAIN/S2 headphones and fluid waveforms throughout.
+This is a short physical PASS; MIDI delta is zero because controls were left
+untouched. Evidence: `next-gates-20261009/iso-rearm-mt-loop-20261009T213809Z/`.
+
+A separate 600-second test then started with the same source and workload to
+exceed the prior 306.865-second failure window. It is **RUNNING, not PASS**;
+records: `next-gates-20261009/iso-rearm-mt-loop-20261009T213958Z/` and
+`iso-rearm-ten-minute-test.log`. The host runner stops both decks in `finally`
+on completion or first strict failure. The existing heartbeat is reused with
+15-minute checkpoints; no second monitor is started. Neither the short PASS
+nor this intermediate test replaces the final exact-image 60-minute soak.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
