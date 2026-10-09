@@ -7,8 +7,10 @@ Clean `ac864bdcd6fad480b9e981058c086ce46bbe66be` is installed VALID in
 USB3 HS and storage on USB2 FS. Full host/M3 build and signed packaging pass.
 Three loaded-track stopped reconnects, short dual MT/loop audio/visual
 playback and active jog/Browse playback passed with operator confirmation.
-The final exact-image soak and complete controller/reliability qualification
-remain open. Earlier entries below are historical, image-scoped checkpoints;
+The attempted final exact-image soak failed on one ISO packet / six lost frames
+at elapsed 306.865 seconds; the operator noticed no disturbance. Both decks
+are stopped and the heartbeat is paused. Root cause, requalification and complete
+controller/reliability qualification remain open. Earlier entries below are historical, image-scoped checkpoints;
 their original pending/FAIL statements are not the current installed state.
 See [normal-power evidence](#normal-wi-fi-tx-power-candidate-2026-10-09).
 
@@ -1146,9 +1148,9 @@ does not require another firmware build. No final soak PASS is asserted here.
 
 The final 3600-second timing soak started on 2026-10-09 at approximately
 23:05:38 Europe/Zagreb, with measurement starting after initial captures.
-Expected completion is around 2026-10-10 00:06. It is **RUNNING, not PASS**.
-Wrapper `.cache/run_m3_s2_normal_tx_timing_soak.ps1` automatically stops both
-decks on completion or failure. Records live under
+The run is **FAIL**, with the first ISO packet loss at elapsed 306.865 seconds,
+2026-10-09 23:10:59.175 Europe/Zagreb. One packet / six frames were lost.
+Records are preserved under
 `.cache/s2-mk3/20261009-ac864bdc/timing-soak/`, with host log
 `D:/AI/m3-s2-ac864bdc-timing-soak.log`. Baseline underflows are 2776, already
 present before either PLAY command; stopped, solo-start, dual-start and initial
@@ -1157,9 +1159,26 @@ loss, service-log drops and output-late baseline are zero.
 At elapsed 108.889 seconds, all strict deltas and ISO packet/frame losses
 remain zero, zoom is 8 and S2 is streaming 44100 Hz. One isolated output-late
 event, maximum 11297 us, is a monitoring finding; this is not a zero-late run.
-The existing 15-minute heartbeat is updated for this exact source, workload
-and output directory; no additional monitor is started between checkpoints.
-Final full-hour operator audio/visual confirmation remains required.
+The first scheduled checkpoint detected the persistent ISO counters and active
+`data_loss`. Both decks were safely stopped and the exact host process was
+terminated after confirming stopped state. The last recorded elapsed time is
+1056.550 seconds, with 3453 status samples; this is not a completed hour.
+PCM underrun, UAC ring loss and service-log deltas remained zero, with no
+observed M3 reboot or S2 disconnect. The operator confirmed no noticed audio,
+waveform or controller disturbance during the run; strict telemetry still fails.
+
+The host observer recorded hard failures but did not break its measurement loop,
+so the wrapper's automatic stop was delayed until the checkpoint intervention.
+No native `result.json` exists; `checkpoint-failure-result.json` explicitly
+annotates that limitation rather than replacing a native result. Before-stop,
+stopped, firmware, UI timing and USB trace checkpoint snapshots preserve evidence.
+The observer now immediately exits TimingSoak on a hard failure, allowing the
+wrapper's existing safe-stop cleanup to run, and reports actual elapsed seconds.
+A focused regression injects strict loss during a five-second requested run and
+requires FAIL before the requested duration. This is a host-only correction;
+all ten focused monitor regressions pass (`normal-tx-soak-stop-tests.log`).
+the installed firmware is unchanged. The heartbeat is paused, no replacement
+soak was started, and the ISO loss root cause remains unproven.
 
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).

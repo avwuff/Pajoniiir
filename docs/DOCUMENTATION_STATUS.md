@@ -20,10 +20,17 @@ supplement passed with operator confirmation and zero new strict playback
 counter deltas. Normal-power stopped-deck Wi-Fi OFF/ON also passed on boot 401
 with preserved MIDI/audio readiness and repeated 20-dBm readback. Full
 controller/reliability coverage and the final exact-image soak remain open.
-The 3600-second mixed-rate/MT/loop S2 soak is running from 2026-10-09 around
-23:05 Europe/Zagreb, with 15-minute checkpoints and automatic final stop.
-The initial 109-second checkpoint has zero strict loss deltas and one isolated
-11297-us output-late event. This is a pending exact-image gate, not a PASS.
+The attempted 3600-second mixed-rate/MT/loop S2 soak is **FAIL**: one ISO
+packet / six frames were lost at elapsed 306.865 seconds (23:10:59 local).
+The operator noticed no audio, display or controller disturbance; the strict
+loss criterion still fails. Both decks were safely stopped at the checkpoint;
+the last recorded elapsed time was 1056.550 seconds. The observer had recorded
+the failure without exiting its loop, so no native final result exists.
+Preserved evidence and the checkpoint annotation are linked in the S2 record.
+The host monitor now exits TimingSoak immediately on a hard failure and records
+actual elapsed time. The heartbeat is paused. One isolated 11297-us output-late
+event remains a separate monitoring finding. ISO root cause and exact-image
+requalification remain open; no new firmware or soak was started.
 
 ## Shared-core migration authority
 

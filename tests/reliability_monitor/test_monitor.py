@@ -27,7 +27,7 @@ FIRMWARE = dict(IDENTITY, running_version='M3-dev-gaaaaaaaaaaaa', running_slot='
 
 
 class MonitorTest(unittest.TestCase):
-    def run_monitor(self, change=None, initial=None, mode='TimingSoak', library_count=191):
+    def run_monitor(self, change=None, initial=None, mode='TimingSoak', library_count=191, seconds=1):
         self.assertIsNotNone(POWERSHELL, 'PowerShell is required for the monitor gate')
         requests=[]
         class Handler(BaseHTTPRequestHandler):
@@ -58,7 +58,7 @@ class MonitorTest(unittest.TestCase):
             with tempfile.TemporaryDirectory() as temp:
                 command=[POWERSHELL,'-NoProfile','-ExecutionPolicy','Bypass','-File',
                     str(ROOT/'tools/monitor_p4_reliability.ps1'),'-BaseUrl',
-                    f'http://127.0.0.1:{server.server_port}','-DurationSeconds','1',
+                    f'http://127.0.0.1:{server.server_port}','-DurationSeconds',str(seconds),
                     '-PollIntervalMs','100','-LibraryEvery','1','-FirmwareEvery','1',
                     '-ExpectedSourceSha','a'*40,'-ExpectedElfSha256','b'*64,
                     '-Mode',mode,'-OutputDirectory',temp]
@@ -81,6 +81,11 @@ class MonitorTest(unittest.TestCase):
         record=self.run_monitor(lambda s:s['diagnostics']['usb_headphones'].update(dropped_blocks=1))
         self.assertEqual(record['result'],'fail',record)
         self.assertIn('UAC dropped-block counter increased',record['hard_failures'])
+
+    def test_strict_failure_returns_before_requested_duration(self):
+        record=self.run_monitor(lambda s:s['diagnostics']['usb_headphones'].update(dropped_blocks=1),seconds=5)
+        self.assertEqual(record['result'],'fail',record)
+        self.assertLess(record['elapsed_seconds'],5,record)
 
     def test_monitoring_threshold_is_investigate(self):
         record=self.run_monitor(lambda s:s['diagnostics'].update(output_late_count=3,output_late_max_us=16000))

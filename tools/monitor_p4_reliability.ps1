@@ -272,6 +272,7 @@ $firstLibraryReadyS = $null
 $timingWorkloadSamples = 0
 $timingWorkloadViolations = 0
 $exitCode = 0
+$runWatch = $null
 
 try {
     Save-DiagnosticLog $initialLogPath
@@ -587,6 +588,10 @@ try {
             )
         }
 
+        # Return to the wrapper's finally block immediately so it can stop
+        # playback. Collecting a failure without leaving this loop delayed the
+        # safety stop until the full requested duration.
+        if ($Mode -eq 'TimingSoak' -and $hardFailures.Count -gt 0) { break }
         $remainingMs = $PollIntervalMs - [int]$iterationStart.Elapsed.TotalMilliseconds
         if ($remainingMs -gt 0) { Start-Sleep -Milliseconds $remainingMs }
     }
@@ -641,6 +646,7 @@ try {
         started_at = $StartedAt.ToString('o')
         finished_at = (Get-Date).ToString('o')
         requested_duration_seconds = $RunSeconds
+        elapsed_seconds = if ($null -ne $runWatch) { [Math]::Round($runWatch.Elapsed.TotalSeconds, 3) } else { $null }
         mode = $Mode
         status_samples = $statusSamples
         http_errors = [ordered]@{
