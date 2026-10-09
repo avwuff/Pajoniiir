@@ -2243,3 +2243,36 @@ in `internal-payload-ota-install-fc4ed608.json`, under the next-gates directory.
 The prior OTA-restart risk remains separately open. Operator RESET is requested
 before testing this candidate. No playback or new soak has been started.
 Physical/strict-loss acceptance remains NOT RUN on this image. No push/release.
+
+### Operator RESET recovered HS audio; short retest, 2026-10-10
+
+The operator performed RESET and confirmed GUI/Wi-Fi availability. Boot 407
+reports POWERON on exact clean VALID `fc4ed608` in `ota_0`; HS audio quarantine
+is cleared. S2 UAC2 24-in-32 streaming is active at verified 44100 Hz, with zero
+configuration/prime fault indicators. This clock differs from the preceding
+48000-Hz failed soak and is retained explicitly. Normal Wi-Fi 20 dBm readback,
+MIDI full profile and 260-track library remain available.
+
+Both tracks, pitch +5/-5 percent and four-beat loops were prepared stopped.
+After loading, cached status reports internal free 53575 B, DMA free 13995 B,
+DMA minimum 13087 B. These are cached counters, not a live heap walk. Initial
+pre-load DMA free was 60587 B. Startup and both track loads succeeded, but
+remaining headroom is a separate qualification consideration, not a claim
+that all future allocations fit.
+
+The operator confirmed both MT switches and zoom 8. One 60-second strict
+retest started at 01:49:26 local, records
+`internal-payload-mt-loop-20261009T234926Z/` under the next-gates directory.
+The runner leaves controls unchanged and safely stops both decks on error/end.
+No new long soak has been started.
+
+### Internal payload short retest: telemetry and physical PASS
+
+The 60-second run completed 60.477 s, 89 samples, with no errors, all 22 strict
+counter deltas zero and output-late delta zero. Both decks were safely stopped.
+Final exact clean `fc4ed608` identity remains VALID in `ota_0`. S2 stayed at
+44100 Hz. The operator explicitly confirmed clean MAIN/S2 headphones and
+fluid dual waveforms throughout. Controls were untouched (MIDI delta zero).
+This is short playback PASS, not proof that the longer ISO failure is fixed;
+the prior candidate lost packets after 1336 s. A fresh exact-image final soak
+and lifecycle/headroom checks remain open. No long run has been started.
