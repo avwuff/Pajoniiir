@@ -797,6 +797,10 @@ was requested and is pending at this entry. Evidence:
 `20261008-m3-enumeration/mt-loop-playback-20261009T194606Z/` and
 `next-gates-20261009/fallback-mt-loop-playback.log` under `.cache/s2-mk3/`.
 
+The operator confirmed clean MAIN/S2 headphones and fluid waveforms during
+this MT/loop test: **short MT/loop physical PASS** on the exact `efa028ad`
+image. Reconnect, Wi-Fi OFF/ON and extended soak remain open.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
