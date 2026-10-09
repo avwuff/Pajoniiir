@@ -3981,6 +3981,8 @@ Invoke-Step -Name "run shared USB host interrupt policy regression" -WorkingDire
     -Executable $pythonSource -Arguments @("tests/controller_usb_host/test_host_interrupt_policy.py")
 Invoke-Step -Name "run fixed internal ISO descriptor pool regression" -WorkingDirectory $RepoRoot `
     -Executable $pythonSource -Arguments @("tests/controller_usb_host/test_isoc_descriptor_pool.py")
+Invoke-Step -Name "run internal ISO payload allocation regression" -WorkingDirectory $RepoRoot `
+    -Executable $pythonSource -Arguments @("tests/controller_usb_host/test_isoc_payload.py")
 Invoke-Step -Name "run pinned HCD cache ownership regression" -WorkingDirectory $RepoRoot `
     -Executable $pythonSource -Arguments @("tests/controller_usb_host/test_usb_cache_ownership.py")
 Invoke-Step -Name "run task-context cache writeback bound regression" -WorkingDirectory $RepoRoot `

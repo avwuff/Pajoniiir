@@ -109,6 +109,7 @@ if(NOT _pajoniiir_hcd_source_found)
         "Could not replace esp-usb hcd_dwc.c in the component source list")
 endif()
 
+include("${CMAKE_CURRENT_LIST_DIR}/apply_espressif_usb_isoc_payload_patch.cmake")
 set_property(TARGET "${_pajoniiir_usb_lib}" PROPERTY SOURCES
              "${_pajoniiir_usb_replacement_sources}")
 message(STATUS "Using generated Pajoniiir USB HS/FS FIFO-patched HCD source")
