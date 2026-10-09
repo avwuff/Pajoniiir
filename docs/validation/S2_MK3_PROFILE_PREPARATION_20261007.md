@@ -1253,6 +1253,26 @@ the same directory. The heartbeat is paused; no restart was performed.
 The 1-KiB cache bound did not eliminate ISO loss and must not be described
 as a completed repair. The short physical PASS remains limited to its 60-s run.
 
+### Host interrupt priority and activation-boundary candidate, 2026-10-10
+
+The second failure has no captured kind-3 late activation. The previous probe
+sampled HFNUM before HAL register programming, so a microframe boundary during
+activation could escape the trace. The probe now reads HFNUM immediately after
+the original activation returns; a regression reproduces a boundary crossing
+that the old probe missed. It remains observation only, without scheduler repair
+or synchronous logging. Each of the first four packet faults also queues a
+second bounded record containing packet index/count, transfer index and callback
+gap; no successful packet is logged and loss counters remain unchanged.
+
+The shared host currently installs level-1 USB interrupts on core 1 for the HS
+diagnostic. The next candidate requests level 3 only for M3 HS audio diagnostics,
+allowing USB to preempt lower-priority peripheral handlers on the display core.
+Ordinary M3/FLX4 and JC interrupt policies retain level 1. This does not bypass
+critical sections and is a mitigation hypothesis, not proof that another ISR
+caused the loss. Actual-installer regressions execute four board/diagnostic
+combinations and verify unchanged topology/core placement plus error propagation.
+No new physical PASS or long soak is asserted for this candidate.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.

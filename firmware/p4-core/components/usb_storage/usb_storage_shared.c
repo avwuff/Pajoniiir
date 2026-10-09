@@ -72,7 +72,14 @@ static esp_err_t shared_storage_host_install(const usb_host_config_t *ignored)
         .override_fs_phy_index = true,
 #endif
         .fs_phy_index = board_capabilities_get()->fs_phy_index,
+#if CONFIG_PAJONIIIR_BOARD_M3 && CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC
+        /* HS periodic OUT must rearm before the next 125-us microframe.
+         * Allow it to preempt level-1 peripheral handlers on the display core.
+         * This does not bypass critical sections; qualify on the exact image. */
+        .intr_flags = ESP_INTR_FLAG_LEVEL3,
+#else
         .intr_flags = ESP_INTR_FLAG_LEVEL1,
+#endif
         .daemon_stack_size = 4096u,
         .daemon_priority = 4u,
 #if CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC

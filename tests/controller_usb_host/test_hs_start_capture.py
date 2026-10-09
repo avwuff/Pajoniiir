@@ -37,7 +37,7 @@ static void usb_bus_trace_record(unsigned root,const usb_bus_trace_event_t *e) {
         harness = r'''
 void __real_usb_dwc_hal_chan_activate(usb_dwc_hal_chan_t *c,void *l,int n,int s) {
  (void)c;(void)l;(void)n;(void)s; activated++;
- hardware.hfnum_reg.val++; /* Capture must precede activation. */
+ hardware.hfnum_reg.val++; /* Model the boundary during HAL register writes. */
 }
 int main(void) {
  usb_dwc_hal_chan_t c={.regs=&hardware.host_chans[1],.flags={.chan_idx=1}};
@@ -46,7 +46,7 @@ int main(void) {
  __wrap_usb_dwc_hal_chan_activate(&c,0,64,7); assert(recorded==0);
  hardware.hfnum_reg.val=0x12000005;
  __wrap_usb_dwc_hal_chan_activate(&c,0,64,5);
- assert(recorded==1 && captured.intr==0x12000005 && captured.event==5 && captured.kind==3);
+ assert(recorded==1 && captured.intr==0x12000006 && captured.event==5 && captured.kind==3);
  hardware.hfnum_reg.val=0x12000005;
  __wrap_usb_dwc_hal_chan_activate(&c,0,64,4); assert(recorded==2);
  c.regs->hcchar_reg.val|=1u<<15;
@@ -55,6 +55,10 @@ int main(void) {
  __wrap_usb_dwc_hal_chan_activate(&c,0,2,4); assert(recorded==2);
  regs_t other={.hcchar_reg={.val=1u<<18}};c.regs=&other;
  __wrap_usb_dwc_hal_chan_activate(&c,0,64,4);assert(recorded==2 && activated==6);
+ c.regs=&hardware.host_chans[1];c.regs->hcchar_reg.val=1u<<18;
+ hardware.hfnum_reg.val=0x12000005;
+ __wrap_usb_dwc_hal_chan_activate(&c,0,64,6);
+ assert(recorded==3 && captured.intr==0x12000006 && captured.event==6);
  return 0;
 }
 '''

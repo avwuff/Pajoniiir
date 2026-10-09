@@ -12,13 +12,21 @@ int review_fail_alloc_packets = -1, review_fail_submit_endpoint = -1;
 
 static unsigned packet_detail_count;
 static uint32_t packet_details[4][4];
+static unsigned packet_context_count;
+static uint32_t packet_context[4][4];
 void service_log_event(service_log_event_t event, service_log_severity_t severity,
                        uint8_t count, uint32_t a0, uint32_t a1,
                        uint32_t a2, uint32_t a3, const char *text)
 {
     assert(event == SERVICE_LOG_UAC_PACKET_FAULT && severity == SERVICE_LOG_WARN);
-    assert(count == 4u && text && packet_detail_count < 4u);
+    assert(count == 4u && text);
     const uint32_t args[] = {a0, a1, a2, a3};
+    if (strcmp(text, "packet index/count/transfer/callback gap ticks") == 0) {
+        assert(packet_context_count < 4u);
+        memcpy(packet_context[packet_context_count++], args, sizeof(args));
+        return;
+    }
+    assert(packet_detail_count < 4u);
     memcpy(packet_details[packet_detail_count++], args, sizeof(args));
 }
 
@@ -146,6 +154,11 @@ static void test_packet_loss(void)
     assert(stats.packet_failures == 3);
     assert(stats.packet_lost_frames == 90); /* 44 + 44 + 2 */
     assert(packet_detail_count == 3u);
+    assert(packet_context_count == 3u);
+    for (unsigned i = 0; i < 3u; ++i) {
+        assert(packet_context[i][0] == i + 1u);
+        assert(packet_context[i][1] == 4u && packet_context[i][2] == 0u);
+    }
     assert(packet_details[0][0] == USB_TRANSFER_STATUS_SKIPPED);
     assert(packet_details[0][1] == 0u && packet_details[0][2] == 352u);
     assert(packet_details[1][0] == USB_TRANSFER_STATUS_ERROR);
@@ -167,10 +180,13 @@ static void test_packet_loss(void)
     isoc_callback(t);
     assert(packet_detail_count == 4u && packet_details[3][2] == wanted);
     assert(packet_details[3][3] == 7u);
+    assert(packet_context_count == 4u && packet_context[3][0] == 0u &&
+           packet_context[3][3] == 7u);
     t->isoc_packet_desc[0].status = USB_TRANSFER_STATUS_SKIPPED;
     t->isoc_packet_desc[0].actual_num_bytes = 0;
     isoc_callback(t);
     assert(packet_detail_count == 4u && s_packet_failures > 4u);
+    assert(packet_context_count == 4u); /* Both detail records remain bounded. */
     t->status = USB_TRANSFER_STATUS_ERROR;
     isoc_callback(t);
     assert(s_faulted && s_transfer_failures == 1);

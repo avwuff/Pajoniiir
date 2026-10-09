@@ -104,7 +104,7 @@ void __wrap_usb_dwc_hal_chan_activate(usb_dwc_hal_chan_t *chan, void *list,
                                     int length, int start)
 {
 #if CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC && CONFIG_USB_HOST_DIAGNOSTIC_BUS_TRACE
-    /* Capture before activation, publish only after the channel is enabled.
+    /* Capture after activation, publish only after the channel is enabled.
      * HFNUM: low 16 bits are the microframe number, upper bits time remaining.
      * Kind 3 event=start index, intr=HFNUM. This is evidence, not recovery.
      * HCD serializes activation and interrupt decoding under its own lock. */
@@ -112,10 +112,12 @@ void __wrap_usb_dwc_hal_chan_activate(usb_dwc_hal_chan_t *chan, void *list,
     const bool hs_out_isoc = chan->regs == &dev->host_chans[chan->flags.chan_idx] &&
         length == 64 && ((chan->regs->hcchar_reg.val >> 18) & 3u) == 1u &&
         !(chan->regs->hcchar_reg.val & (1u << 15));
-    const uint32_t frame = hs_out_isoc ? dev->hfnum_reg.val : 0u;
 #endif
     __real_usb_dwc_hal_chan_activate(chan, list, length, start);
 #if CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC && CONFIG_USB_HOST_DIAGNOSTIC_BUS_TRACE
+    /* A microframe can advance while HAL programs the channel. Pre-activation
+     * HFNUM alone could classify an already-late enable as one frame early. */
+    const uint32_t frame = hs_out_isoc ? dev->hfnum_reg.val : 0u;
     const uint32_t lead = ((uint32_t)start - (frame & 63u)) & 63u;
     if (hs_out_isoc && (lead == 0u || lead > 32u)) {
         const usb_bus_trace_event_t event = {

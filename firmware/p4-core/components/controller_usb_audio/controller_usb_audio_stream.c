@@ -94,7 +94,7 @@ static uint32_t s_config_failures;
 static uint32_t s_transfer_failures;
 static uint32_t s_packet_failures;
 static uint64_t s_packet_lost_frames;
-/* At most four detail records per boot. Never log successful packets or do
+/* At most four fault pairs (eight records) per boot. Never log successful packets or do
  * filesystem work at USB priority; service_log_event only enqueues a copy. */
 static uint32_t s_packet_detail_records;
 static TickType_t s_last_isoc_callback_tick;
@@ -382,6 +382,10 @@ static void isoc_callback(usb_transfer_t *transfer)
                     4u, (uint32_t)transfer->isoc_packet_desc[i].status,
                     (uint32_t)actual, (uint32_t)wanted, callback_gap_ticks,
                     "status/actual/wanted/callback gap ticks");
+                service_log_event(SERVICE_LOG_UAC_PACKET_FAULT, SERVICE_LOG_WARN,
+                    4u, (uint32_t)i, (uint32_t)transfer->num_isoc_packets,
+                    (uint32_t)index, callback_gap_ticks,
+                    "packet index/count/transfer/callback gap ticks");
             }
             __atomic_add_fetch(&s_packet_failures, 1u, __ATOMIC_RELAXED);
             const unsigned missing = !completed || actual < 0 || actual > wanted
