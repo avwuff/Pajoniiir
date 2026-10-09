@@ -1144,6 +1144,23 @@ capability, stopped/faulted/missing live state, packet loss and the previous
 identity/workload/late-event rules. This changes the host observer only and
 does not require another firmware build. No final soak PASS is asserted here.
 
+The final 3600-second timing soak started on 2026-10-09 at approximately
+23:05:38 Europe/Zagreb, with measurement starting after initial captures.
+Expected completion is around 2026-10-10 00:06. It is **RUNNING, not PASS**.
+Wrapper `.cache/run_m3_s2_normal_tx_timing_soak.ps1` automatically stops both
+decks on completion or failure. Records live under
+`.cache/s2-mk3/20261009-ac864bdc/timing-soak/`, with host log
+`D:/AI/m3-s2-ac864bdc-timing-soak.log`. Baseline underflows are 2776, already
+present before either PLAY command; stopped, solo-start, dual-start and initial
+monitor snapshots all retain that count. PCM, UAC drops/overflow, ISO packet
+loss, service-log drops and output-late baseline are zero.
+At elapsed 108.889 seconds, all strict deltas and ISO packet/frame losses
+remain zero, zoom is 8 and S2 is streaming 44100 Hz. One isolated output-late
+event, maximum 11297 us, is a monitoring finding; this is not a zero-late run.
+The existing 15-minute heartbeat is updated for this exact source, workload
+and output directory; no additional monitor is started between checkpoints.
+Final full-hour operator audio/visual confirmation remains required.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.

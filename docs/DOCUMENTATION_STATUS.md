@@ -20,6 +20,10 @@ supplement passed with operator confirmation and zero new strict playback
 counter deltas. Normal-power stopped-deck Wi-Fi OFF/ON also passed on boot 401
 with preserved MIDI/audio readiness and repeated 20-dBm readback. Full
 controller/reliability coverage and the final exact-image soak remain open.
+The 3600-second mixed-rate/MT/loop S2 soak is running from 2026-10-09 around
+23:05 Europe/Zagreb, with 15-minute checkpoints and automatic final stop.
+The initial 109-second checkpoint has zero strict loss deltas and one isolated
+11297-us output-late event. This is a pending exact-image gate, not a PASS.
 
 ## Shared-core migration authority
 
