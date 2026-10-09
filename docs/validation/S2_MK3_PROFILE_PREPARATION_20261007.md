@@ -2153,3 +2153,27 @@ Evidence in the same run directory: `checkpoint-incomplete.json`,
 No automatic restart was made. The heartbeat is PAUSED. The earlier exact-image
 ten-minute playback PASS remains valid within its scope. A fresh final soak
 requires a host runner with durable lifetime and a new, explicit run record.
+
+### Fresh final soak with independent host lifetime, 2026-10-10
+
+Following the operator's instruction to continue, a fresh 3600-second run
+started at approximately 01:15:07 Europe/Zagreb. The previous INCOMPLETE run
+is preserved and is not resumed or relabelled. Its missing observer's cause
+remains unproven.
+
+The new runner is launched by a one-time Windows Task Scheduler action,
+`Pajoniiir-S2-Soak-20261009T231506Z`, under the existing user with limited
+privilege and a hidden, non-interactive PowerShell wrapper. It has no recurring
+trigger and does not depend on an exec session. Task state RUNNING, live
+Python launcher/child chain and advancing samples were verified after launch.
+The wrapper retains stdout/stderr and writes `wrapper-exit.json` on completion.
+Runner `finally` retains the automatic safe stop on strict fault/end.
+
+Records: `.cache/s2-mk3/next-gates-20261009/internal-isoc-soak-durable-20261009T231506Z/`.
+Launch metadata: `.cache/s2-mk3/next-gates-20261009/durable-soak-launch.json`.
+Exact source remains clean installed `3f3605a7ba7fb2ce891b703aae1b69864bce6468`,
+S2 48000 Hz, MAIN 48000 Hz, source tracks 44100/48000 Hz, both MT/loops,
++5/-5 percent and zoom 8. Both decks were verified playing after launch.
+The runner currently extracts 22 strict counter paths; prior prose calling
+these 23 was a counting error, not a missing telemetry value in this schema.
+Status is RUNNING. Fifteen-minute checkpoints now follow this new record.
