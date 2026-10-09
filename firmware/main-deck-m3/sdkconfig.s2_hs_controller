@@ -2,6 +2,11 @@
 # Use a separate build directory and SDKCONFIG; never overwrite the FLX4 default.
 CONFIG_BSP_M3_HS_CONTROLLER=y
 
+# P4 USB-DWC supports cache-coherent DMA in PSRAM. HS audio reservations and
+# 512-aligned endpoint descriptor lists must not fragment scarce internal DMA
+# memory after track loading. This policy applies only to the S2 bench image.
+CONFIG_USB_HOST_DWC_DMA_CAP_MEMORY_IN_PSRAM=y
+
 # Global cache chunking also affects display/I2S and is deliberately disabled.
 # The HS diagnostic data-buffer policy is applied only inside the USB HCD.
 # CONFIG_ESP_MM_CACHE_MSYNC_C2M_CHUNKED_OPS is not set

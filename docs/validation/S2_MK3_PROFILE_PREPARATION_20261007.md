@@ -881,6 +881,29 @@ not evidence of a new panic during this installation. Evidence:
 `next-gates-20261009/iso-pool-{clean-build,package,install,prepare}.log`,
 `iso-pool-reconnect-baseline.log` and the timestamped baseline JSON.
 
+The operator's requested reconnect on `2f394773` did not restore Browse.
+Enumeration itself completed on HS/root 0, but MIDI interface claim returned
+`ESP_ERR_NO_MEM` before any new MIDI or audio stream started. The resource
+journal recorded a failed 16-byte allocation with caps 526344
+(`DMA | INTERNAL | CACHE_ALIGNED`), consistent with the pinned HCD's
+two-descriptor bulk list which also requires 512-byte alignment. Snapshot
+internal free was 48651 bytes and DMA free 13171 bytes; largest blocks remain
+unmeasured. This is **reconnect FAIL**, not a successful audio repair. Boot
+399 persisted and FS media stayed mounted. Evidence:
+`next-gates-20261009/iso-pool-reconnect-after.log` and
+`iso-pool-reconnect-resources.json`, plus timestamped bus/status captures.
+
+The S2 experimental configuration now uses the pinned USB component's native
+`CONFIG_USB_HOST_DWC_DMA_CAP_MEMORY_IN_PSRAM` policy for DMA data buffers and
+endpoint descriptor lists. Its Kconfig explicitly supports ESP32-P4 external
+RAM DMA and warns of access overhead, so timing/playback acceptance must be
+repeated. The existing bounded cache maintenance remains in place. The
+three retained HS URBs now reserve external memory; endpoint lists can be
+recreated without competing for fragmented internal DMA blocks. Configure
+fails if an existing S2 SDKCONFIG leaves this policy disabled, because defaults
+do not override stored configurations. Production FLX4 and other target
+defaults are unchanged. This configuration is a candidate, not a physical PASS.
+
 Status: PC basic-input/navigation captures completed on 2026-10-08; see the
 [profile capture revision](../../controllers/ni_traktor_s2_mk3_basic/README.md#pc-capture-navigation-revision-2026-10-08).
 The updated profile is 928 bytes, 50 inputs, eight outputs, with USB audio off.
