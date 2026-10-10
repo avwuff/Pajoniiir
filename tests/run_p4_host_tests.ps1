@@ -3084,6 +3084,17 @@ $tests = @(
         )
     },
     @{
+        Name = "restart_diagnostics"
+        Dir = "tests/restart_diagnostics"
+        Target = "test_restart_diagnostics.exe"
+        Args = @(
+            "-Wall", "-Wextra", "-Werror", "-std=c11", "-O2",
+            "-I../../firmware/p4-core/components/restart_diagnostics/include", "-Istubs",
+            "-o", "test_restart_diagnostics.exe", "test_restart_diagnostics.c",
+            "../../firmware/p4-core/components/restart_diagnostics/restart_diagnostics.c"
+        )
+    },
+    @{
         Name = "web_crash_export"
         Dir = "tests/web_api_helpers"
         Target = "test_web_crash_export.exe"
@@ -3516,6 +3527,9 @@ if (-not $pythonSource) {
     Write-Warning "no python with the 'cryptography' module found (tried: $usable); SKIPPING the OTA signing tests"
 }
 if ($pythonSource) {
+    Invoke-Step -Name "run restart capture decoder regressions" `
+        -WorkingDirectory $RepoRoot -Executable $pythonSource `
+        -Arguments @("tests/restart_diagnostics/test_decode_restart_capture.py")
     Invoke-Step -Name "run board-aware project version qualification" `
         -WorkingDirectory $RepoRoot -Executable $pythonSource `
         -Arguments @("tests/board_adapter/test_project_version.py")

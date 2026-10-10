@@ -1,0 +1,2 @@
+#pragma once
+#define SOC_ASYNCHRONOUS_BUS_ERROR_MODE 1

@@ -11,7 +11,7 @@ set(PAJONIIIR_SHARED_COMPONENTS
     controller_profile_runtime controller_runtime controller_usb_audio controller_usb_host
     deck_core fatfs hot_cue_store library media_catalog media_identity media_io_gate
     p4_local_controller p4_ota p4_ota_pull p4_ota_pull_core sd_io_gate sd_idle_wait service_log ui
-    usb_host_manager usb_storage web_server wifi_link wifi_transition_lease)
+    usb_host_manager usb_storage web_server wifi_link wifi_transition_lease restart_diagnostics)
 
 set(EXTRA_COMPONENT_DIRS "${CMAKE_CURRENT_LIST_DIR}/../boards/jc1060")
 foreach(component IN LISTS PAJONIIIR_SHARED_COMPONENTS)

@@ -6,6 +6,11 @@ the cache-register store fault. The historical `a9f66bcd` S2 PASS/waiver records
 retain their exact-image scope. The diagnostic candidate is now installed;
 its OTA/export checkpoint is recorded below and does not inherit those soaks.
 
+The subsequent [restart bus capture implementation](RESTART_BUS_CAPTURE_20261010.md)
+adds the missing pre-normalization frame/CSR evidence to future coredumps.
+It is separate from the unchanged historical dump and does not establish a
+repair of its cause.
+
 ## Wireless installation and historical dump capture
 
 The operator clarified that USB1 is available only for power and explicitly

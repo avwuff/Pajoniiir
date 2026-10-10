@@ -2,6 +2,15 @@
 
 Status: **current documentation authority, reconciled 2026-10-06**.
 
+[Restart bus capture implementation](validation/RESTART_BUS_CAPTURE_20261010.md)
+adds bounded shared IRAM hooks and 256 bytes of internal user-coredump DRAM
+to retain frame/queue state before IDF PC normalization. Focused production
+wrapper and decoder tests pass. Actual link/coredump-region and synthetic raw
+pipeline checks are now mandatory build gates. Full qualification host suite
+passes with no SKIP; the single M3 build is pending at this source checkpoint.
+No SDK mutation, device change or
+new S2 qualification; installed `58f09941` remains the diagnostic baseline.
+
 [Offline historical restart audit](reviews/2026-10-10-m3-restart-crash-analysis.md)
 confirms core 0, an internal interrupted stack and the cache-writeback call
 chain by complete original-BIN function-byte checks. One isolated historical

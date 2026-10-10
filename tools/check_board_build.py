@@ -41,7 +41,8 @@ def verify(build: Path, project: str, experimental_recorder: bool = False,
     names = set(path.name for path in core.iterdir() if (path / "CMakeLists.txt").is_file())
     required_core = {"p4_app", "board_adapter", "board_capabilities", "audio_engine", "deck_core", "library", "ui",
                      "web_server", "p4_ota", "controller_profile_manager", "controller_profile_runtime",
-                     "controller_usb_host", "usb_storage", "usb_host_manager", "audio_recorder"}
+                     "controller_usb_host", "usb_storage", "usb_host_manager", "audio_recorder",
+                     "restart_diagnostics"}
     assert required_core <= components, "production shared component missing"
     for name, path in zip(description["build_components"], description["build_component_paths"]):
         if name in names:
