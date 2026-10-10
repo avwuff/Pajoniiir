@@ -5,8 +5,13 @@ Status: **current documentation authority, reconciled 2026-10-06**.
 [Crash diagnostic implementation](validation/CRASH_DIAGNOSTICS_20261010.md)
 adds distinct stored-dump ELF identity, a bounded marked stopped-deck raw export
 and verified local ELF/map archives. Focused behavioral regressions pass;
-full host/M3 checks are in progress. It is not installed and does not repair
+full host suite, the single M3 IDF 6.0.2 build, board/budget checks and actual
+signed packaging/debug archive verification pass on clean `58f09941`.
+Documentation checks pass. It is not installed and does not repair
 or close the historical restart PANIC. S2 testing remains closed with waivers.
+The accepted `a9f66bcd` ELF/map was preserved before build. Before any diagnostic
+OTA, retain the existing raw dump over USB1, since another PANIC could overwrite
+it. No serial ports were found; operator connection/COM information is pending.
 
 Current S2 disposition, 2026-10-10: **work closed with explicit operator
 waivers; no further S2 testing**. Exact clean `a9f66bcd`, VALID `ota_1`, retains
