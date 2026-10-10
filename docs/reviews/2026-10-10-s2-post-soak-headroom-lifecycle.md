@@ -1,5 +1,11 @@
 # S2 post-soak headroom and lifecycle review
 
+Historical review. Its proposed remaining S2 tests are superseded by the
+operator's explicit closeout and waivers in
+[the later resource/restart review](2026-10-10-s2-closeout-resources-restart.md).
+The later review also adds 44100-Hz acceptance, stack/allocation snapshots and
+archived-BIN disassembly. Do not schedule the physical block below.
+
 Date: 2026-10-10. Scope: offline evidence and production-code review while the
 operator is away. No playback, USB recovery, reboot, OTA or firmware mutation
 is part of this review. Installed-image acceptance remains tied to source

@@ -2,6 +2,22 @@
 
 Status: **current documentation authority, reconciled 2026-10-06**.
 
+Current S2 disposition, 2026-10-10: **work closed with explicit operator
+waivers; no further S2 testing**. Exact clean `a9f66bcd`, VALID `ota_1`, retains
+full-hour 48000/44100-Hz telemetry and physical playback PASS and 48000-Hz
+active jog/Browse acceptance. Remaining 44100-Hz active controls, exhaustive
+LED/held-state and outstanding physical lifecycle/profile qualification are
+WAIVED BY OPERATOR / NOT RUN, never converted to PASS. Earlier pending entries
+below remain historical. No unrestricted S2/shared-core production release.
+
+The [closeout/resource/restart review](reviews/2026-10-10-s2-closeout-resources-restart.md)
+records the continuing general investigation: all 5260 cached soak samples show
+no progressive retained-memory decline, a stopped snapshot has zero allocation
+failures and adequate recorded task stack reserves, and largest-block DMA
+qualification remains unavailable. Original outgoing-BIN disassembly supports
+the cache-writeback restart location; its cause and raw-dump/ELF association
+remain unresolved. No new S2 test, firmware, reboot, build, OTA or publication.
+
 The [Hercules preparation record](validation/HERCULES_INPULSE_500_PREPARATION_20261010.md)
 documents PC VID/PID and jog-touch capture, exact fixture regeneration and
 profile/registry host checks. Native output-control policy, filter gate and

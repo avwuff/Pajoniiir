@@ -46,6 +46,11 @@ location, not the profile variant. Keep the repository basic binary for recovery
 
 ## Combined physical checks
 
+As of 2026-10-10, the operator closed this campaign after accepted exact-image
+full-hour 48/44.1-kHz playback and waived remaining physical checks. The steps
+below are retained as reference, not a request for further S2 testing. Waivers
+are NOT RUN, not PASS. General memory/OTA restart work remains separate.
+
 Keep both decks stopped for one brief control batch: both channel faders,
 trim/EQ/filter centers and endpoints, crossfader, headphone mix, both pitch
 directions/center, jog touch/rotation/shifted search, and dedicated LOAD routing.

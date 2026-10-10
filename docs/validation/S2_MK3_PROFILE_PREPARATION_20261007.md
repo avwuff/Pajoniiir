@@ -1,6 +1,25 @@
 # Traktor Kontrol S2 MK3 profile preparation
 
-## Current bench checkpoint (2026-10-09)
+## Current scope: closed with operator waivers (2026-10-10)
+
+The operator explicitly closed S2 work and declined further testing.
+Clean `a9f66bcd3175d86cacb3072b9e1a08bc95f77ba1` remains VALID `ota_1`.
+Its full-hour 48000-Hz and 44100-Hz playback windows retain their telemetry
+and operator-confirmed audio/display PASS; output-late findings retain their
+separate monitoring scope. Accepted active jog/Browse playback is at 48000 Hz.
+Remaining active-control checks at 44100 Hz, exhaustive LED/held-state and
+outstanding physical lifecycle/profile qualification are **WAIVED BY OPERATOR /
+NOT RUN**, not PASS. No further S2 campaign is scheduled.
+
+The separate general memory/OTA-restart investigation continues. A stopped
+snapshot confirms zero allocation failures and adequate recorded stack reserves,
+but largest-block headroom remains unmeasured. Archived-BIN disassembly supports
+the cache-writeback restart location without proving its cause. See
+[closeout/resource/restart review](../reviews/2026-10-10-s2-closeout-resources-restart.md).
+This closure does not establish unrestricted production S2 or shared-core
+acceptance. The image, USB roles, Wi-Fi and firmware were left intact.
+
+## Historical bench checkpoint (2026-10-09)
 
 Clean `3f3605a7ba7fb2ce891b703aae1b69864bce6468` is installed VALID in
 `ota_1` as `M3-dev-g3f3605a7ba7f`, with the normal-power S2 HS configuration,

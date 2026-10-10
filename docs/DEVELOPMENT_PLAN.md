@@ -2,12 +2,12 @@
 
 The [S2 performance candidate](../controllers/ni_traktor_s2_mk3_full/README.md)
 uses the shared runtime for 80 inputs/26 outputs and experimental HS UAC2.
-Complete one combined stopped-control batch and one short dual-playback/audio
-batch; repeat only failures or ambiguous results. The final exact-image soak
-is last. Remaining unmapped controls and physical gates are explicitly recorded.
-Qualify the S2 PSRAM-DMA candidate at normal Wi-Fi TX power before that soak:
-loaded-track stopped reconnects, then a short combined MT/loop/control/audio
-window. Earlier 2-dBm diagnostic acceptance remains scoped to that setting.
+S2 work is closed by explicit operator decision after exact-image full-hour
+48/44.1-kHz physical playback acceptance. Remaining physical checks are waived,
+not PASS; do not schedule further S2 tests. Earlier diagnostic evidence remains
+scoped to its image/settings. Continue the separate general memory/OTA-restart
+investigation described in the
+[closeout review](reviews/2026-10-10-s2-closeout-resources-restart.md).
 
 Shared-core/M3 implementation is tracked in
 [the integration ledger](SHARED_P4_CORE_INTEGRATION.md). Portable code now lives

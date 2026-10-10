@@ -1,14 +1,13 @@
 # P4 operation and release checklist
 
 For the [S2 performance candidate](../controllers/ni_traktor_s2_mk3_full/README.md),
-keep S2 on USB3 HS and the stick on USB2 FS. Combine stopped mixer/pitch/jog/LOAD
-checks, then dual transport/loop/MAIN/headphone checks into two short batches.
-Run the final exact-image soak last. Do not treat source mappings, host tests
-or descriptor negotiation as physical control/headphone acceptance.
-For normal-power S2 qualification, verify the startup TX-power journal and
-exact installed image, keep Wi-Fi enabled, and perform stopped-deck reconnects
-after loading both tracks. Retain PSRAM USB DMA and the SD internal bounce
-policy; record the live negotiated S2 rate separately from the MAIN rate.
+keep S2 on USB3 HS and the stick on USB2 FS. The operator closed S2 work after
+full-hour 48/44.1-kHz playback acceptance and waived remaining physical checks.
+Do not start another S2 test. Keep Wi-Fi enabled and record the exact image and
+negotiated S2 rate separately from MAIN. Source mappings, host tests and waived
+checks do not establish unrestricted physical acceptance. General memory and
+OTA-restart findings continue in the
+[closeout review](reviews/2026-10-10-s2-closeout-resources-restart.md).
 
 For the shared-core/M3 development branch, use the exact target identity and
 [integration gates](SHARED_P4_CORE_INTEGRATION.md). Existing physical records
