@@ -2,6 +2,18 @@
 
 Status: **current documentation authority, reconciled 2026-10-06**.
 
+Latest installed diagnostic/Hercules-support baseline: clean `eafdb7a5`,
+`M3-dev-geafdb7a5d296`, VALID `ota_0`, API idle. The full host qualification
+suite passes without SKIP; the single M3 ESP-IDF 6.0.2 build, board identity,
+image budget, restart-capture link/raw gates, documentation and signed package
+checks pass. Its matching BIN/ELF and seven hashed verification artifacts are
+retained locally. Signed OTA and atomic Hercules v4 profile replacement pass;
+the registry reports the 5592-byte exact `06F8:B12B` profile. Other profiles
+are preserved. Controller absent at installation; physical Hercules activation,
+audio/controls and GUI confirmation on this image are pending. Original crash
+bytes remain unchanged. S2 testing stays operator-closed and no public channel
+or release was updated. Details: [Hercules record](validation/HERCULES_INPULSE_500_PREPARATION_20261010.md).
+
 [Restart bus capture implementation](validation/RESTART_BUS_CAPTURE_20261010.md)
 adds bounded shared IRAM hooks and 256 bytes of internal RTC user-coredump memory
 to retain frame/queue state before IDF PC normalization. Focused production
@@ -66,7 +78,7 @@ documents PC VID/PID and jog-touch capture, exact fixture regeneration and
 profile/registry host checks. A new shared v4 native-headphone capability and
 independent filter policy resolve the software output-control audit; focused
 production PCM/parser/storage/runtime tests pass. Full qualification and the
-new firmware build/install remain pending. Actual descriptors, native blend,
+new M3 firmware build/install now pass on `eafdb7a5`. Actual descriptors, native blend,
 controls/LEDs and audio require physical Hercules acceptance on M3.
 Hercules M3 audio/MIDI/LED/lifecycle acceptance remains NOT RUN. This offline
 work does not change the concurrent S2 exact-image soak.

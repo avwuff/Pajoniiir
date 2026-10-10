@@ -1,7 +1,7 @@
 # Hercules DJControl Inpulse 500 preparation
 
-The existing source-backed profile is an offline candidate, not a hardware
-support claim. See the [MIDI map](../../docs/HERCULES_INPULSE_500_MIDI_MAP.md)
+The source-backed profile is software-qualified and installed on the M3 bench;
+physical hardware acceptance is pending. See the [MIDI map](../../docs/HERCULES_INPULSE_500_MIDI_MAP.md)
 and [M3 preparation record](../../docs/validation/HERCULES_INPULSE_500_PREPARATION_20261010.md).
 
 The current fixture is S3CP v4, 5592 bytes, with 268 expanded inputs and
@@ -23,6 +23,11 @@ and retains MAIN on 1/2. Software headphone mirrors and the native master-cue
 LED output are omitted. Software headphone settings remain stored for other
 profiles. MASTER intentionally controls PCM5102A volume; controller RCA MAIN
 is not the reference output and remains unqualified.
+
+The first matching clean firmware is `eafdb7a5`; M3 build, full host
+qualification, signed local OTA and this profile's atomic replacement pass.
+The exact image is VALID `ota_0`. Physical Hercules activation/audio/controls
+remain pending; see the preparation record for hashes and installed evidence.
 
 The manufacturer documents 24-bit, 44100-Hz audio, MAIN channels 1/2 and
 headphones 3/4. The JSON `audio` section is descriptive: the compiler does

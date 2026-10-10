@@ -1,8 +1,9 @@
 # Hercules Inpulse 500 preparation, 2026-10-10
 
-Status: offline preparation and Windows enumeration; M3 hardware NOT RUN.
-This work does not alter the running `3f3605a7` S2 soak, controller profile,
-firmware, USB connections or workload. No M3 API polling is added.
+Status: matching firmware/profile installed; physical M3 Hercules checks pending.
+The initial Windows/offline preparation below did not alter the then-running
+`3f3605a7` S2 soak, controller profile, firmware, USB connections or workload.
+The later software qualification and installation are recorded separately below.
 
 ## Verified Windows identity
 
@@ -107,3 +108,48 @@ control isolation and activation/clear/non-native replacement; production PCM
 mixer verifies cue unity independent of software headphone mute/mode and that
 MAIN is preserved; converter passes 12 regressions. Full host qualification,
 M3 build/package/install and all Hercules M3 physical checks are pending.
+
+## M3 software qualification, OTA and profile installation
+
+Clean source `eafdb7a5d296d188abf8cb3c0bbc6ce705608ef4` passes the full
+`run_p4_host_tests.ps1 -Qualification` suite, exit 0 with no SKIP. The single
+M3 ESP-IDF 6.0.2 reconfigure/build passes, including linked restart capture and
+five raw coredump pipeline fixtures. Board isolation/identity, unchanged lock,
+`0x380000` image budget and documentation checks pass. JC4880/JC1060 were not
+rebuilt for this Hercules candidate. Physical checks remain separate.
+
+| Artifact | Verified value |
+| --- | --- |
+| Installed version | `M3-dev-geafdb7a5d296` |
+| Project / board / slot | `main-deck-m3` / `m3` / VALID `ota_0` |
+| Application | 2,601,952 bytes |
+| BIN SHA-256 | `872a783f5a85313d890ec1d058a8fc8188fb31cb2cda23bbaccd92e344c98b18` |
+| Matching ELF SHA-256 | `99c0ced2ce4473789f870b52aad75bd325feb8e93a63ca259a1c829eb51d3e39` |
+| Signed bundle | 2,602,140 bytes |
+| Bundle SHA-256 | `106d27a713d227167b72a3bfb56935c36258cdb52866b5279f90f3545f08af7c` |
+
+Package and matching debug archive:
+`.cache/hercules-native-candidate-eafdb7a5/pajoniiir-m3-M3-dev-geafdb7a5d296/`.
+Its verification manifest hashes seven retained build/test/profile artifacts;
+bundle and manifest signatures verify against the trusted release public key.
+One marked local OTA returned HTTP 200; exact clean source/ELF reached VALID,
+API idle and both decks stopped. Installation evidence:
+`.cache/hercules-native-wireless/20261010T215446Z/`. The 7456-byte historical
+dump is still byte-identical with SHA-256
+`75afa985b81eea00e253a8e2410ec55364960bcc65c873a4db547b65b8e0c839`.
+No new PANIC or intentional fault was observed; original evidence is retained.
+
+After verifying matching firmware, a marked overwrite replaced only the old
+Hercules profile. HTTP 200 and the fresh registry confirm valid `06F8:B12B`,
+5592 bytes. FLX4 and S2 registry entries are unchanged. Evidence:
+`.cache/hercules-inpulse-500/native-profile-install-20261010T215517Z/`.
+The server validates write/readback CRC and metadata; the API has no binary
+hash-readback endpoint, so the uploaded SHA is not claimed as an independent
+client readback SHA. The controller was absent and audio was not streaming
+during installation. GUI confirmation, actual descriptors, profile activation,
+MIDI/LEDs, cue/master hardware blend and audio on M3 are pending.
+
+The next physical action is ordinary Hercules connection on USB3, storage
+remaining USB2, with stopped decks. No S2 MIDI-mode FLX gesture is needed.
+Combine stopped controls and then short monitored audio checks when the
+operator is ready; no S2 retest, push, release or public OTA is authorized.
