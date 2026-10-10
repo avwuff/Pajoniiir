@@ -25,6 +25,10 @@ the exact claim rejection code without changing MIDI or recovery behavior;
 focused allocation/ownership tests pass, build/install pending. The initial
 OTA observer timed out while the PC was disconnected; subsequent Wi-Fi
 reconnection verified the exact image VALID. Physical audio remains NOT RUN.
+Generated HCD analysis then identified its HS periodic FIFO limit of 512 bytes,
+below Hercules MPS 540. The next candidate raises only the experimental HS
+controller capacity to 640 bytes; executable four-configuration FIFO admission
+tests pass, preserving standard layouts and bulk/MIDI capacity.
 
 [Restart bus capture implementation](validation/RESTART_BUS_CAPTURE_20261010.md)
 adds bounded shared IRAM hooks and 256 bytes of internal RTC user-coredump memory

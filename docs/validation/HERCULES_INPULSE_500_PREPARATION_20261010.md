@@ -228,3 +228,15 @@ claims, zero leaked ownership/allocations, preserved evidence after cleanup
 and successful following UAC2 startup. Focused tests pass; this diagnostic's
 full build/install is pending. Hercules physical audio/native blend and controls
 remain NOT RUN. S2 testing stays closed.
+
+The generated production HCD exposed the missing integration constraint:
+its HS-root periodic TX FIFO remains 128 quadlets (512 bytes), below the
+recorded Hercules 540-byte MPS. The pinned HAL rejects such an endpoint during
+claim; widening only the stream selector does not widen the HCD. The next
+candidate uses 160 quadlets (640 bytes) on HS only when the diagnostic controller
+experiment is enabled, as already used by JC1060. HS RX and bulk OUT retain
+at least 512-byte capacity, and ordinary M3/JC4880 defaults and M3 FS FIFO
+remain unchanged. An executable gate compiles the actual CMake replacement
+block for all four board/experiment combinations and checks packet admission,
+bulk/MIDI capacity, total FIFO bounds and unchanged standard layouts. It passes.
+The claim-code diagnostic is retained to distinguish any further startup error.
