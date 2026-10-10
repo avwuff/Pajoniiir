@@ -3084,6 +3084,17 @@ $tests = @(
         )
     },
     @{
+        Name = "web_crash_export"
+        Dir = "tests/web_api_helpers"
+        Target = "test_web_crash_export.exe"
+        Args = @(
+            "-Wall", "-Wextra", "-Werror", "-std=c99",
+            "-I../../firmware/p4-core/components/web_server/include",
+            "-o", "test_web_crash_export.exe", "test_web_crash_export.c",
+            "../../firmware/p4-core/components/web_server/web_crash_export.c"
+        )
+    },
+    @{
         Name = "web_api_helpers"
         Dir = "tests/web_api_helpers"
         Target = "test_web_api_helpers.exe"
@@ -3528,6 +3539,10 @@ Invoke-Step -Name "run OTA release helper tests" `
     -WorkingDirectory $RepoRoot `
     -Executable $powerShell.Source `
     -Arguments @("-NoProfile", "-File", "tests/ota_packaging/test_ota_release_helpers.ps1")
+
+Invoke-Step -Name "preserve matching local ELF/map debug artifacts" `
+    -WorkingDirectory $RepoRoot -Executable $powerShell.Source `
+    -Arguments @("-NoProfile", "-File", "tests/ota_packaging/test_debug_artifacts.ps1")
 
 Invoke-Step -Name "run P4 lifecycle harness self-test" `
     -WorkingDirectory $RepoRoot `

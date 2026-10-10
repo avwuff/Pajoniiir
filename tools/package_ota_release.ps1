@@ -94,7 +94,7 @@ function Read-TargetBuild {
                $ExpectedProject, $bytes.Length, $SlotSize)
     }
     if ($bytes.Length -gt 0x380000) { throw "Application exceeds the fixed 0x380000 build budget" }
-    if ($bytes.Length -lt 112 -or [BitConverter]::ToUInt32($bytes, 32) -ne [Convert]::ToUInt32('ABCD5432',16)) {
+    if ($bytes.Length -lt 208 -or [BitConverter]::ToUInt32($bytes, 32) -ne [Convert]::ToUInt32('ABCD5432',16)) {
         throw "Missing ESP app descriptor"
     }
     $embeddedProject = [Text.Encoding]::UTF8.GetString($bytes, 80, 32).Split([char]0)[0]
@@ -161,6 +161,9 @@ $directoryName = switch ($Project) {
 $outputDir = Join-Path $resolvedOutputRoot $directoryName
 New-Item -ItemType Directory -Path $outputDir -Force | Out-Null
 
+$debugManifest = Save-OtaDebugArtifacts -BuildDir (Join-Path $RepoRoot "firmware/$Project/$BuildName") `
+    -OutputDir $outputDir -Project $Project -SourceSha $sourceSha -ExpectedElfSha256 $p4.ElfSha256
+
 Copy-Item -LiteralPath $p4.Source -Destination (Join-Path $outputDir $p4.File) -Force
 
 $p4BundleFile = [System.IO.Path]::GetFileNameWithoutExtension($p4.File) + ".ddjota"
@@ -218,3 +221,4 @@ Write-Host "Signed OTA release package: $outputDir"
 Write-Host "  P4 $($p4.Size) bytes sha256=$($p4.Sha256)"
 Write-Host "  signing key id=$KeyId algorithm=ECDSA-P256-SHA256"
 Write-Host "  upload $p4BundleFile to P4"
+Write-Host "  local debug archive: $debugManifest (not an OTA payload)"

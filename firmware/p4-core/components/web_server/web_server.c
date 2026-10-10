@@ -17,6 +17,8 @@
 #include "ui_heap_usage.h"
 #include "ui_scanout_timing.h"
 #include "web_api_helpers.h"
+#include "web_crash_export.h"
+#include "esp_partition.h"
 #include "deck_core.h"
 #include "control_link.h"
 #include "p4_ota.h"
@@ -174,6 +176,7 @@ typedef struct {
     char reason[192];
     char reason_esc[384];
     char task_esc[40];
+    char crash_elf_prefix[65];
 } crash_dump_work_t;
 #endif
 
@@ -198,6 +201,10 @@ static void format_crash_dump_json(char *out, size_t out_size)
                                 work->reason_esc, sizeof(work->reason_esc));
             web_api_json_escape(summary_rc == ESP_OK ? work->summary.exc_task : "",
                                 work->task_esc, sizeof(work->task_esc));
+            if (summary_rc == ESP_OK)
+                web_crash_sha_prefix(work->summary.app_elf_sha256,
+                                     sizeof(work->summary.app_elf_sha256),
+                                     work->crash_elf_prefix);
         } else {
             summary_rc = ESP_ERR_NO_MEM;
             reason_rc = ESP_ERR_NO_MEM;
@@ -214,6 +221,7 @@ static void format_crash_dump_json(char *out, size_t out_size)
         "\"summary_result\":%d,\"summary_result_name\":\"%s\","
         "\"panic_reason_result\":%d,"
         "\"panic_reason\":\"%s\",\"task\":\"%s\","
+        "\"app_elf_sha256_prefix\":\"%s\",\"app_elf_sha256_prefix_chars\":%u,"
         "\"pc\":\"0x%08X\",\"ra\":\"0x%08X\","
         "\"sp\":\"0x%08X\",\"mcause\":\"0x%08X\","
         "\"mtval\":\"0x%08X\"}",
@@ -222,6 +230,8 @@ static void format_crash_dump_json(char *out, size_t out_size)
         (int)image_rc, esp_err_to_name(image_rc), (unsigned)image_size,
         (int)summary_rc, esp_err_to_name(summary_rc), (int)reason_rc,
         work ? work->reason_esc : "", work ? work->task_esc : "",
+        work ? work->crash_elf_prefix : "",
+        work ? (unsigned)strlen(work->crash_elf_prefix) : 0u,
         summary ? (unsigned)summary->exc_pc : 0u,
         summary ? (unsigned)summary->ex_info.ra : 0u,
         summary ? (unsigned)summary->ex_info.sp : 0u,
@@ -1236,6 +1246,89 @@ static esp_err_t api_recording_stop_handler(httpd_req_t *req)
 #endif  /* CONFIG_AUDIO_RECORDER_ENABLED */
 
 // GET /api/diagnostic-log — stream the active microSD service journal.
+#if CONFIG_ESP_COREDUMP_ENABLE_TO_FLASH
+typedef struct {
+    httpd_req_t *req;
+    const esp_partition_t *partition;
+} crash_export_context_t;
+
+static bool crash_export_idle(void *context)
+{
+    (void)context;
+    p4_ota_status_t ota = {0};
+    p4_ota_get_status(&ota);
+    if (ota.state != P4_OTA_IDLE) return false;
+#if CONFIG_AUDIO_RECORDER_ENABLED
+    if (audio_recorder_get_state() != AUDIO_RECORDER_STOPPED) return false;
+#endif
+    for (uint8_t deck = 0; deck < AUDIO_ENGINE_DECK_COUNT; ++deck) {
+        audio_engine_deck_status_t status = {0};
+        if (audio_engine_deck_get_status(deck, &status) != ESP_OK ||
+            status.state == AE_LOADING || status.state == AE_PLAYING) return false;
+    }
+    return true;
+}
+
+static uint64_t crash_export_now_ms(void *context)
+{
+    (void)context;
+    return (uint64_t)esp_timer_get_time() / 1000u;
+}
+
+static bool crash_export_read(void *context, size_t offset, void *buffer, size_t bytes)
+{
+    crash_export_context_t *export = context;
+    return esp_partition_read(export->partition, offset, buffer, bytes) == ESP_OK;
+}
+
+static bool crash_export_send(void *context, const void *buffer, size_t bytes)
+{
+    crash_export_context_t *export = context;
+    return httpd_resp_send_chunk(export->req, buffer, (ssize_t)bytes) == ESP_OK;
+}
+#endif
+
+/* Explicit diagnostic GET: no erase, reboot, transport or USB mutation.
+ * Check again around each flash read; a concurrent PLAY/LOAD aborts the body.
+ * There is no promise to freeze operator input or suspend idle USB silence. */
+static esp_err_t api_crash_dump_handler(httpd_req_t *req)
+{
+    if (!api_request_allowed(req, true)) return ESP_FAIL;
+#if CONFIG_ESP_COREDUMP_ENABLE_TO_FLASH
+    if (!crash_export_idle(NULL)) {
+        httpd_resp_set_status(req, "409 Conflict");
+        return httpd_resp_sendstr(req, "Stop both decks and wait for services to be idle");
+    }
+    const esp_partition_t *partition = esp_partition_find_first(
+        ESP_PARTITION_TYPE_DATA, ESP_PARTITION_SUBTYPE_DATA_COREDUMP, NULL);
+    size_t address = 0, size = 0;
+    esp_err_t rc = esp_core_dump_image_get(&address, &size);
+    if (!partition || rc == ESP_ERR_NOT_FOUND) {
+        httpd_resp_set_status(req, "404 Not Found");
+        return httpd_resp_sendstr(req, "No stored crash dump");
+    }
+    if (rc != ESP_OK || address != partition->address || size < 4u ||
+        size > partition->size || size > WEB_CRASH_EXPORT_MAX_BYTES) {
+        return httpd_resp_send_err(req, HTTPD_500_INTERNAL_SERVER_ERROR,
+                                   "Invalid crash dump extent");
+    }
+    httpd_resp_set_type(req, "application/octet-stream");
+    httpd_resp_set_hdr(req, "Cache-Control", "no-store");
+    httpd_resp_set_hdr(req, "Content-Disposition", "attachment; filename=crash-dump.bin");
+    char length[24];
+    snprintf(length, sizeof(length), "%u", (unsigned)size);
+    httpd_resp_set_hdr(req, "X-DDJ-Crash-Bytes", length);
+    crash_export_context_t context = {.req=req, .partition=partition};
+    const web_crash_export_ops_t ops = {&context, crash_export_idle, crash_export_now_ms,
+                                       crash_export_read, crash_export_send};
+    if (!web_crash_export_copy(size, partition->size, &ops)) return ESP_FAIL;
+    return httpd_resp_send_chunk(req, NULL, 0);
+#else
+    httpd_resp_set_status(req, "501 Not Implemented");
+    return httpd_resp_sendstr(req, "Flash crash dumps are disabled");
+#endif
+}
+
 static esp_err_t api_diagnostic_log_handler(httpd_req_t *req)
 {
     if (!api_request_allowed(req, false)) return ESP_FAIL;
@@ -2656,7 +2749,7 @@ esp_err_t web_server_start(void)
     /* Must stay above the number of register_uri_or_stop() calls below: a single
      * failed registration stops the whole server, so an over-tight limit takes
      * every endpoint (including OTA) down with it. */
-    config.max_uri_handlers = 32; /* includes USB descriptor and bus trace routes */
+    config.max_uri_handlers = 34; /* includes optional recorder and crash export routes */
     config.task_priority = 3;
     config.core_id = 0;
 
@@ -2766,6 +2859,15 @@ esp_err_t web_server_start(void)
         .user_ctx = NULL
     };
     rc = register_uri_or_stop(s_web_server, &diag_log_uri);
+    if (rc != ESP_OK) return rc;
+
+    httpd_uri_t crash_dump_uri = {
+        .uri = "/api/crash-dump",
+        .method = HTTP_GET,
+        .handler = api_crash_dump_handler,
+        .user_ctx = NULL
+    };
+    rc = register_uri_or_stop(s_web_server, &crash_dump_uri);
     if (rc != ESP_OK) return rc;
 
     httpd_uri_t library_validation_gate_status_uri = {

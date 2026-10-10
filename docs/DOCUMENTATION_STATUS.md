@@ -2,6 +2,12 @@
 
 Status: **current documentation authority, reconciled 2026-10-06**.
 
+[Crash diagnostic implementation](validation/CRASH_DIAGNOSTICS_20261010.md)
+adds distinct stored-dump ELF identity, a bounded marked stopped-deck raw export
+and verified local ELF/map archives. Focused behavioral regressions pass;
+full host/M3 checks are in progress. It is not installed and does not repair
+or close the historical restart PANIC. S2 testing remains closed with waivers.
+
 Current S2 disposition, 2026-10-10: **work closed with explicit operator
 waivers; no further S2 testing**. Exact clean `a9f66bcd`, VALID `ota_1`, retains
 full-hour 48000/44100-Hz telemetry and physical playback PASS and 48000-Hz
