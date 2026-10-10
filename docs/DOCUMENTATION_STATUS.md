@@ -282,6 +282,12 @@ without SKIP markers. The existing a9f66bcd signed package/manifest verifies.
 Physical active-control/reconnect and reboot checks were NOT RUN while the
 operator was away; the installed exact-image playback PASS is preserved.
 
+After operator return, a 30.042-second active-control block on the accepted
+a9f66bcd/S2 48000-Hz setup passed: 1122 MIDI packets, all 22 strict deltas and
+output-late delta zero, decks stopped. Operator confirmed both jogs/Browse,
+MAIN/S2 audio and waveforms were correct. Short active-control telemetry and
+physical PASS; reconnect/lifecycle and the intermittent ISO cause remain open.
+
 1. Exact release artifacts/configuration and current code/tests for their own SHA.
 2. [Published M2.5 record](validation/M2_5_RELEASE_20261006.md) for accepted
    hardware and publication; this status for current scope.

@@ -2444,3 +2444,16 @@ in the next-gates directory. The existing signed image/bundle and manifest
 were reverified. Changes are test/documentation only; no firmware build was
 needed. Physical active-control/reconnect, largest-block/stack and reboot
 checks remain NOT RUN during the operator's absence.
+
+### Active-control playback confirmed, 2026-10-10
+
+After the operator returned and confirmed readiness, a 30-second dual MT/loop
+test ran on the same clean `a9f66bcd`, S2 48000 Hz, zoom 8 and opposite pitch.
+It completed 30.042 seconds / 48 samples with 1122 new MIDI packets, all 22
+strict deltas and output-late delta zero. Both decks were safely stopped and
+final snapshots saved, including the first-fault bus trace and raw diagnostic
+log. The operator confirmed both jogs/Browse controls responded correctly,
+clean MAIN/S2 headphones and fluid waveforms. This is short active-control
+telemetry and physical PASS. Evidence:
+`.cache/s2-mk3/next-gates-20261009/first-fault-active-control-20261010T172815Z/`.
+Physical reconnect qualification remains separate.
