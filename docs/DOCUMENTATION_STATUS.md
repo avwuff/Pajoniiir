@@ -361,8 +361,10 @@ same ELF/VALIDota1 and zoom8. Five output-late events, max11348us/60-s cluster2,
 remain monitoring findings; no investigation trigger fired. Cached DMA free
 starts/ends11163B, sampled minimum8635B; prior lifetime minimum7371B unchanged.
 Historical ISO1/5 and frozen capture unchanged, MIDI0. Exact-image full-hour
-44100-Hz telemetry PASS; operator confirmation requested and pending. Root
-cause and remaining S2/shared-core gates stay open. Audit/hashes preserved,
+44100-Hz telemetry and physical playback PASS: operator confirmed clean
+MAIN/S2 audio, fluid dual waveforms and stable display throughout the hour.
+Root cause and remaining S2/shared-core gates stay open. Original hashes
+rechecked, operator confirmation and updated audit preserved,
 task removed after exit, automation paused; no firmware, restart or publication.
 
 1. Exact release artifacts/configuration and current code/tests for their own SHA.

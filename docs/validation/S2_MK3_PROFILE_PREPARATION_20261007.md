@@ -2656,10 +2656,13 @@ headroom observations without a heap walk; it does not qualify largest-block
 availability or every lifecycle allocation. MIDI delta zero means no active
 control acceptance in this hour.
 
-The exact-image 44100-Hz long playback window has telemetry PASS with separate
-output-late monitoring. Full-hour operator listening/display confirmation was
-requested and remains pending. Root-cause resolution, full controller/shared
-core acceptance and other lifecycle gates are not established by this result.
+The operator subsequently confirmed clean MAIN/S2 headphones, fluid dual
+waveforms and a stable display throughout the entire hour. The exact-image
+44100-Hz long playback window therefore has telemetry and physical playback
+PASS with separate output-late monitoring. Root-cause resolution, full
+controller/shared-core acceptance and other lifecycle gates are not established
+by this result. `operator-confirmation.json` records this response; original
+artifact hashes were rechecked before updating the derived evidence audit.
 `evidence-audit.json` preserves the full-sample checks and original artifact
 hashes in the soak directory above. After confirmed runner exit and evidence
 preservation, the single-use Scheduled Task was removed and checkpoint
