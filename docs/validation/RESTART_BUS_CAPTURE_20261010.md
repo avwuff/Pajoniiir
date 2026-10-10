@@ -4,8 +4,8 @@ This implements the next diagnostic step from the
 [historical restart audit](../reviews/2026-10-10-m3-restart-crash-analysis.md).
 It adds evidence collection, **not a causal repair** of the historical
 cache-register store fault. Further S2 testing remains closed by operator
-decision. The currently installed diagnostic image is still clean `58f09941`,
-VALID `ota_0`; the work below does not change that device state.
+decision. The last verified installed diagnostic image is clean `58f09941`,
+VALID `ota_0`; this implementation performs no device action or live query.
 
 ## Production contract
 
@@ -81,15 +81,54 @@ synthetic raw-coredump cases with the built app BIN/ELF: successful decoding,
 bad checksum, wrong dump identity, truncated region and wrong ABI. These are
 software fixtures, not an induced physical PANIC or observed hardware fault.
 
-The focused C and four decoder regressions pass. The full qualification host
-suite completed with exit code zero and no SKIP markers. One M3 ESP-IDF 6.0.2
-build and its actual link/raw-pipeline checks remain pending after the rejected
-DRAM-region build at this source
-checkpoint. Clean M3 defaults now explicitly select the existing bounded
+The focused production C test, four decoder regressions and full qualification
+host suite pass (exit zero, no SKIP markers). The final isolated M3 ESP-IDF
+6.0.2 build also passes, including actual ELF placement/interception, all five
+synthetic raw-pipeline tests and `check_board_build.py --experimental-s2`.
+An explicit reconfigure refreshed the source identity: an earlier incremental
+build retained stale metadata and was rejected before packaging.
+Clean M3 defaults now explicitly select the existing bounded
 flash-coredump contract (eight tasks, boot check, diagnostic logs disabled),
 matching the shared P4 defaults. The bench HS config already enables flash
-coredumps. JC4880/JC1060 builds are
+coredumps. The final generated config differs from the retained `58f09941`
+config only by disabling `CONFIG_ESP_COREDUMP_LOGS`; dump capture remains enabled.
+JC4880/JC1060 builds are
 deferred according to the operator's M3-first debugging preference.
+
+## Prepared M3 development candidate
+
+This is a local diagnostic artifact, **not installed or physically qualified**:
+
+| Field | Verified value |
+| --- | --- |
+| Clean source | `0b08fb90af24e185631cc1001209cf79bb032096` |
+| Version/project | `M3-dev-g0b08fb90af24` / `main-deck-m3` |
+| Application | 2,601,696 bytes; below `0x380000` budget |
+| BIN SHA-256 | `30b92c6eb9990e32821a71fd7866538e4ead5bf2515e9a615b28e61fc380d42d` |
+| Matching ELF SHA-256 | `7db28ad1ef942c2cde98d115d34ecd48fb0a4dce6088372a8e0855119d00eb7c` |
+| Signed bundle | 2,601,884 bytes; ECDSA P-256 / `rel-001` verified |
+| Bundle SHA-256 | `b0e267a54cb42ff9315b1446b0c60793beab374d5e9cb998f94889c82dea6187` |
+| Coredump record extent | `[0x50108080, 0x50108180)` in `.rtc_noinit` |
+
+The package is retained under
+`.cache/restart-bus-capture-candidate-0b08fb90/pajoniiir-m3-M3-dev-g0b08fb90af24/`.
+Its `debug/` manifest retains the matching ELF/map/config/identity. Its
+`verification/` manifest hashes ten software/build/package evidence files.
+The package signature and manifest signature both verify; committed dependency
+locks are unchanged. No public channel was changed.
+
+Against the retained `58f09941` ELF, `.iram0.text` increases by 330 bytes,
+`.rtc_noinit` by 256, `.dram0.data` by 8, and `.dram0.bss` decreases by 16;
+ordinary `.noinit` is unchanged. These are whole-image static section deltas,
+including alignment and the coredump-log config difference, not a runtime
+heap/DMA budget or physical performance PASS.
+
+The original 7,456-byte dump still hashes to
+`75afa985b81eea00e253a8e2410ec55364960bcc65c873a4db547b65b8e0c839`.
+The preserved installed-image ELF remains
+`bc10d523fee5263ffb81a3033f01145d944e756645fddcc12d3bf038dac91798`.
+Both were rechecked after building; neither was overwritten. This work makes
+no new live device-state claim and does not reopen the operator-closed S2 gates.
 
 ## Reading future evidence
 

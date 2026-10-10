@@ -7,10 +7,13 @@ adds bounded shared IRAM hooks and 256 bytes of internal RTC user-coredump memor
 to retain frame/queue state before IDF PC normalization. Focused production
 wrapper and decoder tests pass. Actual link/coredump-region and synthetic raw
 pipeline checks are now mandatory build gates. Full qualification host suite
-passes with no SKIP; final M3 build qualification is pending at this source
-checkpoint after correcting the actual P4 coredump-region contract.
-No SDK mutation, device change or
-new S2 qualification; installed `58f09941` remains the diagnostic baseline.
+passes with no SKIP. Clean M3 `0b08fb90` passes ESP-IDF 6.0.2, linked RTC-region
+and interception checks, five raw-pipeline fixtures, board identity/isolation
+and signed development packaging. Its matching BIN/ELF and verification hashes
+are retained locally. The candidate is **NOT INSTALLED**; physical PANIC export
+and restart reliability remain **NOT RUN**. No SDK mutation or new S2
+qualification; `58f09941` remains the last verified installed diagnostic baseline,
+with no live device query during this implementation.
 
 [Offline historical restart audit](reviews/2026-10-10-m3-restart-crash-analysis.md)
 confirms core 0, an internal interrupted stack and the cache-writeback call
