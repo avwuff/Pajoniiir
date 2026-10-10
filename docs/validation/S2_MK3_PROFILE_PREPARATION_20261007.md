@@ -2387,3 +2387,28 @@ output-late zero. It stops at the first strict error or 3600 seconds and saves
 the first-fault bus snapshot and raw diagnostic log after stopping decks.
 Checkpoints are scheduled every 15 minutes. This is an active diagnostic run,
 not a completed soak or a claim that the fault is fixed.
+
+### First-fault diagnostic window completed, 2026-10-10
+
+The independent observer completed 3600.296 seconds / 5705 samples and exited
+with code zero at 18:40:08 local. All 22 strict deltas and output-late delta
+were zero. Every recorded sample was checked for unchanged source, live S2
+48000-Hz streaming, dual playback/MT/loop/pitch workload and the unchanged
+strict counters. Both decks were safely stopped; exact clean `a9f66bcd`
+remains VALID `ota_1` with the same ELF. Final zoom is 8. MIDI delta zero
+means this window does not qualify active jog/Browse use.
+
+The first-fault capture is enabled but empty. No ISO loss was reproduced in
+this hour; no causal descriptor snapshot exists to decode. This is a completed
+diagnostic window and telemetry playback PASS for this exact image at S2
+48000 Hz, not proof of a root-cause fix or a 44100-Hz qualification. Observer
+timing overhead may affect reproduction; it is not proven harmless at every
+boundary. Minimum observed internal DMA free was 8759 bytes, final free 11159
+bytes. Lifecycle/headroom and earlier OTA-restart risk remain open.
+
+All final snapshots and raw diagnostic text are retained in the run directory
+above. `evidence-audit.json` records the full-sample audit and SHA-256 hashes
+of result, baseline, stream and final evidence. After confirming runner exit,
+the single-use Scheduled Task was removed and checkpoint automation paused.
+Operator audio/display confirmation for the full hour has been requested and
+is pending. No new test, firmware change, push or publication was performed.

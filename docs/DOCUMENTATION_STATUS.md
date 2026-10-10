@@ -256,6 +256,15 @@ up to 3600 seconds or the first strict error. Initial fresh status confirms
 dual playback, S2 48000 Hz and zero packet failures/output-late. Fifteen-minute
 checkpoints are active; final diagnostic outcome and long acceptance are open.
 
+That first-fault diagnostic window completed 3600.296 s / 5705 samples on
+exact clean `a9f66bcd`, S2 48000 Hz: all 22 strict deltas and output-late delta
+zero, both decks stopped, same ELF/VALID `ota_1`. All samples were audited;
+capture is enabled but empty. ISO loss was not reproduced, so no causal fix
+is established and the 44100-Hz path remains unqualified. Full-hour operator
+confirmation is pending. Minimum observed DMA free is 8759 bytes; lifecycle
+and headroom remain open. Final evidence and hashes retained, one-time task
+removed after runner exit, heartbeat paused. No push or publication.
+
 1. Exact release artifacts/configuration and current code/tests for their own SHA.
 2. [Published M2.5 record](validation/M2_5_RELEASE_20261006.md) for accepted
    hardware and publication; this status for current scope.
