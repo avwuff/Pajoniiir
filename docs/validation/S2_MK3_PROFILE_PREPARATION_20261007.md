@@ -2631,3 +2631,37 @@ maxima and counter reset. Runner/policy/test sources are retained with records.
 Outcome is pending; checkpoints every 15 minutes will report actual progress.
 Neither the long gate, the ISO root cause nor full S2/shared-core acceptance
 is closed by starting this run. No firmware/build/USB/Wi-Fi change or publication.
+
+### Final 44100-Hz timing soak completed, 2026-10-10
+
+The independent runner completed 3600.414 seconds / 5260 samples and exited
+with code zero at 21:28:04 local. A full-sample audit confirms unchanged clean
+`a9f66bcd`, healthy S2 44100-Hz streaming, mounted storage, dual mixed-rate
+playback/MT/four-beat loops and opposite pitch throughout the recorded window.
+All 22 strict counter deltas are zero. Both decks were safely stopped; final
+firmware remains VALID `ota_1` with the same ELF, initial/final zoom is 8.
+
+Five output-late events occurred at sample elapsed 1445.959, 1686.822,
+1694.875, 2119.926 and 3351.965 seconds. The since-boot maximum rose from
+11334 to 11348 us, and the maximum sample-observed 60-second cluster is two.
+No configured investigation trigger fired. These remain monitoring findings;
+this is not zero-late evidence. Existing ISO counters (one packet/five frames)
+and the immutable first-fault snapshot are unchanged. No new ISO loss was
+reproduced, and the earlier cable/power-confounded snapshot is not this run's
+fault evidence.
+
+Cached DMA free begins/ends at 11163 bytes, minimum sampled 8635 bytes;
+lifetime minimum remains 7371 bytes from before the run. This records cached
+headroom observations without a heap walk; it does not qualify largest-block
+availability or every lifecycle allocation. MIDI delta zero means no active
+control acceptance in this hour.
+
+The exact-image 44100-Hz long playback window has telemetry PASS with separate
+output-late monitoring. Full-hour operator listening/display confirmation was
+requested and remains pending. Root-cause resolution, full controller/shared
+core acceptance and other lifecycle gates are not established by this result.
+`evidence-audit.json` preserves the full-sample checks and original artifact
+hashes in the soak directory above. After confirmed runner exit and evidence
+preservation, the single-use Scheduled Task was removed and checkpoint
+automation paused. No restart, new monitor, firmware change, push or public
+release/OTA update was performed.

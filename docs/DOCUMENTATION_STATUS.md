@@ -354,6 +354,17 @@ Four local offline policy regressions pass. Outcome/operator acceptance pending;
 old frozen capture remains historical. No firmware/build, USB or Wi-Fi change,
 push or publication; full S2/shared-core and ISO causation remain open.
 
+The final S2 44100-Hz soak completed 3600.414 s / 5260 samples, wrapper exit0.
+Full-sample audit confirms exact clean `a9f66bcd`, unchanged dual MT/loop/pitch
+workload and healthy streaming; all22strict deltas0, both decks safely stopped,
+same ELF/VALIDota1 and zoom8. Five output-late events, max11348us/60-s cluster2,
+remain monitoring findings; no investigation trigger fired. Cached DMA free
+starts/ends11163B, sampled minimum8635B; prior lifetime minimum7371B unchanged.
+Historical ISO1/5 and frozen capture unchanged, MIDI0. Exact-image full-hour
+44100-Hz telemetry PASS; operator confirmation requested and pending. Root
+cause and remaining S2/shared-core gates stay open. Audit/hashes preserved,
+task removed after exit, automation paused; no firmware, restart or publication.
+
 1. Exact release artifacts/configuration and current code/tests for their own SHA.
 2. [Published M2.5 record](validation/M2_5_RELEASE_20261006.md) for accepted
    hardware and publication; this status for current scope.
