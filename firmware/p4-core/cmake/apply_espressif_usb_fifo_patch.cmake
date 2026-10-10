@@ -83,6 +83,7 @@ string(REPLACE "${_pajoniiir_fifo_upstream}" "${_pajoniiir_fifo_patched}"
        _pajoniiir_hcd_contents "${_pajoniiir_hcd_contents}")
 
 include("${CMAKE_CURRENT_LIST_DIR}/apply_espressif_usb_isoc_descriptor_patch.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/apply_espressif_usb_isoc_capture_patch.cmake")
 set(_pajoniiir_generated_dir "${CMAKE_BINARY_DIR}/pajoniiir_usb")
 set(_pajoniiir_generated_hcd "${_pajoniiir_generated_dir}/hcd_dwc.c")
 file(MAKE_DIRECTORY "${_pajoniiir_generated_dir}")
@@ -90,6 +91,8 @@ file(WRITE "${_pajoniiir_generated_hcd}" "${_pajoniiir_hcd_contents}")
 set_source_files_properties("${_pajoniiir_generated_hcd}" PROPERTIES GENERATED TRUE)
 
 idf_component_get_property(_pajoniiir_usb_lib usb COMPONENT_LIB)
+target_include_directories(${_pajoniiir_usb_lib} PRIVATE
+    "${CMAKE_CURRENT_LIST_DIR}/../components/usb_storage/include")
 get_target_property(_pajoniiir_usb_sources "${_pajoniiir_usb_lib}" SOURCES)
 set(_pajoniiir_usb_replacement_sources)
 set(_pajoniiir_hcd_source_found FALSE)

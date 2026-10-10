@@ -2309,3 +2309,27 @@ The final generated HCD already contains the owned-URB cache fix. The current
 late-start trace cannot exclude near-boundary activation, and a seven-tick
 callback gap is normal for a 56-packet HS block. A bounded, correlated
 first-fault capture is recommended before further timing or memory tuning.
+
+### Correlated first-fault capture implementation, 2026-10-10
+
+The experimental M3 HS HCD now retains activation metadata in each hardware
+buffer: sequence, channel/list/URB identity, start/interval, HFNUM including
+remaining-time bits and cycle counters before/after activation. ISR entry and
+lock acquisition are sampled; completion registers and original HCINT are
+retained before the next buffer executes. After M2C synchronization and before
+destructive parsing, the first faulty OUT packet freezes the full 64-entry
+raw QTD list and associated metadata. The snapshot is immutable until reboot;
+reconnect cannot erase it. Release/acquire publication prevents partial reads.
+
+The existing read-only `/api/usb-bus-trace` response adds `iso_first_fault`.
+Disabled configurations report `enabled:false`; no capture storage or hot-path
+hooks are compiled for them. No per-packet logging, allocation, file or NVS
+write is added. Existing scheduling and payload policy remain unchanged.
+Cycles are unsigned modulo 2^32; this bench runs at 360 MHz without dynamic
+power management. Only same-core cycle differences are meaningful. Completion
+registers precede rearm; raw QTDs are captured later after required cache sync.
+The normal path has added observer work whose timing impact still requires
+physical verification. A subsequent failure is diagnostic evidence, not proof
+the observer has zero effect. The host regression executes production hooks
+for first-fault freeze/publication, list wrap, intervals, root/IN filtering,
+task/ISR context and completion provenance. Hardware reproduction remains open.

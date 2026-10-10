@@ -45,6 +45,7 @@
 #include "usb_host_manager.h"
 #include "usb_storage.h"
 #include "usb_bus_trace.h"
+#include "usb_isoc_fault.h"
 #if CONFIG_CONTROLLER_PROFILE_MANAGER
 #include "controller_profile_manager.h"
 #endif
@@ -87,7 +88,41 @@ static esp_err_t api_usb_bus_trace_handler(httpd_req_t *req)
         }
         if (rc == ESP_OK) rc = httpd_resp_sendstr_chunk(req, "]}");
     }
-    if (rc == ESP_OK) rc = httpd_resp_sendstr_chunk(req, "]}");
+    if (rc == ESP_OK) rc = httpd_resp_sendstr_chunk(req, "],\"iso_first_fault\":{");
+    usb_isoc_fault_t fault;
+    const bool captured = usb_isoc_fault_snapshot(&fault);
+    snprintf(buf, sizeof(buf), "\"enabled\":%s,\"captured\":%s",
+        usb_isoc_fault_enabled() ? "true" : "false", captured ? "true" : "false");
+    if (rc == ESP_OK) rc = httpd_resp_sendstr_chunk(req, buf);
+    if (captured && rc == ESP_OK) {
+        /* Fields are named explicitly; no struct aliasing or padding exported. */
+#define ISO_FIELD(object, field) do { \
+        snprintf(buf, sizeof(buf), ",\"" #field "\":%lu", (unsigned long)(object).field); \
+        if (rc == ESP_OK) rc = httpd_resp_sendstr_chunk(req, buf); \
+    } while (0)
+        ISO_FIELD(fault.activation, sequence); ISO_FIELD(fault.activation, root);
+        ISO_FIELD(fault.activation, channel); ISO_FIELD(fault.activation, urb);
+        ISO_FIELD(fault.activation, list); ISO_FIELD(fault.activation, start);
+        ISO_FIELD(fault.activation, packets); ISO_FIELD(fault.activation, interval);
+        ISO_FIELD(fault.activation, from_isr);
+        ISO_FIELD(fault.activation, irq_entry_cycle); ISO_FIELD(fault.activation, irq_locked_cycle);
+        ISO_FIELD(fault.activation, irq_entry_hfnum);
+        ISO_FIELD(fault.activation, activate_before_cycle); ISO_FIELD(fault.activation, activate_after_cycle);
+        ISO_FIELD(fault.activation, activate_before_hfnum); ISO_FIELD(fault.activation, activate_after_hfnum);
+        ISO_FIELD(fault.activation, done_stop_idx);
+        ISO_FIELD(fault, completion_cycle); ISO_FIELD(fault, completion_hfnum);
+        ISO_FIELD(fault, hcchar); ISO_FIELD(fault, hctsiz); ISO_FIELD(fault, hcdma);
+        ISO_FIELD(fault, hcint); ISO_FIELD(fault, ptx_status); ISO_FIELD(fault, first_packet);
+        ISO_FIELD(fault, buffer_pending); ISO_FIELD(fault, urb_pending);
+#undef ISO_FIELD
+        if (rc == ESP_OK) rc = httpd_resp_sendstr_chunk(req, ",\"qtd_words\":[");
+        for (unsigned i = 0; rc == ESP_OK && i < 128u; ++i) {
+            snprintf(buf, sizeof(buf), "%s%lu", i ? "," : "", (unsigned long)fault.qtd[i]);
+            rc = httpd_resp_sendstr_chunk(req, buf);
+        }
+        if (rc == ESP_OK) rc = httpd_resp_sendstr_chunk(req, "]");
+    }
+    if (rc == ESP_OK) rc = httpd_resp_sendstr_chunk(req, "}}");
     if (rc == ESP_OK) rc = httpd_resp_send_chunk(req, NULL, 0);
     return rc;
 }
