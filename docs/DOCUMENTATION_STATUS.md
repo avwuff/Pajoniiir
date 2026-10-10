@@ -7,11 +7,16 @@ adds distinct stored-dump ELF identity, a bounded marked stopped-deck raw export
 and verified local ELF/map archives. Focused behavioral regressions pass;
 full host suite, the single M3 IDF 6.0.2 build, board/budget checks and actual
 signed packaging/debug archive verification pass on clean `58f09941`.
-Documentation checks pass. It is not installed and does not repair
-or close the historical restart PANIC. S2 testing remains closed with waivers.
-The accepted `a9f66bcd` ELF/map was preserved before build. Before any diagnostic
-OTA, retain the existing raw dump over USB1, since another PANIC could overwrite
-it. No serial ports were found; operator connection/COM information is pending.
+Documentation checks pass. After the operator clarified USB1 is power-only
+and authorized the dump-overwrite risk, one signed local OTA installed clean
+`58f09941`, VALID `ota_0`, boot 412 with reset `SW`. The new endpoint exported
+the complete 7456-byte historical dump; its embedded checksum passes offline.
+The stored nine-character ELF prefix `5f70083d0` matches the recorded outgoing
+`3f3605a7` identity prefix, not a full SHA-256 match. Registers/segments and
+original bytes are retained with hashes. The original application ELF remains
+missing, and the historical restart PANIC cause remains open. S2 testing stays
+closed with waivers; its accepted `a9f66bcd` ELF/map and exact-image soaks remain
+historical evidence, not acceptance of the installed diagnostic image.
 
 Current S2 disposition, 2026-10-10: **work closed with explicit operator
 waivers; no further S2 testing**. Exact clean `a9f66bcd`, VALID `ota_1`, retains
@@ -27,7 +32,9 @@ no progressive retained-memory decline, a stopped snapshot has zero allocation
 failures and adequate recorded task stack reserves, and largest-block DMA
 qualification remains unavailable. Original outgoing-BIN disassembly supports
 the cache-writeback restart location; its cause and raw-dump/ELF association
-remain unresolved. No new S2 test, firmware, reboot, build, OTA or publication.
+were unresolved at that review checkpoint. The diagnostic capture above adds
+raw bytes and registers, but no causal repair or new S2 qualification. No new
+build, S2 test, push, release or public OTA was performed during this capture.
 
 The [Hercules preparation record](validation/HERCULES_INPULSE_500_PREPARATION_20261010.md)
 documents PC VID/PID and jog-touch capture, exact fixture regeneration and

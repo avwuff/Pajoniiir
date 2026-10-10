@@ -2,8 +2,60 @@
 
 Scope: prepare the general OTA-restart investigation after the operator closed
 S2 testing. This implementation is diagnostic infrastructure, not a repair of
-the cache-register store fault. The accepted installed `a9f66bcd` image, USB
-configuration and historical S2 PASS/waiver records remain unchanged.
+the cache-register store fault. The historical `a9f66bcd` S2 PASS/waiver records
+retain their exact-image scope. The diagnostic candidate is now installed;
+its OTA/export checkpoint is recorded below and does not inherit those soaks.
+
+## Wireless installation and historical dump capture
+
+The operator clarified that USB1 is available only for power and explicitly
+authorized OTA despite the risk that a restart PANIC could replace the old
+dump. Serial capture is therefore not a prerequisite for this authorized path.
+The PC reconnected using its saved `Pajoniiir-M3` Wi-Fi profile. Preflight
+confirmed clean `a9f66bcd`, VALID `ota_1`, stopped IDLE decks and an idle OTA
+service. The candidate bundle signature, image and bundle size/hash passed
+verification before the single upload.
+
+`POST /api/ota/p4` returned HTTP 200 with `ok:true,rebooting:true`. Firmware
+returned as clean `58f09941ee55a88cc8baf8a73287d447a0dfb0ca`,
+`M3-dev-g58f09941ee55`, VALID `ota_0`, with ELF SHA
+`bc10d523fee5263ffb81a3033f01145d944e756645fddcc12d3bf038dac91798`.
+The retained service log records boot 412, reset `SW`, Wi-Fi startup at normal
+20-dBm power and a loaded library of 260 tracks. Both decks remained stopped.
+This single OTA completed without a newly observed PANIC; it is not a general
+restart reliability qualification or evidence that the historical cause is fixed.
+
+The new marked `GET /api/crash-dump` returned a complete 7456-byte raw dump,
+matching its `X-DDJ-Crash-Bytes` header and status-reported size. Raw SHA-256:
+`75afa985b81eea00e253a8e2410ec55364960bcc65c873a4db547b65b8e0c839`.
+The installed `esp_coredump` loader validated its embedded checksum offline
+and extracted a RISC-V core ELF without substituting a later application's
+ELF. The raw header declares exactly 7456 bytes, version `0x120104`, chip
+revision 103. Nine register notes and eighteen load segments were preserved.
+
+The dump's `ESP_CORE_DUMP_INFO` note contains **only nine hexadecimal ELF SHA
+characters**, `5f70083d0`, matching the recorded outgoing `3f3605a7` image's
+ELF SHA prefix. Its size, task, PC, RA, SP, MCAUSE and MTVAL match the pre-OTA
+summary. No raw pre-OTA bytes were available, so this is not a before/after
+byte-equality proof or a full SHA-256 match. The original `3f3605a7` application
+ELF remains unavailable; the newly built ELF must not symbolize this old dump.
+
+The first register note identifies TCB `0x4ff35eac` and confirms
+PC `0x4ff0c624`, RA `0x4ff00b70`, SP `0x4ff33c80`. Register `a3` contains
+`0x3ff10000`, the cache-register base used by the preserved original BIN's
+disassembly. The same note has `a4=0x3ff10098` and `a5=4`, values assigned
+later in that instruction sequence than the recorded PC. Preserve these
+values and the PC/MTVAL discrepancy; do not infer precise bus fault timing,
+rewrite PC to the previous instruction or claim a protection/ordering cause.
+
+Local original and derived evidence, including pre/post status and firmware,
+startup polls, raw dump, extracted core/segments, offline analysis and a
+34-file SHA-256 inventory:
+`.cache/crash-diagnostics-wireless/20261010T203454Z/`.
+The capture and offline analysis helpers are retained under `.cache/`.
+The original raw dump was not erased or edited. No additional S2 test, new
+build, playback, USB/Wi-Fi control cycle, push, release or public OTA occurred.
+Physical GUI/audio acceptance of the diagnostic image remains NOT RUN.
 
 ## Implemented
 
@@ -62,12 +114,12 @@ Logs and exit records: `.cache/crash-diagnostics-full-host*`,
 `.cache/crash-diagnostics-m3-build*`, `.cache/crash-diagnostics-package.log`,
 `.cache/crash-diagnostics-documentation*`.
 
-**Not installed.** The running accepted image remains `a9f66bcd`; the new
+**Historical pre-install checkpoint.** The running accepted image was `a9f66bcd`; the new
 endpoint and fields are not available on that image. No JC build, physical
 export/OTA lifecycle test, additional S2 test, push or publication was performed.
 Build/software results are not installed-device acceptance or an OTA PANIC fix.
 
-## Next evidence acquisition
+## Historical serial capture proposal
 
 Before installing a diagnostic image, retain the original raw dump through
 USB1/CH340 serial access: a new OTA PANIC could overwrite it. This is a small
@@ -79,9 +131,11 @@ extract the ELF notes/registers and match the stored SHA prefix against the
 archived outgoing candidates. Never use the newly built ELF to symbolize an
 old dump solely because its addresses look similar.
 
-The serial-port inventory found no ports at this checkpoint. The operator
-has been asked to connect USB1 and provide the COM port. Neither the existing
-dump nor the firmware has been erased or overwritten while awaiting access.
+The serial-port inventory found no ports at this checkpoint. The later
+operator clarification and risk-authorized wireless capture supersede the
+serial dependency; see the completed installation/capture above. Next work
+is offline analysis of the preserved core and original candidate code, with
+the missing original application ELF and short identity prefix kept explicit.
 
 See [capture instructions](../OTA-UPDATE.md#local-crash-diagnostics-and-debug-artifacts)
 and [the original investigation](../reviews/2026-10-10-s2-closeout-resources-restart.md).

@@ -1,5 +1,13 @@
 # S2 closeout, memory reserves and OTA restart evidence
 
+Later checkpoint: [diagnostic installation and raw capture](../validation/CRASH_DIAGNOSTICS_20261010.md#wireless-installation-and-historical-dump-capture)
+completed after explicit operator authorization of the power-only USB1
+fallback. Clean `58f09941` is now VALID `ota_0`; the historical dump checksum
+passes and its stored nine-character ELF prefix matches `3f3605a7`'s recorded
+prefix. The original application ELF and proven restart cause remain missing.
+The review below describes the earlier pre-install evidence; no S2 tests were
+reopened by the later diagnostic OTA.
+
 Date: 2026-10-10. This review supersedes the remaining-test recommendations in
 [the earlier post-soak review](2026-10-10-s2-post-soak-headroom-lifecycle.md).
 It adds a stopped-deck resource snapshot and offline analysis of preserved
