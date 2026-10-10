@@ -2274,5 +2274,31 @@ Final exact clean `fc4ed608` identity remains VALID in `ota_0`. S2 stayed at
 44100 Hz. The operator explicitly confirmed clean MAIN/S2 headphones and
 fluid dual waveforms throughout. Controls were untouched (MIDI delta zero).
 This is short playback PASS, not proof that the longer ISO failure is fixed;
-the prior candidate lost packets after 1336 s. A fresh exact-image final soak
-and lifecycle/headroom checks remain open. No long run has been started.
+the prior candidate lost packets after 1336 s. Lifecycle/headroom checks remain
+open. The subsequent exact-image soak result is recorded below.
+
+### Internal payload final soak: strict ISO FAIL, 2026-10-10
+
+The operator authorized a new 3600-second run with controls and connections
+unchanged. Independent Scheduled Task `Pajoniiir-S2-Soak-20261009T235253Z`
+started at approximately 01:52:54 Europe/Zagreb. Evidence is retained under
+`.cache/s2-mk3/next-gates-20261009/internal-payload-soak-durable-20261009T235253Z/`.
+Exact clean source `fc4ed60878c99212033a5d2872de1d6395b3185c` remains VALID
+`ota_0`, ELF `fb7ad3e0f8d758fc071730bd88bd3027b84b2f0770abb43738645ce0c99137d4`.
+S2 streaming remained 44100 Hz; MAIN 48000 Hz, mixed-rate sources, dual MT,
+four-beat loops, opposite pitch and zoom 8 remained unchanged.
+
+The runner stopped on its first strict failure after 529.276 seconds and 783
+samples: ISO packet failures increased by 2 and packet lost frames by 11.
+The other 20 strict deltas remained zero. Output-late delta was 1, a separate
+monitoring finding; this is not a zero-late run. Both decks were safely stopped
+and the live post-failure status confirmed this. The independent wrapper saved
+its result and exit code 1 at 02:01:46 local. No new run was started.
+
+The operator explicitly reported no noticed audio, waveform or controller
+disturbance before the automatic stop. This does not waive the strict ISO
+failure. Moving both descriptors and payloads into internal memory did not
+eliminate the loss, and external payload contention is not established as the
+sole cause. Final long-duration acceptance remains open. Post-failure status,
+diagnostic log and USB bus trace were retained; checkpoint automation paused.
+Short playback PASS retains its scope. No firmware change, push or release.
