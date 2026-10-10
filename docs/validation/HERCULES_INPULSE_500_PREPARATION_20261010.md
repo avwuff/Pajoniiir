@@ -192,3 +192,39 @@ capacity rejection, fractional 44/45-frame packets, stale stop, teardown and
 FLX4 isolation. Existing UAC2 clock/feedback/30-reconnect host cases pass.
 Full qualification, build/package/install of this feedback candidate and
 physical Hercules audio remain pending. No S2 physical test is reopened.
+
+## Feedback candidate installation and claim rejection
+
+Clean `90fba6906338c68c7d38e322f5f4209aa0273d3f` passes the complete host
+qualification without SKIP and the single M3 ESP-IDF 6.0.2 build, board/budget
+and restart capture gates. Application: 2,602,208 bytes, SHA-256
+`804f69abadec4600410eb2672997cf8643e669a03d4af0afa0cf8697f8e05c47`.
+ELF: `38c63799653e616c0f707ddda7433b70423681aa5c8d1c86dd7463a950315387`.
+Signed bundle: 2,602,396 bytes, SHA-256
+`c14465d7319dd8882973ec40974ec2e8b3465c2e3de6ca91f57744cf7b4f3d23`.
+Matching debug and verification files are retained under
+`.cache/hercules-feedback-candidate-90fba690/pajoniiir-m3-M3-dev-g90fba6906338/`.
+
+One local signed upload returned HTTP 200. The 90-second observer then timed
+out while the PC was disconnected from the AP; original result/polls remain
+unchanged. The operator reported a normal GUI. Reconnection to `Pajoniiir-M3`
+confirmed exact clean source/ELF, VALID `ota_1`, API idle, boot 415/SW and both
+decks IDLE. No repeat upload or reset was needed. Evidence, including separate
+`recovery-verification.json`, is retained at
+`.cache/hercules-feedback-wireless/20261010T220549Z/`.
+
+Hercules MIDI IN/OUT and the v4 profile bind successfully. Audio selects packed
+24-bit/44100 Hz, but remains non-streaming with no control completion or prime
+fault reported. In this production startup path that places the rejection at
+`usb_host_interface_claim`, before asynchronous configuration. The return code
+is not exposed by this image; FIFO, HCD endpoint allocation and memory causes
+are not established. The old crash summary still refers to the preserved
+7456-byte historical image, not a new PANIC. No playback test was started.
+
+The next diagnostic preserves claim rejection as prime stage 5, with interface
+number and exact `esp_err_t`, while retaining the existing MIDI/ownership and
+recovery behavior. Production stream tests exercise unsupported/no-memory
+claims, zero leaked ownership/allocations, preserved evidence after cleanup
+and successful following UAC2 startup. Focused tests pass; this diagnostic's
+full build/install is pending. Hercules physical audio/native blend and controls
+remain NOT RUN. S2 testing stays closed.

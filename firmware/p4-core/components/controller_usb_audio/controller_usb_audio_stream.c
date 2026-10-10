@@ -757,6 +757,11 @@ esp_err_t controller_usb_audio_stream_start(
         client, device, s_format.interface_num, s_format.alternate_setting);
     if (rc != ESP_OK) {
         s_config_failures++;
+        /* Claim allocates the actual HCD endpoints. Preserve its rejection
+         * separately from asynchronous priming faults; MIDI stays available. */
+        s_prime_fault_stage = 5u;
+        s_prime_fault_index = s_format.interface_num;
+        s_prime_fault_code = rc;
         s_configuring = false;
         s_client = NULL;
         s_device = NULL;

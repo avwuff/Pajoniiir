@@ -62,7 +62,8 @@ static inline int usb_host_transfer_free(usb_transfer_t *t) {
     free(t->data_buffer); free(t); return ESP_OK;
 }
 static inline int usb_host_interface_claim(void *c, void *d, unsigned i, unsigned a) {
-    (void)c; (void)d; (void)i; (void)a; return ESP_OK;
+    extern int review_claim_result;
+    (void)c; (void)d; (void)i; (void)a; return review_claim_result;
 }
 static inline int usb_host_interface_release(void *c, void *d, unsigned i) {
     (void)c; (void)d; (void)i; return ESP_OK;

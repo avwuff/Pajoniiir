@@ -40,7 +40,8 @@ typedef struct {
     uint32_t last_control_word;
     uint32_t clock_readback_retries;
     uint32_t clock_reported_rate;
-    /* Startup: 1 feedback alloc, 2 feedback submit, 3 ISO alloc, 4 ISO submit. */
+    /* Startup: 1 feedback alloc, 2 feedback submit, 3 ISO alloc, 4 ISO submit,
+     * 5 interface claim (index is the interface number). */
     uint8_t prime_fault_stage;
     uint8_t prime_fault_index;
     int32_t prime_fault_code;

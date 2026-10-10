@@ -6,6 +6,7 @@ unsigned review_live_transfers, review_hs_payload_allocations;
 size_t review_live_payload_bytes;
 unsigned review_ticks;
 int review_fail_alloc_packets = -1, review_fail_submit_endpoint = -1;
+int review_claim_result = 0;
 /* Compile the actual stream owner against USB/RTOS boundary stubs. A critical
  * section hook deterministically pauses the producer before ring publication. */
 #define CONTROLLER_USB_AUDIO_PC_TEST
@@ -604,6 +605,27 @@ static void test_uac2_44100_fallback(void)
 
 static void test_prime_fault_evidence(void)
 {
+    const int rejected[] = {ESP_ERR_NOT_SUPPORTED, ESP_ERR_NO_MEM};
+    for (unsigned n = 0; n < sizeof(rejected) / sizeof(rejected[0]); ++n) {
+        assert(controller_usb_audio_stream_is_quiesced());
+        for (unsigned i = 0; i < STREAM_TRANSFER_COUNT; ++i) assert(release_idle_isoc(i));
+        assert(controller_usb_audio_stream_set_policy(false, false, false) == ESP_OK);
+        const unsigned allocations = review_live_transfers;
+        review_claim_result = rejected[n];
+        assert(controller_usb_audio_stream_start((void *)1, (void *)2,
+            hercules_fs_config, sizeof(hercules_fs_config), (void *)3, 10, 5) == rejected[n]);
+        controller_usb_audio_stream_stats_t stats;
+        controller_usb_audio_stream_get_stats(&stats);
+        assert(stats.prime_fault_stage == 5 && stats.prime_fault_index == 1);
+        assert(stats.prime_fault_code == rejected[n]);
+        assert(!stats.claimed && !stats.configuring && !stats.streaming);
+        assert(review_live_transfers == allocations);
+        assert(controller_usb_audio_stream_poll_cleanup());
+        controller_usb_audio_stream_get_stats(&stats);
+        assert(stats.prime_fault_stage == 5 && stats.prime_fault_code == rejected[n]);
+        review_claim_result = ESP_OK;
+    }
+    assert(controller_usb_audio_stream_set_policy(false, false, true) == ESP_OK);
     for (unsigned stage = 1; stage <= 4; ++stage) {
         /* These cases model a cold allocation, not a retained HS pool. */
         assert(controller_usb_audio_stream_is_quiesced());
