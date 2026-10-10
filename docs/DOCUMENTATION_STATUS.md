@@ -295,6 +295,24 @@ Post-operator counters show three reconnections and healthy final S2 44100-Hz
 audio, decks/tracks and storage preserved. Per-cycle telemetry remains open;
 the 48000-Hz playback PASS is not transferred to 44100 Hz.
 
+The repeated reconnect observer captured three operational MIDI/audio returns
+at 44100 Hz; operator confirmed both Browse controls. Tracks, stopped decks,
+storage and image remained unchanged, allocation/root-recovery failure deltas
+zero. One ISO packet/five frames was lost before the first removal; operator
+explicitly confirmed manipulating cable or power in that period. Evidence is
+preserved with context and hashes; neither spontaneous firmware causation nor
+manipulation as the cause is established. This is not clean ISO qualification.
+The completed task was removed after exit. Shared monitor ISO checks now also
+cover stopped Observe/UsbRecovery; the regression reproduced false PASS before
+the fix and all 11 monitor tests pass after it. No firmware build or OTA change.
+
+A separate read-only 600-s idle observation of S2 44100-Hz streaming started
+2026-10-10 19:47:11 local with both decks stopped and no intentional USB/power
+changes. Records `stopped-idle-20261010T174710Z` under the next-gates directory;
+independent task and live process verified. Baseline ISO 1 packet/5 frames and
+frozen fault remain retained. Result is pending; this does not qualify playback
+or full S2 acceptance. Checkpoint automation will report completion and pause.
+
 1. Exact release artifacts/configuration and current code/tests for their own SHA.
 2. [Published M2.5 record](validation/M2_5_RELEASE_20261006.md) for accepted
    hardware and publication; this status for current scope.

@@ -465,17 +465,19 @@ try {
                 if (-not $hardFailures.Contains($message)) { $hardFailures.Add($message) }
             }
 
-            if ($Mode -eq 'TimingSoak') {
-                foreach ($counter in @('packet_failures','packet_lost_frames')) {
-                    if ($null -ne $baseline.diagnostics.usb_headphones.PSObject.Properties[$counter]) {
-                        $beforeCount = Require-Value $baseline "diagnostics.usb_headphones.$counter"
-                        $nowCount = Require-Value $status "diagnostics.usb_headphones.$counter"
-                        if ([uint64]$nowCount -ne [uint64]$beforeCount) {
-                            $message = "UAC $counter counter changed"
-                            if (-not $hardFailures.Contains($message)) { $hardFailures.Add($message) }
-                        }
+            # ISO loss remains observable with stopped decks and during recovery.
+            # Older images may omit these counters; once present they must persist.
+            foreach ($counter in @('packet_failures','packet_lost_frames')) {
+                if ($null -ne $baseline.diagnostics.usb_headphones.PSObject.Properties[$counter]) {
+                    $beforeCount = Require-Value $baseline "diagnostics.usb_headphones.$counter"
+                    $nowCount = Require-Value $status "diagnostics.usb_headphones.$counter"
+                    if ([uint64]$nowCount -ne [uint64]$beforeCount) {
+                        $message = "UAC $counter counter changed"
+                        if (-not $hardFailures.Contains($message)) { $hardFailures.Add($message) }
                     }
                 }
+            }
+            if ($Mode -eq 'TimingSoak') {
                 $timingWorkloadSamples++
                 $ratePairOk =
                     (([uint32]$status.diagnostics.deck_sample_rate1 -eq 44100 -and

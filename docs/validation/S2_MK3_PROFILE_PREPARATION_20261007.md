@@ -2479,3 +2479,55 @@ exit. A revised local observer retains transition-fault observations and waits
 up to two seconds for an associated removal; faults without removal and root
 recovery failures still terminate the capture. A completed capture containing
 transition faults requires review and is not automatically classified zero-error.
+
+### Repeated reconnect block and operator context, 2026-10-10
+
+The revised stopped-deck observer recorded all three removals and returns in
+161.221 seconds / 295 samples. Each return restored MIDI and live S2 audio at
+44100 Hz; the operator confirmed both Browse controls worked after all three
+cycles. Tracks, stopped deck state and storage were preserved on exact clean
+`a9f66bcd`. Interface claims, transfer allocations, MIDI submissions, probe
+drops, root recovery failures/queue drops and daemon errors had zero deltas.
+Twelve MIDI pipe errors and three recovery requests coincided with the three
+observed removals. DMA free starts/finishes at 11163 bytes; the lifetime minimum
+7371 bytes was already present at baseline. This is operational recovery
+evidence for three cycles, not zero-error or full lifecycle qualification.
+
+One ISO packet / five frames was lost at sample elapsed 31.479 seconds, before
+the first observed removal at 66.952 seconds. The journal records the fault
+at uptime 7265181 ms; the sample observes it at 7265750 ms. The operator
+explicitly confirmed touching cable or power during that initial period.
+Neither a spontaneous firmware failure nor manipulation as the cause is
+proven. The window cannot qualify clean ISO streaming. Original loss counters,
+observer result and frozen descriptor capture are preserved without rewriting
+the result. The reconnect helper had not checked ISO counters; its completed
+classification did not establish a strict audio PASS.
+
+The frozen capture shows the first scheduled descriptor at slot 59 still
+ACTIVE with 80 bytes remaining; the other 55 scheduled packets completed.
+HFNUM's low frame bits already indicate slot 59 before activation. This
+supports investigation of the block-boundary schedule, but does not establish
+the original cause under the reported physical manipulation. Activation
+before/after cycle timing includes the post-enable HAL wrapper/trace work;
+it is not a precise measurement of channel-enable latency. No firmware timing
+change is justified solely by this confounded capture.
+
+Evidence: `.cache/s2-mk3/next-gates-20261009/first-fault-reconnect-v2-20261010T173545Z/`.
+`operator-context-audit.json` records the operator correction, loss deltas and
+SHA-256 hashes of original records. The completed single-use task was removed
+only after runner exit. The local reconnect observer now checks both ISO
+counters. The shared reliability monitor also checks them in `Observe` and
+`UsbRecovery`, including stopped decks. A regression first reproduced false
+PASS in both modes, then all 11 monitor tests passed after correction; unchanged
+nonzero baseline counters remain valid. Firmware/build/OTA are unchanged.
+
+A separate read-only 600-second stopped-deck S2 44100-Hz observation started
+at 19:47:11 Europe/Zagreb. Task `Pajoniiir-S2-Idle-20261010T174710Z` and its
+live Python process were verified; initial samples show both decks stopped,
+healthy 44100-Hz streaming and unchanged packet counters (baseline 1/5).
+Records: `.cache/s2-mk3/next-gates-20261009/stopped-idle-20261010T174710Z/`.
+It does not change controls, connections or firmware, read heap resources,
+or play audio. The existing frozen fault remains historical; new failures
+are detected through strict deltas. Outcome is pending, and even a completed
+idle window will not qualify 44100-Hz playback or resolve the intermittent
+ISO cause. Checkpoint automation will report its final outcome and pause.

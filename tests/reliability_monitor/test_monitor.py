@@ -129,6 +129,22 @@ class MonitorTest(unittest.TestCase):
         self.assertEqual(qualified['result'],'fail',qualified)
         self.assertIn('Required telemetry is missing: deck1.loop_active',qualified['hard_failures'])
 
+    def test_stopped_observe_and_recovery_cannot_hide_new_iso_loss(self):
+        def stopped(s):
+            for deck in ('deck1', 'deck2'):
+                s[deck]['playing'] = False
+            s['diagnostics']['usb_headphones'].update(packet_failures=1, packet_lost_frames=5)
+        for mode in ('Observe', 'UsbRecovery'):
+            with self.subTest(mode=mode):
+                unchanged = self.run_monitor(initial=stopped, mode=mode)
+                self.assertEqual(unchanged['result'], 'pass', unchanged)
+                lost = self.run_monitor(
+                    lambda s: s['diagnostics']['usb_headphones'].update(packet_failures=2, packet_lost_frames=10),
+                    initial=stopped, mode=mode)
+                self.assertEqual(lost['result'], 'fail', lost)
+                self.assertIn('UAC packet_failures counter changed', lost['hard_failures'])
+                self.assertIn('UAC packet_lost_frames counter changed', lost['hard_failures'])
+
     def test_empty_and_single_row_catalogs_keep_their_actual_counts(self):
         for count in (0,1):
             with self.subTest(count=count):
