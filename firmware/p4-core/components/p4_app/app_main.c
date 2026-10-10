@@ -34,6 +34,7 @@
 #include "p4_startup_gate.h"
 #include "firmware_resources.h"
 #include "p4_ota.h"
+#include "restart_diagnostics.h"
 
 static const char *TAG = "main";
 
@@ -354,6 +355,7 @@ static void on_usb_storage_event(bool mounted)
 
 void pajoniiir_common_app_main(void)
 {
+    p4_restart_capture_init();
     const uint64_t boot_started_us = (uint64_t)esp_timer_get_time();
     p4_tcm_heap_guard_keep();
     ESP_ERROR_CHECK(firmware_resources_init());

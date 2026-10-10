@@ -55,8 +55,18 @@ static void reset(void)
 int main(void)
 {
     assert(sizeof(p4_restart_capture)==256);
+    /* Model stale noinit bytes at boot; a pre-app restart must initialize them. */
+    memset((void *)p4_restart_capture, 0xa5, sizeof(p4_restart_capture));
+    if (!setjmp(restarted)) __wrap_esp_restart();
     assert(p4_restart_capture[0].magic==P4_RESTART_CAPTURE_MAGIC);
     assert(p4_restart_capture[1].version==1 && p4_restart_capture[1].bytes==128);
+    assert(p4_restart_capture[0].flags==0 && p4_restart_capture[1].flags==0);
+    assert(p4_restart_capture[0].restart_phase==2);
+    assert(p4_restart_capture[1].restart_phase==0);
+    p4_restart_capture_t initialized[2];
+    memcpy(initialized,(const void *)p4_restart_capture,sizeof(initialized));
+    p4_restart_capture_init();
+    assert(memcmp(initialized,(const void *)p4_restart_capture,sizeof(initialized))==0);
     reset();
     if (!setjmp(restarted)) __wrap_esp_restart();
     assert(p4_restart_capture[0].restart_phase==2);
@@ -75,6 +85,7 @@ int main(void)
     p4_restart_capture_t frozen; memcpy(&frozen,(const void *)r,sizeof(frozen));
     if (!setjmp(restarted)) __wrap_esp_restart();
     frame.mepc=0xabcd; __wrap_panic_arch_fill_info(&frame,&info);
+    p4_restart_capture_init(); /* Startup/restart calls cannot erase a capture. */
     assert(memcmp(&frozen,(const void *)r,sizeof(frozen))==0);
     assert(real_calls==2); /* Real IDF behavior continues even when frozen. */
     cpu=1; frame=input; frame.mhartid=1;
@@ -86,6 +97,6 @@ int main(void)
     assert(frame.mepc==0x9999 && !p4_restart_capture[0].flags && !p4_restart_capture[1].flags);
     cpu=0; __wrap_panic_arch_fill_info(NULL,&info);
     assert(!p4_restart_capture[0].flags);
-    puts("restart diagnostics: capture-before-normalization, core isolation, frozen evidence and restart delegation PASS");
+    puts("restart diagnostics: fresh boot initialization, capture-before-normalization, core isolation, frozen evidence and restart delegation PASS");
     return 0;
 }

@@ -33,9 +33,13 @@ class RawPipelineTests(unittest.TestCase):
             app = ELFFile(stream)
             symbol = app.get_section_by_name(".symtab").get_symbol_by_name("p4_restart_capture")[0]
             self.address = symbol["st_value"]
-            section = app.get_section(symbol["st_shndx"])
-            offset = self.address - section["sh_addr"]
-            self.payload = bytearray(section.data()[offset:offset + 256])
+            self.assertEqual(app.get_section(symbol["st_shndx"]).name, ".noinit")
+            self.assertEqual(symbol["st_size"], 256)
+        # NOBITS has no initialized ELF payload. Model the production boot ABI;
+        # the link contract separately verifies its init calls and dump bounds.
+        self.payload = bytearray(256)
+        for offset in (0, 128):
+            struct.pack_into("<III", self.payload, offset, 0x50345244, 1, 128)
         # Simulate one captured frame with distinguishable trap/queue data.
         struct.pack_into("<I", self.payload, 3*4, 1)
         struct.pack_into("<I", self.payload, 8*4, 0x4ff0c634)

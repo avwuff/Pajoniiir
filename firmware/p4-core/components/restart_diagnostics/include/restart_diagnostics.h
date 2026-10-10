@@ -12,7 +12,7 @@ enum {
     P4_RESTART_PHASE_NOOS = 2,
 };
 
-/* Fixed little-endian RV32 ABI, copied by IDF's user DRAM coredump region.
+/* Fixed little-endian RV32 ABI, copied by IDF's internal noinit coredump region.
  * VALID is published last. It records one exception per core per boot.
  * Queue entries remain raw, including validity bits; sampling is sequential. */
 typedef struct {
@@ -25,3 +25,5 @@ typedef struct {
 } p4_restart_capture_t;
 
 extern volatile p4_restart_capture_t p4_restart_capture[P4_RESTART_CAPTURE_CORES];
+/* Idempotent per boot; call before services. Hooks cover pre-app exceptions. */
+void p4_restart_capture_init(void);

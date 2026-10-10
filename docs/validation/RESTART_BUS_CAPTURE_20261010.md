@@ -21,11 +21,20 @@ sources:
   CSRs **before** delegating to IDF's possible saved-PC normalization.
 
 The wrappers reside in IRAM. Two fixed 128-byte records reside in internal
-DRAM, in the IDF `COREDUMP_DRAM_ATTR` user region. The normal ELF coredump
+DRAM, in the IDF `COREDUMP_NOINIT_ATTR` user region. The normal ELF coredump
 writer includes this region without enabling global DRAM/heap capture. No
 steady-state audio hook, polling, allocation, logging, NVS write or SDK
 upgrade was added. Capture has observer overhead and is not an atomic
 hardware snapshot.
+
+The actual M3 link exposed a duplicated `_coredump_dram_start/end` definition
+in IDF 6.0.2's generated P4 linker script: the second DRAM bank overwrote the
+bounds with an empty interval despite correct placement in the first bank.
+The mandatory ELF gate rejected that image. The unique internal noinit
+coredump region avoids this without SDK changes or replacing global bounds.
+A BSS readiness marker and bounded IRAM initialization clear stale noinit
+bytes once per boot, before common services; restart and exception hooks also
+initialize on pre-app entry. Repeated initialization preserves frozen evidence.
 
 Each core's record contains ABI magic/version/length, restart phase/cycles,
 pre-normalization frame PC/RA/SP/cause/address/core, current MEPC/MCAUSE/MTVAL,
@@ -51,7 +60,8 @@ differs, the decoder reports the difference without conflating their CSRs.
 The C host test executes the production wrapper source with mocked CSR reads
 and IDF functions. It checks capture-before-normalization, original behavior
 delegation, both-core separation, frozen evidence during panic restart, invalid
-core/null-frame handling and the fixed 256-byte total reservation.
+core/null-frame handling, stale noinit initialization, idempotence and the fixed
+256-byte total reservation.
 
 Four decoder regressions verify raw PC/address pairs and validity bits,
 truncation, ABI/flags/phase/core rejection, and full BIN/ELF SHA matching.
@@ -60,7 +70,8 @@ truncation, ABI/flags/phase/core rejection, and full BIN/ELF SHA matching.
 Every P4 link now runs `tools/check_restart_capture_elf.py`: the actual ELF
 must contain IRAM wrappers, real intercepted callers, delegation to the
 original IDF functions, all required bus CSRs, and the complete 256-byte
-record within the IDF user coredump DRAM bounds. A missing wrapper or an
+record within the IDF user coredump noinit bounds, with IRAM initialization
+called from startup and each hook. A missing wrapper or an
 uncaptured region fails the build. The same build target exercises five
 synthetic raw-coredump cases with the built app BIN/ELF: successful decoding,
 bad checksum, wrong dump identity, truncated region and wrong ABI. These are
@@ -68,7 +79,8 @@ software fixtures, not an induced physical PANIC or observed hardware fault.
 
 The focused C and four decoder regressions pass. The full qualification host
 suite completed with exit code zero and no SKIP markers. One M3 ESP-IDF 6.0.2
-build and its actual link/raw-pipeline checks remain pending at this source
+build and its actual link/raw-pipeline checks remain pending after the rejected
+DRAM-region build at this source
 checkpoint. Clean M3 defaults now explicitly select the existing bounded
 flash-coredump contract (eight tasks, boot check, diagnostic logs disabled),
 matching the shared P4 defaults. The bench HS config already enables flash

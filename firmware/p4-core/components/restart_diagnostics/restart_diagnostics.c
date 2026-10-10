@@ -11,10 +11,10 @@
 
 _Static_assert(sizeof(p4_restart_capture_t) == 128, "restart capture ABI changed");
 
-#define RECORD_INIT { .magic = P4_RESTART_CAPTURE_MAGIC, \
-    .version = P4_RESTART_CAPTURE_VERSION, .bytes = sizeof(p4_restart_capture_t) }
-COREDUMP_DRAM_ATTR volatile p4_restart_capture_t
-    p4_restart_capture[P4_RESTART_CAPTURE_CORES] = { RECORD_INIT, RECORD_INIT };
+COREDUMP_NOINIT_ATTR volatile p4_restart_capture_t
+    p4_restart_capture[P4_RESTART_CAPTURE_CORES];
+/* BSS resets each boot even though the dump region itself is noinit. */
+static DRAM_ATTR volatile uint32_t s_capture_ready;
 
 void __real_panic_arch_fill_info(void *frame, panic_info_t *info);
 void __real_esp_restart(void) __attribute__((noreturn));
@@ -29,8 +29,26 @@ static inline __attribute__((always_inline)) void publish_barrier(void)
 #endif
 }
 
+void IRAM_ATTR p4_restart_capture_init(void)
+{
+    if (s_capture_ready) return;
+    /* Volatile bounded stores prevent a compiler-generated flash memset call. */
+    volatile unsigned char *bytes = (volatile unsigned char *)p4_restart_capture;
+    for (unsigned i = 0; i < sizeof(p4_restart_capture); ++i) {
+        bytes[i] = 0;
+    }
+    for (unsigned i = 0; i < P4_RESTART_CAPTURE_CORES; ++i) {
+        p4_restart_capture[i].magic = P4_RESTART_CAPTURE_MAGIC;
+        p4_restart_capture[i].version = P4_RESTART_CAPTURE_VERSION;
+        p4_restart_capture[i].bytes = sizeof(p4_restart_capture_t);
+    }
+    publish_barrier();
+    s_capture_ready = 1;
+}
+
 static inline __attribute__((always_inline)) void mark_restart(uint32_t phase)
 {
+    p4_restart_capture_init();
     uint32_t core = RV_READ_CSR(mhartid);
     if (core >= P4_RESTART_CAPTURE_CORES) return;
     volatile p4_restart_capture_t *record = &p4_restart_capture[core];
@@ -60,6 +78,8 @@ void IRAM_ATTR __attribute__((noreturn)) __wrap_esp_restart_noos(void)
 
 void IRAM_ATTR __wrap_panic_arch_fill_info(void *frame, panic_info_t *info)
 {
+    /* Also handle an exception after BSS init but before common app startup. */
+    p4_restart_capture_init();
     uint32_t core = RV_READ_CSR(mhartid);
     if (frame != 0 && core < P4_RESTART_CAPTURE_CORES) {
         volatile p4_restart_capture_t *record = &p4_restart_capture[core];

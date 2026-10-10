@@ -27,13 +27,16 @@ def verify(build):
             if elf.get_section(item["st_shndx"]).name != ".iram0.text":
                 raise ValueError(f"{name} is not in internal IRAM")
             addresses[name] = hex(item["st_value"])
+        init = symbol("p4_restart_capture_init")
+        if elf.get_section(init["st_shndx"]).name != ".iram0.text":
+            raise ValueError("capture initialization is not in internal IRAM")
         record = symbol("p4_restart_capture")
-        start = symbol("_coredump_dram_start")["st_value"]
-        end = symbol("_coredump_dram_end")["st_value"]
+        start = symbol("_coredump_noinit_start")["st_value"]
+        end = symbol("_coredump_noinit_end")["st_value"]
         address = record["st_value"]
         if not (record["st_size"] == 256 and start <= address and address + 256 <= end):
-            raise ValueError("record is not fully included in IDF user coredump DRAM")
-        if elf.get_section(record["st_shndx"]).name != ".dram0.data":
+            raise ValueError("record is not fully included in IDF user coredump noinit")
+        if elf.get_section(record["st_shndx"]).name != ".noinit":
             raise ValueError("capture is not in internal DRAM")
 
     cache = (build / "CMakeCache.txt").read_text()
@@ -44,6 +47,14 @@ def verify(build):
     blocks = re.split(r"(?m)^[0-9a-f]+ <([^>]+)>:\n", disassembly)
     functions = dict(zip(blocks[1::2], blocks[2::2]))
     callers = {}
+    init_call = r"\b(?:jal|jalr|j)\b[^\n]*<p4_restart_capture_init>"
+    for caller in wrapper_names + ["pajoniiir_common_app_main"]:
+        if not re.search(init_call, functions.get(caller, "")):
+            raise ValueError(f"{caller} does not initialize the capture region")
+    init_targets = re.findall(r"\b(?:jal|jalr|j)\b[^\n]*<([^>]+)>",
+                              functions.get("p4_restart_capture_init", ""))
+    if any(target.split("+")[0] != "p4_restart_capture_init" for target in init_targets):
+        raise ValueError("capture initialization calls an external helper")
     for wrapped in wrapper_names:
         originals = wrapped.replace("__wrap_", "")
         body = functions.get(wrapped, "")
@@ -60,7 +71,8 @@ def verify(build):
             raise ValueError(f"panic hook omits CSR {csr}")
     result = {"wrapper_iram_addresses": addresses, "actual_callers": callers,
               "capture_address": hex(address), "capture_bytes": 256,
-              "coredump_dram_bounds": [hex(start), hex(end)],
+              "coredump_noinit_bounds": [hex(start), hex(end)],
+              "initialization_iram_address": hex(init["st_value"]),
               "scope": "linked placement/interception only; physical panic export NOT RUN"}
     print(json.dumps(result, indent=2))
     return result
