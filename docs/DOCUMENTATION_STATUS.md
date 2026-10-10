@@ -313,6 +313,15 @@ independent task and live process verified. Baseline ISO 1 packet/5 frames and
 frozen fault remain retained. Result is pending; this does not qualify playback
 or full S2 acceptance. Checkpoint automation will report completion and pause.
 
+That stopped S2 44100-Hz idle observation completed 600.019 s / 1084 samples,
+wrapper exit zero. All samples preserve exact clean `a9f66bcd`, stopped decks,
+tracks, storage and healthy live streaming; all 22 strict deltas and output-late
+delta zero. Final firmware remains VALID `ota_1` with the same ELF. Existing
+ISO 1/5 counters and frozen capture are unchanged. Ten-minute idle telemetry
+PASS only; 44100-Hz playback, full S2 acceptance and ISO causation remain open.
+Full-sample audit/hashes saved, task removed after exit, automation paused.
+No firmware, playback, connection, reboot or publication changes.
+
 1. Exact release artifacts/configuration and current code/tests for their own SHA.
 2. [Published M2.5 record](validation/M2_5_RELEASE_20261006.md) for accepted
    hardware and publication; this status for current scope.

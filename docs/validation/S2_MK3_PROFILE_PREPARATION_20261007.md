@@ -2531,3 +2531,24 @@ or play audio. The existing frozen fault remains historical; new failures
 are detected through strict deltas. Outcome is pending, and even a completed
 idle window will not qualify 44100-Hz playback or resolve the intermittent
 ISO cause. Checkpoint automation will report its final outcome and pause.
+
+### Stopped 44100-Hz idle observation completed, 2026-10-10
+
+The independent read-only observer finished at 19:57:12 local with wrapper
+exit code zero: 600.019 seconds / 1084 samples. All samples were audited for
+the same clean `a9f66bcd`, stopped decks with unchanged tracks, mounted storage
+and healthy S2 44100-Hz streaming. All 22 strict counter deltas and output-late
+delta were zero. Final firmware remains VALID `ota_1` with the same ELF; both
+decks remain stopped. Existing ISO counters (one packet / five frames) were
+unchanged, and the frozen first-fault snapshot is identical to the initial
+snapshot, not a newly captured fault.
+
+This is telemetry PASS for this ten-minute stopped/idle-stream scope. No
+playback, active-control or listening acceptance was performed; the 44100-Hz
+playback gate and intermittent ISO root cause remain open. It does not prove
+that earlier loss was caused by cable/power manipulation. No reboot, firmware
+change, USB change, resources/heap query, playback or new monitor was needed.
+`evidence-audit.json` in the idle run directory records the full-sample audit
+and original artifact hashes. After confirming runner exit and preserving
+evidence, the single-use Scheduled Task was removed; checkpoint automation is
+paused. No push, release or public OTA update.
