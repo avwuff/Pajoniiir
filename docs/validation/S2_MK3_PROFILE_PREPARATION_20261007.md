@@ -2373,3 +2373,17 @@ snapshot error; a read-only retry returned HTTP 200 / text/plain and saved
 were saved on the first attempt. The helper now saves diagnostic-log as raw
 text. Operator listening/display confirmation is pending; long reproduction
 and acceptance remain open.
+
+The operator subsequently confirmed clean MAIN/S2 headphones and fluid dual
+waveforms throughout that short test. This closes its physical playback scope.
+On the same image/configuration a bounded first-fault reproduction window
+started at approximately 17:40:04 Europe/Zagreb, 2026-10-10. Independent
+one-time Scheduled Task `Pajoniiir-S2-FirstFault-20261010T154001Z` runs
+`.cache/run_s2_first_fault_reproduction.py 3600`; records are under
+`.cache/s2-mk3/next-gates-20261009/first-fault-durable-20261010T154001Z/`.
+The live process chain and fresh growing JSONL were verified; both decks
+were playing at approximately 18.5 s, S2 48000 Hz, packet failures and
+output-late zero. It stops at the first strict error or 3600 seconds and saves
+the first-fault bus snapshot and raw diagnostic log after stopping decks.
+Checkpoints are scheduled every 15 minutes. This is an active diagnostic run,
+not a completed soak or a claim that the fault is fixed.
