@@ -288,6 +288,13 @@ output-late delta zero, decks stopped. Operator confirmed both jogs/Browse,
 MAIN/S2 audio and waveforms were correct. Short active-control telemetry and
 physical PASS; reconnect/lifecycle and the intermittent ISO cause remain open.
 
+The first physical reconnect capture stopped during its first removal and the
+operator subsequently identified an incorrectly seated cable. Original fault
+evidence is retained; this is operator-invalid, not a clean three-cycle PASS.
+Post-operator counters show three reconnections and healthy final S2 44100-Hz
+audio, decks/tracks and storage preserved. Per-cycle telemetry remains open;
+the 48000-Hz playback PASS is not transferred to 44100 Hz.
+
 1. Exact release artifacts/configuration and current code/tests for their own SHA.
 2. [Published M2.5 record](validation/M2_5_RELEASE_20261006.md) for accepted
    hardware and publication; this status for current scope.

@@ -2457,3 +2457,25 @@ clean MAIN/S2 headphones and fluid waveforms. This is short active-control
 telemetry and physical PASS. Evidence:
 `.cache/s2-mk3/next-gates-20261009/first-fault-active-control-20261010T172815Z/`.
 Physical reconnect qualification remains separate.
+
+### First physical reconnect block: operator-invalid first cycle
+
+The initial stopped-deck reconnect observer ended after 45.013 seconds during
+the first removal: four new MIDI pipe errors and one recovery request. It
+did not record all three cycles continuously. Original result and final
+snapshots are preserved in
+`.cache/s2-mk3/next-gates-20261009/first-fault-reconnect-20261010T173008Z/`.
+The operator reported three cycles and functioning Browse, then explicitly
+identified an incorrectly seated cable in the first cycle. This is an invalid
+first attempt, not a clean lifecycle PASS or a proven spontaneous failure.
+
+A post-operator readback confirms three controller disconnect/connect deltas,
+both decks stopped with original tracks/MT/loops, storage still mounted with
+no storage disconnects, same clean VALID image and healthy live S2 audio.
+S2 now reports 44100 Hz: prior 48000-Hz playback acceptance is not transferred
+to this new negotiated rate. Controller pipe errors/recovery counters remain
+retained, not reset or concealed. The one-time observer task was removed after
+exit. A revised local observer retains transition-fault observations and waits
+up to two seconds for an associated removal; faults without removal and root
+recovery failures still terminate the capture. A completed capture containing
+transition faults requires review and is not automatically classified zero-error.
