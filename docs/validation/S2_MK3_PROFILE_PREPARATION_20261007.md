@@ -2410,5 +2410,10 @@ All final snapshots and raw diagnostic text are retained in the run directory
 above. `evidence-audit.json` records the full-sample audit and SHA-256 hashes
 of result, baseline, stream and final evidence. After confirming runner exit,
 the single-use Scheduled Task was removed and checkpoint automation paused.
-Operator audio/display confirmation for the full hour has been requested and
-is pending. No new test, firmware change, push or publication was performed.
+The operator subsequently confirmed clean MAIN and S2 headphones, fluid dual
+waveforms and a stable display throughout the full hour. The exact-image
+48000-Hz playback window therefore has telemetry and physical PASS. The
+underlying intermittent ISO cause remains unresolved because no fault was
+captured; active-control, lifecycle/headroom and 44100-Hz qualification retain
+their separate open scope. No new test, firmware change, push or publication
+was performed.

@@ -260,8 +260,10 @@ That first-fault diagnostic window completed 3600.296 s / 5705 samples on
 exact clean `a9f66bcd`, S2 48000 Hz: all 22 strict deltas and output-late delta
 zero, both decks stopped, same ELF/VALID `ota_1`. All samples were audited;
 capture is enabled but empty. ISO loss was not reproduced, so no causal fix
-is established and the 44100-Hz path remains unqualified. Full-hour operator
-confirmation is pending. Minimum observed DMA free is 8759 bytes; lifecycle
+is established and the 44100-Hz path remains unqualified. The operator
+confirmed clean MAIN/S2 audio, fluid waveforms and stable display for the full
+hour: exact-image 48000-Hz playback telemetry and physical PASS. Active-control
+qualification remains separate. Minimum observed DMA free is 8759 bytes; lifecycle
 and headroom remain open. Final evidence and hashes retained, one-time task
 removed after runner exit, heartbeat paused. No push or publication.
 
