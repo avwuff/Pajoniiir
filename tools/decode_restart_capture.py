@@ -130,7 +130,8 @@ def main():
             raise ValueError("output must not overwrite an input artifact")
         if args.output.exists():
             raise ValueError("output already exists; preserve evidence")
-        args.output.write_text(rendered + "\n", encoding="utf-8")
+        with args.output.open("x", encoding="utf-8") as output:
+            output.write(rendered + "\n")
     print(rendered)
 
 

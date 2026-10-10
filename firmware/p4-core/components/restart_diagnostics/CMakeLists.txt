@@ -1,10 +1,11 @@
-if(NOT IDF_TARGET STREQUAL "esp32p4" OR NOT CONFIG_ESP_COREDUMP_ENABLE_TO_FLASH)
-    message(FATAL_ERROR "P4 restart diagnostics require ESP32-P4 and flash ELF coredumps")
-endif()
-
 idf_component_register(SRCS "restart_diagnostics.c"
                        INCLUDE_DIRS "include"
                        PRIV_REQUIRES esp_system espcoredump riscv)
+# Requirements discovery executes this file before sdkconfig is available.
+# idf_component_register returns early in that pass; validate only afterwards.
+if(NOT IDF_TARGET STREQUAL "esp32p4" OR NOT CONFIG_ESP_COREDUMP_ENABLE_TO_FLASH)
+    message(FATAL_ERROR "P4 restart diagnostics require ESP32-P4 and flash ELF coredumps")
+endif()
 # External IDF calls are intercepted without editing the installed SDK.
 target_link_libraries(${COMPONENT_LIB} INTERFACE
     "-Wl,--wrap=panic_arch_fill_info"
