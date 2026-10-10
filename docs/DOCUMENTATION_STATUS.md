@@ -2,6 +2,16 @@
 
 Status: **current documentation authority, reconciled 2026-10-06**.
 
+[Offline historical restart audit](reviews/2026-10-10-m3-restart-crash-analysis.md)
+confirms core 0, an internal interrupted stack and the cache-writeback call
+chain by complete original-BIN function-byte checks. One isolated historical
+M3 analysis build passes; its ELF differs from the original and is used only
+for individually verified functions. The original panic handler can replace
+PC from an asynchronous bus-error queue. Missing queue CSRs/pre-normalization
+MEPC prevent identification of the rejected transaction and causal repair.
+The latest successful OTA had no controller or USB audio stream, so it does
+not qualify the earlier workload. Device state and S2 closeout remain unchanged.
+
 [Crash diagnostic implementation](validation/CRASH_DIAGNOSTICS_20261010.md)
 adds distinct stored-dump ELF identity, a bounded marked stopped-deck raw export
 and verified local ELF/map archives. Focused behavioral regressions pass;

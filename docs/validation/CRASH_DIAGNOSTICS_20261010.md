@@ -59,6 +59,16 @@ Physical GUI/audio acceptance of the diagnostic image remains NOT RUN.
 
 ## Implemented
 
+Later [offline restart analysis](../reviews/2026-10-10-m3-restart-crash-analysis.md)
+confirms core 0, an internal stack and the restart call chain using complete
+function-byte comparisons against the original BIN. One isolated historical
+M3 analysis build passes, but its ELF is not the missing original ELF. The
+original panic handler's asynchronous bus-error PC replacement is confirmed;
+the queue CSRs and unmodified trap PC were not retained. No cause or repair is
+established. The successful diagnostic OTA had no enumerated controller or
+USB audio stream and does not qualify that earlier restart workload. This
+later offline work made no device changes and did not reopen S2 testing.
+
 - `/api/status` exposes the stored dump's bounded hexadecimal ELF SHA prefix
   and its length. It never substitutes the running firmware SHA when crash
   identity is missing, invalid or summary extraction fails.

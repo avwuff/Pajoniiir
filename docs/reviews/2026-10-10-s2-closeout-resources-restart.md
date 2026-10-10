@@ -1,5 +1,11 @@
 # S2 closeout, memory reserves and OTA restart evidence
 
+Further [offline frame/function audit](2026-10-10-m3-restart-crash-analysis.md)
+confirms the actual exception core, internal stack and byte-verified restart
+chain. It identifies IDF's possible asynchronous bus-error PC replacement,
+while keeping the missing original ELF and fault-time CSR state explicit.
+It adds no causal repair or new S2 test.
+
 Later checkpoint: [diagnostic installation and raw capture](../validation/CRASH_DIAGNOSTICS_20261010.md#wireless-installation-and-historical-dump-capture)
 completed after explicit operator authorization of the power-only USB1
 fallback. Clean `58f09941` is now VALID `ota_0`; the historical dump checksum
