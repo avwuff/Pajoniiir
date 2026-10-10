@@ -235,6 +235,14 @@ For the current S2 strict ISO investigation, see the
 It identifies observability gaps and the next causal capture; it adds no
 firmware or physical acceptance claim.
 
+The subsequent bounded first-fault observer is implemented and installed as
+clean `a9f66bcd`, VALID `ota_1`. Full host suite, M3 ESP-IDF 6.0.2 build,
+board/image and signed-package checks pass. The API confirms capture enabled,
+not yet captured; S2 MIDI and live 48000-Hz audio are active, decks prepared
+and stopped. This diagnostic image has no new physical playback/soak PASS.
+See the [S2 validation record](validation/S2_MK3_PROFILE_PREPARATION_20261007.md)
+for exact SHA, ELF, artifact hash and outstanding reproduction gate.
+
 1. Exact release artifacts/configuration and current code/tests for their own SHA.
 2. [Published M2.5 record](validation/M2_5_RELEASE_20261006.md) for accepted
    hardware and publication; this status for current scope.

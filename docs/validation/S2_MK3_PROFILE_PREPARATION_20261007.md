@@ -2333,3 +2333,25 @@ physical verification. A subsequent failure is diagnostic evidence, not proof
 the observer has zero effect. The host regression executes production hooks
 for first-fault freeze/publication, list wrap, intervals, root/IN filtering,
 task/ISR context and completion provenance. Hardware reproduction remains open.
+
+### First-fault observer installed, 2026-10-10
+
+Clean source `a9f66bcd3175d86cacb3072b9e1a08bc95f77ba1` passed the full
+P4 host suite, ESP-IDF 6.0.2 M3 experimental HS build and board isolation/image
+check. Image size is 2607968 bytes, SHA-256
+`c47aa21a7a46d8ab0ca144049b2e9b859b230e21bf8387973234d8dfce0f376a`.
+The locally signed package passed signature/manifest verification and upload
+returned HTTP 200. Readback confirms clean `M3-dev-ga9f66bcd3175`, VALID
+`ota_1`, ELF `90c9ef537ef6d3b8a60e41a2114084de82bda044a6110cb401c5fc7130d33689`.
+
+The read-only bus trace reports `iso_first_fault.enabled:true` and
+`captured:false`. S2 MIDI/profile and live UAC streaming are active without
+an operator RESET. UAC negotiated 48000 Hz on this boot; this is a different
+rate from the failed fc4ed608 44100-Hz soak. Both original mixed-rate tracks,
+opposite pitches and four-beat loops were prepared with decks stopped.
+MT and zoom require operator preparation before playback. No new playback
+or soak acceptance is claimed. Evidence is under
+`.cache/s2-mk3/next-gates-20261009/first-fault-*a9f66bcd.json`; host/build logs
+and separate exit manifests both record exit code zero. The capture observer
+still requires a short physical check and fault reproduction. No push or
+public release/OTA update was performed.
