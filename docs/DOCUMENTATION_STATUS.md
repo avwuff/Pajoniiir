@@ -343,6 +343,17 @@ Long 44100-Hz qualification and intermittent ISO cause remain open. Evidence,
 hashes/operator confirmation preserved; task removed after exit, automation
 paused. No firmware, reboot, USB, push or publication changes.
 
+Final 3600-s S2 44100-Hz timing soak started about 2026-10-10 20:28:00 local
+on the same clean VALID `a9f66bcd`, dual MT/loops, mixed-rate tracks, opposite
+pitch and zoom8. One independent task/runner is verified; initial playing
+samples retain historical ISO1/5, feedback-invalid3 and output-late3. Records
+`final-soak-441-20261010T182759Z` under next-gates; checkpoints every15minutes.
+Strict losses stop the run; output-late rolling cluster/max findings are
+recorded separately rather than treating total10 over an hour as a cluster.
+Four local offline policy regressions pass. Outcome/operator acceptance pending;
+old frozen capture remains historical. No firmware/build, USB or Wi-Fi change,
+push or publication; full S2/shared-core and ISO causation remain open.
+
 1. Exact release artifacts/configuration and current code/tests for their own SHA.
 2. [Published M2.5 record](validation/M2_5_RELEASE_20261006.md) for accepted
    hardware and publication; this status for current scope.

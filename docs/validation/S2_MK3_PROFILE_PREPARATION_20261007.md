@@ -2602,3 +2602,32 @@ and operator confirmation are preserved in the playback run directory above.
 After confirmed runner exit, the single-use task was removed and checkpoint
 automation paused. No new firmware/build, reboot, connections, push or public
 release/OTA changes were made.
+
+### Final 44100-Hz timing soak started, 2026-10-10
+
+At the operator's request to continue to the long gate, preflight confirmed
+the accepted image/configuration remained intact: clean VALID `a9f66bcd`,
+S2 44100-Hz streaming, dual MT/four-beat loops, source rates 44100/48000 Hz,
++5/-5 percent pitch, zoom 8, and stopped decks. A single 3600-second monitor
+started at approximately 20:28:00 local via independent Scheduled Task
+`Pajoniiir-S2-Soak441-20261010T182759Z`. Task state, the live wrapper/Python
+process chain and initial playing samples were verified. Baseline ISO counters
+remain one packet/five frames; feedback-invalid 3 and output-late 3/max11334us
+also predate the new run.
+
+Records: `.cache/s2-mk3/next-gates-20261009/final-soak-441-20261010T182759Z/`.
+The runner stops at the first strict error or after 3600 seconds, safely stops
+both decks, then captures final firmware/UI/bus trace and raw diagnostic text.
+It does not query heap/resources during playback. The existing immutable
+first-fault capture remains historical and is not reset for this qualification.
+
+For this long window, output-late monitoring is separate from strict losses.
+The short helper's total-ten-event stop is not used: total events over an hour
+do not establish a 60-second cluster. A sample-observed rolling cluster of
+three or a new since-boot maximum above 15000us records an investigation
+trigger without representing an ISO/data-loss failure. Four offline policy
+regressions cover isolated totals, cluster eviction, new versus historical
+maxima and counter reset. Runner/policy/test sources are retained with records.
+Outcome is pending; checkpoints every 15 minutes will report actual progress.
+Neither the long gate, the ISO root cause nor full S2/shared-core acceptance
+is closed by starting this run. No firmware/build/USB/Wi-Fi change or publication.
