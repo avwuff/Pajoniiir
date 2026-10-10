@@ -243,6 +243,12 @@ and stopped. This diagnostic image has no new physical playback/soak PASS.
 See the [S2 validation record](validation/S2_MK3_PROFILE_PREPARATION_20261007.md)
 for exact SHA, ELF, artifact hash and outstanding reproduction gate.
 
+The observer's short playback completed 60.514 s / 95 samples at S2 48000 Hz,
+all 22 strict deltas and output-late delta zero, both decks stopped. Capture
+is enabled but empty. Final diagnostic-log text was recovered after a helper
+JSON-decoding error; original evidence is preserved. Physical confirmation
+and long fault reproduction remain pending.
+
 1. Exact release artifacts/configuration and current code/tests for their own SHA.
 2. [Published M2.5 record](validation/M2_5_RELEASE_20261006.md) for accepted
    hardware and publication; this status for current scope.

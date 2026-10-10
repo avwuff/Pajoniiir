@@ -2355,3 +2355,21 @@ or soak acceptance is claimed. Evidence is under
 and separate exit manifests both record exit code zero. The capture observer
 still requires a short physical check and fault reproduction. No push or
 public release/OTA update was performed.
+
+### First-fault observer short playback, 2026-10-10
+
+The operator confirmed dual MT and zoom 8 readiness. The 60-second run on
+exact clean `a9f66bcd` completed 60.514 seconds / 95 samples, with all 22
+strict counter deltas and output-late delta zero. S2 remained at 48000 Hz,
+both decks were safely stopped and final firmware remains VALID. MIDI delta
+was zero because controls were left unchanged. The immutable fault capture
+remains enabled and empty; this run did not reproduce the ISO failure.
+Evidence: `.cache/s2-mk3/next-gates-20261009/first-fault-mt-loop-20261010T153709Z/`.
+
+The helper incorrectly attempted JSON decoding of the text diagnostic-log
+endpoint after playback had stopped. The original result preserves that
+snapshot error; a read-only retry returned HTTP 200 / text/plain and saved
+369915 bytes plus response metadata. Bus trace and all other final snapshots
+were saved on the first attempt. The helper now saves diagnostic-log as raw
+text. Operator listening/display confirmation is pending; long reproduction
+and acceptance remain open.
