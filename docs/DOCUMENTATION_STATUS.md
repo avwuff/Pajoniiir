@@ -3,11 +3,12 @@
 Status: **current documentation authority, reconciled 2026-10-06**.
 
 [Restart bus capture implementation](validation/RESTART_BUS_CAPTURE_20261010.md)
-adds bounded shared IRAM hooks and 256 bytes of internal user-coredump DRAM
+adds bounded shared IRAM hooks and 256 bytes of internal RTC user-coredump memory
 to retain frame/queue state before IDF PC normalization. Focused production
 wrapper and decoder tests pass. Actual link/coredump-region and synthetic raw
 pipeline checks are now mandatory build gates. Full qualification host suite
-passes with no SKIP; the single M3 build is pending at this source checkpoint.
+passes with no SKIP; final M3 build qualification is pending at this source
+checkpoint after correcting the actual P4 coredump-region contract.
 No SDK mutation, device change or
 new S2 qualification; installed `58f09941` remains the diagnostic baseline.
 

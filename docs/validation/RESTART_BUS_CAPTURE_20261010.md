@@ -21,7 +21,7 @@ sources:
   CSRs **before** delegating to IDF's possible saved-PC normalization.
 
 The wrappers reside in IRAM. Two fixed 128-byte records reside in internal
-DRAM, in the IDF `COREDUMP_NOINIT_ATTR` user region. The normal ELF coredump
+RTC memory, in the IDF `COREDUMP_NOINIT_ATTR` user region. The normal ELF coredump
 writer includes this region without enabling global DRAM/heap capture. No
 steady-state audio hook, polling, allocation, logging, NVS write or SDK
 upgrade was added. Capture has observer overhead and is not an atomic
@@ -30,11 +30,15 @@ hardware snapshot.
 The actual M3 link exposed a duplicated `_coredump_dram_start/end` definition
 in IDF 6.0.2's generated P4 linker script: the second DRAM bank overwrote the
 bounds with an empty interval despite correct placement in the first bank.
-The mandatory ELF gate rejected that image. The unique internal noinit
+The mandatory ELF gate rejected that image. The unique internal RTC noinit
 coredump region avoids this without SDK changes or replacing global bounds.
 A BSS readiness marker and bounded IRAM initialization clear stale noinit
 bytes once per boot, before common services; restart and exception hooks also
 initialize on pre-app entry. Repeated initialization preserves frozen evidence.
+On P4, `SOC_RTC_MEM_SUPPORTED` selects `.rtc_noinit.coredump` and the writer's
+`_coredump_rtc_noinit_start/end` bounds. The subsequent link check initially
+expected generic DRAM noinit bounds and correctly refused qualification until
+the checker was corrected to that actual P4 contract.
 
 Each core's record contains ABI magic/version/length, restart phase/cycles,
 pre-normalization frame PC/RA/SP/cause/address/core, current MEPC/MCAUSE/MTVAL,

@@ -31,13 +31,15 @@ def verify(build):
         if elf.get_section(init["st_shndx"]).name != ".iram0.text":
             raise ValueError("capture initialization is not in internal IRAM")
         record = symbol("p4_restart_capture")
-        start = symbol("_coredump_noinit_start")["st_value"]
-        end = symbol("_coredump_noinit_end")["st_value"]
+        # ESP32-P4 SOC_RTC_MEM_SUPPORTED maps COREDUMP_NOINIT_ATTR to RTC.
+        # core_dump_common.c selects these same bounds for its noinit writer.
+        start = symbol("_coredump_rtc_noinit_start")["st_value"]
+        end = symbol("_coredump_rtc_noinit_end")["st_value"]
         address = record["st_value"]
         if not (record["st_size"] == 256 and start <= address and address + 256 <= end):
             raise ValueError("record is not fully included in IDF user coredump noinit")
-        if elf.get_section(record["st_shndx"]).name != ".noinit":
-            raise ValueError("capture is not in internal DRAM")
+        if elf.get_section(record["st_shndx"]).name != ".rtc_noinit":
+            raise ValueError("capture is not in internal RTC noinit memory")
 
     cache = (build / "CMakeCache.txt").read_text()
     match = re.search(r"^CMAKE_OBJDUMP:FILEPATH=(.+)$", cache, re.M)
@@ -47,21 +49,21 @@ def verify(build):
     blocks = re.split(r"(?m)^[0-9a-f]+ <([^>]+)>:\n", disassembly)
     functions = dict(zip(blocks[1::2], blocks[2::2]))
     callers = {}
-    init_call = r"\b(?:jal|jalr|j)\b[^\n]*<p4_restart_capture_init>"
+    init_call = r"\b(?:jal|jalr|j|jr)\b[^\n]*<p4_restart_capture_init>"
     for caller in wrapper_names + ["pajoniiir_common_app_main"]:
         if not re.search(init_call, functions.get(caller, "")):
             raise ValueError(f"{caller} does not initialize the capture region")
-    init_targets = re.findall(r"\b(?:jal|jalr|j)\b[^\n]*<([^>]+)>",
+    init_targets = re.findall(r"\b(?:jal|jalr|j|jr)\b[^\n]*<([^>]+)>",
                               functions.get("p4_restart_capture_init", ""))
     if any(target.split("+")[0] != "p4_restart_capture_init" for target in init_targets):
         raise ValueError("capture initialization calls an external helper")
     for wrapped in wrapper_names:
         originals = wrapped.replace("__wrap_", "")
         body = functions.get(wrapped, "")
-        if not re.search(r"\b(?:jal|jalr|j)\b[^\n]*<" + re.escape(originals) + r">", body):
+        if not re.search(r"\b(?:jal|jalr|j|jr)\b[^\n]*<" + re.escape(originals) + r">", body):
             raise ValueError(f"{wrapped} does not delegate to original IDF {originals}")
         found = [name for name, code in functions.items() if name != wrapped and
-                 re.search(r"\b(?:jal|jalr|j)\b[^\n]*<" + re.escape(wrapped) + r">", code)]
+                 re.search(r"\b(?:jal|jalr|j|jr)\b[^\n]*<" + re.escape(wrapped) + r">", code)]
         if not found:
             raise ValueError(f"no real linked caller intercepts {wrapped}")
         callers[wrapped] = found

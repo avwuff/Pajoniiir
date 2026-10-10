@@ -101,7 +101,7 @@ def decode_dump(raw_path, app_bin, app_elf):
                     if 0 <= offset and offset + 256 <= segment["p_filesz"]:
                         payloads.append(segment.data()[offset:offset+256])
             if len(payloads) != 1:
-                raise ValueError("dump does not contain the complete diagnostic user DRAM region")
+                raise ValueError("dump does not contain the complete diagnostic user memory region")
             return {"raw_sha256": hashlib.sha256(raw).hexdigest(), "raw_bytes": len(raw),
                     "checksum_validated": True, "app_elf_sha256": app_hash,
                     "dump_elf_prefix": prefix, "identity_scope": f"{len(prefix)} hex characters in dump; full BIN/ELF pair verified",

@@ -33,7 +33,7 @@ class RawPipelineTests(unittest.TestCase):
             app = ELFFile(stream)
             symbol = app.get_section_by_name(".symtab").get_symbol_by_name("p4_restart_capture")[0]
             self.address = symbol["st_value"]
-            self.assertEqual(app.get_section(symbol["st_shndx"]).name, ".noinit")
+            self.assertEqual(app.get_section(symbol["st_shndx"]).name, ".rtc_noinit")
             self.assertEqual(symbol["st_size"], 256)
         # NOBITS has no initialized ELF payload. Model the production boot ABI;
         # the link contract separately verifies its init calls and dump bounds.
