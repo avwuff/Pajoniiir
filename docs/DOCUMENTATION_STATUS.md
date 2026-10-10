@@ -230,6 +230,11 @@ Do not transfer historical passes to new code or claim waived tests were run.
 
 ## Source-of-truth order
 
+For the current S2 strict ISO investigation, see the
+[2026-10-10 scheduling and evidence analysis](reviews/2026-10-10-s2-hs-isoc-loss-analysis.md).
+It identifies observability gaps and the next causal capture; it adds no
+firmware or physical acceptance claim.
+
 1. Exact release artifacts/configuration and current code/tests for their own SHA.
 2. [Published M2.5 record](validation/M2_5_RELEASE_20261006.md) for accepted
    hardware and publication; this status for current scope.

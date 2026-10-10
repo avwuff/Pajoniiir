@@ -2302,3 +2302,10 @@ eliminate the loss, and external payload contention is not established as the
 sole cause. Final long-duration acceptance remains open. Post-failure status,
 diagnostic log and USB bus trace were retained; checkpoint automation paused.
 Short playback PASS retains its scope. No firmware change, push or release.
+
+Detailed source/evidence analysis is recorded in
+[S2 HS ISO loss analysis](../reviews/2026-10-10-s2-hs-isoc-loss-analysis.md).
+The final generated HCD already contains the owned-URB cache fix. The current
+late-start trace cannot exclude near-boundary activation, and a seven-tick
+callback gap is normal for a 56-packet HS block. A bounded, correlated
+first-fault capture is recommended before further timing or memory tuning.
