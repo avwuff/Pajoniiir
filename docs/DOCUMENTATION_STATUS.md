@@ -331,6 +331,18 @@ new playback evidence. Records `playback-441-20261010T180751Z` under next-gates;
 task/runner verified, checkpoint active. Outcome and physical confirmation
 remain pending; no new firmware/build/USB/Wi-Fi changes or publication.
 
+That S2 44100-Hz ten-minute playback window completed 600.622 s / 877 samples,
+all 22 strict deltas zero, safely stopped, same clean VALID `a9f66bcd`/ELF.
+Full-sample audit confirms dual MT/loops, mixed-rate source tracks, opposite
+pitch and healthy streaming. Three output-late events (max11334us, largest
+sample-observed 60-s cluster2) remain monitoring findings. Operator confirmed
+clean MAIN/S2 audio, fluid dual waveforms and stable display for the whole run:
+exact-image ten-minute 44100-Hz playback telemetry and physical PASS. MIDI0
+does not qualify active controls; existing ISO1/5 and frozen capture unchanged.
+Long 44100-Hz qualification and intermittent ISO cause remain open. Evidence,
+hashes/operator confirmation preserved; task removed after exit, automation
+paused. No firmware, reboot, USB, push or publication changes.
+
 1. Exact release artifacts/configuration and current code/tests for their own SHA.
 2. [Published M2.5 record](validation/M2_5_RELEASE_20261006.md) for accepted
    hardware and publication; this status for current scope.

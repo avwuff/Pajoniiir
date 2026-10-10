@@ -2574,3 +2574,31 @@ The already-frozen initial bus snapshot is retained as historical evidence;
 an unchanged final snapshot cannot describe a new playback fault. Checkpoint
 automation will verify the final outcome and request operator confirmation.
 This test is active and has no completed telemetry or physical PASS yet.
+
+### 44100-Hz ten-minute playback confirmed, 2026-10-10
+
+The independent monitor completed 600.622 seconds / 877 samples, wrapper exit
+code zero at 20:17:58 local. All recorded samples were audited for unchanged
+clean `a9f66bcd`, healthy live S2 44100-Hz streaming, mounted storage, dual
+mixed-rate playback with MT/four-beat loops and +5/-5 percent pitch. All 22
+strict counter deltas were zero. Both decks were safely stopped; final image
+remains VALID `ota_1` with the same ELF, and initial/final zoom is 8.
+
+Three output-late events were observed at sample elapsed 251.738, 310.943 and
+439.867 seconds. Since-boot maximum rose from zero to 11334 us; the largest
+sample-observed 60-second cluster is two. These remain monitoring findings,
+not zero-late evidence or strict data-loss failures. MIDI delta zero means
+this window does not qualify active jog/Browse use. Existing ISO counters
+(one packet / five frames) and the frozen first-fault snapshot were unchanged.
+The historical snapshot cannot be attributed to this completed playback.
+
+The operator explicitly confirmed clean MAIN/S2 headphones, fluid dual
+waveforms and a stable display throughout the full test. This closes telemetry
+and physical playback PASS for this exact image/configuration at S2 44100 Hz
+for ten minutes. It does not prove an intermittent ISO root-cause fix, replace
+long 44100-Hz qualification or complete all S2/shared-core acceptance gates.
+Original records, raw diagnostic text, runner source, full-sample audit/hashes
+and operator confirmation are preserved in the playback run directory above.
+After confirmed runner exit, the single-use task was removed and checkpoint
+automation paused. No new firmware/build, reboot, connections, push or public
+release/OTA changes were made.
