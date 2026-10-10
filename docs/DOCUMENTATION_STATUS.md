@@ -322,6 +322,15 @@ PASS only; 44100-Hz playback, full S2 acceptance and ISO causation remain open.
 Full-sample audit/hashes saved, task removed after exit, automation paused.
 No firmware, playback, connection, reboot or publication changes.
 
+A separate 600-s S2 44100-Hz dual MT/loop playback window started at about
+2026-10-10 20:07:52 local after operator restored zoom 8 and confirmed readiness.
+Exact `a9f66bcd` remains installed; one independent monitor checks all22strict
+deltas and safely stops both decks on error/end. Initial playing samples show
+unchanged ISO counters (historical1packet/5frames). Prior frozen fault is not
+new playback evidence. Records `playback-441-20261010T180751Z` under next-gates;
+task/runner verified, checkpoint active. Outcome and physical confirmation
+remain pending; no new firmware/build/USB/Wi-Fi changes or publication.
+
 1. Exact release artifacts/configuration and current code/tests for their own SHA.
 2. [Published M2.5 record](validation/M2_5_RELEASE_20261006.md) for accepted
    hardware and publication; this status for current scope.

@@ -2552,3 +2552,25 @@ change, USB change, resources/heap query, playback or new monitor was needed.
 and original artifact hashes. After confirming runner exit and preserving
 evidence, the single-use Scheduled Task was removed; checkpoint automation is
 paused. No push, release or public OTA update.
+
+### 44100-Hz playback window started, 2026-10-10
+
+After operator authorization to continue, readback confirmed the same clean
+VALID `a9f66bcd`, live S2 44100-Hz streaming, mixed-rate tracks, dual MT/loops
+and opposite pitches. Zoom initially read 12; the operator restored zoom 8
+and explicitly confirmed readiness to observe MAIN, S2 headphones and both
+waveforms. A single 600-second dual playback monitor started at approximately
+20:07:52 local through independent Scheduled Task
+`Pajoniiir-S2-Playback441-20261010T180751Z`. The live process chain and initial
+playing samples were verified: both decks/MT active, S2 44100 Hz, ISO counters
+unchanged from baseline one packet/five frames. Feedback-invalid baseline 3
+is also historical, not a new test loss.
+
+Records: `.cache/s2-mk3/next-gates-20261009/playback-441-20261010T180751Z/`;
+the runner source is retained with the artifacts. It stops on a new strict
+counter change or at 600 seconds and safely stops both decks in its final
+handler. It does not query heap/resources or change firmware, USB or Wi-Fi.
+The already-frozen initial bus snapshot is retained as historical evidence;
+an unchanged final snapshot cannot describe a new playback fault. Checkpoint
+automation will verify the final outcome and request operator confirmation.
+This test is active and has no completed telemetry or physical PASS yet.
