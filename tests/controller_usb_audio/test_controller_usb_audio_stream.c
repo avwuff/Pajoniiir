@@ -11,6 +11,7 @@ int review_fail_alloc_packets = -1, review_fail_submit_endpoint = -1;
 #define CONTROLLER_USB_AUDIO_PC_TEST
 #include "controller_usb_audio_stream.c"
 #include "fixtures/s2_mk3_hs_config.h"
+#include "fixtures/hercules_inpulse_500_fs_config.h"
 
 static unsigned packet_detail_count;
 static uint32_t packet_details[4][4];
@@ -712,6 +713,76 @@ static void test_hs_reconnect_under_heap_pressure(void)
     puts("PASS 30 host HS reconnects: bounded retained payload, no new OUT allocation, FS releases all transfers");
 }
 
+static void test_hercules_fs_feedback(void)
+{
+    flx4_uac_descriptor_result_t parsed;
+    flx4_uac_playback_format_t format;
+    uint8_t bad[sizeof(hercules_fs_config)];
+    assert(flx4_uac_parse_playback_formats(hercules_fs_config, sizeof(hercules_fs_config), &parsed));
+    assert(flx4_uac_select_preferred_format(&parsed, &format));
+    assert(format.channels == 4 && format.bits_per_sample == 24 && format.max_packet_size == 540);
+    assert(format.requires_feedback && format.feedback_endpoint == 0x81 && format.feedback_refresh == 5);
+    assert(format.sync_address == 0x81 && !format.frequency_control);
+    assert(flx4_uac_format_supports_rate(&format, 44100));
+    assert(!flx4_uac_format_supports_rate(&format, 48000));
+    /* Real descriptor mutations cannot silently turn feedback into fixed pacing. */
+    for (unsigned mutation = 0; mutation < 4; ++mutation) {
+        memcpy(bad, hercules_fs_config, sizeof(bad));
+        for (size_t off = 9; off < sizeof(bad); off += bad[off]) {
+            if (bad[off+1] != 5) continue;
+            if (mutation == 0 && bad[off+2] == 1) bad[off+8] = 0x82;
+            if (mutation == 1 && bad[off+2] == 0x81) bad[off+4] = 4;
+            if (mutation == 2 && bad[off+2] == 0x81) bad[off+7] = 0;
+            if (mutation == 3 && bad[off+2] == 0x81) bad[off+3] = 0x15;
+        }
+        assert(!flx4_uac_parse_playback_formats(bad, sizeof(bad), &parsed) ||
+               !flx4_uac_select_preferred_format(&parsed, &format));
+    }
+    assert(controller_usb_audio_stream_is_quiesced());
+    assert(controller_usb_audio_stream_set_policy(false, false, false) == ESP_OK);
+    assert(controller_usb_audio_stream_start((void*)1, (void*)2,
+        hercules_fs_config, sizeof(hercules_fs_config), (void*)3, 10, 5) == ESP_OK);
+    s_control->status = USB_TRANSFER_STATUS_COMPLETED;
+    control_callback(s_control);
+    assert(s_streaming && s_feedback_active && s_target_rate == 44100 && s_sample_bits == 24);
+    assert(s_feedback->num_bytes == 3 && s_feedback->isoc_packet_desc[0].num_bytes == 3);
+    assert(s_format.interface_num == 1 && s_format.endpoint_addr == 1 && !s_format.uac2);
+    s_feedback->status = USB_TRANSFER_STATUS_COMPLETED;
+    s_feedback->isoc_packet_desc[0].status = USB_TRANSFER_STATUS_COMPLETED;
+    s_feedback->isoc_packet_desc[0].actual_num_bytes = 3;
+    uint32_t q14 = (uint32_t)(((uint64_t)44100 << 14) / 1000);
+    for (unsigned b = 0; b < 3; ++b) s_feedback->data_buffer[b] = (uint8_t)(q14 >> (8*b));
+    unsigned updates = s_feedback_updates, invalid = s_feedback_invalid;
+    feedback_callback(s_feedback);
+    assert(s_feedback_updates == updates+1 && s_feedback_q16 == q14*4);
+    /* Reject malformed width/rate/capacity; keep the last valid clock. */
+    const uint32_t retained = s_feedback_q16;
+    s_feedback->isoc_packet_desc[0].actual_num_bytes = 4;
+    feedback_callback(s_feedback);
+    assert(s_feedback_invalid == ++invalid && s_feedback_q16 == retained);
+    s_feedback->isoc_packet_desc[0].actual_num_bytes = 0;
+    feedback_callback(s_feedback);
+    assert(s_feedback_invalid == invalid); /* no update between refresh periods */
+    s_feedback->isoc_packet_desc[0].actual_num_bytes = 3;
+    q14 = (45u << 14) + 1u; /* 46 frames would exceed the 540-byte endpoint */
+    for (unsigned b = 0; b < 3; ++b) s_feedback->data_buffer[b] = (uint8_t)(q14 >> (8*b));
+    feedback_callback(s_feedback);
+    assert(s_feedback_invalid == ++invalid && s_feedback_q16 == retained);
+    s_feedback_q16 = (44u << 16) + 16384u; s_feedback_phase = 0;
+    assert(prepare_and_submit(s_isoc[0]) == ESP_OK);
+    assert(s_isoc[0]->num_bytes == 177*12);
+    for (int p = 0; p < 4; ++p) assert(s_isoc[0]->isoc_packet_desc[p].num_bytes == (p == 3 ? 540 : 528));
+    review_ticks += 500;
+    (void)controller_usb_audio_stream_poll_cleanup();
+    assert(s_faulted && !s_streaming); /* stale feedback requires bounded stop */
+    retire_transfers(); finish_cleanup();
+    assert(controller_usb_audio_stream_is_quiesced() && !s_feedback);
+    assert(controller_usb_audio_stream_set_policy(true, false, false) == ESP_OK);
+    assert(controller_usb_audio_stream_start((void*)1, (void*)2,
+        hercules_fs_config, sizeof(hercules_fs_config), (void*)3, 10, 5) == ESP_ERR_NOT_SUPPORTED);
+    puts("PASS captured Hercules UAC1: endpoint association, 10.14 feedback, capacity, fractional pacing, stale stop and FLX4 isolation");
+}
+
 int main(void)
 {
     uint8_t d[sizeof(descriptor)];
@@ -770,6 +841,7 @@ int main(void)
     test_generic_pacing_and_timeout();
     test_generic_fixed_16bit(44100);
     test_generic_fixed_16bit(48000);
+    test_hercules_fs_feedback();
     test_uac2();
     test_clock_settle();
     test_uac2_44100_fallback();

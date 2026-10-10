@@ -153,3 +153,42 @@ The next physical action is ordinary Hercules connection on USB3, storage
 remaining USB2, with stopped decks. No S2 MIDI-mode FLX gesture is needed.
 Combine stopped controls and then short monitored audio checks when the
 operator is ready; no S2 retest, push, release or public OTA is authorized.
+
+## Initial physical activation and UAC1 feedback finding
+
+The operator confirmed the `eafdb7a5` GUI returned normally and connected
+Hercules to USB3 with storage on USB2. Current status reports `06F8:B12B`,
+product `DJControl Inpulse 500`, MIDI IN/OUT and active
+`hercules_djcontrol_inpulse_500`. Both decks remain IDLE. This proves binding
+and profile activation, not an input sweep or audible headphone output.
+
+The matching last-probe descriptor contains all 270 configuration bytes,
+untruncated, full-speed (`speed:1`), direct root. AudioStreaming interface 1,
+alt 1 is four-channel packed 24-bit PCM, discrete 44100 Hz only, asynchronous
+OUT `0x01`, max packet 540, interval 1, linked to explicit feedback IN `0x81`.
+Feedback max packet is 3, interval 1, refresh exponent 5; no endpoint sampling
+frequency control is advertised. Actual audio status is not streaming; the
+existing generic UAC1 policy rejects asynchronous feedback and its M3 packet
+bound is below 540. The descriptive JSON rate did not cause this rejection.
+Evidence: `.cache/hercules-inpulse-500/activation-20261010/`, actual descriptor
+`usb-controller-descriptors.json`, status, bus trace and diagnostic TEXT.
+An earlier request used an incorrect descriptor URI and returned the HTML
+fallback; `usb-probe-descriptor.json` is not descriptor evidence.
+
+The [USB Audio 1.0 specification](https://www.usb.org/sites/default/files/audio10.pdf),
+section 3.7.2.2, defines three-byte 10.14 feedback as samples per USB frame and
+the endpoint association. The new shared driver candidate validates the explicit
+pipe in the same alternate setting, converts samples/ms to its Q16 accumulator,
+bounds feedback against rate and endpoint capacity, and preserves fractional
+packet cadence. The experimental controller-root packet bound admits 540 bytes;
+qualified FLX4 selection still rejects asynchronous profiles. MAIN stays 48 kHz
+while the existing USB resampler targets 44.1 kHz. Zero-byte feedback between
+refreshes is not a new clock value; stale estimates stop the stream with bounded
+cleanup. The existing UAC2 feedback decoder and clock negotiations are retained.
+
+A captured fixture and actual stream-owner host regression pass endpoint
+association, malformed width/refresh, missing feedback, 10.14 conversion,
+capacity rejection, fractional 44/45-frame packets, stale stop, teardown and
+FLX4 isolation. Existing UAC2 clock/feedback/30-reconnect host cases pass.
+Full qualification, build/package/install of this feedback candidate and
+physical Hercules audio remain pending. No S2 physical test is reopened.

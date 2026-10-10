@@ -24,7 +24,7 @@
 #define STREAM_HS_PACKETS_PER_TRANSFER 56
 #define RESAMPLE_INPUT_FRAMES 128u
 #define RESAMPLE_OUTPUT_FRAMES 142u
-#if defined(CONFIG_PAJONIIIR_BOARD_JC1060) || defined(CONTROLLER_USB_AUDIO_PC_TEST)
+#if defined(CONFIG_PAJONIIIR_BOARD_JC1060) || defined(CONTROLLER_USB_AUDIO_PC_TEST) || CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC
 #define STREAM_FIFO_BYTES 640u
 #else
 #define STREAM_FIFO_BYTES 400u
@@ -222,7 +222,9 @@ static bool select_stream_format(const uint8_t *descriptor,
                 const flx4_uac_playback_format_t *candidate = &parsed.formats[i];
                 if (candidate->channels == STREAM_CHANNELS &&
                     candidate->max_packet_size <= STREAM_FIFO_BYTES &&
-                    (s_qualified_flx4 || (candidate->pcm_explicit && candidate->sync_type >= 2u)) &&
+                    (s_qualified_flx4 ? !candidate->requires_feedback :
+                        (candidate->pcm_explicit && (candidate->sync_type >= 2u ||
+                                                   candidate->requires_feedback))) &&
                     candidate->bits_per_sample == (width ? 24u : 16u) &&
                     flx4_uac_format_supports_rate(candidate, rates[rate])) {
                     *out = *candidate;
@@ -298,14 +300,14 @@ static esp_err_t prepare_and_submit(usb_transfer_t *transfer)
     size_t offset = 0u;
     for (int packet = 0; packet < transfer->num_isoc_packets; ++packet) {
         uint16_t frames;
-        if (s_format.uac2) {
+        if (s_format.uac2 || s_format.requires_feedback) {
             s_feedback_phase += s_feedback_q16;
             frames = (uint16_t)(s_feedback_phase >> 16);
             s_feedback_phase &= 0xffffu;
         } else frames = flx4_uac_packetizer_next_frames(&s_packetizer);
         const size_t bytes =
             (size_t)frames * STREAM_CHANNELS * s_format.bytes_per_sample;
-        if (bytes > s_format.max_packet_size ||
+        if (frames > 48u || bytes > s_format.max_packet_size ||
             offset + bytes > transfer->data_buffer_size) {
             return ESP_ERR_INVALID_SIZE;
         }
@@ -460,8 +462,9 @@ static esp_err_t submit_feedback(void)
 {
     s_feedback->device_handle = s_device;
     s_feedback->bEndpointAddress = s_format.feedback_endpoint;
-    s_feedback->num_bytes = 4;
-    s_feedback->isoc_packet_desc[0].num_bytes = 4;
+    const int bytes = s_format.uac2 ? 4 : 3;
+    s_feedback->num_bytes = bytes;
+    s_feedback->isoc_packet_desc[0].num_bytes = bytes;
     s_feedback_active = true;
     esp_err_t rc = usb_host_transfer_submit(s_feedback);
     if (rc != ESP_OK) s_feedback_active = false;
@@ -513,13 +516,19 @@ static void feedback_callback(usb_transfer_t *transfer)
         return;
     }
     uint32_t value = 0;
-    if (transfer->isoc_packet_desc[0].status == USB_TRANSFER_STATUS_COMPLETED &&
-        transfer->isoc_packet_desc[0].actual_num_bytes == 4 &&
-        controller_uac2_feedback(transfer->data_buffer, 4, s_target_rate, &value)) {
+    const int bytes = transfer->isoc_packet_desc[0].actual_num_bytes;
+    const bool completed = transfer->isoc_packet_desc[0].status == USB_TRANSFER_STATUS_COMPLETED;
+    const bool valid = completed && (s_format.uac2 ?
+        (bytes == 4 && controller_uac2_feedback(transfer->data_buffer, 4, s_target_rate, &value)) :
+        (bytes == 3 && flx4_uac_feedback_q16(&s_format, transfer->data_buffer, 3, s_target_rate, &value)));
+    if (valid) {
         s_feedback_q16 = value;
         s_feedback_tick = xTaskGetTickCount();
         __atomic_add_fetch(&s_feedback_updates, 1u, __ATOMIC_RELAXED);
-    } else __atomic_add_fetch(&s_feedback_invalid, 1u, __ATOMIC_RELAXED);
+    } else if (!(completed && bytes == 0 && !s_format.uac2)) {
+        /* FS feedback may have no new value between its bRefresh periods. */
+        __atomic_add_fetch(&s_feedback_invalid, 1u, __ATOMIC_RELAXED);
+    }
     if (submit_feedback() != ESP_OK) mark_fault(false);
 }
 
@@ -609,7 +618,7 @@ static void control_callback(usb_transfer_t *transfer)
     }
 
     bool all_submitted = true;
-    if (s_format.uac2) {
+    if (s_format.uac2 || s_format.requires_feedback) {
         const esp_err_t alloc_rc = usb_host_transfer_alloc(4u, 1, &s_feedback);
         if (alloc_rc != ESP_OK) {
             mark_prime_fault(1u, 0u, alloc_rc);
@@ -716,7 +725,8 @@ esp_err_t controller_usb_audio_stream_start(
     set_accepting(false);
     s_control_step = 0u;
     s_feedback_phase = 0u;
-    s_feedback_q16 = (48000u / 8000u) << 16;
+    s_feedback_q16 = (uint32_t)(((uint64_t)s_target_rate << 16u) /
+                              (s_format.uac2 ? 8000u : 1000u));
     s_feedback_active = false;
     s_clock_range_bytes = 0;
     s_clock_44100_supported = false;
@@ -793,8 +803,13 @@ bool controller_usb_audio_stream_poll_cleanup(void)
             if (submit_control_step(step) != ESP_OK) mark_fault(true);
         }
     }
-    if (s_streaming && s_format.uac2 &&
-        (TickType_t)(xTaskGetTickCount() - s_feedback_tick) >= pdMS_TO_TICKS(500u)) {
+    uint32_t feedback_timeout_ms = 500u;
+    if (!s_format.uac2 && s_format.requires_feedback) {
+        const uint32_t refresh_timeout = (1u << s_format.feedback_refresh) * 3u;
+        if (refresh_timeout > feedback_timeout_ms) feedback_timeout_ms = refresh_timeout;
+    }
+    if (s_streaming && (s_format.uac2 || s_format.requires_feedback) &&
+        (TickType_t)(xTaskGetTickCount() - s_feedback_tick) >= pdMS_TO_TICKS(feedback_timeout_ms)) {
         mark_fault(false); /* A stale clock estimate must not run indefinitely. */
     }
     if (s_control_active && !s_control_expired &&

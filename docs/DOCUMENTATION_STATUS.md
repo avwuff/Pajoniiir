@@ -14,6 +14,14 @@ audio/controls and GUI confirmation on this image are pending. Original crash
 bytes remain unchanged. S2 testing stays operator-closed and no public channel
 or release was updated. Details: [Hercules record](validation/HERCULES_INPULSE_500_PREPARATION_20261010.md).
 
+The operator subsequently confirmed the GUI and Hercules connection. Exact
+`06F8:B12B` MIDI/profile activation passes; the full-speed captured descriptor
+exposes asynchronous UAC1, packed 24-bit/4ch/44100 Hz with explicit 3-byte
+feedback. Audio remains unsupported on installed `eafdb7a5`. A shared UAC1
+feedback candidate and real-descriptor production stream regression now pass
+focused host checks; full qualification/build/install and physical audio are
+pending. This finding supersedes the pending GUI/activation lines above.
+
 [Restart bus capture implementation](validation/RESTART_BUS_CAPTURE_20261010.md)
 adds bounded shared IRAM hooks and 256 bytes of internal RTC user-coredump memory
 to retain frame/queue state before IDF PC normalization. Focused production

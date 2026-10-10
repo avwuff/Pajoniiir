@@ -63,7 +63,7 @@ static uint32_t packet_bytes_for_rate(const flx4_uac_playback_format_t *fmt,
 
 bool flx4_uac_format_supports_rate(const flx4_uac_playback_format_t *fmt, uint32_t rate)
 {
-    if (!fmt || !fmt->pcm || fmt->requires_feedback || fmt->interval != 1u ||
+    if (!fmt || !fmt->pcm || fmt->interval != 1u ||
         !((fmt->bits_per_sample == 16u && fmt->bytes_per_sample == 2u) ||
           (fmt->bits_per_sample == 24u && fmt->bytes_per_sample == 3u)) ||
         (fmt->channels != 2u && fmt->channels != 4u) ||
@@ -71,7 +71,31 @@ bool flx4_uac_format_supports_rate(const flx4_uac_playback_format_t *fmt, uint32
         fmt->max_packet_size > 1023u) {
         return false;
     }
+    if (fmt->requires_feedback &&
+        (!fmt->pcm_explicit || fmt->sync_type != 1u ||
+         !(fmt->feedback_endpoint & USB_EP_DIR_IN) ||
+         fmt->sync_address != fmt->feedback_endpoint ||
+         fmt->feedback_interval != 1u || fmt->feedback_refresh < 1u ||
+         fmt->feedback_refresh > 9u)) return false;
     return format_has_rate(fmt, rate) && packet_bytes_for_rate(fmt, rate) <= fmt->max_packet_size;
+}
+
+bool flx4_uac_feedback_q16(const flx4_uac_playback_format_t *fmt,
+                           const uint8_t *data, size_t length, uint32_t rate,
+                           uint32_t *frames_q16)
+{
+    if (!data || !frames_q16 || length != 3u ||
+        !flx4_uac_format_supports_rate(fmt, rate) || !fmt->requires_feedback)
+        return false;
+    /* UAC1 full-speed feedback is samples/ms in 10.14, not HS samples/125us. */
+    const uint32_t value = rd24(data) << 2u;
+    const uint32_t nominal = (uint32_t)(((uint64_t)rate << 16u) / 1000u);
+    const uint32_t max_frames = fmt->max_packet_size /
+        ((uint32_t)fmt->channels * fmt->bytes_per_sample);
+    if (value < nominal - nominal / 20u || value > nominal + nominal / 20u ||
+        ((value + 0xffffu) >> 16u) > max_frames) return false;
+    *frames_q16 = value;
+    return true;
 }
 
 static bool format_has_supported_packetization(const flx4_uac_playback_format_t *fmt)
@@ -177,8 +201,21 @@ bool flx4_uac_parse_playback_formats(const uint8_t *config_desc,
         } else if (in_audio_streaming_alt && type == USB_DESC_TYPE_ENDPOINT && len >= 7u) {
             const uint8_t ep = config_desc[off + 2u];
             const uint8_t transfer_type = config_desc[off + 3u] & USB_EP_XFER_MASK;
-            if (transfer_type == USB_EP_XFER_ISOC &&
-                ((config_desc[off + 3u] >> 4u) & 3u) != 0u) current.requires_feedback = true;
+            if ((ep & USB_EP_DIR_IN) && transfer_type == USB_EP_XFER_ISOC &&
+                ((config_desc[off + 3u] >> 4u) & 3u) == 1u) {
+                /* Match the explicit synch pipe in the same alternate setting.
+                 * Implicit feedback and malformed/multiple pipes stay unsupported. */
+                if (current.feedback_endpoint || len < 9u ||
+                    ((config_desc[off + 3u] >> 2u) & 3u) != 0u ||
+                    rd16(&config_desc[off + 4u]) != 3u ||
+                    config_desc[off + 8u] != 0u) {
+                    memset(out, 0, sizeof(*out)); return false;
+                }
+                current.feedback_endpoint = ep;
+                current.feedback_interval = config_desc[off + 6u];
+                current.feedback_refresh = config_desc[off + 7u];
+                current.requires_feedback = true;
+            }
             if ((ep & USB_EP_DIR_IN) == 0u && transfer_type == USB_EP_XFER_ISOC) {
                 if (current.endpoint_addr != 0u) {
                     memset(out, 0, sizeof(*out));
@@ -188,7 +225,9 @@ bool flx4_uac_parse_playback_formats(const uint8_t *config_desc,
                 current.max_packet_size = rd16(&config_desc[off + 4u]);
                 current.interval = config_desc[off + 6u];
                 current.sync_type = (config_desc[off + 3u] >> 2u) & 3u;
-                if (((config_desc[off + 3u] >> 2u) & 3u) == 1u ||
+                if (len >= 9u) current.sync_address = config_desc[off + 8u];
+                if (((config_desc[off + 3u] >> 4u) & 3u) != 0u ||
+                    ((config_desc[off + 3u] >> 2u) & 3u) == 1u ||
                     (len >= 9u && config_desc[off + 8u] != 0u)) current.requires_feedback = true;
             }
         } else if (in_audio_streaming_alt && type == 0x25u && len >= 7u) {
