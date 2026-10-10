@@ -2,6 +2,8 @@
 #include <stdio.h>
 
 unsigned review_submits;
+unsigned review_live_transfers, review_hs_payload_allocations;
+size_t review_live_payload_bytes;
 unsigned review_ticks;
 int review_fail_alloc_packets = -1, review_fail_submit_endpoint = -1;
 /* Compile the actual stream owner against USB/RTOS boundary stubs. A critical
@@ -634,7 +636,9 @@ static void test_prime_fault_evidence(void)
 static void test_hs_reconnect_under_heap_pressure(void)
 {
     usb_transfer_t *pool[STREAM_TRANSFER_COUNT] = {0};
-    for (unsigned cycle = 0; cycle < 3; ++cycle) {
+    unsigned initial_hs_allocations = 0;
+    size_t retained_payload_bytes = 0;
+    for (unsigned cycle = 0; cycle < 30; ++cycle) {
         start_clock_readback(); clock_reply(48000);
         s_control->data_buffer[8] = 1; s_control->actual_num_bytes = 9;
         control_callback(s_control);
@@ -644,13 +648,26 @@ static void test_hs_reconnect_under_heap_pressure(void)
             if (!cycle) pool[i] = s_isoc[i];
             assert(s_isoc[i] == pool[i] && s_isoc[i]->device_handle == (void *)2);
         }
-        controller_usb_audio_stream_request_stop(cycle != 1);
+        if (!cycle) {
+            initial_hs_allocations = review_hs_payload_allocations;
+            for (unsigned i = 0; i < STREAM_TRANSFER_COUNT; ++i)
+                retained_payload_bytes += pool[i]->data_buffer_size;
+        }
+        /* Only control and feedback may allocate again; OUT reservations
+         * remain bounded even when reconnect alternates gone/soft-stop. */
+        assert(review_hs_payload_allocations == initial_hs_allocations);
+        assert(review_live_transfers == STREAM_TRANSFER_COUNT + 2u);
+        assert(review_live_payload_bytes == retained_payload_bytes +
+               s_control->data_buffer_size + s_feedback->data_buffer_size);
+        controller_usb_audio_stream_request_stop(cycle % 2u == 0u);
         assert(!controller_usb_audio_stream_poll_cleanup());
         assert(!controller_usb_audio_stream_is_quiesced());
         /* No reuse or detach while the old USB callbacks still own the URBs. */
         assert(s_isoc[0]->device_handle == (void *)2);
         retire_transfers(); finish_cleanup();
         assert(controller_usb_audio_stream_is_quiesced() && !s_feedback && !s_control);
+        assert(review_live_transfers == STREAM_TRANSFER_COUNT);
+        assert(review_live_payload_bytes == retained_payload_bytes);
         for (unsigned i = 0; i < STREAM_TRANSFER_COUNT; ++i) {
             assert(s_isoc[i] == pool[i] && !s_isoc[i]->device_handle);
             assert(!s_isoc[i]->num_bytes && !s_isoc[i]->bEndpointAddress);
@@ -691,7 +708,8 @@ static void test_hs_reconnect_under_heap_pressure(void)
     controller_usb_audio_stream_request_stop(true);
     retire_transfers(); finish_cleanup();
     for (unsigned i = 0; i < STREAM_TRANSFER_COUNT; ++i) assert(!s_isoc[i]);
-    puts("PASS HS reconnect reuses detached DMA buffers under heap pressure; FS lifecycle preserved");
+    assert(review_live_transfers == 0 && review_live_payload_bytes == 0);
+    puts("PASS 30 host HS reconnects: bounded retained payload, no new OUT allocation, FS releases all transfers");
 }
 
 int main(void)
@@ -757,6 +775,7 @@ int main(void)
     test_uac2_44100_fallback();
     test_prime_fault_evidence();
     test_hs_reconnect_under_heap_pressure();
+    assert(review_live_transfers == 0 && review_live_payload_bytes == 0);
     puts("PASS UAC 16/24-bit, consumer pacing, bounded timeout, ownership, reconnect and channel routing");
     return 0;
 }

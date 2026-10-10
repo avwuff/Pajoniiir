@@ -2417,3 +2417,30 @@ underlying intermittent ISO cause remains unresolved because no fault was
 captured; active-control, lifecycle/headroom and 44100-Hz qualification retain
 their separate open scope. No new test, firmware change, push or publication
 was performed.
+
+### Unattended post-soak software review, 2026-10-10
+
+At the operator's request to continue while away, the saved 5705 samples were
+reviewed for resource trends without new device actions. Internal/DMA free
+bytes finish at their starting values (50739/11159); their first/last quarter
+medians also match. The DMA lifetime minimum is 8759 bytes, but largest blocks
+remain unmeasured. There is no observed steady-state decline; headroom is not
+fully qualified. The linked map confirms 2048 bytes of static ISO lists and
+656 bytes of frozen fault storage, excluding per-buffer/pipe observer overhead.
+
+The production stream host test now accounts for live USB transfer count and
+requested payload bytes over 30 reconnect cycles under blocked OUT allocation.
+Retained reservations remain bounded, all OUT pointers are reused, and final
+FS teardown frees every reservation. The focused host test passes; these are
+not physical USB cycles. The saved OTA crash fault address maps to the IDF
+6.0.2 hardware-v1 cache synchronization map register; the cause of its store
+failure remains unproven. No firmware, USB, Wi-Fi, playback, OTA or restart
+change was made. See the [post-soak review](../reviews/2026-10-10-s2-post-soak-headroom-lifecycle.md)
+for evidence, limitations and the next combined physical block.
+
+The full P4 host suite subsequently completed with exit code zero and no
+SKIP markers; log and saved exit manifest are `unattended-host-20261010.*`
+in the next-gates directory. The existing signed image/bundle and manifest
+were reverified. Changes are test/documentation only; no firmware build was
+needed. Physical active-control/reconnect, largest-block/stack and reboot
+checks remain NOT RUN during the operator's absence.

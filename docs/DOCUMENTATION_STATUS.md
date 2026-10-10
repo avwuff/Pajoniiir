@@ -267,6 +267,21 @@ qualification remains separate. Minimum observed DMA free is 8759 bytes; lifecyc
 and headroom remain open. Final evidence and hashes retained, one-time task
 removed after runner exit, heartbeat paused. No push or publication.
 
+The [unattended post-soak review](reviews/2026-10-10-s2-post-soak-headroom-lifecycle.md)
+checks all recorded memory samples and reconnect/restart code. Cached free
+internal/DMA memory has no observed progressive decline, but largest blocks
+and lifecycle reserves remain unqualified. The extended production-stream
+host regression passes 30 reconnect cycles with bounded live reservations,
+no new OUT allocations and full release after FS transition. These are host
+tests, not physical Campaign A. The prior OTA crash address matches the cache
+sync map register; its underlying failure is still unresolved. No new firmware
+build or install is needed for these test/documentation changes.
+
+Full P4 host suite for the unattended test changes passes with exit code zero,
+without SKIP markers. The existing a9f66bcd signed package/manifest verifies.
+Physical active-control/reconnect and reboot checks were NOT RUN while the
+operator was away; the installed exact-image playback PASS is preserved.
+
 1. Exact release artifacts/configuration and current code/tests for their own SHA.
 2. [Published M2.5 record](validation/M2_5_RELEASE_20261006.md) for accepted
    hardware and publication; this status for current scope.

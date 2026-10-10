@@ -2,6 +2,7 @@
 #pragma once
 #include <stdint.h>
 #include <stdlib.h>
+#include <assert.h>
 #include "esp_err.h"
 typedef void *usb_host_client_handle_t;
 typedef void *usb_device_handle_t;
@@ -31,6 +32,8 @@ typedef struct usb_transfer {
 #define USB_BM_REQUEST_TYPE_RECIP_ENDPOINT 2
 #define USB_B_REQUEST_SET_INTERFACE 11
 extern unsigned review_submits;
+extern unsigned review_live_transfers, review_hs_payload_allocations;
+extern size_t review_live_payload_bytes;
 extern int review_fail_alloc_packets, review_fail_submit_endpoint;
 static inline int usb_host_transfer_submit(usb_transfer_t *t) {
     if ((int)t->bEndpointAddress == review_fail_submit_endpoint) return ESP_ERR_INVALID_STATE;
@@ -42,12 +45,20 @@ static inline int usb_host_transfer_submit_control(void *c, usb_transfer_t *t) {
 static inline int usb_host_transfer_alloc(size_t n, int packets, usb_transfer_t **out) {
     if (packets == review_fail_alloc_packets) return ESP_ERR_NO_MEM;
     *out = calloc(1, sizeof(**out));
+    if (!*out) return ESP_ERR_NO_MEM;
     (*out)->data_buffer = calloc(1, n);
+    if (!(*out)->data_buffer) { free(*out); *out = NULL; return ESP_ERR_NO_MEM; }
     (*out)->data_buffer_size = n;
     (*out)->num_isoc_packets = packets;
+    ++review_live_transfers;
+    review_live_payload_bytes += n;
+    if (packets == 56) ++review_hs_payload_allocations;
     return ESP_OK;
 }
 static inline int usb_host_transfer_free(usb_transfer_t *t) {
+    assert(t && review_live_transfers && review_live_payload_bytes >= t->data_buffer_size);
+    --review_live_transfers;
+    review_live_payload_bytes -= t->data_buffer_size;
     free(t->data_buffer); free(t); return ESP_OK;
 }
 static inline int usb_host_interface_claim(void *c, void *d, unsigned i, unsigned a) {
