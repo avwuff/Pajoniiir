@@ -152,3 +152,19 @@ Capture does not change signed OTA identity, partition layout, startup health
 gate, panic audio quarantine or cache writeback behavior. New installation,
 physical crash export and restart reliability remain **NOT RUN** until they
 actually occur. No additional S2 soak or acceptance is scheduled by this work.
+
+## Wireless installation and GUI confirmation
+
+One signed local POST `/api/ota/p4` returned HTTP 200 and installed the exact
+clean `0b08fb90` source and ELF listed above in VALID `ota_1`; API returned idle.
+The operator confirmed that the GUI returned normally. Both decks were stopped
+and the controller/USB audio stream was absent at admission. This is installation
+and stopped GUI evidence, not audio or historical restart-workload acceptance.
+
+Evidence: `.cache/restart-capture-wireless/20261010T214139Z/`, including before/after
+firmware, status, startup polls, install result and raw crash export. The new
+7456-byte download has the same full SHA-256 as the validated historical dump
+above; no new PANIC replaced it during this OTA. Outgoing `58f09941` and installed
+`0b08fb90` matching ELF archives are retained. The user did not request a new
+flash-image backup. Future natural PANIC capture and restart reliability remain
+NOT RUN; no fault is intentionally induced and S2 tests stay closed.

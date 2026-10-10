@@ -10,10 +10,12 @@ pipeline checks are now mandatory build gates. Full qualification host suite
 passes with no SKIP. Clean M3 `0b08fb90` passes ESP-IDF 6.0.2, linked RTC-region
 and interception checks, five raw-pipeline fixtures, board identity/isolation
 and signed development packaging. Its matching BIN/ELF and verification hashes
-are retained locally. The candidate is **NOT INSTALLED**; physical PANIC export
-and restart reliability remain **NOT RUN**. No SDK mutation or new S2
-qualification; `58f09941` remains the last verified installed diagnostic baseline,
-with no live device query during this implementation.
+are retained locally. A signed local OTA installed clean `0b08fb90`, VALID
+`ota_1`, API idle; the operator confirmed GUI restoration. Both decks were
+stopped and no controller/audio stream was active. The historical 7456-byte
+crash export is byte-identical and preserved. Future physical PANIC export
+and restart reliability remain **NOT RUN**; this successful restart does not
+qualify the earlier crash workload or reopen S2 testing.
 
 [Offline historical restart audit](reviews/2026-10-10-m3-restart-crash-analysis.md)
 confirms core 0, an internal interrupted stack and the cache-writeback call
@@ -61,8 +63,11 @@ build, S2 test, push, release or public OTA was performed during this capture.
 
 The [Hercules preparation record](validation/HERCULES_INPULSE_500_PREPARATION_20261010.md)
 documents PC VID/PID and jog-touch capture, exact fixture regeneration and
-profile/registry host checks. Native output-control policy, filter gate and
-descriptor-driven audio startup require resolution before M3 activation.
+profile/registry host checks. A new shared v4 native-headphone capability and
+independent filter policy resolve the software output-control audit; focused
+production PCM/parser/storage/runtime tests pass. Full qualification and the
+new firmware build/install remain pending. Actual descriptors, native blend,
+controls/LEDs and audio require physical Hercules acceptance on M3.
 Hercules M3 audio/MIDI/LED/lifecycle acceptance remains NOT RUN. This offline
 work does not change the concurrent S2 exact-image soak.
 

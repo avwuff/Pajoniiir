@@ -208,6 +208,22 @@ true; false sets the v4 bit. This does not enable the Smart CFX response curve.
 Disconnect, missing profiles and older profiles retain the FLX4 policy.
 No controller-name checks implement this policy.
 
+Capability bit 5 (`CP_PF_NATIVE_HEADPHONES`) assigns headphone blend and level
+to controller hardware. JSON `capabilities.native_headphone_controls` defaults
+false; true requires `usb_audio` and S3CP v4. Parser and storage admission reject
+the capability on v2/v3 or without USB audio. The compiler rejects software
+headphone mix, level and master-cue input mirrors. The runtime feeds the selected
+pre-fader cue bus at unity gain to USB channels 3/4; channels 1/2 retain MAIN.
+The existing cue bus is mono on both headphone channels. Hardware performs the
+final cue/master blend and attenuation. Stored software headphone settings are
+preserved and resume after disconnect or activation of a non-native profile.
+No board or VID/PID checks select this policy.
+
+Earlier v4 firmware, including M3 `0b08fb90`, ignores bit 5. Install firmware
+implementing this capability before uploading a native-headphone profile;
+the binary version alone does not establish support. Web JSON equivalent:
+`capabilities.nativeHeadphoneControls`.
+
 MIDI/LED mapping waits for one initial SysEx enqueue per activation. The
 controller worker rechecks its binding epoch on every packet; USB output also
 checks its captured generation. Failure disables the activation and reports
@@ -222,7 +238,7 @@ shared golden bytes test both compilers. Public web deployment is separate.
 
 The compiler emits the oldest version that fully represents a profile: v2
 without extensions, v3 for scaled CC input, v4 for initial SysEx, NOTE_SELECT,
-nonzero output scaling or the filter capability. v4 also supports scaled CC.
+nonzero output scaling or filter/native-headphone capabilities. v4 also supports scaled CC.
 The bare historical M2.4 image rejects v3/v4; v91 accepts them. When rolling
 back to older firmware, use a representable v2 JSON profile and recompile;
 never patch version bytes or silently discard required extensions.

@@ -4,33 +4,36 @@ The existing source-backed profile is an offline candidate, not a hardware
 support claim. See the [MIDI map](../../docs/HERCULES_INPULSE_500_MIDI_MAP.md)
 and [M3 preparation record](../../docs/validation/HERCULES_INPULSE_500_PREPARATION_20261010.md).
 
-The baseline fixture is S3CP v2, 5700 bytes, with 274 expanded inputs and
-107 outputs. SHA-256:
-`4eb737e7dd6c96432878e273b1d0466c19ff07b295fc372940c42e3c0db5aa70`.
+The current fixture is S3CP v4, 5592 bytes, with 268 expanded inputs and
+106 outputs. SHA-256:
+`570b59ecca6baa7319ef85ca92d7d3a11fbe11ea1f9c9c580a8779031a40f549`.
+The historical 5700-byte v2 fixture remains documented in the preparation record.
 It matches exact USB identity `06F8:B12B`; `06F8:B105` is rejected.
 
 ```powershell
 python tools/controller_profile/compile_profile.py controllers/hercules_djcontrol_inpulse_500/profile.json -o .cache/hercules-profile.s3bin
 ```
 
-Before installing, resolve the native hardware output-control policy and
-the filter gate. The current profile inherits the FLX4 Smart CFX filter
-requirement; independent Hercules filters need the existing v4
-`channel_filter_requires_smart_cfx: false` capability. No new firmware ABI is
-required for that flag on the current shared-core candidate.
+Install matching native-headphone firmware before uploading this profile.
+M3 `0b08fb90` and older v4 firmware ignore the new capability bit 5. The profile
+uses `channel_filter_requires_smart_cfx: false` for independent channel filters
+and `native_headphone_controls: true` for hardware cue/master blend and level.
+The firmware supplies the selected mono pre-fader cue bus at unity on USB 3/4
+and retains MAIN on 1/2. Software headphone mirrors and the native master-cue
+LED output are omitted. Software headphone settings remain stored for other
+profiles. MASTER intentionally controls PCM5102A volume; controller RCA MAIN
+is not the reference output and remains unqualified.
 
 The manufacturer documents 24-bit, 44100-Hz audio, MAIN channels 1/2 and
 headphones 3/4. The JSON `audio` section is descriptive: the compiler does
-not serialize its channel/rate fields. Its current 48000 preference therefore
-does not configure the USB driver and must not be used as evidence of a
-48-kHz Hercules mode. Actual USB descriptors and clock replies are required.
+not serialize its channel/rate fields. The corrected 44100 preference
+does not configure the USB driver or establish format support. Actual USB descriptors and clock replies are required.
 
-Master volume, headphone level/mix and master-headphone selection also act in
-the controller hardware. Decide which events should affect PCM5102A MAIN and
-which should be left to native hardware before enabling their software mirrors;
-avoid applying the same attenuation or cue blend twice.
+Headphone level/mix and master-headphone selection remain native hardware
+controls. Verify both blend endpoints and PFL physically before accepting this
+route. No arbitrary initialization SysEx is sent.
 
-After the running S2 soak finishes and both decks are stopped:
+S2 work is closed by the operator. With both decks stopped:
 
 1. Save the exact-image result and physical confirmation before changing USB.
 2. Read Hercules descriptors first. Initially retain the bench controller port

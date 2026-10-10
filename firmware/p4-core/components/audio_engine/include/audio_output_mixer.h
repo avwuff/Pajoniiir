@@ -98,6 +98,8 @@ void audio_output_mixer_prepare_controls(audio_output_mixer_controls_t *out,
                                          float master_trim_gain,
                                          bool master_cue_enabled);
 void audio_output_gain_ramp_reset(audio_output_gain_ramp_t *ramp, float gain);
+/* A native hardware monitor receives an unattenuated cue-only USB pair. */
+void audio_output_mixer_native_headphones(audio_output_mixer_controls_t *controls);
 float audio_output_gain_ramp_next(audio_output_gain_ramp_t *ramp,
                                   float target_gain,
                                   uint32_t frames_remaining);

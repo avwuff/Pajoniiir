@@ -82,3 +82,28 @@ they do not establish calibrated jog direction/sensitivity. All four touch
 addresses match the committed profile. The table's CC touch notation should
 not replace these measured Note On addresses. This is PC address evidence,
 not M3 scratch/playback or lifecycle acceptance.
+
+## Native-headphone implementation candidate
+
+The historical v2 baseline above is superseded by a 5592-byte S3CP v4 fixture
+with 268 inputs and 106 outputs, SHA-256
+`570b59ecca6baa7319ef85ca92d7d3a11fbe11ea1f9c9c580a8779031a40f549`. Shared capability bit 5 assigns final
+headphone blend/level to hardware; bit 4 enables independent filters. Parser,
+storage admission, compiler, web converter, profile runtime and production
+audio mixer share the contract. No Hercules VID check is added to playback.
+The compiler forbids software headphone mix/level/master-cue input mirrors.
+MASTER deliberately still adjusts PCM5102A MAIN; RCA MAIN is not qualified.
+USB 3/4 carry the selected mono pre-fader PFL bus at unity; the controller
+performs the native blend with MAIN 1/2 and headphone attenuation. Physical
+blend endpoints remain NOT RUN. The descriptive preferred rate is corrected
+to 44100 Hz without overriding USB descriptors. Measured jog-touch notes remain.
+
+Install matching firmware before uploading this fixture: older v4 firmware
+including `0b08fb90` ignores the new bit. S2 work remains closed; the controller
+port remains experimental USB3/root0, with storage USB2/root1.
+
+Focused checks pass: production parser/storage/runtime fixture tests, native
+control isolation and activation/clear/non-native replacement; production PCM
+mixer verifies cue unity independent of software headphone mute/mode and that
+MAIN is preserved; converter passes 12 regressions. Full host qualification,
+M3 build/package/install and all Hercules M3 physical checks are pending.

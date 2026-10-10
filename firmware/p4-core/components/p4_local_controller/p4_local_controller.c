@@ -173,6 +173,8 @@ static void local_profile_task(void *arg)
         }
         audio_engine_set_filter_requires_smart_cfx(
             !active || controller_profile_runtime_filter_requires_smart_cfx());
+        audio_engine_set_native_headphones(
+            active && controller_profile_runtime_native_headphones());
 
         const bool builtin_flx4 = work.identity.vid == 0x2B73u &&
                                   work.identity.pid == 0x0045u;
@@ -228,6 +230,7 @@ static void local_connection_callback(bool connected,
 
     atomic_store_explicit(&s_local_connected, false, memory_order_release);
     audio_engine_set_filter_requires_smart_cfx(true);
+    audio_engine_set_native_headphones(false);
     set_semantic_connection(false);
     controller_runtime_set_builtin_flx4_enabled(false);
     controller_led_runtime_set_builtin_flx4_enabled(false);

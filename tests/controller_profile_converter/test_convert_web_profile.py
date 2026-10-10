@@ -22,6 +22,23 @@ def profile(controls=None, feedback_outputs=None):
 
 
 class ConverterTests(unittest.TestCase):
+    def test_native_headphone_capability_survives_conversion_and_requires_v4(self):
+        import struct
+        p = profile()
+        p["firmwareAbi"]["capabilities"] = {"usbAudio": True, "nativeHeadphoneControls": True}
+        converted = convert_profile(p)
+        blob = compile_profile(converted)
+        self.assertEqual(struct.unpack_from("<H", blob, 4)[0], 4)
+        self.assertEqual(struct.unpack_from("<I", blob, 20)[0] & 0x22, 0x22)
+        converted["capabilities"]["usb_audio"] = False
+        with self.assertRaisesRegex(ValueError, "requires usb_audio"):
+            compile_profile(converted)
+        converted["capabilities"]["usb_audio"] = True
+        converted["inputs"] = [{"type": "cc14", "event": "mixer.headphone_mix",
+                                "status": 0xb0, "msb": 5, "lsb": 0x25}]
+        with self.assertRaisesRegex(ValueError, "forbids software headphone mirrors"):
+            compile_profile(converted)
+
     def test_web_v4_roundtrip_matches_shared_golden(self):
         p = profile([
             {"id": "fx.target.master", "semanticId": "CTRL_ID_BEAT_FX_TARGET",

@@ -169,6 +169,15 @@ static float mono_from_dsp(audio_dsp_frame_t frame)
     return (frame.left + frame.right) * 0.5f;
 }
 
+void audio_output_mixer_native_headphones(audio_output_mixer_controls_t *controls)
+{
+    if (!controls) return;
+    controls->headphone_mode = AUDIO_OUTPUT_HEADPHONE_CUE_MONO;
+    controls->headphone_master_gain = 0.0f;
+    controls->headphone_cue_gain = 1.0f;
+    controls->headphone_level_gain = 1.0f;
+}
+
 static float normalized_headphone_master_mix(uint16_t raw)
 {
     if (raw >= AUDIO_MIXER_CONTROL_MAX) {

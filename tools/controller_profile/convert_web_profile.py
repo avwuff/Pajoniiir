@@ -247,7 +247,8 @@ def convert_profile(web_data):
             "usb_audio": bool_field(caps, "usbAudio", False),
             "jog_touch": bool_field(caps, "jogTouch", False),
             "pitch_14bit": bool_field(caps, "pitch14bit", False),
-            "channel_filter_requires_smart_cfx": bool_field(caps, "channelFilterRequiresSmartCfx", True)
+            "channel_filter_requires_smart_cfx": bool_field(caps, "channelFilterRequiresSmartCfx", True),
+            "native_headphone_controls": bool_field(caps, "nativeHeadphoneControls", False)
         },
         "inputs": [],
         "outputs": [],

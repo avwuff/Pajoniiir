@@ -74,7 +74,8 @@ int cp_profile_parse(const uint8_t *data, size_t len, cp_profile_t *out)
     out->decks = data[29];
     out->init_sysex_len = version >= 4 ? rd_u16(data + 30) : 0;
     if (out->init_sysex_len > CP_MAX_INIT_SYSEX ||
-        (version < 4 && (out->flags & CP_PF_FILTER_ALWAYS))) {
+        ((out->flags & CP_PF_NATIVE_HEADPHONES) && !(out->flags & CP_PF_USB_AUDIO)) ||
+        (version < 4 && (out->flags & (CP_PF_FILTER_ALWAYS | CP_PF_NATIVE_HEADPHONES)))) {
         return CP_ERR_BOUNDS;
     }
 

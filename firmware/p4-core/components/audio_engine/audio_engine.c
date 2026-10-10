@@ -426,6 +426,7 @@ static uint16_t         s_headphone_mix = AUDIO_MIXER_CONTROL_MAX;
 static uint16_t         s_headphone_level = AUDIO_MIXER_CONTROL_MAX;
 static audio_output_gain_ramp_t s_headphone_level_ramp = { .current = 1.0f };
 static bool             s_master_cue_enabled = true;
+static bool             s_native_headphones;
 static bool             s_pfl_enabled[AUDIO_ENGINE_DECK_COUNT];
 /* Control/UI writers and the audio output reader run on different cores. Keep
  * the legacy cue mode and the richer headphone route in one atomic word so an
@@ -3996,6 +3997,9 @@ static void ae_output_task(void *arg)
                                                  audio_mixer_fader_gain(
                                                      atomic_load_u16(&s_master_volume)),
                                              master_cue_enabled);
+        if (atomic_load_bool(&s_native_headphones)) {
+            audio_output_mixer_native_headphones(&mixer_controls);
+        }
         const float headphone_level_target =
             mixer_controls.headphone_level_gain;
 
@@ -6666,6 +6670,11 @@ bool audio_engine_get_smart_cfx_enabled(void)
 void audio_engine_set_filter_requires_smart_cfx(bool requires)
 {
     atomic_store_bool(&s_channel_filter_always, !requires);
+}
+
+void audio_engine_set_native_headphones(bool native)
+{
+    atomic_store_bool(&s_native_headphones, native);
 }
 
 esp_err_t audio_engine_toggle_smart_fader(void)

@@ -73,6 +73,7 @@ typedef enum {
 #define CP_PF_JOG_TOUCH    (1u << 2)
 #define CP_PF_PITCH_14BIT  (1u << 3)
 #define CP_PF_FILTER_ALWAYS (1u << 4) /* v4: channel filter bypasses Smart CFX gate */
+#define CP_PF_NATIVE_HEADPHONES (1u << 5) /* v4: hardware blends/attenuates cue */
 
 typedef struct {
     uint8_t match_status;

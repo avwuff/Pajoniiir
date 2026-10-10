@@ -77,6 +77,7 @@ PF_USB_AUDIO = 1 << 1
 PF_JOG_TOUCH = 1 << 2
 PF_PITCH_14BIT = 1 << 3
 PF_FILTER_ALWAYS = 1 << 4
+PF_NATIVE_HEADPHONES = 1 << 5
 
 # control_link.h namespaces
 NS_DECK1 = 0x10
@@ -415,6 +416,13 @@ def compile_profile(profile):
         flags |= PF_PITCH_14BIT
     if caps.get("channel_filter_requires_smart_cfx", True) is False:
         flags |= PF_FILTER_ALWAYS
+    if caps.get("native_headphone_controls", False):
+        if not caps.get("usb_audio"):
+            raise ValueError("native_headphone_controls requires usb_audio")
+        native_events = {"mixer.headphone_mix", "system.headphone_level", "system.master_cue"}
+        if any(item.get("event") in native_events for item in profile.get("inputs", [])):
+            raise ValueError("native_headphone_controls forbids software headphone mirrors")
+        flags |= PF_NATIVE_HEADPHONES
     sysex_values = [num(v) for v in profile.get("init_sysex", [])]
     if sysex_values and (not 2 <= len(sysex_values) <= MAX_INIT_SYSEX or
                          sysex_values[0] != 0xF0 or sysex_values[-1] != 0xF7 or
@@ -435,7 +443,7 @@ def compile_profile(profile):
                          (profile_size, MAX_PROFILE_SIZE))
     crc = zlib.crc32(tail + body) & 0xFFFFFFFF
     version = S3CP_SCALED_VERSION if any(e.raw_type == RAW_CC7_TO14 for e in entries) else S3CP_VERSION
-    if sysex or flags & PF_FILTER_ALWAYS or any(e.raw_type >= RAW_NOTE_SELECT for e in entries) or any(o.value_scale for o in outputs):
+    if sysex or flags & (PF_FILTER_ALWAYS | PF_NATIVE_HEADPHONES) or any(e.raw_type >= RAW_NOTE_SELECT for e in entries) or any(o.value_scale for o in outputs):
         version = S3CP_EXTENDED_VERSION
     header = S3CP_MAGIC + struct.pack("<HHII", version, HEADER_SIZE,
                                       profile_size, crc) + tail

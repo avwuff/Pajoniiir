@@ -771,8 +771,34 @@ static void test_scratch_source_silence(void)
     assert(out.right == 0);
 }
 
+static void test_native_headphones_keep_master_and_cue_separate(void)
+{
+    audio_mixer_frame_t frames0[] = {{2000, 6000}, {2000, 6000}};
+    audio_mixer_frame_t frames1[] = {{10000, 10000}, {10000, 10000}};
+    source_t src0 = {.frames = frames0, .count = 2};
+    source_t src1 = {.frames = frames1, .count = 2};
+    audio_resampler_state_t rs0, rs1;
+    audio_output_mixer_deck_t d0 = make_deck(&src0, &rs0, 1.0f);
+    audio_output_mixer_deck_t d1 = make_deck(&src1, &rs1, 0.0f);
+    prime_output_mixer(&d0, &d1);
+    audio_output_mixer_controls_t controls;
+    /* Software knobs at master-only and mute must not duplicate hardware gain. */
+    audio_output_mixer_prepare_controls(&controls, false, true,
+        AUDIO_OUTPUT_HEADPHONE_SPLIT_MONO, 16383, 0, 1.0f, false);
+    audio_output_mixer_native_headphones(&controls);
+    audio_output_mix_result_t out = audio_output_mixer_next_prepared(
+        &d0, &d1, &controls, NULL, NULL, NULL);
+    assert(out.master.left == 2000 && out.master.right == 6000);
+    assert(out.headphone.left == 10000 && out.headphone.right == 10000);
+    /* Returning to software mode must honor the same stored mute settings. */
+    audio_output_mixer_prepare_controls(&controls, false, true,
+        AUDIO_OUTPUT_HEADPHONE_MASTER_MONO, 16383, 0, 1.0f, false);
+    assert(controls.headphone_level_gain == 0 && controls.headphone_master_gain == 1);
+}
+
 int main(void)
 {
+    test_native_headphones_keep_master_and_cue_separate();
     test_headphone_gain_ramp_is_continuous_and_retargetable();
     test_mixes_two_active_decks_with_output_gains();
     test_scratch_source_replaces_ring_without_consuming();

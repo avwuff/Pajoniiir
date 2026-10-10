@@ -103,6 +103,14 @@ bool controller_profile_runtime_filter_requires_smart_cfx(void)
     return requires;
 }
 
+bool controller_profile_runtime_native_headphones(void)
+{
+    RT_LOCK();
+    bool native = s_active && s_ready && (s_profile.flags & CP_PF_NATIVE_HEADPHONES);
+    RT_UNLOCK();
+    return native;
+}
+
 bool controller_profile_runtime_initialize(controller_profile_packet_cb_t cb, void *ctx)
 {
     bool ok = true;

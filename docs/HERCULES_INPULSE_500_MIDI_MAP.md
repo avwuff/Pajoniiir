@@ -92,7 +92,8 @@ Deck 1 pads use status `0x96`; Deck 2 pads use `0x97`.
 ## Mixer, browser and adapted FX
 
 The profile maps both channel faders, crossfader, trims, three-band EQ,
-filters, master volume, headphone mix/level and PFL. All absolute analog
+independent filters, PCM5102A master volume and PFL. Native headphone
+blend/level and master-headphone selection are not mirrored in software. All absolute analog
 controls except tempo are replayed after reconnect. Browse rotate/press,
 Shift+browse and both normal/shifted LOAD buttons use the standard Pajoniiir
 browser semantics.
@@ -108,7 +109,7 @@ The four physical FX buttons are a Pajoniiir adaptation, not a Serato layout:
 
 ## LED output and RGB values
 
-Transport, Cue, Sync, PFL, loop, mode and master-cue LEDs use normal Note On
+Transport, Cue, Sync, PFL, loop and mode LEDs use normal Note On
 values `0x7F`/`0x00`. The VU meters pass through `0x00..0x7F` on CC `0x40`.
 Pad banks use controller-specific RGB Data2 values:
 
