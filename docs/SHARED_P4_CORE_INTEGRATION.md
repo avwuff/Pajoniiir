@@ -4,6 +4,13 @@ Status: implementation in progress; partial exact-image M3 acceptance, no public
 
 ## Current closeout, 2026-10-11
 
+The [final development handoff](reviews/2026-10-11-shared-core-final-handoff.md)
+supersedes current-state and next-action statements below. Installed clean
+6166d936 is VALID ota_1 with Hercules USB3/storage USB2, short audio/display and
+active jog/Browse smoke PASS. Latest ordinary local matrix passes on b913818;
+whole-core physical, hosted CI and publication gates remain explicit. S2 stays
+operator-closed with waivers. Subsequent paragraphs retain checkpoint history.
+
 The [delivery-readiness ledger](reviews/2026-10-11-shared-core-delivery-readiness.md)
 is the current P01–P10/open-gate and migration handoff authority. Ordinary local
 qualification and three signed packages are complete on frozen `5ff76b6c`;

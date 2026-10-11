@@ -1,9 +1,10 @@
 # P4 operation and release checklist
 
-Current Hercules bench: clean `e16ecfb5`, VALID `ota_0`, Hercules USB3/root0,
-storage USB2/root1, Wi-Fi ON. Final 60-minute playback and the shortened
-active-input/lifecycle scopes are accepted as documented in the
-[current closeout](reviews/2026-10-11-shared-core-hercules-closeout.md).
+Current Hercules bench: clean `6166d936`, VALID `ota_1`, Hercules USB3/root0,
+storage USB2/root1, Wi-Fi ON. Local OTA/startup and short audio/display plus
+active jog/Browse smokes pass; both decks are stopped. The
+[final handoff](reviews/2026-10-11-shared-core-final-handoff.md) is current authority.
+The e16ecfb5 hour/lifecycle acceptance remains historical and does not transfer.
 This experimental arrangement does not change ordinary FLX4 defaults.
 USB1 is power-only on this bench; do not require a new serial connection for
 documentation closeout. Do not repeat accepted tests solely to fill historical
@@ -19,7 +20,8 @@ Three frozen-source ordinary signed packages and their debug/configuration
 manifests now verify locally. Review the
 [delivery handoff](reviews/2026-10-11-shared-core-delivery-readiness.md)
 before selecting a later installation. None of these new images is installed
-or physically accepted; the current Hercules bench remains unchanged.
+or physically accepted by that historical packaging step. The later controller
+bench OTA/short-smoke scope is recorded in the final handoff above.
 
 For the [S2 performance candidate](../controllers/ni_traktor_s2_mk3_full/README.md),
 keep S2 on USB3 HS and the stick on USB2 FS. The operator closed S2 work after

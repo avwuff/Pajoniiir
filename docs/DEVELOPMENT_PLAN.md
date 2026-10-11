@@ -1,5 +1,13 @@
 # P4 post-release development plan
 
+The [final development handoff](reviews/2026-10-11-shared-core-final-handoff.md)
+is the current delivery/open-gate authority. Installed clean 6166d936 is VALID
+ota_1 on the Hercules role-swap bench; short audio/display and active-control
+smokes pass. Latest ordinary three-target local builds/simulators pass on
+b913818; physical acceptance is image-specific, CI stays operator-skipped and
+S2 remains operator-closed. Next is PR reconciliation and separately authorized
+push/merge/publication. Earlier progression below retains its dated scope.
+
 Current shared-core work is reconciled in the
 [2026-10-11 phase/P01–P10 review](reviews/2026-10-11-shared-core-hercules-closeout.md).
 The Hercules source/fixture/support-scope review is complete: unchanged clean

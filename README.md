@@ -8,6 +8,12 @@
 
 # Pajoniiir
 
+The [final development handoff](docs/reviews/2026-10-11-shared-core-final-handoff.md)
+records the current installed M3 controller candidate, successful short audio,
+display and active-input smokes, latest local three-target builds, and remaining
+physical/CI/publication gates. Historical acceptance remains image-specific;
+this development integration is not a new public production release.
+
 Shared-core development: portable P4 firmware lives in `firmware/p4-core`,
 with hardware providers under `firmware/boards`. JC4880, JC1060 and M3 use linked
 common startup; the M3 entrypoint is `firmware/main-deck-m3`.
@@ -26,13 +32,14 @@ this development branch is not a new production release.
 passes on clean `5ff76b6c`: complete host gate, nine simulator configurations,
 both keylock policies and JC4880/JC1060/M3 ESP-IDF 6.0.2 builds with unchanged
 locks and verified identities/budgets. Hardware and publication gates remain
-separate; the installed Hercules bench image is unchanged.
+separate; the subsequent controller bench OTA is recorded in the final handoff.
 
 The [delivery-readiness ledger](docs/reviews/2026-10-11-shared-core-delivery-readiness.md)
 records all P01–P10 dispositions, remaining acceptance gates and migration
 boundaries. Three frozen-source ordinary signed candidates are retained locally;
 a [review description](docs/reviews/2026-10-11-shared-core-pr-description.md)
-is prepared. No new image is installed or published by this handoff.
+is prepared. That historical packaging handoff did not install or publish images;
+the later authorized local controller OTA did not change public releases.
 
 The [S2 MK3 performance candidate](controllers/ni_traktor_s2_mk3_full/README.md)
 adds source-backed mixer/pitch/jog/LED mappings and experimental descriptor-driven

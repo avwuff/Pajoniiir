@@ -2,6 +2,14 @@
 
 Status: **current documentation authority, reconciled 2026-10-11**.
 
+[Final development handoff](reviews/2026-10-11-shared-core-final-handoff.md)
+consolidates implementation, software results, installed identity and outstanding
+acceptance/publication gates. The 6166d936 active-control supplement now passes
+20.531 s / 35 samples with 2421 MIDI packets, all 22 strict deltas zero and no
+new output-late events. Operator confirms both jogs/Browse, audio outputs and
+waveforms normal; both decks stopped. This closes the short-smoke input gap,
+not full new-image qualification. S2 stays operator-closed with waivers.
+
 [Authorized M3 OTA and short smoke](validation/M3_FINAL_CONTROLLER_CANDIDATE_20261011.md#authorized-local-ota-and-short-smoke)
 installed `M3-dev-g6166d9362730`, clean source `6166d93627304895857b626e719032de3b4f884d`,
 as VALID `ota_1`; exact ELF identity and unchanged historical crash summary were

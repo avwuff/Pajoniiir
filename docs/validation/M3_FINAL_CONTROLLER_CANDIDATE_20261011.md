@@ -134,3 +134,12 @@ The smoke archive also contains the runner, operator confirmation, raw diagnosti
 log and SHA-256 inventory. This is a short exact-image audio/display smoke, not
 full new-image qualification or evidence that historical underrun causes are fixed.
 S2 remains operator-closed with waivers and was not physically connected/tested.
+
+The subsequent active-control supplement completed 20.531 s / 35 samples with
+2421 MIDI packets. All 22 strict deltas and output-late delta were zero; both
+decks ended stopped. Operator confirmed both jogs/Browse, clean MAIN/headphones
+and normal waveforms. This closes the short smoke's active-input gap for this
+image, not broader profile or long-soak qualification. Evidence:
+`.cache/final-m3-candidate-6166d936/controls-20s-20261011T202900Z/`.
+See the [final development handoff](../reviews/2026-10-11-shared-core-final-handoff.md)
+for the consolidated completed, waived and open scope.
