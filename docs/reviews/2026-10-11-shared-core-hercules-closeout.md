@@ -7,6 +7,11 @@ supersedes this checkpoint's remaining-work/next-action tables. Frozen-source
 ordinary software qualification and signed packaging are complete; physical,
 experimental and historical restart gates retain their stated limits.
 
+Subsequent operator clarification: the historical OTA restart was associated
+with moving the cable. The current delivery ledger closes that event as operator
+cable intervention. Restart-investigation rows below retain the earlier review
+checkpoint's context; they no longer request investigation of that event.
+
 The common production architecture is implemented. JC4880, JC1060 and M3
 entrypoints select `firmware/p4-core/components` and their board directories.
 This review closes the Hercules source/fixture/support-scope reconciliation

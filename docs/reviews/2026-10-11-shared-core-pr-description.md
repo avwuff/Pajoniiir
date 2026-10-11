@@ -56,8 +56,10 @@ unrelated export. Migration instructions and licence/provenance handoff are in
 [delivery readiness](2026-10-11-shared-core-delivery-readiness.md).
 
 Hosted CI is SKIPPED BY OPERATOR (quota), not PASS. New candidate physical
-acceptance, JC hardware, fresh experiment builds, wider real-media/transport
-coverage and historical OTA-restart causation remain open. S2 work remains
+acceptance, JC hardware, fresh experiment builds and wider real-media/transport
+coverage remain open. The operator clarified that the historical OTA restart
+was associated with moving the cable; it is closed as a cable-intervention
+event, not an outstanding firmware defect or a firmware-fix claim. S2 work remains
 operator-closed; Hercules individual pad/FX/LED scope is partial. This review
 does not reopen accepted controller campaigns or establish whole-core completion.
 No existing release tag/asset or public OTA channel is changed.

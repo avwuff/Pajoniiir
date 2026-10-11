@@ -6,8 +6,14 @@ Current review handoff: [P01–P10 dispositions and residual gates](reviews/2026
 and [prepared PR description](reviews/2026-10-11-shared-core-pr-description.md).
 Finding labels now follow the original comparison (P05 beat phase; P06 PDB
 title). Software/package rows are closed for frozen `5ff76b6c`; historical
-restart causation, deferred experiments, coverage gaps and operator exclusions
+deferred experiments, coverage gaps and operator exclusions
 are separately classified. No device action or remote publication is implied.
+
+Operator correction, 2026-10-11: the historical OTA restart was associated with
+moving the cable. The current ledger closes it as an operator cable-intervention
+event and removes it from open firmware defects. Earlier investigation paragraphs
+below remain historical evidence, superseded by this clarification. No firmware
+fix, new test or new-image lifecycle acceptance is claimed.
 
 Latest local delivery: three ordinary `5ff76b6c` candidates are signed and
 independently verified, with BIN/ELF/MAP, configuration manifests, frozen

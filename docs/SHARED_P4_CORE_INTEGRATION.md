@@ -27,7 +27,9 @@ S2 stays operator-closed. Hercules individual pad/FX/LED coverage remains partia
 
 The review distinguishes implemented software from remaining acceptance: fresh
 experimental firmware builds, real playlist/artwork/source-loop variants,
-JC physical gates and historical OTA-restart causation. Hosted CI is SKIPPED BY
+JC physical gates. The operator clarified that the historical OTA restart was
+associated with moving the cable; it is closed as an operator cable-intervention
+event, with original evidence retained and no firmware-fix claim. Hosted CI is SKIPPED BY
 OPERATOR; physical Campaign A was excluded, not passed. No whole-core/release
 PASS or public publication is implied. The following dated narrative and phase
 tables retain their historical source/evidence scope.

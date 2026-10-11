@@ -12,10 +12,12 @@ policies and all three IDF 6.0.2 builds with unchanged locks and valid budgets.
 Configuration-specific signed delivery provenance is now complete. The
 [delivery-readiness ledger](reviews/2026-10-11-shared-core-delivery-readiness.md)
 and local PR description are prepared for review. Next work requires selecting
-its scope: matched restart investigation, separate experiment builds or a
+its scope: separate experiment builds or a
 board-specific release gate. Real-media/physical acceptance remains separate;
 hosted CI stays skipped.
-Historical OTA-restart causation remains open. Earlier
+The operator clarified that the historical OTA restart was associated with
+moving the cable. That event is closed as operator cable intervention, without
+a firmware-fix claim or further scheduled investigation. Earlier
 installed-state and next-action paragraphs below are historical progression.
 
 The [S2 performance candidate](../controllers/ni_traktor_s2_mk3_full/README.md)
@@ -23,8 +25,7 @@ uses the shared runtime for 80 inputs/26 outputs and experimental HS UAC2.
 S2 work is closed by explicit operator decision after exact-image full-hour
 48/44.1-kHz physical playback acceptance. Remaining physical checks are waived,
 not PASS; do not schedule further S2 tests. Earlier diagnostic evidence remains
-scoped to its image/settings. Continue the separate general memory/OTA-restart
-investigation described in the
+scoped to its image/settings. General memory evidence remains described in the
 [closeout review](reviews/2026-10-10-s2-closeout-resources-restart.md).
 
 Shared-core/M3 implementation is tracked in

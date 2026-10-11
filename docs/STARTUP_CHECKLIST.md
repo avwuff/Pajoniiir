@@ -27,8 +27,12 @@ full-hour 48/44.1-kHz playback acceptance and waived remaining physical checks.
 Do not start another S2 test. Keep Wi-Fi enabled and record the exact image and
 negotiated S2 rate separately from MAIN. Source mappings, host tests and waived
 checks do not establish unrestricted physical acceptance. General memory and
-OTA-restart findings continue in the
+OTA-restart records are retained in the
 [closeout review](reviews/2026-10-10-s2-closeout-resources-restart.md).
+
+The operator subsequently clarified that the historical OTA restart was
+associated with moving the cable. It is closed as an operator cable-intervention
+event; do not schedule a firmware repair or a repeat test for that event.
 
 For the shared-core/M3 development branch, use the exact target identity and
 [integration gates](SHARED_P4_CORE_INTEGRATION.md). Existing physical records

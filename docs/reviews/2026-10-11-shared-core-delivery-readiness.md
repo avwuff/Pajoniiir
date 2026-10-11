@@ -8,6 +8,12 @@ a development integration, not a new production release or a whole-project
 acceptance declaration. This ledger supersedes earlier next-action tables;
 dated validation records keep their original scope.
 
+Operator clarification, 2026-10-11: the historical OTA restart discussed in
+this handoff was associated with the operator moving the cable. It is closed
+as an operator-reported cable-intervention event, not an outstanding spontaneous
+firmware restart defect. Original logs/dumps remain preserved. This is a context
+correction, not a firmware repair or a new exact-image lifecycle PASS.
+
 Canonical repository: `dvucinozd/Pajoniiir`, branch
 `codex/shared-p4-core-m3`. Frozen qualification/package source:
 `5ff76b6cb1474779c6e58ecd5b273dcee378a3ed`. Subsequent commits are documentation
@@ -39,7 +45,7 @@ the tests or historical evidence.
 | P05 PQTZ phases/downbeat | Implemented; phases 1–4 and downbeat-1 binary regressions PASS | No independent complete beat-phase physical review | NOT RUN; software success is not an acoustic/downbeat confirmation |
 | P06 PDB title index 17 | Implemented; required parser fixtures and selected real-export comparison PASS | Named metadata/UI review passed | Arbitrary/export-version coverage not implied; wider media variants NOT RUN |
 | P07 decoder/transport/DSP | Implemented; mandatory MP3/WAV/FLAC, EOF/onset/loop and production keylock regressions PASS | Named mixed-rate/MT/manual-loop and controller transport gates passed | Broader physical seek/EOF/race/active-removal matrix NOT RUN |
-| P08 pending startup health | Implemented; requested actual AP/HTTP readiness, timeout and rollback tests PASS | Named M3 injected timeout/rollback gates passed | Historical OTA-restart PANIC causation unresolved; new-image lifecycle separate |
+| P08 pending startup health | Implemented; requested actual AP/HTTP readiness, timeout and rollback tests PASS | Named M3 injected timeout/rollback gates passed | Historical restart closed with operator-confirmed cable-intervention context; new-image lifecycle separate |
 | P09 CI and qualification | Three-board/variant workflows and required no-SKIP fixtures implemented; full ordinary local matrix PASS | Physical Campaign A excluded by operator | Hosted CI SKIPPED BY OPERATOR (quota); fresh experimental firmware builds NOT RUN |
 | P10 canonical documentation | Implemented; boards, provenance, migration, package/configuration manifests and review draft prepared | Exact-image operator records retained | Publication and remaining board acceptance records open |
 
@@ -54,7 +60,7 @@ archives verify. Local evidence is not successful hosted CI.
 
 | Priority | Item | Required next evidence | Treatment now |
 | --- | --- | --- | --- |
-| High | Historical OTA-restart PANIC | Matched dump/ELF/boot context and a causal reproduction before a repair claim | Unresolved investigation; do not infer a fix from successful later restarts |
+| Closed operator context | Historical OTA restart | Operator confirmed moving the cable during the event; original evidence retained | Removed from open firmware defects; no repair claim or further test scheduled |
 | High for a board release | Exact candidate configuration and installation | Selected topology, exact BIN/bundle/ELF and required board lifecycle/operator checks | New packages uninstalled and physically NOT RUN |
 | Medium | Nested ordered playlists, stale artwork after media change, source memory loops and wider formats | Suitable actual export/media and bounded tests | Physical coverage gaps; no evidence here of an unimplemented shared module |
 | Medium | USB throughput, FAT variants, physical races and active removal | Board-specific measurements and operator/hardware access | NOT RUN; do not substitute host fixtures |
@@ -65,8 +71,8 @@ archives verify. Local evidence is not successful hosted CI.
 
 No new confirmed production firmware defect was established by this evidence
 reconciliation. Incomplete coverage and deliberately deferred features are not
-automatically implementation bugs. The historical restart finding remains a
-real unresolved investigation; isolated output-late is monitored under the
+automatically implementation bugs. The historical restart is closed with the
+operator's cable-intervention clarification; isolated output-late is monitored under the
 existing rules, not described as zero-late.
 
 ## Migration and delivery handoff
