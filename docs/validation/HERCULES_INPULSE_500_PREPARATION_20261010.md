@@ -2,6 +2,8 @@
 
 Status: matching firmware/profile installed; combined physical 60-second smoke
 passed on `04f0cfb6`; full Hercules qualification remains open.
+The latest installed candidate is `ac9287af`; its stopped normal restart is
+recorded below, separately from the earlier physical playback evidence.
 The initial Windows/offline preparation below did not alter the then-running
 `3f3605a7` S2 soak, controller profile, firmware, USB connections or workload.
 The later software qualification and installation are recorded separately below.
@@ -291,3 +293,22 @@ This closes the combined short smoke only. Full pad/FX/LED/load/screensaver
 coverage, reconnect/power and long Hercules qualification remain NOT RUN;
 RCA MAIN is not the PCM5102A reference. Restart fault root cause also remains
 open. No S2 gate is reopened, and no push, release or public OTA is authorized.
+
+## Later cache restart candidate: `ac9287af`
+
+Clean `ac9287af4a4c07d826474ed11f0688e81135e515` is now installed as
+`M3-dev-gac9287af4a4c`, VALID `ota_1`, with the same Hercules profile and USB
+roles. The complete qualification host suite, exact M3 ESP-IDF 6.0.2 build,
+linked restart gates, board/budget checks and signed package pass.
+Its shared normal restart joins the IDF cache-sync lock before resetting the
+peer core; architecture and SoC PANIC paths bypass the wait.
+
+One stopped software restart with Hercules idle audio streaming passes:
+boot 418 -> 419, reset `SW`, exact image remains VALID, full raw crash hash
+unchanged, Hercules MIDI/UAC1 44100-Hz stream restored. Both decks remain
+stopped. This is not a USB cable reconnect, cold power cycle, listening test,
+or new-image playback qualification. The operator-confirmed 60-second smoke
+above still belongs to `04f0cfb6`; it is not transferred to this candidate.
+New-image physical GUI confirmation is pending, and historical fault causality
+and wider restart reliability remain open. Full artifact identities and records
+are in [the restart observation](RESTART_BUS_CAPTURE_20261010.md#exact-candidate-and-stopped-restart-observation).

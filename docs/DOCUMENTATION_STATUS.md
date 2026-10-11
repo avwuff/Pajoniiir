@@ -1,9 +1,9 @@
 # Documentation status
 
-Status: **current documentation authority, reconciled 2026-10-06**.
+Status: **current documentation authority, reconciled 2026-10-11**.
 
-Latest installed diagnostic/Hercules-support baseline: clean `04f0cfb6`,
-`M3-dev-g04f0cfb6dba3`, VALID `ota_0`, API idle, both decks stopped. Hercules
+Latest installed restart/Hercules-support candidate: clean `ac9287af`,
+`M3-dev-gac9287af4a4c`, VALID `ota_1`, API idle, both decks stopped. Hercules
 `06F8:B12B` MIDI/profile and UAC1 full-speed packed 24-bit/44100-Hz playback
 are active. Explicit feedback updates grow without invalid values. The missing
 HCD integration was its 512-byte HS periodic FIFO, below Hercules MPS 540;
@@ -14,7 +14,17 @@ final M3 ESP-IDF 6.0.2 build, board identity/budget, restart link/raw gates,
 signed bundle/manifest and local OTA pass. Matching BIN/ELF and hashed evidence
 are retained. JC builds and public release were not run.
 
-The operator-confirmed combined 60.078-s test passes MAIN/headphones, both
+The cache synchronization restart candidate passes the complete qualification
+host suite without SKIP and its exact M3 ESP-IDF 6.0.2 build, linked IRAM/panic
+bypass contracts, five raw fixtures, board/budget checks and signed packaging.
+One authorized local OTA installed it. A subsequent stopped normal restart
+passes boot 418 -> 419, reset `SW`, the same exact VALID image and byte-identical
+crash dump, with Hercules MIDI/UAC1 44100 Hz restored. The peer-reset/cache-sync
+serialization gap is addressed; causality and broader restart reliability remain
+open. New-image physical GUI confirmation is pending. Evidence and scope:
+[restart candidate](validation/RESTART_BUS_CAPTURE_20261010.md#cache-synchronization-candidate-after-the-natural-fault).
+
+On earlier exact `04f0cfb6`, the operator-confirmed combined 60.078-s test passes MAIN/headphones, both
 jogs/Browse, PFL D1/D2, native headphone Mix/Volume and fluid waveforms. All 85
 samples were audited: all 22 strict deltas zero, 649 MIDI packets, output-late
 delta zero. This is a short smoke, not full Hercules qualification. Profile is
@@ -40,8 +50,8 @@ and signed development packaging. Its matching BIN/ELF and verification hashes
 are retained locally. A signed local OTA installed clean `0b08fb90`, VALID
 `ota_1`, API idle; the operator confirmed GUI restoration. Both decks were
 stopped and no controller/audio stream was active. The historical 7456-byte
-crash export is byte-identical and preserved. Future physical PANIC export
-and restart reliability remain **NOT RUN**; this successful restart does not
+crash export is byte-identical and preserved. At that earlier checkpoint,
+physical PANIC export and restart reliability were **NOT RUN**; that restart does not
 qualify the earlier crash workload or reopen S2 testing.
 
 [Offline historical restart audit](reviews/2026-10-10-m3-restart-crash-analysis.md)

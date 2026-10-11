@@ -4,8 +4,10 @@ This implements the next diagnostic step from the
 [historical restart audit](../reviews/2026-10-10-m3-restart-crash-analysis.md).
 It adds evidence collection, **not a causal repair** of the historical
 cache-register store fault. Further S2 testing remains closed by operator
-decision. The last verified installed diagnostic image is clean `58f09941`,
-VALID `ota_0`; this implementation performs no device action or live query.
+decision. At the initial implementation checkpoint, installed clean `58f09941`
+was VALID `ota_0` and implementation work performed no device action or live
+query. Later natural-fault capture and the installed `ac9287af` candidate are
+recorded chronologically below; their explicit scopes supersede that checkpoint.
 
 ## Production contract
 
@@ -236,3 +238,42 @@ gate additionally requires IRAM placement of the cache join, an internal SRAM
 panic marker and interception/delegation of the SoC panic hook. This candidate
 addresses the synchronization gap; physical restart reliability and causality
 remain unqualified until a matching installed candidate is observed.
+
+### Exact candidate and stopped restart observation
+
+Clean source `ac9287af4a4c07d826474ed11f0688e81135e515`, version
+`M3-dev-gac9287af4a4c`, passes the complete qualification host suite (exit 0,
+no SKIP), the sole M3 ESP-IDF 6.0.2 build and the actual linked restart contract,
+five raw-pipeline fixtures, board identity/isolation and documentation checks.
+The production test's initial full-run C99 compile failure (missing explicit
+`stdbool.h` in the test) was corrected; the final full suite passes. No JC build,
+dependency update, public release or S2 physical retest was performed.
+
+| Artifact | Verified value |
+| --- | --- |
+| BIN | 2,602,400 bytes; SHA-256 `4e0e7145bb57092a52f455808617a286cc422a2557bae767fc8381891ea1e2bf` |
+| ELF | SHA-256 `53808ea215b37addd063c783afbd995b219b4a3c000b9d8b332cc86230da9113` |
+| Signed bundle | 2,602,588 bytes; SHA-256 `faae2bb5293f1911c0252be77aea1945ba03123cc877bb2f79d5dc91f16ab1a6` |
+
+Package/debug archive and hashed software evidence are under
+`.cache/restart-cache-join-candidate-ac9287af/pajoniiir-m3-M3-dev-gac9287af4a4c/`.
+The manifest and bundle verify with the existing trusted `rel-001` key.
+One local OTA returned HTTP 200 and the exact image reached VALID `ota_1`.
+The original natural dump remained byte-identical. Host Wi-Fi reconnection was
+needed during observation; that delay is not a demonstrated device boot fault.
+OTA evidence: `.cache/restart-cache-join-wireless/20261011T080615Z/`.
+
+One subsequent marked POST `/api/validation/reboot` returned HTTP 202 with
+Hercules MIDI and its idle 44100-Hz UAC1 stream active, storage present and both
+decks stopped. The persisted journal shows boot 418 -> 419, exact candidate
+version/slot unchanged and `reset=SW`. The API returns the same exact VALID
+image; Hercules MIDI and 44100-Hz streaming recover without a fault. Before and
+after raw crash exports both hash to
+`356d0a050d773a9eb287f7a1da51a1e9ba1c67bdb9d99e0af85d47d6902a4a14`.
+The single restart completed without new panic evidence and without a second
+request. Records: `.cache/restart-cache-join-check/20261011T080821Z/`.
+
+This is **one stopped normal restart observation**, not a long restart campaign,
+playback/audio qualification, new-image eyes-on GUI confirmation, or proof that
+the historical cache fault's cause is resolved. No cache registers are sampled
+from the fault handler and no writeback is skipped. The S2 closeout stays closed.
