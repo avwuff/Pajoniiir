@@ -466,6 +466,13 @@ static int int_field_size(const uint8_t *buf, size_t len)
     return size < 0 || len >= (size_t)size ? size : 0;
 }
 
+static uint8_t integer_tag_field(uint8_t tag)
+{
+    return tag == 0x04u ? DJLINK_DB_FIELD_INT8 :
+           tag == 0x05u ? DJLINK_DB_FIELD_INT16 :
+           tag == 0x06u ? DJLINK_DB_FIELD_INT32 : 0u;
+}
+
 /* v300: the head of an analysis reply, up to and including the header of
  * its blob argument (or the whole message when it has none). 1 = parsed,
  * 0 = more bytes needed, -1 = malformed. */
@@ -533,6 +540,11 @@ static int blob_head(dj_link_db_t *c, size_t *head_len, uint32_t *txid, uint16_t
             *blob_len = djlink_rd32(&b[pos + 1u]);
             *has_blob = true;
             *tail = (uint8_t)(argc - i - 1u);
+            for (uint8_t j = 0; j < *tail; ++j) {
+                uint8_t field = integer_tag_field(tags[i + 1u + j]);
+                if (!field) return -1;
+                c->blob_tail_fields[j] = field;
+            }
             *head_len = pos + 5u;
             return 1;
         }
@@ -540,7 +552,7 @@ static int blob_head(dj_link_db_t *c, size_t *head_len, uint32_t *txid, uint16_t
         if (n == 0) {
             return 0;
         }
-        if (n < 0) {
+        if (n < 0 || b[pos] != integer_tag_field(tags[i])) {
             return -1; /* a string is no analysis reply */
         }
         if (i == 1u) {
@@ -624,12 +636,13 @@ static int blob_step(dj_link_db_t *c, uint32_t now_ms)
         if (n == 0) {
             return 0;
         }
-        if (n < 0) {
+        if (n < 0 || c->rx[0] != c->blob_tail_fields[0]) {
             fail(c, "BAD REPLY");
             return 0;
         }
         consume(c, (size_t)n);
         c->blob_tail--;
+        memmove(c->blob_tail_fields, c->blob_tail_fields + 1, c->blob_tail);
     }
     finish_blob(c, now_ms);
     return 1;
@@ -736,6 +749,9 @@ static void handle_msg(dj_link_db_t *c, const djlink_db_msg_t *m, uint32_t now_m
             finish_path(c, now_ms);
             return;
         }
+        if (menu_count(m) > DJ_LINK_DB_RENDER_BATCH) {
+            fail(c, "PATH MENU TOO LARGE"); return;
+        }
         request_render(c, 0, menu_count(m) < DJ_LINK_DB_RENDER_BATCH
                                  ? menu_count(m) : DJ_LINK_DB_RENDER_BATCH,
                        DJ_LINK_DB_PATH_WAIT_RENDER, now_ms);
@@ -746,11 +762,18 @@ static void handle_msg(dj_link_db_t *c, const djlink_db_msg_t *m, uint32_t now_m
             uint32_t item_type;
             const djlink_db_arg_t *l1;
             const djlink_db_arg_t *l2;
-            if (item_fields(m, &num, &l1, &l2, &item_type) &&
-                item_type == DJ_LINK_DB_ITEM_FILE_PATH) {
+            if (c->render_seen >= c->render_count ||
+                !item_fields(m, &num, &l1, &l2, &item_type)) {
+                fail(c, "BAD PATH ITEM"); return;
+            }
+            ++c->render_seen;
+            if (item_type == DJ_LINK_DB_ITEM_FILE_PATH) {
                 (void)dj_link_db_decode_path(l1->bin,l1->bin_len,c->path,sizeof(c->path));
             }
         } else if (m->type == DJLINK_DB_TYPE_MENU_FOOTER) {
+            if (c->render_seen != c->render_count) {
+                fail(c, "INCOMPLETE PATH MENU"); return;
+            }
             finish_path(c, now_ms);
         } else if (m->type != DJLINK_DB_TYPE_MENU_HEADER) {
             fail(c, "BAD RENDER REPLY");

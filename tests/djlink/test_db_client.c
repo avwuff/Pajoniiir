@@ -17,7 +17,12 @@ typedef struct {
     unsigned blobs;
     size_t blob_len;
     bool blob_answered;
+    unsigned paths;
 } mock_t;
+static void path(void *ctx,uint32_t id,const char *value)
+{
+    mock_t *m=ctx;assert(id==7);assert(value);++m->paths;
+}
 static void blob(void *ctx,uint32_t id,uint16_t request,size_t len,bool answered)
 {
     mock_t *m=ctx;assert(id==7 && request==DJLINK_DB_TYPE_BEATGRID_REQUEST);
@@ -64,7 +69,7 @@ static void init(dj_link_db_t *c, mock_t *m, uint32_t limit)
 {
     memset(m, 0, sizeof(*m));
     dj_link_db_io_t io = {.connect=connect_mock, .send=send_mock, .close=close_mock,
-        .list_begin=list_begin, .track=row, .blob=blob, .ctx=m};
+        .list_begin=list_begin, .track=row, .blob=blob, .path=path, .ctx=m};
     dj_link_db_init(c, &io, limit);
 }
 static bool next_detail(void *ctx, uint32_t *index, uint32_t *id)
@@ -209,6 +214,13 @@ static void bounded_assets(void)
     assert(dj_link_db_want_blob(&c,DJLINK_DB_TYPE_BEATGRID_REQUEST,7,out,sizeof(out),300));
     reply(&c,c.txid,DJLINK_DB_TYPE_BEATGRID_REPLY,args,3,1);
     assert(m.blobs==2 && m.blob_answered && m.blob_len==4 && !memcmp(out,payload,4));
+    djlink_db_arg_t with_tail[6];memcpy(with_tail,args,sizeof(args));
+    with_tail[3]=(djlink_db_arg_t){.type=DJLINK_DB_FIELD_INT8,.num=1};
+    with_tail[4]=(djlink_db_arg_t){.type=DJLINK_DB_FIELD_INT16,.num=2};
+    with_tail[5]=(djlink_db_arg_t){.type=DJLINK_DB_FIELD_INT32,.num=3};
+    assert(dj_link_db_want_blob(&c,DJLINK_DB_TYPE_BEATGRID_REQUEST,7,out,sizeof(out),400));
+    reply(&c,c.txid,DJLINK_DB_TYPE_BEATGRID_REPLY,with_tail,6,1);
+    assert(m.blobs==3 && m.blob_answered && m.blob_len==4 && !memcmp(out,payload,4));
 }
 static void metadata_completion(void)
 {
@@ -231,10 +243,50 @@ static void metadata_completion(void)
     reply(&c, c.txid, DJLINK_DB_TYPE_MENU_FOOTER, NULL, 0, 1);
     assert(c.phase == DJ_LINK_DB_FAILED && m.detail_rows == 1);
 }
+static void malformed_asset_tags(void)
+{
+    /* Streaming replies must enforce the same tag/field contract as the
+     * ordinary codec, including fields after the binary body. */
+    for (unsigned which=0;which<4;++which) {
+        dj_link_db_t c;mock_t m;init(&c,&m,8);join(&c,&m);availability(&c,0);
+        uint8_t payload[]={1,2,3,4},out[4]={0},wire[128];
+        djlink_db_arg_t args[4]={{.type=DJLINK_DB_FIELD_INT32,.num=DJLINK_DB_TYPE_BEATGRID_REQUEST},
+            {.type=DJLINK_DB_FIELD_INT32,.num=0},
+            {.type=DJLINK_DB_FIELD_BINARY,.bin=payload,.bin_len=sizeof(payload)},
+            {.type=DJLINK_DB_FIELD_INT32,.num=1}};
+        assert(dj_link_db_want_blob(&c,DJLINK_DB_TYPE_BEATGRID_REQUEST,7,out,sizeof(out),200));
+        int n=djlink_db_msg_build(c.txid,DJLINK_DB_TYPE_BEATGRID_REPLY,args,4,wire,sizeof(wire));
+        assert(n>0 && wire[20]==0x06 && wire[23]==0x06);
+        if (which==0) wire[20]=0x04; /* declares INT8, sends INT32 */
+        else if (which==1) wire[20]=0x7f; /* unknown declaration */
+        else if (which==2) wire[23]=0x05; /* trailing INT16 declaration, INT32 field */
+        else wire[23]=0x7f; /* unknown trailing declaration */
+        djlink_db_msg_t parsed;
+        assert(djlink_db_msg_parse(wire,(size_t)n,&parsed)!=DJLINK_OK);
+        feed(&c,wire,(size_t)n,1);
+        assert(c.phase==DJ_LINK_DB_FAILED && m.blobs==0);
+    }
+}
+static void path_completion(void)
+{
+    for (unsigned which=0;which<3;++which) {
+        dj_link_db_t c;mock_t m;init(&c,&m,8);join(&c,&m);availability(&c,0);
+        assert(dj_link_db_want_path(&c,7,200));
+        djlink_db_arg_t args[2]={{.type=DJLINK_DB_FIELD_INT32,.num=DJ_LINK_DB_TYPE_TRACK_INFO},
+            {.type=DJLINK_DB_FIELD_INT32,.num=2}};
+        reply(&c,c.txid,DJLINK_DB_TYPE_SUCCESS,args,2,1);
+        item(&c,7,DJ_LINK_DB_ITEM_FILE_PATH,1);
+        if (which!=0) item(&c,7,DJ_LINK_DB_ITEM_TITLE,1);
+        if (which==2) item(&c,7,DJ_LINK_DB_ITEM_TITLE,1);
+        reply(&c,c.txid,DJLINK_DB_TYPE_MENU_FOOTER,NULL,0,1);
+        if (which==1) assert(c.phase==DJ_LINK_DB_READY && m.paths==1);
+        else assert(c.phase==DJ_LINK_DB_FAILED && m.paths==0);
+    }
+}
 int main(void)
 {
     bounded_list_and_playlist(); failures_and_stale_events(); framing_and_visible_details();
-    metadata_completion();bounded_assets();
+    metadata_completion();bounded_assets();malformed_asset_tags();path_completion();
     puts("PASS DB client fragments, 2000-row cap, playlists, malformed replies, cancel/epochs, timeout");
     return 0;
 }

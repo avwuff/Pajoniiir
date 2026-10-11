@@ -2,6 +2,17 @@
 
 Status: **current documentation authority, reconciled 2026-10-11**.
 
+[PR 46 inherited DJ Link protocol review](reviews/2026-10-11-pr46-dj-link-protocol-review.md)
+records the operator-authorized manual review after CodeRabbit rejected the
+service request. Reproduced DBServer streaming tag and incomplete path-response
+defects are repaired with production client regressions. The ordinary M3
+build/verifier passes at 2,601,280 bytes; dependency locks, experimental defaults,
+installed firmware and frozen packages remain unchanged. This is not a completed
+CodeRabbit review or real Pro DJ Link interoperability PASS.
+Full host qualification passes without SKIP, the final focused client gate
+passes, and Linux ASan/UBSan protocol/network regressions pass. Documentation
+integrity and `git diff --check` pass.
+
 [PR 46 recorder/DJ Link review](reviews/2026-10-11-pr46-recorder-link-review.md)
 covers four service requests (24 returned reviewed-file entries, five issues),
 all addressed locally, plus a reproduced recorder ring sequence-wrap defect.
