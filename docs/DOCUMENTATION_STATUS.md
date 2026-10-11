@@ -2,6 +2,14 @@
 
 Status: **current documentation authority, reconciled 2026-10-11**.
 
+Latest local delivery: three ordinary `5ff76b6c` candidates are signed and
+independently verified, with BIN/ELF/MAP, configuration manifests, frozen
+qualification evidence and delivery hashes retained locally. The existing
+packaging guards ran against clean exact-source HEAD; the working branch was
+restored afterwards. No device installation or publication occurred. Exact new
+image physical gates remain NOT RUN; hosted CI is SKIPPED BY OPERATOR (quota).
+See [frozen-source signed delivery](validation/SHARED_P4_LOCAL_QUALIFICATION_20261011.md#frozen-source-local-signed-delivery-2026-10-11).
+
 Latest Hercules shortened gates on unchanged clean `e16ecfb5`, VALID `ota_0`:
 three stopped USB reconnect/recovery observations with operator Browse/LED
 confirmation, one separate cold-power readiness/GUI check, 60.219-s mixed-rate

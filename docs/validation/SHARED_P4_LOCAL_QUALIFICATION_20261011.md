@@ -62,8 +62,9 @@ and real-export/transport variants retain their NOT RUN status.
 Every compiled identity is the frozen full SHA above with `source_dirty=0`.
 Each board uses its committed dependency lock. The three regular build
 directories retain BIN/ELF/MAP, board identity and budget JSON files.
-The independent audit records hashes for all 15 files; these are unsigned
-local build artifacts, not signed OTA packages or release assets.
+The independent qualification audit records hashes for all 15 build files.
+These original build files are retained alongside the subsequent local signed
+candidate packages described below; no release was published.
 
 Logs, SDKCONFIG files, before/after lock hashes, build results, exact-source
 host result, simulator/keylock logs and independent audit/hash manifest are
@@ -80,3 +81,41 @@ remaining real-media/JC physical gates, historical OTA-restart causation and
 publication authorization remain separate. No new physical campaign or repeat
 of accepted Hercules/S2 tests was started. The shared-core whole-project
 completion criterion is not established solely by this local matrix.
+
+## Frozen-source local signed delivery, 2026-10-11
+
+The existing packaging tool ran on a temporary clean detached checkout of
+`5ff76b6cb1474779c6e58ecd5b273dcee378a3ed`, using the previously qualified
+ordinary build directories. All current-HEAD/source, configuration, project,
+board isolation and budget guards remained enabled. The working branch was
+restored to documentation-only `1d1b0f60` after packaging. No rebuild, flash,
+device control, push, release or public OTA channel update occurred.
+
+| Board | Embedded version | Signed bundle bytes | Complete bundle SHA-256 |
+| --- | --- | --- | --- |
+| JC4880 | `M2.5-189-g5ff76b6c` | 2605532 | `9ff596855b69b9be73b7f34f611f2d01a6a732342db1dec26459da4d9b7b0e38` |
+| JC1060 | `M2.5-189-g5ff76b6c` | 2663612 | `7d25f2bfe40b3b7e2de0063de277957df26f0b19ad0f7e973e5efd3558e8b27b` |
+| M3 | `M3-dev-g5ff76b6cb147` | 2598796 | `2f1aa3fd684f30bf33a67e22d16162aa6dbc76bc2a88827dea4771e9327b60e0` |
+
+Each local directory contains BIN, signed `.ddjota`, signed schema-2 manifest,
+configuration manifest and a hashed debug archive (ELF, MAP, build identity,
+project description and SDKCONFIG header). Existing trusted `rel-001` signing
+and the firmware public key verify all three bundle and manifest signatures.
+An additional audit verifies payload equality, embedded ELF digest, every debug
+copy, all 30 frozen qualification record hashes and all 15 frozen build artifact
+hashes. `delivery-sha256.json` hashes 36 retained delivery files, including the
+packaging wrapper and audit source.
+
+Local root: `.cache/shared-delivery-5ff76b6c/`. Subdirectories are
+`pajoniiir-M2.5-189-g5ff76b6c`,
+`pajoniiir-jc1060-M2.5-189-g5ff76b6c` and
+`pajoniiir-m3-M3-dev-g5ff76b6cb147`. Audit result is `delivery-audit.json`.
+The configuration manifest is evidence metadata; it is not part of the signed
+OTA payload. Its integrity is recorded in the local delivery hash manifest.
+
+These are local candidates, not board releases. All three exact new images
+remain physically NOT RUN and uninstalled. M3 is explicitly a development
+candidate with ordinary USB2 controller/USB3 storage policy; accepted Hercules
+bench evidence belongs to `e16ecfb5` with exchanged USB roles. JC versions retain
+their embedded development describe strings; no release tag was created.
+The existing installed image and all open delivery boundaries above are retained.
