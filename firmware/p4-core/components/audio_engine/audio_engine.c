@@ -1342,7 +1342,7 @@ static volatile bool          s_output_run = false;
  * two-index ring reset atomic w.r.t. a concurrent pop (which runs outside
  * AE_LOCK during mixing). */
 static portMUX_TYPE           s_ring_flush_mux = portMUX_INITIALIZER_UNLOCKED;
-static volatile bool          s_output_codec_open = false;
+static bool                   s_output_codec_open = false;
 static uint32_t               s_output_sample_rate = 0;
 static audio_output_sink_stats_t s_main_sink_stats;
 static uint32_t               s_headphone_sink_errors;
@@ -1792,6 +1792,7 @@ static void ae_wav_seek_to_ms(audio_engine_state_t *eng, uint32_t position_ms)
  * error instead of silently behaving like a track that simply ended.
  */
 #define AE_READ_FAULT_RETRIES 8u
+#define AE_READ_FAULT_BACKOFF_MS 25u
 
 static uint32_t s_read_fault_streak[AUDIO_ENGINE_DECK_COUNT];
 
@@ -3078,6 +3079,7 @@ static void ae_decode_task(void *arg)
             int n = decode_one_frame(eng, fw, ctx->deck, decode_pcm);
             uint32_t decode_us = (uint32_t)(esp_timer_get_time() - decode_start_us);
             size_t file_pos = eng->file_pos;
+            bool read_fault_retry = s_read_fault_streak[ctx->deck] > 0u;
             if (n > 0) {
                 eng->frames_since_seek += (uint64_t)n;
                 for (int i = 0; i < n; i++) {
@@ -3095,6 +3097,9 @@ static void ae_decode_task(void *arg)
                                       file_pos,
                                       fw->loaded_bytes,
                                       fw->load_done);
+            }
+            if (n <= 0 && read_fault_retry) {
+                vTaskDelay(pdMS_TO_TICKS(AE_READ_FAULT_BACKOFF_MS));
             }
             attempts++;
         }
@@ -3451,6 +3456,7 @@ static void ae_decode_task(void *arg)
             }
         }
         bool eof = atomic_load_bool(&eng->eof);
+        bool read_fault_retry = s_read_fault_streak[ctx->deck] > 0u;
         size_t file_pos = eng->file_pos;
         AE_UNLOCK();
 
@@ -3497,7 +3503,14 @@ static void ae_decode_task(void *arg)
             }
             continue;
         }
-        if (samples <= 0) continue;
+        if (samples <= 0) {
+            /* Includes FLAC recovery/seek faults. Snapshot under AE_LOCK,
+             * then yield outside it so another deck/control can progress. */
+            if (read_fault_retry) {
+                vTaskDelay(pdMS_TO_TICKS(AE_READ_FAULT_BACKOFF_MS));
+            }
+            continue;
+        }
 
         ae_diag_record_decode(ctx->deck,
                               decode_us,
@@ -3744,7 +3757,7 @@ static esp_err_t audio_output_service_open_codec(uint32_t sample_rate)
     if (sample_rate == 0) return ESP_ERR_INVALID_ARG;
 
     AE_LOCK();
-    if (s_output_codec_open) {
+    if (atomic_load_bool(&s_output_codec_open)) {
         AE_UNLOCK();
         return ESP_OK;
     }
@@ -3774,9 +3787,10 @@ static esp_err_t audio_output_service_open_codec(uint32_t sample_rate)
             return ESP_FAIL;
         }
     }
-    s_output_codec_open = true;
     s_output_sample_rate = sample_rate;
     audio_output_apply_fx_sample_rate(sample_rate);
+    /* Publish only fully initialized DSP state to the higher-priority output. */
+    atomic_store_bool(&s_output_codec_open, true);
     ESP_LOGI(TAG, "shared codec open @ %u Hz", (unsigned)sample_rate);
     AE_UNLOCK();
     return ESP_OK;
@@ -3876,7 +3890,7 @@ static void ae_output_task(void *arg)
     while (s_output_run) {
         s_audio_wdt_block++;
         ae_wdt_trace_begin_block();
-        if (!s_output_codec_open) {
+        if (!atomic_load_bool(&s_output_codec_open)) {
             if ((s_audio_wdt_block & 1023u) == 0u)
                 firmware_resources_sample_task(FW_RESOURCE_OUTPUT);
             ae_wdt_trace(AUDIO_WDT_PHASE_WAIT_CODEC, 0u);
@@ -4347,9 +4361,9 @@ static void ae_output_task(void *arg)
         }
     }
     ae_wdt_trace(AUDIO_WDT_PHASE_EXIT, 0u);
-    if (s_output_codec_open) {
+    if (atomic_load_bool(&s_output_codec_open)) {
         if (s_codec) esp_codec_dev_close(s_codec);
-        s_output_codec_open = false;
+        atomic_store_bool(&s_output_codec_open, false);
         s_output_sample_rate = 0;
     }
     s_output_task = NULL;
@@ -4379,9 +4393,9 @@ static esp_err_t audio_output_service_ensure_started(void)
 static esp_err_t audio_output_service_stop(void)
 {
     if (!s_output_task) {
-        if (s_output_codec_open) {
+        if (atomic_load_bool(&s_output_codec_open)) {
             if (s_codec) esp_codec_dev_close(s_codec);
-            s_output_codec_open = false;
+            atomic_store_bool(&s_output_codec_open, false);
             s_output_sample_rate = 0;
         }
         s_output_run = false;
@@ -6885,7 +6899,7 @@ void audio_engine_get_diagnostics_snapshot(audio_engine_diagnostics_snapshot_t *
     out_snapshot->usb_headphone_active_data_loss_flags =
         __atomic_load_n(&s_uac_active_data_loss_flags, __ATOMIC_ACQUIRE);
 #if AE_FW
-    out_snapshot->output_codec_open = s_output_codec_open;
+    out_snapshot->output_codec_open = atomic_load_bool(&s_output_codec_open);
     out_snapshot->output_sample_rate = s_output_sample_rate;
     out_snapshot->output_late_count = s_diag_output_late.count;
     out_snapshot->output_late_max_us = s_diag_output_late.max_us;

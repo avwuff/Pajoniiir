@@ -4028,6 +4028,8 @@ Invoke-Step -Name "run diagnostic Wi-Fi TX limit regression" -WorkingDirectory $
 if (-not $pythonSource) { throw "Python is required for firmware lifecycle regression" }
 Invoke-Step -Name "run firmware lifecycle regression" -WorkingDirectory $RepoRoot `
     -Executable $pythonSource -Arguments @("tests/audio_fw_runtime/test_firmware_lifecycle.py")
+Invoke-Step -Name "run codec publication and media fault backoff regression" -WorkingDirectory $RepoRoot `
+    -Executable $pythonSource -Arguments @("tests/audio_fw_runtime/test_review_boundaries.py")
 Invoke-Step -Name "run production network mutation lifecycle regression" -WorkingDirectory $RepoRoot `
     -Executable $pythonSource -Arguments @("tests/deck_net_sync/test_network_lifecycle.py")
 Invoke-Step -Name "run firmware artwork identity ownership regression" `

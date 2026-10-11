@@ -2,6 +2,13 @@
 
 Status: **current documentation authority, reconciled 2026-10-11**.
 
+[PR 46 scoped audio review](reviews/2026-10-11-pr46-audio-review.md) reports two
+confirmed minor CodeRabbit issues repaired locally: FX-ready publication and
+media-fault retry spacing. The full service review was rejected at 707 files
+against its 150-file limit; audio-core review is partial, not whole-PR approval.
+New repair evidence does not qualify the frozen packages or change the installed
+Hercules image. Remaining review directories and board gates stay open.
+
 Current review handoff: [P01–P10 dispositions and residual gates](reviews/2026-10-11-shared-core-delivery-readiness.md)
 and [prepared PR description](reviews/2026-10-11-shared-core-pr-description.md).
 Finding labels now follow the original comparison (P05 beat phase; P06 PDB
