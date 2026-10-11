@@ -545,6 +545,19 @@ Root cause and remaining S2/shared-core gates stay open. Original hashes
 rechecked, operator confirmation and updated audit preserved,
 task removed after exit, automation paused; no firmware, restart or publication.
 
+Final Hercules exact-image `e16ecfb5` 44100-Hz playback soak completed
+3600.016 s / 5171 samples, wrapper exit 0. Every sample and final stopped
+snapshot have all 22 strict counter deltas zero; clean source/ELF/VALID ota_0,
+mixed-rate MT/loop/pitch workload and zoom 8 verified. Operator confirmed clean
+MAIN/Hercules headphones, fluid dual waveforms and stable display throughout
+the hour. Fifteen output-late events, max 12534 us and rolling-60-s cluster 2,
+remain monitoring findings; no investigation trigger fired. This is telemetry
+plus physical PASS for the named final playback scope, not zero-late or full
+profile/shared-core completion. MIDI delta 0; the earlier 2044-packet active-input
+supplement remains separate. Audit, original artifacts and hashes retained;
+task removed after exit and heartbeat paused. S2 remains operator-closed.
+See [Hercules validation](validation/HERCULES_INPULSE_500_PREPARATION_20261010.md).
+
 1. Exact release artifacts/configuration and current code/tests for their own SHA.
 2. [Published M2.5 record](validation/M2_5_RELEASE_20261006.md) for accepted
    hardware and publication; this status for current scope.

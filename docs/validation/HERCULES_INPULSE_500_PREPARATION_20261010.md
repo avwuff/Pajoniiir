@@ -664,5 +664,34 @@ complete pad/FX qualification. Original results, separate operator reports,
 full-sample audits, runners and hashes are retained at
 `.cache/hercules-inpulse-500/final-mt-60s-20261011T124426Z/` and
 `.cache/hercules-inpulse-500/final-mt-controls-20s-20261011T124705Z/`.
-Both decks are stopped. Final Hercules timing soak remains NOT RUN; wider
-control limitations above remain explicit. S2 stays operator-closed.
+Both decks are stopped. The final Hercules timing soak outcome is recorded below;
+wider control limitations above remain explicit. S2 stays operator-closed.
+
+### Final exact-image Hercules timing soak, 2026-10-11
+
+The independent scheduled runner completed 3600.016 s / 5171 samples, from
+14:52:33 to 15:52:35 Europe/Zagreb, wrapper exit 0. Full-sample audit verifies
+clean `e16ecfb5e7b0daef81e4640ba46e9f9409184963`, VALID `ota_0`, ELF
+`96279a267ef9a93f89148ba01de95519c93a87d6581f609e576739002323252f`,
+unchanged mixed 44100/48000-Hz source tracks, +5/-5% pitch, both MT/four-beat
+loops, zoom 8, PCM5102A MAIN 48000 Hz and healthy Hercules UAC1 FS 44100-Hz
+packed-24 audio. Wi-Fi remained on and USB2 storage stayed mounted.
+
+All 22 strict counter paths are present and have zero delta in every sample
+and the final stopped snapshot. Both decks safely stopped. Sampled cached DMA
+free minimum was 21851 B; no heap walk was used. Initial/final frozen
+first-fault captures are unchanged and do not represent a new fault.
+There were 15 output-late events, maximum 12534 us and sample-observed maximum
+two events per rolling 60 s; neither investigation trigger fired. This is
+not a zero-late claim. MIDI delta was zero, as controls were intentionally
+unchanged; the previous active-input supplement retains its separate scope.
+
+The operator confirmed "Da, cijeli sat bio je uredan" in response to the
+full-hour MAIN/Hercules headphones, dual-waveform and stable-display question.
+The exact-image, 44100-Hz final playback soak has telemetry and physical PASS
+with output-late monitoring findings. It does not close wider individual
+controls/pad-FX limitations, JC physical/current CI gates or shared-core completion.
+Original results, full-sample audit, operator context, runner/policy and hashes
+are archived at `.cache/hercules-inpulse-500/final-soak-20261011T125106Z/`.
+The one-time task was removed after verified runner exit and the checkpoint
+automation paused. No firmware change, restart, push or publication occurred.
