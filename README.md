@@ -8,8 +8,8 @@
 
 # Pajoniiir
 
-**A standalone dual-deck DJ system with one ESP32-P4 firmware core for
-JC4880, JC1060 and M3 boards.**
+**A standalone dual-deck DJ system with one ESP32-P4 firmware core for Guiton
+JC4880P443C_I_W, JC1060P470C_I_W_Y and JC-ESP32P4-M3-DEV boards. Note that JC-ESP32P4-M3-DEV board has EYOYO 5 Inch Touchscreen  **
 
 Pajoniiir hosts a Rekordbox-exported USB library and a USB DJ controller,
 renders the touchscreen UI, and runs both playback decks, DSP mixer,
@@ -32,9 +32,9 @@ acceptance on every board or controller.
 
 | Target | Entrypoint / signed project | Ordinary product policy | Physical evidence |
 | --- | --- | --- | --- |
-| JC4880 | `firmware/main-deck-p4` / `main-deck-p4` | 800 x 480, PCM5102A MAIN, controller USB1 / storage USB0 | Named Hercules audio/control/MT/loop/seek/CUE/PFL blocks accepted on `e22ff334`; long soak explicitly waived |
-| JC1060 | `firmware/main-deck-jc1060` / `main-deck-jc1060` | 1024 x 600, controller USB MAIN/cue, Ethernet provider, controller USB0 / storage USB1 | NOT RUN; contributor Kayrosen will test later |
-| M3 | `firmware/main-deck-m3` / `main-deck-m3` | DSI506/FT5426 800 x 480, fixed-48-kHz PCM5102A MAIN, Wi-Fi ON, controller USB2 FS / storage USB3 HS | Historical exact-image waveform/controller/soak acceptance; later images have their own recorded scope |
+| JC4880P443C_I_W | `firmware/main-deck-p4` / `main-deck-p4` | 800 x 480, PCM5102A MAIN, controller USB1 / storage USB0 | Named Hercules audio/control/MT/loop/seek/CUE/PFL blocks accepted on `e22ff334`; long soak explicitly waived |
+| JC1060P470C_I_W_Y | `firmware/main-deck-jc1060` / `main-deck-jc1060` | 1024 x 600, controller USB MAIN/cue, Ethernet provider, controller USB0 / storage USB1 | NOT RUN; contributor Kayrosen will test later |
+| JC-ESP32P4-M3-DEV | `firmware/main-deck-m3` / `main-deck-m3` | DSI506/FT5426 800 x 480, fixed-48-kHz PCM5102A MAIN, Wi-Fi ON, controller USB2 FS / storage USB3 HS | Historical exact-image waveform/controller/soak acceptance; later images have their own recorded scope |
 
 All three entrypoints link the same production audio, deck, Rekordbox,
 controller, UI, web and OTA modules in `firmware/p4-core`. Peripheral providers
