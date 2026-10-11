@@ -18,6 +18,8 @@ typedef struct {
     uint64_t remote_yield_epoch;
     uint32_t remote_deadline_ms;
     int8_t local_master, pending_deck;
+    bool pending_accepted;
+    uint32_t pending_started_ms;
     uint32_t deadline_ms, status_ms, packet_counter[2], beat_rx_ms;
     uint32_t local_session[2];
     uint8_t last_beat[2];

@@ -121,6 +121,7 @@ djlink_err_t djlink_handoff_resp_parse(const uint8_t *buf, size_t len, djlink_ha
     if (err != DJLINK_OK) {
         return err;
     }
+    if (djlink_rd32(&buf[0x28]) != 1u) return DJLINK_ERR_TYPE;
     out->requester_number = buf[0x27];
     return DJLINK_OK;
 }

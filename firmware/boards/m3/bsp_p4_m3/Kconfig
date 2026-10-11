@@ -1,0 +1,25 @@
+menu "Pajoniiir JC-ESP32P4-M3 BSP"
+
+config BSP_M3_HS_CONTROLLER
+    bool "Experimental: controller on USB3 HS, storage on USB2 FS"
+    default n
+    help
+        Opt-in USB role swap for controllers whose MIDI interface requires
+        High Speed, including the captured S2 MK3. This is not the accepted
+        FLX4 production topology. Descriptor-validated UAC2 is experimental;
+        qualify controller audio, FS storage throughput and recovery separately.
+
+config BSP_PCM5102A_MAIN_OUT
+    bool "Enable PCM5102A main I2S output"
+    default y
+    help
+        Enable the I2S TX channel for the external PCM5102A MAIN OUT DAC.
+
+config BSP_ES8311_MONITOR
+    bool "Enable ES8311 onboard monitor codec"
+    default n
+    help
+        Bring up the ES8311 codec on I2S unit 0 for the onboard monitor
+        speaker/headphones path.
+
+endmenu

@@ -81,6 +81,17 @@ static void test_value_is_clamped(void)
     app_settings_set_backlight(200u);
     CHECK(g_test_nvs.last_value == 100u);
     CHECK(app_settings_get().backlight_pct == 100u);
+    app_settings_set_backlight(0u);
+    CHECK(g_test_nvs.last_value == 10u);
+    CHECK(app_settings_get().backlight_pct == 10u);
+    reset_all();
+    g_test_nvs.has_stored_backlight=1;
+    g_test_nvs.stored_backlight=0;
+    CHECK(app_settings_init()==ESP_OK);
+    CHECK(app_settings_get().backlight_pct==10u);
+    app_settings_set_backlight(1u);
+    run_worker_once();
+    CHECK(app_settings_get().backlight_pct==10u);
 }
 
 static void test_slider_burst_produces_one_write(void)
@@ -276,6 +287,29 @@ static void test_link_is_default_off_and_durable(void)
 
 int main(void)
 {
+    reset_all();
+    g_test_nvs.legacy_mask=7u;
+    CHECK(app_settings_init()==ESP_OK);
+    CHECK(g_test_nvs.has_blob && !g_test_nvs.legacy_mask && g_test_nvs.erase_key_calls==3u);
+    app_settings_ota_config_t migrated={0};
+    app_settings_ota_get_config(&migrated);
+    CHECK(!strcmp(migrated.password,"legacy-secret"));
+    g_test_nvs.legacy_mask=7u;
+    app_settings_test_reset();
+    CHECK(app_settings_init()==ESP_OK);
+    CHECK(!g_test_nvs.legacy_mask && g_test_nvs.erase_key_calls==6u);
+    reset_all();
+    g_test_nvs.legacy_mask=7u;
+    g_test_nvs.fail_next_set=1;
+    CHECK(app_settings_init()==ESP_OK);
+    CHECK(g_test_nvs.legacy_mask==7u && !g_test_nvs.erase_key_calls);
+    const esp_err_t init_errors[] = {ESP_ERR_NVS_NO_FREE_PAGES, ESP_ERR_NVS_NEW_VERSION_FOUND, ESP_FAIL};
+    for (unsigned i = 0; i < sizeof(init_errors)/sizeof(init_errors[0]); ++i) {
+        reset_all();
+        g_test_nvs.init_result = init_errors[i];
+        CHECK(app_settings_init() == init_errors[i]);
+        CHECK(g_test_nvs.erase_calls == 0 && g_test_nvs.open_calls == 0);
+    }
     test_setter_before_worker_persists_synchronously();
     test_failed_write_is_not_published();
     test_value_is_clamped();

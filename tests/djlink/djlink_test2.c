@@ -3,8 +3,32 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 static int failures = 0;
+
+static void test_full_width_names(void)
+{
+    /* A wire name can occupy all 20 bytes without any NUL. These exact-size
+     * allocations make an accidental strlen visible to ASan. */
+    uint8_t out[DJLINK_MAX_PACKET];
+    char *name=malloc(DJLINK_NAME_LEN);
+    if (!name) abort();
+    memset(name,'N',DJLINK_NAME_LEN);
+    uint8_t packed[DJLINK_NAME_LEN];
+    djlink_name_from_str(name,packed);
+    if (memcmp(packed,name,DJLINK_NAME_LEN)) abort();
+    free(name);
+    djlink_sync_t *sync=malloc(sizeof(*sync));
+    djlink_fader_t *fader=malloc(sizeof(*fader));
+    djlink_onair_t *onair=malloc(sizeof(*onair));
+    if (!sync || !fader || !onair) abort();
+    memset(sync,1,sizeof(*sync));memset(fader,1,sizeof(*fader));memset(onair,1,sizeof(*onair));
+    if (djlink_sync_build(sync,out,sizeof(out))<0 || memcmp(out+0x0b,sync->name,20)) abort();
+    if (djlink_fader_build(fader,out,sizeof(out))<0 || memcmp(out+0x0b,fader->name,20)) abort();
+    if (djlink_onair_build(onair,out,sizeof(out))<0 || memcmp(out+0x0b,onair->name,20)) abort();
+    free(sync);free(fader);free(onair);
+}
 
 #define CHECK(cond)                                                          \
     do {                                                                     \
@@ -153,6 +177,10 @@ static void test_sync(void)
     djlink_handoff_resp_t hs2;
     CHECK_EQ(djlink_handoff_resp_parse(out, (size_t)n, &hs2), DJLINK_OK);
     CHECK_EQ(hs2.requester_number, 4);
+    out[0x2b]=0;
+    CHECK(djlink_handoff_resp_parse(out,(size_t)n,&hs2)!=DJLINK_OK);
+    out[0x2b]=2;
+    CHECK(djlink_handoff_resp_parse(out,(size_t)n,&hs2)!=DJLINK_OK);
 }
 
 static void test_mixer_packets(void)
@@ -484,6 +512,7 @@ static void test_dbserver(void)
 
 int main(void)
 {
+    test_full_width_names();
     test_claims();
     test_sync();
     test_mixer_packets();

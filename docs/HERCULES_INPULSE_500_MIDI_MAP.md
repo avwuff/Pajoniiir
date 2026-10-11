@@ -1,7 +1,19 @@
 # Hercules DJControl Inpulse 500 MIDI Map
 
-Status: host-qualified Pajoniiir controller profile; physical Inpulse 500 MIDI,
-LED, reconnect and USB-audio acceptance is still pending.
+Status: host-qualified Pajoniiir controller profile; combined physical smoke
+passed on `04f0cfb6`. The current installed `e16ecfb5` has a separate physically
+accepted manual IN/OUT/Exit retest on both MP3 decks. Full MIDI/LED/lifecycle
+coverage remains partial. Its final 60-minute playback soak and separate
+active jog/Browse, wake/LOAD LOCK and shortened lifecycle scopes pass;
+the operator's prior
+CUE/PLAY handoff and Sync checks are retained without duplicate tests.
+
+The [2026-10-10 M3 preparation record](validation/HERCULES_INPULSE_500_PREPARATION_20261010.md)
+adds measured Windows identity and jog-touch addresses, current offline
+fixture verification, audio-rate/native-hardware-control audit findings and
+the short combined activation sequence. The current v4 fixture and matching
+firmware are installed on M3; measured activation and the historical short
+audio/control smoke are recorded separately from current-image qualification.
 
 Authoritative mapping sources:
 
@@ -17,12 +29,12 @@ The committed source and compiled fixtures are
 
 | Parameter | Profile value | Status |
 | --- | --- | --- |
-| USB VID:PID | `06F8:B12B` | Matches published Inpulse 500 hardware IDs; confirm from the P4 USB descriptor report on the target unit |
+| USB VID:PID | `06F8:B12B` | Confirmed from the M3 descriptor and active profile |
 | Decks | 2 | Profile/runtime verified |
-| MIDI input/output | Enabled | Host verified; hardware pending |
-| Jog touch | Enabled | Host/profile path verified; hardware pending |
-| Pitch | 14-bit CC | Host/profile path verified; hardware pending |
-| USB audio | 4 channels: MAIN 1/2, headphones 3/4 | Device capability is documented, but Pajoniiir routing is not hardware-qualified for Hercules |
+| MIDI input/output | Enabled | M3 binding confirmed; earlier combined smoke passed, full input/output sweep open |
+| Jog touch | Enabled | Measured PC touch addresses and earlier M3 jog smoke; complete scratch/Shift sweep open |
+| Pitch | 14-bit CC | Host/profile path and mixed-rate +5/-5% playback accepted; exact endpoint calibration unrun |
+| USB audio | 4 channels: MAIN 1/2, headphones 3/4 | Measured UAC1 FS/44100/packed-24; earlier routing smoke and current 60-minute MAIN/headphone playback accepted; controller RCA MAIN unqualified |
 
 `06F8:B105` belongs to a different Hercules product family and must not match
 this profile. Exact VID/PID matching is intentional.
@@ -83,10 +95,18 @@ its pads are intentionally unmapped.
 
 Deck 1 pads use status `0x96`; Deck 2 pads use `0x97`.
 
+Pad FX 1/2 currently provide low/high-pass filters on pads 1/2 and echo on
+pads 3/4. Pads 5..8 have no DSP preset; mapped addresses alone do not establish
+audible effect support. Press/release is momentary, with a bounded echo tail.
+Hot Cue recall is read-only only when the slot already exists: a normal empty
+pad creates a persistent local cue and Shift+pad deletes a cue. Avoid those
+writes in a performance sweep without an explicitly selected cue-edit scope.
+
 ## Mixer, browser and adapted FX
 
 The profile maps both channel faders, crossfader, trims, three-band EQ,
-filters, master volume, headphone mix/level and PFL. All absolute analog
+independent filters, PCM5102A master volume and PFL. Native headphone
+blend/level and master-headphone selection are not mirrored in software. All absolute analog
 controls except tempo are replayed after reconnect. Browse rotate/press,
 Shift+browse and both normal/shifted LOAD buttons use the standard Pajoniiir
 browser semantics.
@@ -102,7 +122,7 @@ The four physical FX buttons are a Pajoniiir adaptation, not a Serato layout:
 
 ## LED output and RGB values
 
-Transport, Cue, Sync, PFL, loop, mode and master-cue LEDs use normal Note On
+Transport, Cue, Sync, PFL, loop and mode LEDs use normal Note On
 values `0x7F`/`0x00`. The VU meters pass through `0x00..0x7F` on CC `0x40`.
 Pad banks use controller-specific RGB Data2 values:
 
@@ -134,8 +154,10 @@ input mapping, Mode 6 addresses, RGB MIDI output, registry discovery, all 69
 remote LED IDs, the P4-local semantic vocabulary and P4 `sync_off`/`loop_size`
 behavior.
 
-Before this profile can be called hardware-supported, connect a physical
-Inpulse 500 and record:
+Before this profile can be called fully hardware-qualified, complete the
+[combined operator blocks](validation/HERCULES_INPULSE_500_PREPARATION_20261010.md#remaining-combined-operator-blocks)
+on the exact final image. Preserve the earlier smoke as historical evidence.
+The complete coverage still requires:
 
 1. P4 descriptor VID/PID/product and successful local match/activation.
 2. A two-deck MIDI input sweep, including releases and Shift variants.

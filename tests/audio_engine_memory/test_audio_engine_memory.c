@@ -34,6 +34,17 @@ int main(void)
     d.heap_walk_max_us[2] = 999;
     audio_engine_snapshot_memory(NULL);
     assert(walks == 0);
+#if defined(CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC) && CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC
+    delay_us = 2000;
+    for (int i = 0; i < 20; ++i) audio_engine_snapshot_memory(&d);
+    assert(walks == 0 && records == 0 && clock_us == 0);
+    assert(d.heap_free == 90000 && d.internal_free == 10000);
+    assert(d.dma_min_free == 3000 && d.psram_min_free == 4000);
+    assert(d.internal_largest_free == 0 && d.dma_largest_free == 0 && d.psram_largest_free == 0);
+    assert(d.heap_walk_max_us[0] == 0 && d.heap_walk_max_us[1] == 0 && d.heap_walk_max_us[2] == 0);
+    puts("HS diagnostic isolation retains counters without any TLSF walk: PASS");
+    return 0;
+#else
     delay_us = 499;
     audio_engine_snapshot_memory(&d);
     assert(records == 0 && walks == 2);
@@ -51,4 +62,5 @@ int main(void)
     assert(records == 4 && d.heap_walk_max_us[0] == 1200);
     puts("heap diagnostics timing, values and bounded records: PASS");
     return 0;
+#endif
 }

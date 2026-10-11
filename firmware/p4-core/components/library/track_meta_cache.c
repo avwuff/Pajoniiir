@@ -1,0 +1,455 @@
+#include "track_meta_cache.h"
+#include "library_load_trace.h"
+
+#include "esp_log.h"
+#include "media_io_gate.h"
+#include "sd_io_gate.h"
+
+#include <errno.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
+#if !defined(TRACK_META_CACHE_STANDALONE_TEST)
+static const char *TAG = "track_meta_cache";
+#endif
+#if defined(TRACK_META_CACHE_STANDALONE_TEST)
+static const char *CACHE_MOUNT = "tc";
+static const char *CACHE_PARENT = "tc/meta";
+static const char *CACHE_ROOT = "tc/meta/v4";
+#else
+static const char *CACHE_MOUNT = "/sd";
+static const char *CACHE_PARENT = "/sd/trackcache";
+static const char *CACHE_ROOT = "/sd/trackcache/v4";
+#endif
+
+#define TRACK_META_CACHE_MAGIC   0x31434D54u /* "TMC1" */
+#define TRACK_META_CACHE_VERSION 6u
+#define TRACK_META_CACHE_FLAGS_LOW  0x01u
+#define TRACK_META_CACHE_FLAGS_VBR  0x02u
+#define TRACK_META_CACHE_FLAGS_HIGH 0x04u
+#define TRACK_META_CACHE_MEMORY_TRUNC 0x01u
+#define TRACK_META_CACHE_COLOR_TRUNC  0x02u
+
+#pragma pack(push, 1)
+typedef struct {
+    uint32_t magic;
+    uint16_t version;
+    uint16_t header_size;
+    uint32_t track_key;
+    uint8_t persistent_id[32];
+    uint64_t dat_size;
+    int64_t dat_mtime;
+    uint64_t ext_size;
+    int64_t ext_mtime;
+    uint16_t bpm;
+    uint16_t beat_count;
+    uint8_t cue_count;
+    uint8_t flags;
+    uint16_t reserved;
+    uint32_t waveform_high_len;
+    uint32_t color_preview_len;
+    uint8_t memory_cue_count;
+    uint8_t metadata_flags;
+    uint16_t reserved_v4;
+    uint32_t waveform_span_ms;
+} track_meta_cache_header_t;
+#pragma pack(pop)
+
+static esp_err_t file_signature(const char *path, uint64_t *out_size, int64_t *out_mtime)
+{
+    if (out_size) *out_size = 0;
+    if (out_mtime) *out_mtime = 0;
+    if (!path || !path[0]) {
+        return ESP_ERR_NOT_FOUND;
+    }
+
+    struct stat st;
+    if (stat(path, &st) != 0 || !S_ISREG(st.st_mode)) {
+        return ESP_ERR_NOT_FOUND;
+    }
+    if (out_size) {
+        *out_size = st.st_size > 0 ? (uint64_t)st.st_size : 0;
+    }
+    if (out_mtime) {
+        *out_mtime = (int64_t)st.st_mtime;
+    }
+    return ESP_OK;
+}
+
+static esp_err_t sd_available(void)
+{
+    struct stat st;
+    return stat(CACHE_MOUNT, &st) == 0 && S_ISDIR(st.st_mode) ? ESP_OK : ESP_ERR_NOT_FOUND;
+}
+
+static esp_err_t mkdir_if_missing(const char *path)
+{
+#if defined(_WIN32)
+    if (mkdir(path) == 0 || errno == EEXIST) {
+#else
+    if (mkdir(path, 0775) == 0 || errno == EEXIST) {
+#endif
+        return ESP_OK;
+    }
+    return ESP_FAIL;
+}
+
+static esp_err_t cache_paths(const media_persistent_id_t *persistent_id,
+                             char *dir, size_t dir_len,
+                             char *path, size_t path_len, bool create_dirs)
+{
+    if (sd_available() != ESP_OK) {
+        return ESP_ERR_NOT_FOUND;
+    }
+    if (create_dirs && (mkdir_if_missing(CACHE_PARENT) != ESP_OK ||
+        mkdir_if_missing(CACHE_ROOT) != ESP_OK)) {
+        return ESP_FAIL;
+    }
+    if (!persistent_id || !persistent_id->valid) return ESP_ERR_INVALID_ARG;
+    char digest_hex[65];
+    static const char hex[] = "0123456789abcdef";
+    for (size_t i = 0; i < 32u; i++) {
+        digest_hex[i * 2u] = hex[persistent_id->bytes[i] >> 4u];
+        digest_hex[i * 2u + 1u] = hex[persistent_id->bytes[i] & 0x0fu];
+    }
+    digest_hex[64] = '\0';
+    int written = snprintf(dir, dir_len, "%s/%s", CACHE_ROOT, digest_hex);
+    if (written < 0 || written >= (int)dir_len) {
+        return ESP_ERR_INVALID_SIZE;
+    }
+    if (create_dirs && mkdir_if_missing(dir) != ESP_OK) {
+        return ESP_FAIL;
+    }
+    written = snprintf(path, path_len, "%s/meta.bin", dir);
+    return (written < 0 || written >= (int)path_len) ? ESP_ERR_INVALID_SIZE : ESP_OK;
+}
+
+static bool header_matches(const track_meta_cache_header_t *header,
+                           uint32_t track_key,
+                           const media_persistent_id_t *persistent_id,
+                           uint64_t dat_size,
+                           int64_t dat_mtime,
+                           uint64_t ext_size,
+                           int64_t ext_mtime)
+{
+    return header &&
+           header->magic == TRACK_META_CACHE_MAGIC &&
+           header->version == TRACK_META_CACHE_VERSION &&
+           header->header_size == sizeof(*header) &&
+           header->track_key == track_key &&
+           persistent_id && persistent_id->valid &&
+           memcmp(header->persistent_id, persistent_id->bytes, 32u) == 0 &&
+           header->dat_size == dat_size &&
+           header->dat_mtime == dat_mtime &&
+           header->ext_size == ext_size &&
+           header->ext_mtime == ext_mtime &&
+           /* uint16_t beat_count covers the parser's full 0xFFFF limit. */
+           header->cue_count <= ANLZ_MAX_CUES &&
+           header->memory_cue_count <= ANLZ_MAX_MEMORY_CUES &&
+           (header->metadata_flags & ~(TRACK_META_CACHE_MEMORY_TRUNC |
+                                       TRACK_META_CACHE_COLOR_TRUNC)) == 0u &&
+           header->waveform_high_len <= ANLZ_WAVEFORM_HIGH_MAX &&
+           (header->waveform_span_ms == 0u ||
+             (header->waveform_high_len < ANLZ_WAVEFORM_HIGH_MAX &&
+              header->waveform_span_ms == (uint64_t)header->waveform_high_len * 1000u / 150u)) &&
+           header->color_preview_len <= ANLZ_COLOR_PREVIEW_MAX &&
+           header->color_preview_len % ANLZ_COLOR_PREVIEW_ENTRY == 0u;
+}
+
+static bool read_exact(FILE *fp, void *dst, size_t len)
+{
+    return len == 0 || fread(dst, 1, len, fp) == len;
+}
+
+static bool write_exact(FILE *fp, const void *src, size_t len)
+{
+    return len == 0 || fwrite(src, 1, len, fp) == len;
+}
+
+/* Both public entry points hold sd_io_gate for their whole transaction, so cache
+ * I/O is serialised against the recorder, service log and profile storage that
+ * share the card. This used to be bolted on by a wrapper translation unit that
+ * renamed these functions and re-exported gated versions; the gate belongs with
+ * the transaction it protects. media_io_gate (USB, a different medium) is taken
+ * separately around the source-file stats below. */
+static esp_err_t track_meta_cache_load_gated(uint32_t track_key,
+                                             const media_persistent_id_t *persistent_id,
+                                             const char *dat_path,
+                                             const char *ext_path,
+                                             bool include_high_waveform,
+                                             anlz_metadata_t *out_meta);
+
+esp_err_t track_meta_cache_load(uint32_t track_key,
+                                const media_persistent_id_t *persistent_id,
+                                const char *dat_path,
+                                const char *ext_path,
+                                bool include_high_waveform,
+                                anlz_metadata_t *out_meta)
+{
+    if (!out_meta || track_key == 0 || !persistent_id || !persistent_id->valid) {
+        return ESP_ERR_INVALID_ARG;
+    }
+    memset(out_meta, 0, sizeof(*out_meta));
+
+    library_load_trace_mark(LIBRARY_LOAD_PHASE_CACHE_SD_GATE_WAIT, track_key);
+    sd_io_gate_begin();
+    library_load_trace_mark(LIBRARY_LOAD_PHASE_CACHE_SD_GATE_HELD, track_key);
+    const esp_err_t load_rc = track_meta_cache_load_gated(track_key, persistent_id, dat_path, ext_path,
+                                                          include_high_waveform, out_meta);
+    sd_io_gate_end();
+    return load_rc;
+}
+
+static esp_err_t track_meta_cache_load_gated(uint32_t track_key,
+                                             const media_persistent_id_t *persistent_id,
+                                             const char *dat_path,
+                                             const char *ext_path,
+                                             bool include_high_waveform,
+                                             anlz_metadata_t *out_meta)
+{
+
+    /* dat_path/ext_path live on the USB drive. Serialise these stats against
+       USB unmount/uninstall through the media I/O gate: without it, a drive
+       disconnect during the stat tears down the MSC device under an in-flight
+       transfer and the vendored driver panics on a NULL transfer semaphore
+       (assert xQueueSemaphoreTake pxQueue). The SD-side cache reads below use
+       a different medium and do not need the gate. */
+    uint64_t dat_size = 0;
+    int64_t dat_mtime = 0;
+    uint64_t ext_size = 0;
+    int64_t ext_mtime = 0;
+    library_load_trace_mark(LIBRARY_LOAD_PHASE_CACHE_MEDIA_GATE_WAIT, track_key);
+    media_io_gate_begin();
+    library_load_trace_mark(LIBRARY_LOAD_PHASE_CACHE_DAT_STAT, track_key);
+    esp_err_t dat_rc = file_signature(dat_path, &dat_size, &dat_mtime);
+    if (dat_rc == ESP_OK) {
+        library_load_trace_mark(LIBRARY_LOAD_PHASE_CACHE_EXT_STAT, track_key);
+        file_signature(ext_path, &ext_size, &ext_mtime);
+    }
+    media_io_gate_end();
+    if (dat_rc != ESP_OK) {
+        return ESP_ERR_NOT_FOUND;
+    }
+
+    char dir[96];
+    char path[112];
+    esp_err_t rc = cache_paths(persistent_id, dir, sizeof(dir), path, sizeof(path), false);
+    if (rc != ESP_OK) {
+        return rc;
+    }
+
+    library_load_trace_mark(LIBRARY_LOAD_PHASE_CACHE_SD_OPEN, track_key);
+    FILE *fp = fopen(path, "rb");
+    if (!fp) {
+        return ESP_ERR_NOT_FOUND;
+    }
+
+    library_load_trace_mark(LIBRARY_LOAD_PHASE_CACHE_SD_READ, track_key);
+    track_meta_cache_header_t header;
+    bool ok = read_exact(fp, &header, sizeof(header)) &&
+              header_matches(&header, track_key, persistent_id, dat_size, dat_mtime, ext_size, ext_mtime);
+    if (!ok) {
+        fclose(fp);
+        return ESP_ERR_INVALID_RESPONSE;
+    }
+    if (include_high_waveform && ext_size > 0 &&
+        !(header.flags & TRACK_META_CACHE_FLAGS_HIGH)) {
+        fclose(fp);
+        return ESP_ERR_INVALID_RESPONSE;
+    }
+
+    out_meta->bpm = header.bpm;
+    out_meta->beat_count = header.beat_count;
+    out_meta->cue_count = header.cue_count;
+    out_meta->memory_cue_count = header.memory_cue_count;
+    out_meta->memory_cues_truncated =
+        (header.metadata_flags & TRACK_META_CACHE_MEMORY_TRUNC) != 0u;
+    out_meta->color_preview_truncated =
+        (header.metadata_flags & TRACK_META_CACHE_COLOR_TRUNC) != 0u;
+    out_meta->waveform_span_ms = header.waveform_span_ms;
+    out_meta->has_waveform_low = (header.flags & TRACK_META_CACHE_FLAGS_LOW) != 0;
+    out_meta->has_vbr = (header.flags & TRACK_META_CACHE_FLAGS_VBR) != 0;
+
+    ok = read_exact(fp, out_meta->waveform_low, sizeof(out_meta->waveform_low)) &&
+         read_exact(fp, out_meta->vbr, sizeof(out_meta->vbr)) &&
+         read_exact(fp, out_meta->cues, sizeof(out_meta->cues)) &&
+         read_exact(fp, out_meta->memory_cues, sizeof(out_meta->memory_cues));
+    if (ok && header.beat_count > 0) {
+        out_meta->beats = calloc(header.beat_count, sizeof(anlz_beat_t));
+        ok = out_meta->beats && read_exact(fp, out_meta->beats,
+                                           (size_t)header.beat_count * sizeof(anlz_beat_t));
+    }
+    if (ok && header.waveform_high_len > 0) {
+        if (include_high_waveform && (header.flags & TRACK_META_CACHE_FLAGS_HIGH)) {
+            out_meta->waveform_high = malloc(header.waveform_high_len);
+            ok = out_meta->waveform_high &&
+                 read_exact(fp, out_meta->waveform_high, header.waveform_high_len);
+            if (ok) {
+                out_meta->waveform_high_len = header.waveform_high_len;
+            }
+        } else {
+            ok = fseek(fp, (long)header.waveform_high_len, SEEK_CUR) == 0;
+        }
+    }
+    if (ok && header.color_preview_len > 0u) {
+        out_meta->color_preview = malloc(header.color_preview_len);
+        ok = out_meta->color_preview &&
+             read_exact(fp, out_meta->color_preview, header.color_preview_len);
+        if (ok) out_meta->color_preview_len = header.color_preview_len;
+    }
+
+    fclose(fp);
+    if (!ok) {
+        anlz_free(out_meta);
+        memset(out_meta, 0, sizeof(*out_meta));
+        return ESP_FAIL;
+    }
+    ESP_LOGI(TAG, "cache hit: track_key=%lu", (unsigned long)track_key);
+    return ESP_OK;
+}
+
+static esp_err_t track_meta_cache_save_gated(uint32_t track_key,
+                                             const media_persistent_id_t *persistent_id,
+                                             const char *dat_path,
+                                             const char *ext_path,
+                                             const anlz_metadata_t *meta);
+
+esp_err_t track_meta_cache_save(uint32_t track_key,
+                                const media_persistent_id_t *persistent_id,
+                                const char *dat_path,
+                                const char *ext_path,
+                                const anlz_metadata_t *meta)
+{
+    sd_io_gate_begin();
+    const esp_err_t save_rc = track_meta_cache_save_gated(track_key, persistent_id, dat_path,
+                                                          ext_path, meta);
+    sd_io_gate_end();
+    return save_rc;
+}
+
+static esp_err_t track_meta_cache_save_gated(uint32_t track_key,
+                                             const media_persistent_id_t *persistent_id,
+                                             const char *dat_path,
+                                             const char *ext_path,
+                                             const anlz_metadata_t *meta)
+{
+    if (!meta || track_key == 0 || !persistent_id || !persistent_id->valid) {
+        return ESP_ERR_INVALID_ARG;
+    }
+    if ((meta->beat_count > 0 && !meta->beats) ||
+        (meta->waveform_high_len > 0 && !meta->waveform_high) ||
+        (meta->color_preview_len > 0 && !meta->color_preview) ||
+        meta->cue_count > ANLZ_MAX_CUES ||
+        meta->memory_cue_count > ANLZ_MAX_MEMORY_CUES ||
+        meta->waveform_high_len > ANLZ_WAVEFORM_HIGH_MAX ||
+        (meta->waveform_span_ms != 0u &&
+          (!meta->waveform_high || meta->waveform_high_len >= ANLZ_WAVEFORM_HIGH_MAX ||
+           meta->waveform_span_ms != (uint64_t)meta->waveform_high_len * 1000u / 150u)) ||
+        meta->color_preview_len > ANLZ_COLOR_PREVIEW_MAX ||
+        meta->color_preview_len % ANLZ_COLOR_PREVIEW_ENTRY != 0u) {
+        return ESP_ERR_INVALID_ARG;
+    }
+
+    /* USB-side stats — gated for the same reason as in track_meta_cache_load(). */
+    uint64_t dat_size = 0;
+    int64_t dat_mtime = 0;
+    uint64_t ext_size = 0;
+    int64_t ext_mtime = 0;
+    media_io_gate_begin();
+    esp_err_t dat_rc = file_signature(dat_path, &dat_size, &dat_mtime);
+    if (dat_rc == ESP_OK) {
+        file_signature(ext_path, &ext_size, &ext_mtime);
+    }
+    media_io_gate_end();
+    if (dat_rc != ESP_OK) {
+        return ESP_ERR_NOT_FOUND;
+    }
+
+    char dir[96];
+    char path[112];
+    esp_err_t rc = cache_paths(persistent_id, dir, sizeof(dir), path, sizeof(path), true);
+    if (rc != ESP_OK) {
+        return rc;
+    }
+
+    char part[112];
+    int written = snprintf(part, sizeof(part), "%s.part", path);
+    if (written < 0 || written >= (int)sizeof(part)) {
+        return ESP_ERR_INVALID_SIZE;
+    }
+
+    library_load_trace_mark(LIBRARY_LOAD_PHASE_CACHE_SAVE_SD_OPEN, track_key);
+    FILE *fp = fopen(part, "wb");
+    if (!fp) {
+        return ESP_FAIL;
+    }
+
+    track_meta_cache_header_t header = {
+        .magic = TRACK_META_CACHE_MAGIC,
+        .version = TRACK_META_CACHE_VERSION,
+        .header_size = sizeof(track_meta_cache_header_t),
+        .track_key = track_key,
+        .dat_size = dat_size,
+        .dat_mtime = dat_mtime,
+        .ext_size = ext_size,
+        .ext_mtime = ext_mtime,
+        .bpm = meta->bpm,
+        .beat_count = meta->beat_count,
+        .cue_count = meta->cue_count,
+        .memory_cue_count = meta->memory_cue_count,
+        .metadata_flags =
+            (meta->memory_cues_truncated ? TRACK_META_CACHE_MEMORY_TRUNC : 0u) |
+            (meta->color_preview_truncated ? TRACK_META_CACHE_COLOR_TRUNC : 0u),
+        .flags = (meta->has_waveform_low ? TRACK_META_CACHE_FLAGS_LOW : 0u) |
+                 (meta->has_vbr ? TRACK_META_CACHE_FLAGS_VBR : 0u) |
+                 (meta->waveform_high && meta->waveform_high_len > 0 ? TRACK_META_CACHE_FLAGS_HIGH : 0u),
+        .waveform_high_len = meta->waveform_high && meta->waveform_high_len > 0 ? meta->waveform_high_len : 0,
+        .waveform_span_ms = meta->waveform_span_ms,
+        .color_preview_len = meta->color_preview_len,
+    };
+    memcpy(header.persistent_id, persistent_id->bytes, sizeof(header.persistent_id));
+
+    library_load_trace_mark(LIBRARY_LOAD_PHASE_CACHE_SAVE_HEADER, track_key);
+    bool ok = write_exact(fp, &header, sizeof(header));
+    if (ok) {
+        library_load_trace_mark(LIBRARY_LOAD_PHASE_CACHE_SAVE_LOW, track_key);
+        ok = write_exact(fp, meta->waveform_low, sizeof(meta->waveform_low));
+    }
+    if (ok) {
+        library_load_trace_mark(LIBRARY_LOAD_PHASE_CACHE_SAVE_VBR, track_key);
+        ok = write_exact(fp, meta->vbr, sizeof(meta->vbr));
+    }
+    if (ok) {
+        library_load_trace_mark(LIBRARY_LOAD_PHASE_CACHE_SAVE_CUES, track_key);
+        ok = write_exact(fp, meta->cues, sizeof(meta->cues));
+    }
+    if (ok) ok = write_exact(fp, meta->memory_cues, sizeof(meta->memory_cues));
+    if (ok) {
+        library_load_trace_mark(LIBRARY_LOAD_PHASE_CACHE_SAVE_BEATS, track_key);
+        ok = write_exact(fp, meta->beats,
+                         (size_t)meta->beat_count * sizeof(anlz_beat_t));
+    }
+    if (ok) {
+        library_load_trace_mark(LIBRARY_LOAD_PHASE_CACHE_SAVE_HIGH, track_key);
+        ok = write_exact(fp, meta->waveform_high, header.waveform_high_len);
+    }
+    if (ok) ok = write_exact(fp, meta->color_preview, header.color_preview_len);
+    library_load_trace_mark(LIBRARY_LOAD_PHASE_CACHE_SAVE_CLOSE, track_key);
+    if (fclose(fp) != 0) ok = false;
+
+    if (!ok) {
+        unlink(part);
+        return ESP_FAIL;
+    }
+    library_load_trace_mark(LIBRARY_LOAD_PHASE_CACHE_SAVE_REPLACE, track_key);
+    unlink(path);
+    if (rename(part, path) != 0) {
+        unlink(part);
+        return ESP_FAIL;
+    }
+    ESP_LOGI(TAG, "cache write: track_key=%lu", (unsigned long)track_key);
+    return ESP_OK;
+}

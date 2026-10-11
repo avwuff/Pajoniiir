@@ -4,14 +4,16 @@ $RepoRoot = Resolve-Path (Join-Path $PSScriptRoot "../..")
 $BuildDir = Join-Path $PSScriptRoot "build"
 New-Item -ItemType Directory -Force -Path $BuildDir | Out-Null
 
-$Runtime = Join-Path $RepoRoot "firmware/main-deck-p4/components/controller_runtime"
-$Codec = Join-Path $RepoRoot "firmware/main-deck-p4/components/controller_usb_host"
-$Profile = Join-Path $RepoRoot "firmware/main-deck-p4/components/controller_profile"
-$ProfileRuntime = Join-Path $RepoRoot "firmware/main-deck-p4/components/controller_profile_runtime"
-$HostManager = Join-Path $RepoRoot "firmware/main-deck-p4/components/usb_host_manager"
-$Control = Join-Path $RepoRoot "firmware/main-deck-p4/components/control_link/include"
+$Runtime = Join-Path $RepoRoot "firmware/p4-core/components/controller_runtime"
+$Codec = Join-Path $RepoRoot "firmware/p4-core/components/controller_usb_host"
+$Profile = Join-Path $RepoRoot "firmware/p4-core/components/controller_profile"
+$ProfileRuntime = Join-Path $RepoRoot "firmware/p4-core/components/controller_profile_runtime"
+$HostManager = Join-Path $RepoRoot "firmware/p4-core/components/usb_host_manager"
+$Control = Join-Path $RepoRoot "firmware/p4-core/components/control_link/include"
 $Reconciler = Join-Path $RepoRoot "firmware/common/control_state_reconciler/include"
 $Stubs = Join-Path $PSScriptRoot "stubs"
+python (Join-Path $PSScriptRoot "verify_m3_reference.py")
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 $CommonArgs = @(
     "-std=c11", "-Wall", "-Wextra", "-Wpedantic", "-Werror", "-pthread",
@@ -24,6 +26,17 @@ $CommonArgs = @(
     "-I$Reconciler",
     "-I$Stubs"
 )
+
+$M3ParityExe = Join-Path $BuildDir "test_m3_flx4_parity.exe"
+gcc @CommonArgs "-I$(Join-Path $RepoRoot 'firmware/p4-core/components/controller_led_runtime/include')" `
+    (Join-Path $Runtime "flx4_map.c") (Join-Path $Codec "usb_midi_codec.c") `
+    (Join-Path $RepoRoot "firmware/p4-core/components/controller_led_runtime/flx4_led_midi.c") `
+    (Join-Path $PSScriptRoot "legacy_m3/legacy_m3_flx4_map.c") `
+    (Join-Path $PSScriptRoot "legacy_m3/legacy_m3_flx4_led.c") `
+    (Join-Path $PSScriptRoot "test_m3_flx4_parity.c") -o $M3ParityExe
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+& $M3ParityExe
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 $BufferExe = Join-Path $BuildDir "test_controller_event_buffer"
 $RuntimeExe = Join-Path $BuildDir "test_controller_runtime"
@@ -104,4 +117,22 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 & $MutexExe
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
+$S2Exe = Join-Path $BuildDir "test_s2_navigation.exe"
+gcc @CommonArgs -DCONTROLLER_PROFILE_RUNTIME_PC_TEST `
+    (Join-Path $Profile "controller_profile.c") `
+    (Join-Path $ProfileRuntime "controller_profile_runtime.c") `
+    (Join-Path $PSScriptRoot "test_s2_navigation.c") -o $S2Exe
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+& $S2Exe (Join-Path $RepoRoot "controllers/ni_traktor_s2_mk3_basic/profile.s3bin")
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+& $S2Exe (Join-Path $RepoRoot "controllers/ni_traktor_s2_mk3_full/profile.s3bin")
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+$BusTraceExe = Join-Path $BuildDir "test_usb_bus_trace.exe"
+$UsbStorage = Join-Path $RepoRoot "firmware/p4-core/components/usb_storage"
+gcc @CommonArgs "-I$(Join-Path $UsbStorage 'include')" `
+    (Join-Path $UsbStorage "usb_bus_trace.c") `
+    (Join-Path $PSScriptRoot "test_usb_bus_trace.c") -o $BusTraceExe
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+& $BusTraceExe
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 exit 0

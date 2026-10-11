@@ -62,7 +62,8 @@ void djlink_wr32(uint8_t *p, uint32_t v);
  * dst must hold at least DJLINK_NAME_LEN + 1 bytes. */
 void djlink_name_to_str(const uint8_t name[DJLINK_NAME_LEN], char *dst);
 
-/* Pack a NUL-terminated C string into a 20-byte padded name field. */
+/* Pack a string prefix or a full 20-byte name into a padded name field.
+ * Read at most DJLINK_NAME_LEN bytes; no NUL is required in a full field. */
 void djlink_name_from_str(const char *src, uint8_t name[DJLINK_NAME_LEN]);
 
 /* --- Pitch / BPM helpers -------------------------------------------------

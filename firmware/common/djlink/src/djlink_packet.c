@@ -69,10 +69,7 @@ void djlink_name_from_str(const char *src, uint8_t name[DJLINK_NAME_LEN])
     if (src == NULL) {
         return;
     }
-    n = strlen(src);
-    if (n > DJLINK_NAME_LEN) {
-        n = DJLINK_NAME_LEN;
-    }
+    for (n = 0; n < DJLINK_NAME_LEN && src[n] != '\0'; ++n) {}
     memcpy(name, src, n);
 }
 

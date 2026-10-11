@@ -1,5 +1,168 @@
 # P4 operation and release checklist
 
+For the authorized `shared-p4-beta.1` contributor distribution, use the
+[beta record](validation/SHARED_P4_BETA_1_20261011.md) and
+[JC1060 handoff](JC1060_BETA_HANDOFF_20261011.md). Verify the kit's board/project,
+source/ELF, signature and hashes before any installation. New beta assets are
+not installed or physically accepted merely by publication. Stable M2.5 and
+public OTA channels remain unchanged; JC4880 soak is waived and JC1060 physical
+testing is deferred to Kayrosen, both explicitly NOT RUN for those scopes.
+
+Current Hercules bench: clean `6166d936`, VALID `ota_1`, Hercules USB3/root0,
+storage USB2/root1, Wi-Fi ON. Local OTA/startup and short audio/display plus
+active jog/Browse smokes pass; both decks are stopped. The
+[final handoff](reviews/2026-10-11-shared-core-final-handoff.md) is current authority.
+The e16ecfb5 hour/lifecycle acceptance remains historical and does not transfer.
+This experimental arrangement does not change ordinary FLX4 defaults.
+USB1 is power-only on this bench; do not require a new serial connection for
+documentation closeout. Do not repeat accepted tests solely to fill historical
+unchecked boxes. Remaining individual profile and board gates stay explicit.
+
+The [ordinary local software matrix](validation/SHARED_P4_LOCAL_QUALIFICATION_20261011.md)
+passes on clean `5ff76b6c` with exact-source builds for all three boards.
+This is build evidence, not a request to install its ordinary M3 image over the
+accepted Hercules bench configuration. Keep configuration-specific packaging
+and physical acceptance separate; hosted CI remains skipped by operator decision.
+
+Three frozen-source ordinary signed packages and their debug/configuration
+manifests now verify locally. Review the
+[delivery handoff](reviews/2026-10-11-shared-core-delivery-readiness.md)
+before selecting a later installation. None of these new images is installed
+or physically accepted by that historical packaging step. The later controller
+bench OTA/short-smoke scope is recorded in the final handoff above.
+
+For the [S2 performance candidate](../controllers/ni_traktor_s2_mk3_full/README.md),
+keep S2 on USB3 HS and the stick on USB2 FS. The operator closed S2 work after
+full-hour 48/44.1-kHz playback acceptance and waived remaining physical checks.
+Do not start another S2 test. Keep Wi-Fi enabled and record the exact image and
+negotiated S2 rate separately from MAIN. Source mappings, host tests and waived
+checks do not establish unrestricted physical acceptance. General memory and
+OTA-restart records are retained in the
+[closeout review](reviews/2026-10-10-s2-closeout-resources-restart.md).
+
+The operator subsequently clarified that the historical OTA restart was
+associated with moving the cable. It is closed as an operator cable-intervention
+event; do not schedule a firmware repair or a repeat test for that event.
+
+For the shared-core/M3 development branch, use the exact target identity and
+[integration gates](SHARED_P4_CORE_INTEGRATION.md). Existing physical records
+remain image-specific; successful builds do not qualify the new M3 target.
+
+## Shared-core M3 first installation
+
+- [ ] Freeze clean source, successful exact-SHA CI, image/bundle/ELF hashes and
+  candidate evidence; keep the signed artifacts immutable.
+- [ ] Identify the M3 MAC, pre-v3 silicon, COM port, old slot and old image SHA.
+- [ ] Stop playback and use the [preserving migration tool](M3_SHARED_CORE_MIGRATION.md);
+  save full flash, or explicitly reuse a verified installed recovery image and
+  capture protected regions/NVS/OTA selection before any device write.
+- [ ] Verify factory write before resetting OTA selection. Preserve bootloader,
+  partitions and settings. Keep wired recovery access.
+- [ ] Verify board/project/source/ELF and operator settings, then install the
+  matching signed bundle and require `running_image_state=valid` in an OTA slot.
+- [ ] Complete [Campaign A/B](RELIABILITY_MONITORING_PLAN.md) and operator audio,
+  panel/touch/controls acceptance on this exact image. Record unrun gates explicitly.
+
+These checks do not authorize publication or qualify JC4880/JC1060 hardware.
+
+For the `M3-dev-gfb5cbca13f33` M3 qualification baseline in VALID
+ota_0, see the
+[exact-image acceptance record](validation/M3_SHARED_WAVEFORM_REGRESSION_20261006.md).
+The preceding 1d3ee7b6 short retest was improved but not fully fluid: slight dual stutter remains
+with and without loops; MAIN/headphones were confirmed clean. Both decks are
+stopped and the original loops restored. Do not start Campaign B until the
+remaining visual gate passes.
+The bf2fdc47 repeated retest retained slight dual stutter with clean sound.
+The fb5cbca1 short MT/zoom-8 dual retest passed with fluid waveforms and clean
+MAIN/headphones sound. A subsequent short operator review confirmed all five
+zooms fluid and sound clean; captured per-zoom dwell varied. Campaign B subsequently
+passed on this exact image for 3600.163 seconds with operator visual/listening
+confirmation, zero new PCM/UAC/service-log losses and 11 output-late monitoring
+events. Both decks ended stopped. Campaign A physical cycles/operator checks
+were subsequently SKIPPED BY OPERATOR. The [automatic software-reboot supplement](validation/M3_AUTOMATIC_RECOVERY_20261007.md)
+observed ten recoveries with nine complete timing windows; host visibility flags
+and cycle-6 timing remain investigation/incomplete evidence. This is not a
+physical Campaign A PASS. [Autonomous negative OTA and injected startup rollback](validation/M3_OTA_NEGATIVE_ROLLBACK_20261007.md)
+subsequently passed and restored the exact accepted image. Current-source GitHub
+Actions was SKIPPED BY OPERATOR (quota), not PASS. Remaining image-specific gates
+and other-board physical acceptance remain open.
+[Catalog/web LOAD LOCK evidence](validation/M3_LIBRARY_CUES_WEB_LOAD_LOCK_20261007.md)
+now records 324 identities stable across reboot and six refused replacements
+while both decks kept playing. Final state is the same image, both decks empty
+and stopped. On-device cue writes and physical MIDI/touch checks remain NOT RUN.
+
+The [real-export audit](validation/M3_REAL_EXPORT_AUDIT_20261007.md) completed
+read-only on the PC and found artist/album row-layout losses and missing EXT
+Hot Cue D. Repair and rerun source comparisons before accepting a new candidate;
+do not label this audit a full library PASS. No playlists/source loops occur
+in this export; physical cover/cue rendering remains NOT RUN.
+Correction candidate `M3-dev-g082d2c0abda0` has passed software comparisons,
+host regressions, M3 build and signed identity/budget checks. Local OTA installed
+it VALID in ota_1, with the exact source/ELF and 324 tracks; all 13 artist names
+are recovered. D1 France Gall and D2 Jura Stublić are READY/stopped for the
+operator's cue/rendering check. The operator subsequently confirmed D1 A–D
+recall, with source D at 123347 ms observed through the API. Subsequent
+[cue lifecycle checks](validation/M3_CUE_LIFECYCLE_20261007.md) passed local
+override, deletion and restore-source persistence through reboot. Both decks
+are stopped and the original source bank is restored. Broader new-image
+physical acceptance is separate.
+Ordinary FLX4 and touch LOAD refusal on each playing deck subsequently passed,
+with unchanged tracks and clean sound; see [physical record](validation/M3_PHYSICAL_LOAD_LOCK_20261007.md).
+Selected [stopped-deck routing cases](validation/M3_PHYSICAL_LOAD_ROUTING_20261007.md)
+also pass; both decks are finally READY/stopped with Star Eater.
+Subsequent touch D1 and FLX4 D2 completed ordinary stopped LOAD parity.
+Repeated [Shift+Load playing-deck refusals](validation/M3_PHYSICAL_SHIFT_LOAD_LOCK_20261007.md)
+passed on both decks; final tracks are Combat Ready, both stopped.
+The subsequent `4620b83c` screensaver repair is now installed VALID in ota_0.
+France Gall D1 and Jura D2 are READY/stopped for the real two-minute idle wake
+check. [Physical wake acceptance](validation/M3_CONTROLLER_SCREENSAVER_WAKE_20261007.md)
+failed: first PLAY started playback. Atomic UI handoff candidate `af4ca590`
+is now installed VALID in ota_1; operator PLAY wake/next-PLAY checks pass with
+one consumed PLAY wake recorded by API. Browse and touch regressions also pass;
+final counter is two consumed controller wakes and both decks are stopped.
+final soak is deferred and earlier image-specific tests do not transfer.
+Both 11574f4e and c698fa67 failed on dual waveform deformation; c698fa67 also
+showed visual stutter without audible stutter.
+The measurement candidate also reproduced the visual failure and measured
+57 coalesced refreshes in a short dual-playback window. Follow the
+[repair/retest record](validation/M3_SHARED_WAVEFORM_REGRESSION_20261006.md) before
+starting a new 60-minute campaign. Exact clean source/ELF and VALID state were
+verified on 2026-10-07 after the upload helper's earlier polling deadline
+expired; this later observation is not a startup-time measurement.
+Its short retest also failed: solo sharp, dual deformed, audio clean, with 55
+coalesced refreshes. Both decks are stopped. The full soak remains NOT RUN.
+The zero-wait display-observation e4536de2 candidate passed production contention
+tests, unchanged simulator baselines, all three clean builds, CI and packaging.
+Its installed source/ELF and VALID state were observed within the helper deadline,
+but the operator again confirmed solo sharp, dual deformed and clean sound.
+The dual window coalesced 65 refreshes. Both decks are stopped; Campaign B
+cannot begin before a successful measured/operator retest. See the
+[diagnostic audit](validation/M3_DIAGNOSTIC_OVERHEAD_REVIEW_20261007.md) for
+remaining loop-query waits and heap/UART overhead.
+
+The ee54f0d1 loop-observation repair passed host qualification, unchanged product
+simulators, M3 build and signed packaging. The operator reports worse visual
+stuttering; it is not physically accepted. During this diagnosis, perform only
+M3 candidate builds and bench tests. JC4880/JC1060 builds and the full CI matrix
+resume after an operator-accepted M3 retest. Cancelled/interrupted work is not a
+PASS. The separate bench manifest retains full software qualification as false;
+it does not relax final integration, Campaign A/B or publication gates.
+
+The initial completed-frame candidate 6d55ce2a failed; the bench was returned to
+ee54f0d1 VALID in ota_0 before installing b0c66744 VALID in ota_1. Deferred
+preservation reduced the solo copy cost but b0c66744 also failed: severe stutter
+began with dual playback. Its interrupted dual aggregate is not a continuous
+dual measurement. The next revision fixes retained position handling and adds
+RAM observation-age counters. Before its physical
+PASS, verify exact source/ELF/VALID state,
+`capabilities.display_framebuffers=2`, stable panel/touch/colours and all zooms,
+then compare solo/dual MT timing including framebuffer-sync/present cost.
+Require unchanged playback state throughout each window; an operator stop
+invalidates that window and terminates the test. Compare observation-age
+counters as well, without assuming mutex contention caused the device failure.
+Both previous visual failures remain recorded; no physical PASS follows from
+installation or host pixel tests. Check audio/UAC and HTTP stability as well.
+
 Status: **current M2.5 JC4880 checklist and development qualification gates**
 (2026-10-06). Acceptance already recorded in the
 [M2.5 release](validation/M2_5_RELEASE_20261006.md) is not a request to

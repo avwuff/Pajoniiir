@@ -136,7 +136,8 @@ bool dj_link_discovery_ingest(dj_link_discovery_t *s, uint16_t port,
         if (djlink_status_parse(buf, len, &st) != DJLINK_OK ||
             st.device_number < 1 || st.device_number > 6) goto dropped;
         dj_link_peer_t *p = peer(s, st.device_number, ip, buf+0x0b, NULL, now);
-        p->status = st; p->has_status = true; note_number(s, st.device_number, now);
+        p->status = st; p->has_status = true; p->status_rx_ms = now;
+        note_number(s, st.device_number, now);
     } else goto dropped;
     ++s->accepted; return true;
 dropped:

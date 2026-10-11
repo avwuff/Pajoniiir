@@ -78,6 +78,8 @@ extern "C" {
 #define DJLINK_NFS_READ_DEFAULT   1024u
 #define DJLINK_NFS_READ_MIN       512u
 #define DJLINK_NFS_RETRANSMIT_MS  250u  /* crate-digger default, doubles per retry */
+#define DJLINK_NFS_BACKOFF_SHIFT_MAX 6u
+#define DJLINK_NFS_RETRANSMIT_MAX_MS (UINT32_MAX >> DJLINK_NFS_BACKOFF_SHIFT_MAX)
 #define DJLINK_NFS_RETRIES        5u
 #define DJLINK_NFS_WINDOW_MAX     8u    /* READs in flight */
 #define DJLINK_NFS_PATH_MAX       256u  /* UTF-8 bytes incl. NUL */
@@ -227,7 +229,7 @@ typedef struct {
     uint8_t  window;           /* READs in flight, 0 = 1; capped as below */
     uint8_t *window_buf;       /* reorder storage: window * read_size bytes; */
     size_t   window_buf_len;   /* without it the window is 1 (no reordering) */
-    uint32_t retransmit_ms;    /* 0 = 250; doubles on every retry */
+    uint32_t retransmit_ms;    /* 0 = 250; <= RETRANSMIT_MAX_MS, doubles up to 64x */
     uint8_t  retries;          /* 0 = 5 retransmits per request */
     uint32_t max_size;         /* 0 = no limit */
     uint32_t xid_seed;         /* first xid; vary it per fetch */

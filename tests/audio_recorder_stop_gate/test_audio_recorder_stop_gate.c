@@ -1,5 +1,40 @@
 #include "audio_recorder_stop_gate.h"
 #include <stdio.h>
+#include <pthread.h>
+#include <assert.h>
+
+static audio_recorder_stop_gate_t racing_gate;
+static unsigned phase, done;
+static bool retired;
+static void *race_producer(void *unused)
+{
+    (void)unused;
+    for (unsigned round = 1; round <= 20000; ++round) {
+        while (__atomic_load_n(&phase, __ATOMIC_ACQUIRE) < round) {}
+        if (audio_recorder_stop_gate_try_enter(&racing_gate)) {
+            assert(!__atomic_load_n(&retired, __ATOMIC_ACQUIRE));
+            audio_recorder_stop_gate_leave(&racing_gate);
+        }
+        __atomic_store_n(&done, round, __ATOMIC_RELEASE);
+    }
+    return NULL;
+}
+static void test_close_admission_race(void)
+{
+    pthread_t producer;
+    audio_recorder_stop_gate_init(&racing_gate);
+    assert(!pthread_create(&producer, NULL, race_producer, NULL));
+    for (unsigned round = 1; round <= 20000; ++round) {
+        __atomic_store_n(&retired, false, __ATOMIC_RELEASE);
+        assert(audio_recorder_stop_gate_open(&racing_gate));
+        __atomic_store_n(&phase, round, __ATOMIC_RELEASE);
+        audio_recorder_stop_gate_close(&racing_gate);
+        while (!audio_recorder_stop_gate_is_quiescent(&racing_gate)) {}
+        __atomic_store_n(&retired, true, __ATOMIC_RELEASE);
+        while (__atomic_load_n(&done, __ATOMIC_ACQUIRE) < round) {}
+    }
+    assert(!pthread_join(producer, NULL));
+}
 
 static int failures;
 static unsigned s_checks;
@@ -7,6 +42,7 @@ static unsigned s_checks;
 
 int main(void)
 {
+    test_close_admission_race();
     audio_recorder_stop_gate_t gate;
     audio_recorder_stop_gate_init(&gate);
     CHECK(audio_recorder_stop_gate_is_quiescent(&gate));

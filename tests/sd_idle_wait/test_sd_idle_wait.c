@@ -14,17 +14,17 @@ int main(void) {
     fake_t f={.ready_after=4};
     assert(sd_idle_wait_run(&f, 1, 5000, &ops)==ESP_OK && f.probes==0);
     assert(sd_idle_wait_run(&f, 0, 5000, &ops)==ESP_OK);
-    assert(f.probes==4 && f.yields==3 && f.time==3080);
+    assert(f.probes==4 && f.yields==4 && f.time==4080);
     f=(fake_t){.ready_after=100};
     assert(sd_idle_wait_run(&f,0,2000,&ops)==ESP_ERR_TIMEOUT);
-    assert(f.probes==2 && f.yields==2); /* No command after deadline. */
+    assert(f.probes==1 && f.yields==2); /* No command after deadline. */
     f=(fake_t){.ready_after=100,.error=ESP_ERR_INVALID_RESPONSE};
     assert(sd_idle_wait_run(&f,0,5000,&ops)==ESP_ERR_INVALID_RESPONSE && f.probes==1);
     assert(sd_idle_wait_run(&f,0,0,&ops)==ESP_ERR_TIMEOUT);
     assert(sd_idle_wait_run(&f,0,5000,NULL)==ESP_ERR_INVALID_ARG);
     sd_idle_wait_stats_t stats; sd_idle_wait_get_stats(&stats);
-    assert(stats.waits==4 && stats.polls==7 && stats.timeouts==2 && stats.errors==1);
-    assert(stats.max_wait_us==3080);
+    assert(stats.waits==4 && stats.polls==6 && stats.timeouts==2 && stats.errors==1);
+    assert(stats.max_wait_us==4080);
     sd_idle_wait_get_stats(NULL);
     puts("PASS bounded SD idle polling, immediate ready, deadlines, errors and counters");
 }

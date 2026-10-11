@@ -1,0 +1,16 @@
+menu "Controller USB diagnostics"
+config CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC
+    bool "Diagnostic: defer HS audio until validated boot; quarantine after panic"
+    default n
+    depends on ESP_COREDUMP_ENABLE_TO_FLASH
+    help
+        Bench-only HS audio investigation. MIDI initializes normally; HS audio
+        waits at least ten seconds and for OTA validation. After a panic, HS
+        audio remains disabled for that boot so Wi-Fi can expose the crash dump.
+        Does not bypass startup health or change the FS/FLX4 audio path.
+        Diagnostic memory snapshots omit internal/DMA largest-block walks
+        (reported as null); free and low-water counters remain available.
+        Installs USB interrupts on core 1. With bus trace enabled, kind 3
+        records suspect HS OUT start indices after channel activation;
+        intr is raw HFNUM and event is the descriptor start index.
+endmenu

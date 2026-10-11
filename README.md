@@ -8,8 +8,78 @@
 
 # Pajoniiir
 
-**A standalone dual-deck DJ system for the Pioneer DDJ-FLX4, powered by a
-single ESP32-P4 board.**
+**A standalone dual-deck DJ system with one ESP32-P4 firmware core for
+JC4880, JC1060 and M3 boards.**
+
+Pajoniiir hosts a Rekordbox-exported USB library and a USB DJ controller,
+renders the touchscreen UI, and runs both playback decks, DSP mixer,
+controller feedback, web control and signed OTA updates on the P4.
+
+## Shared P4 beta
+
+The shared-core development line is distributed as
+[`shared-p4-beta.1`](https://github.com/dvucinozd/Pajoniiir/releases/tag/shared-p4-beta.1),
+a **GitHub prerelease for contributor testing**. It includes separate signed
+packages for each board, compiled controller profiles, source/configuration
+provenance and SHA-256 inventories. Select the package by project identity;
+the board images are not interchangeable.
+
+The published **M2.5 JC4880/DDJ-FLX4 stable release and public OTA channels
+remain unchanged**. Beta assets are downloaded from GitHub and installed
+manually. The M3 beta uses its own `M3-dev-g<source SHA>` version and has no
+automatic pull-update discovery. This beta does not claim full production
+acceptance on every board or controller.
+
+| Target | Entrypoint / signed project | Ordinary product policy | Physical evidence |
+| --- | --- | --- | --- |
+| JC4880 | `firmware/main-deck-p4` / `main-deck-p4` | 800 x 480, PCM5102A MAIN, controller USB1 / storage USB0 | Named Hercules audio/control/MT/loop/seek/CUE/PFL blocks accepted on `e22ff334`; long soak explicitly waived |
+| JC1060 | `firmware/main-deck-jc1060` / `main-deck-jc1060` | 1024 x 600, controller USB MAIN/cue, Ethernet provider, controller USB0 / storage USB1 | NOT RUN; contributor Kayrosen will test later |
+| M3 | `firmware/main-deck-m3` / `main-deck-m3` | DSI506/FT5426 800 x 480, fixed-48-kHz PCM5102A MAIN, Wi-Fi ON, controller USB2 FS / storage USB3 HS | Historical exact-image waveform/controller/soak acceptance; later images have their own recorded scope |
+
+All three entrypoints link the same production audio, deck, Rekordbox,
+controller, UI, web and OTA modules in `firmware/p4-core`. Peripheral providers
+and product policies live under `firmware/boards`; independent protocols remain
+in `firmware/common`. Dependency versions stay pinned to ESP-IDF **6.0.2**.
+
+The shared core includes:
+
+- PDB/ANLZ metadata corrections, playlist/folder catalogs, artwork workers,
+  color waveforms, memory cues/loops and persistent media identities.
+- Source/local Hot Cue merging with slot overrides, deletion tombstones and
+  restore-source behavior. Legacy track-ID-only cues require explicit migration.
+- Shared seek/preroll/loop handling, CUE/PLAY semantics and default-ON LOAD LOCK
+  across MIDI, touch and web, including asynchronous load admission.
+- M3 FIR/search-cache and consumer-owned PCM timeline fixes, plus board-specific
+  waveform scheduling without a second playback implementation.
+- S3CP v2/v3/v4 controller profiles, connection epochs, held-state reconciliation,
+  LED feedback and descriptor-driven audio admission using the selected USB root.
+- Board/project/source identity checks, signed OTA startup health/rollback,
+  bounded journals and crash diagnostics.
+
+FLX4 remains the ordinary reference controller. The
+[Hercules Inpulse 500](controllers/hercules_djcontrol_inpulse_500/README.md) and
+[Traktor Kontrol S2 MK3](controllers/ni_traktor_s2_mk3_full/README.md) profiles
+document their supported controls and individual limits. M3 Hercules/S2 testing
+uses an **explicit experimental port swap: controller USB3, storage USB2**;
+these ordinary beta M3 assets retain the FLX4 port policy. S2 work is closed by
+operator decision with remaining checks waived. A historical hour soak qualifies
+only its exact image and configuration; it does not qualify the new beta assets.
+
+Local three-target builds, board/component/lock/image-budget checks and the full
+required-fixture host qualification passed on `722bb976`. Product UI simulator
+results and unchanged-source equivalence are recorded in the
+[final software matrix](docs/validation/SHARED_P4_FINAL_BUILD_MATRIX_20261011.md).
+Hosted CI and wider real-media/controller/physical coverage retain their explicit
+dispositions. Output-late observations remain monitoring findings, not zero-late
+claims. Recorder, alternate DJ UI and M3 Ethernet/Pro DJ Link remain experimental
+or disabled in ordinary builds.
+
+Use the [final handoff](docs/reviews/2026-10-11-shared-core-final-handoff.md),
+[integration ledger](docs/SHARED_P4_CORE_INTEGRATION.md),
+[board policies](docs/SHARED_P4_BOARDS.md),
+[JC1060 contributor handoff](docs/JC1060_BETA_HANDOFF_20261011.md) and
+[beta delivery record](docs/validation/SHARED_P4_BETA_1_20261011.md) for exact
+versions, installation boundaries and remaining gates.
 
 [![Latest release](https://img.shields.io/github/v/release/dvucinozd/Pajoniiir)](https://github.com/dvucinozd/Pajoniiir/releases/latest)
 [![Platform](https://img.shields.io/badge/platform-ESP32--P4-E7352C?logo=espressif&logoColor=white)](https://www.espressif.com/en/products/socs/esp32-p4)
@@ -19,7 +89,7 @@ single ESP32-P4 board.**
 ![Pajoniiir running the dual-deck Overview screen](docs/images/Pajoniiir1.jpg)
 
 Pajoniiir plays a Rekordbox-exported USB library without a laptop. The
-ESP32-P4 hosts both the USB drive and DDJ-FLX4, renders the touchscreen UI,
+ESP32-P4 hosts both the USB drive and selected controller, renders the touchscreen UI,
 runs the two playback decks and mixer, and sends MAIN and headphone-cue audio.
 
 Read the **[online user manual](https://docs.pajoniiir.eu/)** for setup,
@@ -30,7 +100,7 @@ controls and update instructions.
 - Two independent decks provide waveforms, tempo control, Master Tempo,
   Hot Cues, loops, Beat Jump, Sync, Pad FX and Beat FX.
 - MAIN audio is available on the PCM5102A RCA output.
-- Headphone cue is returned through the DDJ-FLX4.
+- Headphone cue is returned through the selected supported USB controller.
 - Signed local and remote OTA updates are supported.
 
 ## Release and support
@@ -77,6 +147,10 @@ See the [integration notes and source attribution](docs/FORK_IMPROVEMENTS.md)
 for module provenance and the detailed implementation history.
 
 ## Hardware
+
+The parts, photographs, power precautions and wiring instructions below describe
+the JC4880 reference build. For JC1060 and M3, use the board policy table above
+and their BSP/wiring documentation; connector numbers differ between boards.
 
 | Part | Purpose |
 | --- | --- |
@@ -147,6 +221,8 @@ wiring documentation rather than relying on product photos.
 
 ## Connect the system
 
+### JC4880 reference build
+
 ![Pajoniiir M2 wiring diagram](docs/images/wiring_M2.jpg)
 
 1. With power off, connect the regulated system supply and common ground as
@@ -162,6 +238,19 @@ Both USB insertion orders and reconnect recovery have been physically tested.
 For connector details and electrical limits, use
 [`docs/HARDWARE_WIRING.md`](docs/HARDWARE_WIRING.md) as the source of truth.
 
+### Other boards
+
+For ordinary M3, USB1 supplies power/debug, FLX4 connects to USB2 FS and the
+Rekordbox drive to USB3 HS. PCM5102A BCK/LCK/DIN use GPIO1/2/3, with SCK grounded
+and shared ground. Preserve the accepted DSI506/FT5426 settings. The first
+transition from historical M3 `main-deck-p4` requires the
+[preserving wired migration](docs/M3_SHARED_CORE_MIGRATION.md), not cross-board OTA.
+
+JC1060 uses USB0 for the controller and USB1 for storage, controller USB audio
+for MAIN/cue, and its own display/touch/Ethernet provider. Do not enable the
+JC4880/M3 PCM5102A pins on JC1060; they conflict with Ethernet. Follow the
+[contributor handoff](docs/JC1060_BETA_HANDOFF_20261011.md) before installation.
+
 ## Touchscreen and controller workflow
 
 - **Overview** shows both deck waveforms, transport state, time, BPM, pitch,
@@ -173,7 +262,16 @@ For connector details and electrical limits, use
 - The DDJ-FLX4 controls transport, jog/vinyl, tempo, mixer/EQ, cue, loops,
   Beat Jump, Sync, pads and effects, with LED state restored after reconnect.
 
+The screensaver consumes the first controller action to wake the display;
+the second PLAY starts playback. Touch wake does not activate the control below
+the screensaver. LOAD LOCK refuses replacing a playing deck, including shifted
+LOAD; stop the deck before loading another track.
+
 ## Wi-Fi Remote and updates
+
+These Wi-Fi instructions apply to JC4880 and M3. JC1060 uses its Ethernet
+provider and has no Wi-Fi capability. Ordinary M3 starts with Wi-Fi enabled;
+its AP name is `Pajoniiir-M3` (use the name shown in Settings).
 
 1. Enable **Wi-Fi Remote** on the Settings screen.
 2. Connect a phone or computer to the `Pajoniiir` Wi-Fi network. The default
@@ -181,9 +279,12 @@ For connector details and electrical limits, use
 3. Open [`http://192.168.4.1`](http://192.168.4.1) or
    [`http://pajoniiir.local`](http://pajoniiir.local).
 
-For a local update, upload only the signed `main-deck-p4.ddjota` package. Keep
+For a JC4880 local update, upload only the signed `main-deck-p4.ddjota` package. Keep
 power stable, stop playback and wait for the device to reboot completely.
-Remote releases are published through `https://ota.pajoniiir.eu`.
+Remote stable releases are published through `https://ota.pajoniiir.eu`.
+JC1060 and M3 require `main-deck-jc1060.ddjota` and `main-deck-m3.ddjota`
+respectively. The beta does not update any public pull channel. Never upload a
+raw BIN through the signed OTA endpoint or select a different board's package.
 
 See the [OTA update procedure](docs/OTA-UPDATE.md) for installation,
 verification, rollback and wired-recovery instructions.
@@ -241,12 +342,16 @@ Set-Location "$repoRoot\firmware\main-deck-p4"
 idf.py build
 ```
 
+Select `firmware/main-deck-jc1060` or `firmware/main-deck-m3` instead for the
+other products. Use a fresh build directory and SDKCONFIG per target/experiment;
+do not reuse a role-swap configuration for an ordinary M3 release.
+
 Run the same P4 host regression suite used by CI:
 
 ```powershell
 Set-Location $repoRoot
 $env:Path = "$env:Path;C:\msys64\ucrt64\bin"
-.\tests\run_p4_host_tests.ps1
+.\tests\run_p4_host_tests.ps1 -Qualification
 ```
 
 Run the headless UI screenshot and navigation gate:
@@ -256,15 +361,17 @@ Run the headless UI screenshot and navigation gate:
 ```
 
 Generated build directories, local `sdkconfig` files, signing keys and release
-packages are intentionally excluded from Git. The reproducible dependency lock
-at `firmware/main-deck-p4/dependencies.lock` is committed.
+packages are intentionally excluded from Git. The reproducible dependency locks
+for all three product entrypoints are committed; builds must not change them.
 
 ## Project status and documentation
 
-The JC4880/FLX4 release is published and merged into `master`.
-JC1060/DDJ-400/Pro DJ Link hardware acceptance and broader controller
-qualification remain development work. Current status and acceptance limits
-are maintained in the [release record](docs/validation/JC4880_V91_RELEASE_20261005.md),
+The stable JC4880/FLX4 M2.5 release remains available. The shared P4 beta is a
+separate contributor prerelease, with JC1060 physical checks deferred and JC4880
+long soak explicitly skipped by the operator. DDJ-400/Pro DJ Link and broader
+controller/real-media qualification retain their development limits. Current
+status and acceptance limits are maintained in the
+[final handoff](docs/reviews/2026-10-11-shared-core-final-handoff.md),
 [documentation status](docs/DOCUMENTATION_STATUS.md) and
 [development plan](docs/DEVELOPMENT_PLAN.md).
 
@@ -279,8 +386,8 @@ are maintained in the [release record](docs/validation/JC4880_V91_RELEASE_202610
 - [Development plan](docs/DEVELOPMENT_PLAN.md)
 - [Risk register](docs/RISK_REGISTER.md)
 
-The production JC4880 entrypoint is `firmware/main-deck-p4`; the
-development JC1060 entrypoint is `firmware/main-deck-jc1060`. Both use a shared
+The JC4880, JC1060 and M3 entrypoints are `firmware/main-deck-p4`,
+`firmware/main-deck-jc1060` and `firmware/main-deck-m3`. All use one shared
 P4 core. Historical S3 and dual-processor material remains in Git history and
 is not part of the active product.
 

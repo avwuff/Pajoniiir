@@ -4,6 +4,7 @@
 #include <string.h>
 
 #include "usb_midi_codec.h"
+#include "s2_mk3_descriptors.h"
 
 static unsigned s_tests_run;
 #define CHECK(expr) do { \
@@ -32,6 +33,18 @@ static const uint8_t s_interrupt[] = {
 int main(void)
 {
     usb_midi_endpoints_t endpoints;
+    CHECK(!usb_midi_find_streaming_endpoints(s2_mk3_fs, sizeof(s2_mk3_fs), &endpoints));
+    CHECK(usb_midi_find_streaming_endpoints(s2_mk3_hs, sizeof(s2_mk3_hs), &endpoints));
+    CHECK(endpoints.interface_num == 6 && endpoints.alternate_setting == 0);
+    CHECK(endpoints.in_ep_addr == 0x85 && endpoints.in_ep_mps == 512);
+    CHECK(endpoints.out_ep_addr == 0x05 && endpoints.out_ep_mps == 64);
+    uint8_t damaged_s2[sizeof(s2_mk3_hs)];
+    memcpy(damaged_s2, s2_mk3_hs, sizeof(damaged_s2));
+    damaged_s2[sizeof(damaged_s2) - 1u] = 1u;
+    CHECK(!usb_midi_find_streaming_endpoints(damaged_s2, sizeof(damaged_s2), &endpoints));
+    memcpy(damaged_s2, s2_mk3_hs, sizeof(damaged_s2));
+    damaged_s2[298] = 0x05; /* OUT twice: zero padding cannot hide missing IN. */
+    CHECK(!usb_midi_find_streaming_endpoints(damaged_s2, sizeof(damaged_s2), &endpoints));
     CHECK(usb_midi_find_streaming_endpoints(s_bulk, sizeof(s_bulk),
                                             &endpoints));
     CHECK(endpoints.interface_num == 3u);
@@ -86,7 +99,27 @@ int main(void)
     CHECK(!usb_midi_parse_event_packet(NULL, &message));
     CHECK(!usb_midi_parse_event_packet(note_on, NULL));
 
-    printf("PASS reusable controller USB-MIDI codec\n");
+    usb_midi_probe_snapshot_t snapshot;
+    CHECK(!usb_midi_probe_snapshot_get(NULL));
+    CHECK(!usb_midi_probe_snapshot_get(&snapshot));
+    uint8_t device[18] = {18, 1};
+    usb_midi_probe_snapshot_capture(device, s_bulk, sizeof(s_bulk), 7, 1, 1, true);
+    CHECK(usb_midi_probe_snapshot_get(&snapshot));
+    CHECK(snapshot.address == 7 && snapshot.speed == 1 && snapshot.direct_root);
+    CHECK(snapshot.total_length == sizeof(s_bulk) && snapshot.captured_length == sizeof(s_bulk));
+    CHECK(memcmp(snapshot.config, s_bulk, sizeof(s_bulk)) == 0);
+    uint8_t oversized[USB_MIDI_PROBE_CONFIG_MAX + 5u];
+    memset(oversized, 0x55, sizeof(oversized));
+    usb_midi_probe_snapshot_capture(device, oversized, sizeof(oversized), 8, 2, 0, false);
+    CHECK(usb_midi_probe_snapshot_get(&snapshot));
+    CHECK(snapshot.total_length == sizeof(oversized) && snapshot.captured_length == USB_MIDI_PROBE_CONFIG_MAX);
+    CHECK(snapshot.config[USB_MIDI_PROBE_CONFIG_MAX - 1] == 0x55);
+    usb_midi_probe_snapshot_capture(NULL, s_bulk, sizeof(s_bulk), 1, 0, 0, false);
+    CHECK(usb_midi_probe_snapshot_get(&snapshot) && snapshot.address == 8);
+    usb_midi_probe_snapshot_capture(device, s_bulk, sizeof(s_bulk), 9, 1, 1, true);
+    CHECK(usb_midi_probe_snapshot_get(&snapshot));
+    CHECK(snapshot.config[sizeof(s_bulk)] == 0 && snapshot.address == 9);
+    printf("PASS reusable controller USB-MIDI codec and bounded probe snapshots\n");
     printf("TESTS_RUN=%u\n", s_tests_run);
     return 0;
 }

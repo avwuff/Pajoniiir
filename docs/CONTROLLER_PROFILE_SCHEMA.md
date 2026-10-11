@@ -15,7 +15,7 @@ This document is the authoritative specification for both formats:
 
 The compiler between the two is `tools/controller_profile/compile_profile.py`.
 The parser/matcher is
-`firmware/main-deck-p4/components/controller_profile/`.
+`firmware/p4-core/components/controller_profile/`.
 
 Design constraints:
 
@@ -82,7 +82,11 @@ Numeric fields accept `"0xNN"` hex strings or plain integers. `audio` is
 informational; the compiled USB-audio flag indicates a capability, not arbitrary
 endpoint routing. Actual formats are descriptor-validated by the UAC runtime;
 the FLX4-qualified selection remains preserved. A profile cannot enable an
-unsupported feedback, UAC2/high-speed or 24-in-32 format.
+unsupported format. The shared runtime now has an experimental HS UAC2 path
+for four-channel asynchronous PCM, explicit 16.16 feedback, a programmable
+direct clock with validity control, and 16-in-16 or 24-in-32 samples at 48 kHz.
+Clock RANGE/CUR and validity are checked before priming. Other topologies are
+rejected. This software support does not qualify S2 headphone audio physically.
 
 ### Input entry types
 
@@ -99,6 +103,7 @@ emits one semantic event. `event` names come from the vocabulary below.
 | `cc14` | `event`, `status`, `msb`, `lsb`, `replay` (bool) | 14-bit CC pair. Compiler emits two table entries sharing one pairing slot; the runtime emits `value = msb<<7 \| lsb` only when both halves have been seen. |
 | `cc7_abs` | `event`, `status`, `data1`, `replay` (bool) | 7-bit absolute → `value = data2 & 0x7F`. |
 | `cc7_to14` | `event` (PITCH), `status` (CC), `data1`, `replay` (bool) | S3CP v3/v4: maps 0/64/127 to 0/8192/16383 using integer scaling; intermediate values are monotonic. |
+| `cc7_to14_inverted` | Same as `cc7_to14` | S3CP v4 raw 10: maps 0/64/127 to 16383/8192/0; preserves the center detent and reverses direction. |
 | `note_select` | `event`, `status` (Note On), `data1`, `value` (0..32767) | S3CP v4: positive velocity emits the fixed value; zero velocity emits nothing. |
 | `state_pair` | `event`, `members` (2× `{status,data1}`), `values` (4 entries, `null` = no emit) | Two buttons share latched pressed-state bits; on every edge the runtime emits `values[member0_bit \| member1_bit<<1]`. Used for FLX4 Beat FX target CH1/CH2/BOTH. |
 
@@ -148,6 +153,7 @@ controller-specific MIDI OUT.
 | --- | --- | --- |
 | `note` | `led`, `deck_status` (2-element array) or `status` + `deck` (`0`, `1`, or `"any"`), `data1`, optional `on`/`off`/`blink` (default `0x7F`/`0x00`/`0x7F`) | state 0 → off byte, 1 → on byte, 2 → blink byte. |
 | `cc_value` | same addressing, no on/off | data byte = LED state value `& 0x7F` (value passthrough, e.g. VU meter level). |
+| `note_velocity` | same addressing with Note On status, no on/off | Same binary passthrough kind as `cc_value`; preserves the meter value as Note On velocity instead of reducing it to a binary LED. |
 | `note_bank` | `led_bank`, `deck_status`, `first_data1`, `count`, optional `on`/`off`/`blink` | Compiler expands to `count` sequential `note` entries for pad LED banks and applies the same state bytes to each entry. Defaults match `note`; controller-specific RGB Data2 values can override them. |
 
 `deck_status: ["0x90", "0x91"]` expands to two entries (deck 0 and deck 1).
@@ -182,6 +188,14 @@ and nonnegative signed-16-bit base_value. Positive velocity emits that value;
 zero velocity is ignored. JSON: `type: "note_select"`, `event`, `status`,
 `data1`, `value`.
 
+V4 raw **10 CC7_TO14_INVERTED** requires CC/PITCH, no pair slot and only
+the REPLAY flag. For `v <= 64`, the value is
+`8192 + ((64 - v) * 8191 + 32) / 64`; otherwise it is
+`8192 - ((v - 64) * 8192 + 31) / 63` (integer division).
+Compiler, parser and storage/upload validator share this contract. Earlier
+v4 firmware that accepts only raw types through 9 rejects this profile;
+install matching firmware before uploading it. Existing v2/v3 bytes are unchanged.
+
 Header offset 30 stores initial SysEx length (0..128); payload follows both
 tables and participates in size/CRC. Nonempty payload must be F0, 7-bit data,
 F7. JSON: `init_sysex`. Output offset 8 stores `value_scale`: zero retains old
@@ -193,6 +207,22 @@ enable gate. JSON `capabilities.channel_filter_requires_smart_cfx` defaults
 true; false sets the v4 bit. This does not enable the Smart CFX response curve.
 Disconnect, missing profiles and older profiles retain the FLX4 policy.
 No controller-name checks implement this policy.
+
+Capability bit 5 (`CP_PF_NATIVE_HEADPHONES`) assigns headphone blend and level
+to controller hardware. JSON `capabilities.native_headphone_controls` defaults
+false; true requires `usb_audio` and S3CP v4. Parser and storage admission reject
+the capability on v2/v3 or without USB audio. The compiler rejects software
+headphone mix, level and master-cue input mirrors. The runtime feeds the selected
+pre-fader cue bus at unity gain to USB channels 3/4; channels 1/2 retain MAIN.
+The existing cue bus is mono on both headphone channels. Hardware performs the
+final cue/master blend and attenuation. Stored software headphone settings are
+preserved and resume after disconnect or activation of a non-native profile.
+No board or VID/PID checks select this policy.
+
+Earlier v4 firmware, including M3 `0b08fb90`, ignores bit 5. Install firmware
+implementing this capability before uploading a native-headphone profile;
+the binary version alone does not establish support. Web JSON equivalent:
+`capabilities.nativeHeadphoneControls`.
 
 MIDI/LED mapping waits for one initial SysEx enqueue per activation. The
 controller worker rechecks its binding epoch on every packet; USB output also
@@ -208,7 +238,7 @@ shared golden bytes test both compilers. Public web deployment is separate.
 
 The compiler emits the oldest version that fully represents a profile: v2
 without extensions, v3 for scaled CC input, v4 for initial SysEx, NOTE_SELECT,
-nonzero output scaling or the filter capability. v4 also supports scaled CC.
+nonzero output scaling or filter/native-headphone capabilities. v4 also supports scaled CC.
 The bare historical M2.4 image rejects v3/v4; v91 accepts them. When rolling
 back to older firmware, use a representable v2 JSON profile and recompile;
 never patch version bytes or silently discard required extensions.
@@ -281,6 +311,7 @@ the bounded initial SysEx payload follows both tables and is covered by CRC.
 | 7 | NOTE_STATE_PAIR | latch member bit (flags bit1 selects member B) in pair_slot; emit `lut[bitA \| bitB<<1]`, `-1` = no emit |
 | 8 | CC7_TO14 | v3/v4; center-preserving 7-to-14-bit scaling above; CC/PITCH only, no pair slot, only REPLAY flag allowed |
 | 9 | NOTE_SELECT | v4; Note On press emits nonnegative base_value; no pair slot, flags or press mask; release ignored |
+| 10 | CC7_TO14_INVERTED | v4; reversed center-preserving scaling; same field restrictions as raw 8 |
 
 ### Output entry — 12 bytes
 

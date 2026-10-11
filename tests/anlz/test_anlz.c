@@ -4,8 +4,8 @@
  * Builds on Linux/macOS/Windows with:
  *   make
  * or manually:
- *   gcc -DANLZ_STANDALONE_TEST -I../../firmware/main-deck-p4/components/library/include \
- *       ../../firmware/main-deck-p4/components/library/rekordbox_anlz.c \
+ *   gcc -DANLZ_STANDALONE_TEST -I../../firmware/p4-core/components/library/include \
+ *       ../../firmware/p4-core/components/library/rekordbox_anlz.c \
  *       test_anlz.c -o test_anlz
  *
  * Usage:
@@ -789,6 +789,122 @@ static void test_pwv3_timing(void)
           "analysis span bounds failed");
 }
 
+static void test_pqtz_original_bar_phases(void)
+{
+    FILE *fp = fopen(SYNTH_DAT, "wb");
+    if (!fp) { TEST("PQTZ phase fixture"); FAIL("open"); return; }
+    w_tag(fp, ANLZ_TAG_PMAI); w_be32(fp, 28); w_be32(fp, 28);
+    for (unsigned i = 0; i < 16; i++) fputc(0, fp);
+    w_tag(fp, ANLZ_TAG_PQTZ); w_be32(fp, 24); w_be32(fp, 56);
+    w_be32(fp, 0); w_be32(fp, 0x80000); w_be32(fp, 4);
+    for (unsigned phase = 1; phase <= 4; phase++) {
+        w_be16(fp, (uint16_t)phase); w_be16(fp, 12000); w_be32(fp, (phase - 1) * 500);
+    }
+    w_tag(fp, ANLZ_TAG_PPTH); w_be32(fp, 20); w_be32(fp, 26);
+    w_be32(fp, 0); w_be32(fp, 6);
+    w_be16(fp, '/'); w_be16(fp, 'a'); w_be16(fp, 0);
+    bool written = fclose(fp) == 0;
+    anlz_metadata_t meta = {0};
+    esp_err_t rc = written ? anlz_parse_dat(SYNTH_DAT, &meta) : ESP_FAIL;
+    TEST("standard PQTZ retains original phases 1-4 and downbeat 1");
+    bool valid = rc == ESP_OK && meta.beat_count == 4 && meta.beats;
+    for (unsigned i = 0; i < 4 && valid; i++) {
+        valid = meta.beats[i].beat_phase == i + 1 &&
+                anlz_beat_bar_index(meta.beats[i].beat_phase) == i &&
+                anlz_beat_is_downbeat(meta.beats[i].beat_phase) == (i == 0);
+    }
+    CHECK(valid, "PQTZ phase/downbeat regression");
+    anlz_free(&meta);
+    remove(SYNTH_DAT);
+}
+
+static void append_ext_cue(uint32_t list_type, uint32_t slot, uint8_t type,
+                           uint32_t start, uint32_t end, bool empty)
+{
+    FILE *fp = fopen(SYNTH_EXT, "ab");
+    if (!fp) { perror("append EXT cue"); exit(1); }
+    w_tag(fp, ANLZ_TAG_PCOB); w_be32(fp, 24u);
+    w_be32(fp, empty ? 24u : 80u); w_be32(fp, list_type);
+    w_be16(fp, 0u); w_be16(fp, empty ? 0u : 1u); w_be32(fp, 0u);
+    if (!empty) {
+        w_tag(fp, 0x50435054u); /* PCPT */
+        w_be32(fp, 28u); w_be32(fp, 56u); w_be32(fp, slot);
+        w_be32(fp, 0u); w_be32(fp, 0u); w_be32(fp, 0u);
+        fputc(type, fp); fputc(0, fp); fputc(0, fp); fputc(0, fp);
+        w_be32(fp, start); w_be32(fp, end);
+        for (unsigned i = 0u; i < 16u; ++i) fputc(0, fp);
+    }
+    fclose(fp);
+}
+
+static void test_ext_source_cue_merge(void)
+{
+    build_synthetic_dat(); append_memory_pcob(1u, false);
+    build_synthetic_ext();
+    append_ext_cue(1u, 4u, 1u, 123347u, 0u, false);
+    append_ext_cue(1u, 1u, 1u, 1000u, 0u, false); /* same DAT A */
+    append_ext_cue(0u, 0u, 1u, 1000u, 0u, false); /* same memory */
+    append_ext_cue(0u, 0u, 2u, 2000u, 4000u, false); /* independent memory loop */
+    anlz_metadata_t meta = {0};
+    esp_err_t rc = anlz_parse_dat(SYNTH_DAT, &meta);
+    TEST("EXT Hot Cue D enriches DAT; duplicate A and memory are idempotent");
+    CHECK(rc == ESP_OK && anlz_parse_ext(SYNTH_EXT, &meta) == ESP_OK &&
+          meta.cue_count == 3u && meta.cues[2].index == 3u &&
+          meta.cues[2].start_ms == 123347u && meta.memory_cue_count == 2u &&
+          meta.memory_cues[1].type == ANLZ_CUE_LOOP &&
+          meta.memory_cues[1].index == 1u, "source merge failed");
+    TEST("EXT reparse does not duplicate source hot/memory cues");
+    CHECK(anlz_parse_ext(SYNTH_EXT, &meta) == ESP_OK &&
+          meta.cue_count == 3u && meta.memory_cue_count == 2u, "reparse duplicated cues");
+
+    for (unsigned variant = 0u; variant < 6u; ++variant) {
+        build_synthetic_ext();
+        if (variant == 0u) append_ext_cue(1u, 1u, 1u, 999u, 0u, false);
+        if (variant == 1u) append_ext_cue(1u, 5u, 2u, 2000u, 1000u, false);
+        if (variant == 2u) {
+            append_ext_cue(1u, 5u, 1u, 3000u, 0u, false);
+            FILE *fp = fopen(SYNTH_EXT, "ab"); fputc('X', fp); fclose(fp);
+        }
+        if (variant == 3u) {
+            FILE *fp = fopen(SYNTH_EXT, "wb"); fclose(fp);
+            append_ext_cue(1u, 5u, 1u, 3000u, 0u, false); /* missing waveform */
+        }
+        if (variant == 4u) {
+            append_ext_cue(1u, 5u, 1u, 3000u, 0u, false);
+            uint8_t bytes[1024];
+            FILE *fp = fopen(SYNTH_EXT, "rb");
+            size_t n = fread(bytes, 1u, sizeof(bytes), fp); fclose(fp);
+            fp = fopen(SYNTH_EXT, "wb"); fwrite(bytes, 1u, n - 1u, fp); fclose(fp);
+        }
+        if (variant == 5u) {
+            append_ext_cue(1u, 5u, 1u, 3000u, 0u, false);
+            append_ext_cue(1u, 5u, 1u, 3000u, 0u, false);
+        }
+        uint8_t *wave = meta.waveform_high;
+        TEST("conflict/malformed/missing-wave EXT retains published DAT+EXT");
+        CHECK(anlz_parse_ext(SYNTH_EXT, &meta) != ESP_OK &&
+              meta.waveform_high == wave && meta.cue_count == 3u &&
+              meta.cues[2].start_ms == 123347u && meta.memory_cue_count == 2u,
+              "rejected EXT changed metadata");
+    }
+    build_synthetic_ext(); append_ext_cue(1u, 0u, 0u, 0u, 0u, true);
+    TEST("empty EXT cue list preserves DAT source cues");
+    CHECK(anlz_parse_ext(SYNTH_EXT, &meta) == ESP_OK && meta.cue_count == 3u &&
+          meta.memory_cue_count == 2u, "empty EXT erased cues");
+    build_synthetic_ext();
+    append_ext_cue(1u, 3u, 1u, 3000u, 0u, false);
+    for (unsigned slot = 5u; slot <= 8u; ++slot)
+        append_ext_cue(1u, slot, 1u, slot * 1000u, 0u, false);
+    for (unsigned i = 0u; i < 17u; ++i)
+        append_ext_cue(0u, 0u, 1u, 10000u + i * 1000u, 0u, false);
+    TEST("EXT supports all eight Hot Cue slots and bounded memory enrichment");
+    CHECK(anlz_parse_ext(SYNTH_EXT, &meta) == ESP_OK && meta.cue_count == 8u &&
+          meta.memory_cue_count == ANLZ_MAX_MEMORY_CUES && meta.memory_cues_truncated,
+          "cue capacity/bounded memory merge failed");
+    anlz_free(&meta);
+    remove(SYNTH_DAT); remove(SYNTH_EXT);
+}
+
 int main(int argc, char *argv[])
 {
     test_pwv3_timing();
@@ -807,6 +923,18 @@ int main(int argc, char *argv[])
     test_optional_pwv4_color_preview();
     test_pwv4_color_columns();
     test_memory_cue_list();
+    test_ext_source_cue_merge();
+    test_pqtz_original_bar_phases();
+    {
+        anlz_metadata_t fixture = {0};
+        TEST("committed qualification ANLZ has standard beats and tagged cue A");
+        esp_err_t rc = anlz_parse_dat("../fixtures/p4/ANLZ0000.DAT", &fixture);
+        CHECK(rc == ESP_OK && fixture.beat_count == 4 && fixture.cue_count == 1 &&
+              fixture.beats[0].beat_phase == 1 && fixture.cues[0].start_ms == 1250 &&
+              strcmp(fixture.audio_path, "/Contents/onset-44100.wav") == 0,
+              "mandatory ANLZ fixture failed");
+        anlz_free(&fixture);
+    }
 
     printf("\n=== Strict truncation corpus ===\n");
     TEST("DAT header/section/payload truncations rejected transactionally");

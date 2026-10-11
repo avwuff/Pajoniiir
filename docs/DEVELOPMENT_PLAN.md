@@ -1,5 +1,194 @@
 # P4 post-release development plan
 
+The operator authorized shared-core PR #46 delivery and GitHub prerelease
+`shared-p4-beta.1`. See the [beta record](validation/SHARED_P4_BETA_1_20261011.md)
+and [JC1060 handoff](JC1060_BETA_HANDOFF_20261011.md). JC1060 physical testing
+is deferred to Kayrosen; JC4880 long soak is explicitly waived, NOT RUN.
+The following dated checkpoints retain their own source and acceptance scope.
+
+The [final development handoff](reviews/2026-10-11-shared-core-final-handoff.md)
+is the current delivery/open-gate authority. Installed clean 6166d936 is VALID
+ota_1 on the Hercules role-swap bench; short audio/display and active-control
+smokes pass. Latest ordinary three-target local builds/simulators pass on
+b913818; physical acceptance is image-specific, CI stays operator-skipped and
+S2 remains operator-closed. Next is PR reconciliation and separately authorized
+push/merge/publication. Earlier progression below retains its dated scope.
+
+Current shared-core work is reconciled in the
+[2026-10-11 phase/P01–P10 review](reviews/2026-10-11-shared-core-hercules-closeout.md).
+The Hercules source/fixture/support-scope review is complete: unchanged clean
+`e16ecfb5` has exact-image final playback acceptance, with individual pad/FX/LED
+limits still explicit.
+
+The [subsequent ordinary local qualification](validation/SHARED_P4_LOCAL_QUALIFICATION_20261011.md)
+now passes on clean `5ff76b6c`: complete host gate, nine simulators, both keylock
+policies and all three IDF 6.0.2 builds with unchanged locks and valid budgets.
+Configuration-specific signed delivery provenance is now complete. The
+[delivery-readiness ledger](reviews/2026-10-11-shared-core-delivery-readiness.md)
+and local PR description are prepared for review. Next work requires selecting
+its scope: separate experiment builds or a
+board-specific release gate. Real-media/physical acceptance remains separate;
+hosted CI stays skipped.
+The operator clarified that the historical OTA restart was associated with
+moving the cable. That event is closed as operator cable intervention, without
+a firmware-fix claim or further scheduled investigation. Earlier
+installed-state and next-action paragraphs below are historical progression.
+
+The [S2 performance candidate](../controllers/ni_traktor_s2_mk3_full/README.md)
+uses the shared runtime for 80 inputs/26 outputs and experimental HS UAC2.
+S2 work is closed by explicit operator decision after exact-image full-hour
+48/44.1-kHz physical playback acceptance. Remaining physical checks are waived,
+not PASS; do not schedule further S2 tests. Earlier diagnostic evidence remains
+scoped to its image/settings. General memory evidence remains described in the
+[closeout review](reviews/2026-10-10-s2-closeout-resources-restart.md).
+
+Shared-core/M3 implementation is tracked in
+[the integration ledger](SHARED_P4_CORE_INTEGRATION.md). Portable code now lives
+under `firmware/p4-core`; hardware providers live under `firmware/boards`.
+This development branch does not extend the physical scope of M2.5.
+
+The shared-core implementation retains donor library/transport/profile features
+and accepted M3 BSP/DSP/UI policies in one runtime. Finish software variant gates,
+then use [M3 wired migration](M3_SHARED_CORE_MIGRATION.md) on the frozen candidate.
+New-image physical gates include GUI/touch, dual-deck MAIN/PFL, all five zooms,
+signed OTA/startup/rollback, 30 Campaign A cycles and at least 60 minutes of
+worst-case Campaign B timing. Legacy-image acceptance does not transfer.
+Unavailable hardware is NOT RUN. Public board-channel publication requires
+separate authorization after that board's acceptance.
+
+The accepted M3 qualification baseline is `M3-dev-gfb5cbca13f33` from clean source
+`fb5cbca13f33d21dfb4e16e0ba667c340399eb0c`, installed VALID in ota_0.
+It removes an unused blocking audio-position read from per-refresh jog-mode
+polling. Host qualification, unchanged M3 simulator hashes, M3 build and signed
+identity/budget checks passed. Its short dual MT/zoom-8 retest passed with
+operator-confirmed fluid waveforms and clean MAIN/headphones sound. A subsequent
+short review confirmed all five zooms fluid and sound clean. The same installed
+image then passed a continuous 3600.163-second Campaign B soak: telemetry and
+operator-confirmed stable/fluid display and clean MAIN/headphones. Strict new
+PCM/UAC/service-log losses were zero; 11 output-late events remain monitoring
+findings, not a zero-late claim. Campaign A's 30 physical cycles and operator
+checks were excluded by the operator. The [automatic supplement](validation/M3_AUTOMATIC_RECOVERY_20261007.md)
+observed ten software-reboot recoveries, with nine complete measured cycles,
+host visibility investigation flags and one incomplete timing window. This does
+not establish physical Campaign A acceptance. [Autonomous negative OTA and injected
+startup rollback tests](validation/M3_OTA_NEGATIVE_ROLLBACK_20261007.md) subsequently
+passed and restored the exact accepted image. Current-source GitHub Actions is
+SKIPPED BY OPERATOR (quota), not PASS; full hardware acceptance remains open.
+Short per-zoom dwell coverage is
+recorded separately from the completed zoom-8 soak.
+
+[Catalog/cue software and web LOAD LOCK checks](validation/M3_LIBRARY_CUES_WEB_LOAD_LOCK_20261007.md)
+subsequently passed on the unchanged image: 324 persistent identities remained
+equal across reboot and six playing-deck replacements were refused. Production
+NVS adapter error/corruption tests now join the host runner. Physical cue/NVS,
+MIDI/touch LOAD LOCK and independent real-export/UI acceptance remain open.
+
+The [real-export audit](validation/M3_REAL_EXPORT_AUDIT_20261007.md) now
+reproduces lost artist names on 13 tracks, lost album names on 12 tracks and
+missing source Hot Cue D from EXT on track 7. Correct row-specific name layouts
+and transactional EXT cue enrichment, preserve local cue identities, and rerun
+the actual 324-track comparisons before an M3 candidate build. No firmware was
+changed by the audit. Playlists/source loops are absent from this medium;
+their real-media gates and on-device rendering remain open.
+Correction `082d2c0a` passes exact-source 324-track comparisons with zero import
+differences, the default shared host gate, final focused regressions and the
+M3 IDF 6.0.2 build/signed package. It is now installed VALID in ota_1, and the
+live 324-track library recovers all 13 artist names. D1 A–D recall is now
+operator-confirmed, including source D at 123347 ms in the stopped API snapshot.
+The [on-device cue lifecycle](validation/M3_CUE_LIFECYCLE_20261007.md) now passes:
+local override, deletion tombstone and restore-source persist through reboot.
+Final source D recall is 123347 ms and both decks are stopped.
+Next: remaining new-image physical gates; do not transfer fb5 acceptance.
+Ordinary playing-deck LOAD refusal now also passes through FLX4 and touch on
+both decks; see [physical LOAD LOCK limits](validation/M3_PHYSICAL_LOAD_LOCK_20261007.md).
+Selected [stopped-deck LOAD routing](validation/M3_PHYSICAL_LOAD_ROUTING_20261007.md)
+also passes ordinary FLX4 D1, touch D2 and FLX4 Shift+Load D1/D2.
+Subsequent ordinary FLX4 D2 and touch D1 passed, completing stopped LOAD input
+parity. Repeated [playing Shift+Load refusal](validation/M3_PHYSICAL_SHIFT_LOAD_LOCK_20261007.md)
+also passed on both decks; the initial disagreement is preserved and has since
+been explicitly attributed to operator error by the operator.
+Current bench image: clean `4620b83c`, VALID ota_0, repairing the lost direct
+controller screensaver wake callback via the shared event sink. Default host
+tests, M3 build and signed packaging pass; [physical wake retest](validation/M3_CONTROLLER_SCREENSAVER_WAKE_20261007.md)
+failed when first PLAY started playback. The atomic UI handoff follow-up awaits
+retest. Atomic candidate `af4ca590` now passes default host/M3 build/signature
+checks and is installed VALID in ota_1. Operator PLAY wake/next-PLAY checks pass;
+API records one consumed PLAY wake and a second Browse wake. Browse and touch
+regressions also pass on af4ca590; final state is both decks stopped.
+Soak remains the final step; other-board builds are deferred until
+the M3 result. Prior physical cue/LOAD evidence remains tied to 082d2c0a.
+
+The preceding bf2fdc47 skipped unchanged cover comparisons and hidden Library styling, and separated
+chrome/UI-tail/LVGL timings. Host qualification, unchanged M3 simulator hashes,
+M3 build and signed identity/budget checks passed. Its repeated physical test
+still showed slight dual stutter with clean MAIN/headphones sound.
+
+The preceding 1d3ee7b6 was installed VALID in ota_0.
+Host qualification, unchanged M3 simulator baselines, the M3 build and signed
+package verification passed. Its physical retest showed much improved visuals
+with slight residual stutter and clean MAIN/headphones sound. Continuous dual
+playback without loops also retains the small stutter. The full visual and
+long-soak gates remain open.
+
+The preceding b0c66744 deferred framebuffer-preservation repair passed host qualification,
+unchanged M3 simulator baselines and the M3 IDF 6.0.2 build. The operator stopped
+the test because of severe stuttering, beginning only when both decks played.
+That image failed the physical visual gate; listening was not qualified.
+
+During unresolved M3 bench diagnosis, build, sign and test M3 only. Resume
+JC4880/JC1060 builds and full cross-board CI after the operator accepts the M3
+repair. Full integration/release requirements remain mandatory afterwards.
+The redundant matrix runs were cancelled; the earlier JC4880 build had already
+finished and the JC1060 configure was interrupted. Keep separate M3 bench
+evidence rather than marking full software qualification complete.
+
+The paired-buffer image 6d55ce2a failed its physical test and the bench was
+returned to the signed ee54f0d1 image, VALID in ota_0. Its captured solo window
+spent 6.04 ms copying old framebuffer content before redraw. The subsequent
+dual interval lost HTTP access and persistent logs recorded audio/UAC losses.
+The installed b0c66744 revision keeps complete-frame ownership but defers preservation until
+after rendering, copying only previous damage not covered by new writes.
+Exact bitmap coverage preserves paused content and holes between rectangles;
+fully redrawn strips require no old-pixel copy. Pixel reference tests and M3
+simulator baselines, exact M3 build and signed packaging passed. The physical
+retest failed. The next revision changes only UI position freshness handling:
+retained observations cannot rebase the display prediction backwards. RAM
+observation-age counters will distinguish this reproduced host defect from
+unproven device causes. Audio DSP and panel configuration remain unchanged.
+See the candidate record for the pre-v3 contract and image-specific evidence.
+
+The preceding `M3-dev-ge4536de2ec6f` was installed in M3 ota_1 with VALID health state,
+verified against its exact clean source and ELF on 2026-10-07 within the
+installation helper's polling deadline. The preceding 180b008c helper's expired
+deadline remains a separate historical finding.
+[The current candidate record](validation/M3_SHARED_WAVEFORM_REGRESSION_20261006.md) separates
+the signed OTA, 324-track catalog and mixed-rate load evidence from remaining
+operator audio/UI and USB campaigns. Initial wired migration and earlier GUI/
+touch/settings confirmations remain in the image-specific
+[95e installation record](validation/M3_SHARED_CORE_INSTALL_20261006.md).
+Both 11574f4e and the installed c698fa67 ordering repair failed on
+operator-confirmed dual waveform deformation. The latter also showed visual
+stutter while audio remained clean. The measurement candidate reproduced the
+failure: 57 coalesced refreshes in about 12 seconds of dual playback. The next
+repair, now installed after all three builds and exact-source CI passed,
+removes duplicate PPA cache maintenance and unchanged frame resampling;
+see [the regression record](validation/M3_SHARED_WAVEFORM_REGRESSION_20261006.md).
+The installed repair also failed the physical retest: solo sharp, dual deformed,
+audio clean, 55 coalesced refreshes in the short dual window. Investigate the
+remaining blocking UI status reads before another candidate; the full timing
+gate must restart after a successful exact-image physical retest.
+The installed e4536de2 candidate shares one zero-wait, UI-owned audio-status observation per
+deck between position, session-checked duration and status/progress rendering.
+Busy decode retains the last observation; transport decisions keep their
+authoritative APIs. Production mutex-contention and simulator recovery tests
+and all three clean builds passed, but its physical retest still failed: solo
+sharp, dual deformed, audio clean, with 65 coalesced refreshes. The next ee54f0d1
+candidate removes the remaining waveform-phase loop-query waits, but its operator
+report still rejects the visual result. The
+[diagnostic-overhead audit](validation/M3_DIAGNOSTIC_OVERHEAD_REVIEW_20261007.md)
+separates quiet service-file logging from recurring heap inspection and UART
+producer reports; the full soak remains NOT RUN.
+
 Status: **M2.5 published; A-L merged into master; hardware extensions open**
 (2026-10-06).
 
@@ -75,7 +264,7 @@ Repeat gates because behavior or assumptions changed, not because records aged.
 | DSP/scheduling/buffering | Reproduce/fix the failure; exact-image active timing and appropriately long audible test |
 | Partition/bootloader/trust key | Wired recovery plan, isolated signed build and supervised installation |
 
-Shared-core changes require both entrypoint builds. Use committed independent
+Shared-core changes require all three entrypoint builds. Use committed independent
 dependency locks and the fixed `0x380000` image budget. Preserve actual source,
 configuration, version, slot/boot, strict deltas and operator results.
 A host soak or simulator cannot replace physical deadlines or sound.

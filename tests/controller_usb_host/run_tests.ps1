@@ -4,7 +4,7 @@ $RepoRoot = Resolve-Path (Join-Path $PSScriptRoot "../..")
 $BuildDir = Join-Path $PSScriptRoot "build"
 New-Item -ItemType Directory -Force -Path $BuildDir | Out-Null
 
-$Component = Join-Path $RepoRoot "firmware/main-deck-p4/components/controller_usb_host"
+$Component = Join-Path $RepoRoot "firmware/p4-core/components/controller_usb_host"
 $Include = Join-Path $Component "include"
 
 $CodecExe = Join-Path $BuildDir "test_usb_midi_codec"
@@ -28,6 +28,9 @@ gcc -std=c11 -Wall -Wextra -Wpedantic -Werror "-I$Include" `
     -o $GateExe
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 & $GateExe
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+& python (Join-Path $PSScriptRoot "test_routed_queue_reset.py")
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 & (Join-Path $RepoRoot "tests/controller_usb_audio/run_tests.ps1")

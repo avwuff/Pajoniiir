@@ -9,7 +9,9 @@
     "led_feedback": true,
     "usb_audio": true,
     "jog_touch": true,
-    "pitch_14bit": true
+    "pitch_14bit": true,
+    "channel_filter_requires_smart_cfx": false,
+    "native_headphone_controls": true
   },
 
   "inputs": [
@@ -114,8 +116,6 @@
     { "type": "cc14", "event": "mixer.ch2_eq_low", "status": "0xB2", "msb": "0x02", "lsb": "0x22", "replay": true },
 
     { "type": "cc14", "event": "mixer.crossfader", "status": "0xB0", "msb": "0x00", "lsb": "0x20", "replay": true },
-    { "type": "cc14", "event": "mixer.headphone_mix", "status": "0xB0", "msb": "0x05", "lsb": "0x25", "replay": true },
-    { "type": "cc14", "event": "system.headphone_level", "status": "0xB0", "msb": "0x04", "lsb": "0x24", "replay": true },
     { "type": "cc14", "event": "system.master_volume", "status": "0xB0", "msb": "0x03", "lsb": "0x23", "replay": true },
     { "type": "cc14", "event": "mixer.ch1_filter", "status": "0xB1", "msb": "0x01", "lsb": "0x21", "replay": true },
     { "type": "cc14", "event": "mixer.ch2_filter", "status": "0xB2", "msb": "0x01", "lsb": "0x21", "replay": true },
@@ -129,8 +129,6 @@
     { "type": "button", "event": "browser.load_deck2", "status": "0x92", "data1": "0x0D" },
     { "type": "button", "event": "browser.shift_load_deck2", "status": "0x95", "data1": "0x0D" },
 
-    { "type": "button", "event": "system.master_cue", "status": "0x90", "data1": "0x02" },
-    { "type": "button", "event": "system.master_cue", "status": "0x93", "data1": "0x02" },
 
     { "type": "button", "event": "system.beat_fx_select_prev", "status": "0x90", "data1": "0x14" },
     { "type": "button", "event": "system.beat_fx_select_next", "status": "0x90", "data1": "0x15" },
@@ -162,14 +160,12 @@
     { "kind": "note_bank", "led_bank": "beat_jump_pads", "deck_status": ["0x96", "0x97"], "first_data1": "0x30", "count": 8, "off": "0x00", "on": "0x74", "blink": "0x74" },
     { "kind": "note_bank", "led_bank": "pad_fx2_pads", "deck_status": ["0x96", "0x97"], "first_data1": "0x50", "count": 8, "off": "0x00", "on": "0x63", "blink": "0x63" },
 
-    { "kind": "cc_value", "led": "vu_meter", "deck_status": ["0xB1", "0xB2"], "data1": "0x40" },
-
-    { "kind": "note", "led": "master_cue", "deck": "any", "status": "0x90", "data1": "0x02" }
+    { "kind": "cc_value", "led": "vu_meter", "deck_status": ["0xB1", "0xB2"], "data1": "0x40" }
   ],
 
   "audio": {
     "enabled": true,
     "headphone_channels": [3, 4],
-    "preferred_sample_rate": 48000
+    "preferred_sample_rate": 44100
   }
 }

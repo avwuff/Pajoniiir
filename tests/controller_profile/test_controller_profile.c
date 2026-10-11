@@ -149,6 +149,26 @@ static void test_parse_validation(void)
     assert(profile.input_count == 9 && profile.output_count == 4);
     assert(profile.pair_slot_count == 2);
 
+    /* CRC-valid malformed output cannot inject MIDI status into data bytes. */
+    const size_t output = CP_HEADER_SIZE + profile.input_count * CP_INPUT_ENTRY_SIZE;
+    const uint8_t invalid_status[] = {0, 0x7f, 0xf0, 0xff};
+    for (size_t i = 0; i < sizeof(invalid_status); ++i) {
+        build_basic(&b);
+        b.buf[output + 3] = invalid_status[i];
+        wr_u32(b.buf + 12, cp_crc32(b.buf + 16, b.len - 16));
+        assert(cp_profile_parse(b.buf, b.len, &profile) == CP_ERR_BOUNDS);
+    }
+    for (size_t field = 4; field <= 7; ++field) {
+        build_basic(&b);
+        b.buf[output + field] = 0x80;
+        wr_u32(b.buf + 12, cp_crc32(b.buf + 16, b.len - 16));
+        assert(cp_profile_parse(b.buf, b.len, &profile) == CP_ERR_BOUNDS);
+    }
+    build_basic(&b);
+    memset(b.buf + output + 4, 0x7f, 4);
+    wr_u32(b.buf + 12, cp_crc32(b.buf + 16, b.len - 16));
+    assert(cp_profile_parse(b.buf, b.len, &profile) == CP_OK);
+
     /* bad magic */
     build_basic(&b);
     b.buf[0] = 'X';
@@ -470,10 +490,52 @@ static void test_ddj400_fixture(void)
     printf("  normalized DDJ400 fixture and FX target selector    PASS\n");
 }
 
+static void test_s2_mk3_basic_fixture(void)
+{
+    uint8_t blob[1024], output[3];
+    cp_profile_t p;
+    cp_runtime_t rt;
+    cp_event_t ev;
+    FILE *f = fopen("../../controllers/ni_traktor_s2_mk3_basic/profile.s3bin", "rb");
+    assert(f);
+    size_t len = fread(blob, 1, sizeof(blob), f); fclose(f);
+    assert(len == 928 && cp_profile_parse(blob, len, &p) == CP_OK);
+    assert(p.vid == 0x17cc && p.pid == 0x1710 && p.decks == 2);
+    assert(p.input_count == 50 && p.output_count == 8);
+    assert(p.flags == CP_PF_LED_FEEDBACK && p.init_sysex_len == 0);
+    cp_runtime_init(&rt);
+    for (unsigned d = 0; d < 2; ++d) {
+        uint8_t status = (uint8_t)(0x91 + 2 * d);
+        uint8_t ns = (uint8_t)(d ? CTRL_NS_DECK2 : CTRL_NS_DECK1);
+        assert(cp_runtime_process(&p, &rt, status, 1, 127, &ev));
+        expect_event(&ev, CTRL_TYPE_BUTTON, ns + CTRL_DECK_CTL_PLAY, 1);
+        assert(cp_runtime_process(&p, &rt, status, 1, 0, &ev));
+        expect_event(&ev, CTRL_TYPE_BUTTON, ns + CTRL_DECK_CTL_PLAY, 0);
+        /* The source-derived fixture declares exact Note On statuses. Capture
+         * must verify physical releases; a native Note Off is not an alias. */
+        assert(!cp_runtime_process(&p, &rt, (uint8_t)(status - 0x10), 1, 0, &ev));
+        for (unsigned shifted = 0; shifted < 2; ++shifted) {
+            for (unsigned pad = 0; pad < 8; ++pad) {
+                assert(cp_runtime_process(&p, &rt, (uint8_t)(status + shifted),
+                                          (uint8_t)(3 + pad), 127, &ev));
+                expect_event(&ev, CTRL_TYPE_BUTTON, ns + CTRL_DECK_CTL_PAD_ACTION,
+                             CTRL_PAD_ACTION_VALUE(0, pad, shifted, 1));
+            }
+        }
+        assert(cp_profile_map_led(&p, LED_PLAY, (uint8_t)d, 0, output));
+        assert(output[0] == status && output[1] == 1 && output[2] == 20);
+        assert(cp_profile_map_led(&p, LED_PLAY, (uint8_t)d, 1, output));
+        assert(output[2] == 127);
+    }
+    assert(!cp_runtime_process(&p, &rt, 0x90, 1, 127, &ev));
+    printf("  S2 MK3 basic source fixture (no hardware claim)     PASS\n");
+}
+
 int main(void)
 {
     test_v4();
     test_ddj400_fixture();
+    test_s2_mk3_basic_fixture();
     test_jog_mode_profile_actions();
     printf("=== controller_profile format/runtime tests ===\n");
     test_parse_validation();

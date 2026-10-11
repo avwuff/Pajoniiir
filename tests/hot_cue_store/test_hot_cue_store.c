@@ -110,6 +110,8 @@ static void test_v2_slots_are_authoritative_until_explicit_reset(void)
     assert(loaded.version==3u && loaded.override_mask==0u);
     hot_cue_store_merge(&source,&loaded,&effective);
     assert(effective.valid_mask==3u && effective.slots[0].pos_ms==1000u);
+    assert(hot_cue_store_clear(&id)==ESP_OK);
+    assert(hot_cue_store_load(&id,&loaded)==ESP_ERR_NOT_FOUND);
 }
 
 int main(void)

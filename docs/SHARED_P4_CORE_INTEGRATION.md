@@ -1,0 +1,425 @@
+# Shared P4 core integration
+
+Status: implementation in progress; partial exact-image M3 acceptance, no publication.
+
+## Current closeout, 2026-10-11
+
+The [final development handoff](reviews/2026-10-11-shared-core-final-handoff.md)
+supersedes current-state and next-action statements below. Installed clean
+6166d936 is VALID ota_1 with Hercules USB3/storage USB2, short audio/display and
+active jog/Browse smoke PASS. Latest ordinary local matrix passes on b913818;
+whole-core physical, hosted CI and publication gates remain explicit. S2 stays
+operator-closed with waivers. Subsequent paragraphs retain checkpoint history.
+
+The [delivery-readiness ledger](reviews/2026-10-11-shared-core-delivery-readiness.md)
+is the current P01–P10/open-gate and migration handoff authority. Ordinary local
+qualification and three signed packages are complete on frozen `5ff76b6c`;
+the prepared review description is local only. Physical/experiment/restart and
+publication boundaries remain explicit; earlier next-action tables are historical.
+
+The [current phase/P01–P10 review](reviews/2026-10-11-shared-core-hercules-closeout.md)
+supersedes historical next-action and installed-state statements below.
+The subsequent [local ordinary-target qualification](validation/SHARED_P4_LOCAL_QUALIFICATION_20261011.md)
+passes on clean `5ff76b6c`: full no-SKIP host gate, nine unchanged simulator
+baselines, both 300-s keylock policies, all three fresh IDF 6.0.2 builds,
+single-BSP/source identity checks, unchanged locks and image budgets. A missing
+simulator `ui_idle.c` source was fixed in the test CMake list. Current-source
+experiment firmware matrix and physical/publication gates remain separate.
+All three entrypoints use the canonical core and board providers. Current
+installed M3 is clean `e16ecfb5`, VALID `ota_0`, with Hercules on USB3/root0
+and storage on USB2/root1 in the experimental role configuration. Its final
+60-minute mixed-rate MT/loop playback has all 22 strict deltas zero and operator
+full-hour audio/visual PASS; 15 output-late events remain monitoring findings.
+S2 stays operator-closed. Hercules individual pad/FX/LED coverage remains partial.
+
+The review distinguishes implemented software from remaining acceptance: fresh
+experimental firmware builds, real playlist/artwork/source-loop variants,
+JC physical gates. The operator clarified that the historical OTA restart was
+associated with moving the cable; it is closed as an operator cable-intervention
+event, with original evidence retained and no firmware-fix claim. Hosted CI is SKIPPED BY
+OPERATOR; physical Campaign A was excluded, not passed. No whole-core/release
+PASS or public publication is implied. The following dated narrative and phase
+tables retain their historical source/evidence scope.
+
+## Historical implementation and bench progression
+
+Accepted M3 qualification baseline: clean source `fb5cbca13f33d21dfb4e16e0ba667c340399eb0c`,
+signed local OTA, observed VALID in ota_0 on 2026-10-07. Its short dual
+MT/zoom-8 retest passed: operator-confirmed fluid waveforms and clean sound.
+The subsequent short operator review confirmed all five zooms fluid and sound
+clean. Its continuous 3600.163-second Campaign B soak then passed telemetry and
+operator visual/listening acceptance. New PCM/UAC/service-log loss deltas were
+zero; 11 output-late events remain monitoring findings. Campaign A physical
+cycles and operator checks were subsequently excluded by the operator. The
+[automatic software-reboot supplement](validation/M3_AUTOMATIC_RECOVERY_20261007.md)
+observed ten recoveries, nine complete timing windows, host visibility flags and
+one incomplete timing window. It does not establish physical Campaign A PASS.
+[Autonomous negative OTA and injected startup rollback](validation/M3_OTA_NEGATIVE_ROLLBACK_20261007.md)
+subsequently passed and restored the exact accepted image. Current-source GitHub
+Actions is SKIPPED BY OPERATOR (quota), not PASS. Full hardware acceptance remains open.
+It removes a blocking audio-position query from jog-mode polling. The preceding
+bf2fdc47 repeated test retained slight dual stutter with clean sound.
+The preceding 1d3ee7b6 retained-position
+repair passed M3 software checks; the physical retest showed improved visuals
+with slight residual dual stutter and clean sound. Full fluidity remains open. The preceding
+b0c66744 image failed on operator-confirmed severe dual waveform stutter.
+After the focused M3 visual result, local JC4880/JC1060 builds passed on the
+same clean fb5cbca1 source; current-source CI is skipped by the operator and full
+hardware gates remain open.
+[Catalog/cue software and web LOAD LOCK](validation/M3_LIBRARY_CUES_WEB_LOAD_LOCK_20261007.md)
+subsequently passed on the unchanged M3 image, with 324 identities stable across
+reboot and six protected replacement attempts. Production NVS error/corruption
+tests were added; on-device cue writes and physical MIDI/touch checks remain open.
+The [read-only actual export audit](validation/M3_REAL_EXPORT_AUDIT_20261007.md)
+then reproduced three import defects: 13 lost artist names, 12 lost album names
+and one missing EXT Hot Cue D. Firmware remains unchanged; library acceptance
+cannot close until corrected imports are retested. Real playlists/source loops
+are absent from this medium and remain unexercised.
+Correction source `082d2c0a` subsequently passed the actual 324-track/648-file
+comparisons with zero observed import differences, the default host suite,
+final focused regressions and M3-only build/signed packaging. Local signed OTA
+then installed it VALID in ota_1 with exact source/ELF; all 13 artist names are
+recovered in the live 324-track library. Cue/rendering and broader new-image
+physical acceptance remain open. This is the current M3 bench image. The
+operator subsequently confirmed D1 A–D recall; the stopped D1 API position
+matches source D at 123347 ms. Subsequent
+[cue lifecycle checks](validation/M3_CUE_LIFECYCLE_20261007.md) passed local
+override, deletion tombstone and restore-source persistence through reboot.
+The original source bank is restored; both decks are stopped. Broader physical
+gates remain open.
+Ordinary FLX4/touch LOAD refusal is now physically confirmed on each playing
+deck; [variants and limits](validation/M3_PHYSICAL_LOAD_LOCK_20261007.md) remain explicit.
+Selected [stopped LOAD/Shift+Load routing](validation/M3_PHYSICAL_LOAD_ROUTING_20261007.md)
+also passes, with untouched other-deck titles and both decks finally stopped.
+All ordinary stopped FLX4/touch deck combinations subsequently passed, as did
+repeated [playing Shift+Load refusal](validation/M3_PHYSICAL_SHIFT_LOAD_LOCK_20261007.md)
+on each deck. Physical concurrent LOAD/PLAY races and lock OFF remain unrun.
+Current bench supersedes the above installed state: clean `4620b83c` is VALID
+in ota_0, repairing controller screensaver wake lost from historical M3 435bcfe.
+The local controller now binds to the shared deck input sink, with link state
+excluded from wake consumption. Full default host tests, M3 build and signed
+package pass; [physical wake acceptance](validation/M3_CONTROLLER_SCREENSAVER_WAKE_20261007.md)
+failed: first PLAY started playback. Atomic UI handoff candidate `af4ca590`
+subsequently passes default host/M3 build/signature checks and is installed
+VALID in ota_1. Operator PLAY wake/next-PLAY checks pass and API records one
+consumed PLAY wake. Browse and touch regressions also pass on af4ca590;
+the final counter is two consumed controller wakes, with both decks stopped.
+The final soak is deferred; other-board rebuilds await the M3 retest.
+See the [exact-image record](validation/M3_SHARED_WAVEFORM_REGRESSION_20261006.md).
+
+Canonical repository: `dvucinozd/Pajoniiir`. Work branch: `codex/shared-p4-core-m3`.
+Frozen donor base: `9af99cd234e775521f3ec83c0104f5c6a0c72920`.
+Frozen M3 source: `e95417c4e2fea007d2c1dcb693790914692c62ba`.
+The M3 review branch, not its older master, is the migration source.
+
+## Adoption matrix
+
+| Area | Authority and integration | Gate |
+| --- | --- | --- |
+| Shared layout/startup | Donor core, neutral component location, board providers | Three clean IDF 6.0.2 builds, host regressions |
+| Display/touch/scanout | Each accepted BSP; M3 waveform-first/top-to-bottom policy | Board simulator and physical panel/touch |
+| DSP/output | Donor transport plus M3 consumer PCM timeline/cache/FIR and fixed 48 kHz | PCM onset/timeline and 300 s keylock soak; audible gate |
+| P01 OTA | Distinct `main-deck-m3`, retain other project identities | Cross-board rejection before flash, package verification |
+| P02 persistent cues | Full donor media identity; preserve unbound M3 legacy records | Collision, migration and interrupted writes |
+| P03 LOAD LOCK | Donor shared semantic admission, default ON | Input parity and asynchronous PLAY/load race |
+| P04/P05/P06 Rekordbox | Donor tagged PCPT, PQTZ 1-4, title index 17 | Production-parser binary fixtures |
+| P07 transport | Donor seek/preroll/live length/loop/CDJ behavior | Format, EOF, onset, loop and mixed-rate gates |
+| P08 startup | Actual requested AP/HTTP readiness, bounded pending gate | Timeout/rollback, optional peripherals absent |
+| Library/UI | Donor playlists/artwork/PWV4/memory cues, board layout policy | Stale generations, bounded cache, reviewed screenshots |
+| USB/controller | Shared profiles v2/v3/v4/recovery; retain M3 ownership and epoch fixes | Lifecycle harness, profile corruption/reconnect, physical root mapping |
+| Diagnostics | Shared bounded persistent journals/resources plus M3 monitor | Crash/restart tests and exact-image monitoring |
+| Experiments | Shared recorder/Link/network services, M3 defaults OFF | Software variants; separate physical qualification |
+| P09/P10 CI/docs | All targets and codex branches; canonical status/provenance | Clean locks, binary budget and documented NOT RUN gates |
+
+## Invariants
+
+One production implementation per portable subsystem. Exactly one BSP links per
+target. Physical pin/USB topology, C6 lifecycle and scanout differences belong
+in board providers. No S3, UART bridge or Ethernet is reintroduced on M3.
+Preserve module-specific licenses and existing immutable release artifacts.
+
+The wired M3 migration preserves the 16 MiB partition layout and NVS. Factory
+write/readback precedes OTA-selection reset. Legacy track-ID cues are never
+silently bound to an unrelated media identity. Public channel changes require
+separate authorization after exact-image physical acceptance.
+
+## Validation status
+
+Phase 1 software gate PASS: full P4 host runner exit 0; IDF 6.0.2 builds and
+`check_board_build.py` pass for JC4880 (2,576,928 B) and JC1060 (2,633,968 B).
+The initial builds found a relocated BSP-private timer dependency, now fixed.
+Only dependency-lock manifest hashes changed; resolved versions/hashes did not.
+Real external MP3/PDB optional cases remain SKIP in this phase's host run.
+No flash, physical acceptance, remote push or publication has occurred.
+
+Phase 2 software gate PASS: all three IDF 6.0.2 targets build and pass BSP,
+dependency and descriptor checks: JC4880 2,600,720 B, JC1060 2,657,632 B,
+M3 2,562,000 B. The full host runner passes, including M3 scanout primitives,
+board capability selection, scheduler ordering, Wi-Fi decisions and FIR/cache
+regressions. The regular and M3-policy 300 s MT soaks pass with zero source-clock
+drift and no detected clicks/clipping. Compact and wide product simulator
+screenshots match the existing baselines without updating them. Linked USB/SD
+wrappers and float32-only keylock/resampler objects were verified on all boards.
+
+The shared DSP retains donor transport/timeline publication and uses board
+policy for the M3 FIR reuse and denser bounded correlation search. JC defaults
+retain the original faster search and unfiltered resampler. M3 uses fixed 48 kHz
+MAIN, RGB888 native scanout and waveform-first/top-to-bottom updates. Wi-Fi
+retains JC WPA2/WPA3/STA and M3 WPA2/APSTA policies, coherent M3 readiness, and
+the shared exclusive OTA/probe/control lease and bounded association retries.
+Real external MP3/PDB cases remain optional SKIP until the qualification fixture
+gate is added. M3 image memory headroom and all physical gates remain NOT RUN.
+
+Phase 3 software gate PASS: full host runner exit 0, three IDF 6.0.2 builds,
+all six wrong-board manifest combinations, signed artifact identity tests,
+M3/JC channel separation and independent CMake version-history tests pass.
+M3 uses `M3-dev-g<12-hex-SHA>` until its own release ancestry exists; dirty
+sources are labelled and pull discovery is disabled for development versions.
+Explicit release builds require a clean source and a bounded numeric version.
+Packaging checks compiled source provenance and board isolation before signing.
+The public-channel generator refuses development M3 versions. `/api/status`
+now reports board/project/source identity, product capabilities and whether
+pull updates are supported; the web check button follows that state.
+
+NVS initialization failures now preserve storage and fail startup, including
+NO_FREE_PAGES/NEW_VERSION cases, instead of erasing settings and legacy cues.
+Pending OTA retains the production 60 s actual AP/HTTP readiness gate; absent
+USB peripherals are not required. Startup readiness/timeout/rollback decision
+tests pass. Physical interrupted upload, boot timeout and rollback remain
+NOT RUN on the integrated image. No device was flashed and no channel changed.
+
+Phase 4 software gate PASS: full host runner exit 0 and all three IDF 6.0.2
+builds pass with unchanged dependency locks. Standard PQTZ phases 1–4 and
+downbeat 1 are covered by a real binary section fixture, alongside existing
+title-index-17, tagged PCPT, memory/Hot Cue list and persistent merge regressions.
+The new read-only paged catalog API exports P4 FAT metadata and persistent IDs
+without loading ANLZ or changing decks; generation/file-change tests execute
+the production catalog helper.
+
+The offline legacy-cue migration tool requires the selected old export and
+backup SHA, runs the production PDB parser, validates official NVS CRC/chunk
+structures, and compares every setting/key after generating the merged image.
+Ten executable tests cover lossless settings/blob preservation, ambiguous IDs,
+wrong exports, missing audio, conflicting newer cues, damaged backups and a
+complete CLI round trip. Old blobs remain intact; absent slots do not create
+tombstones. See `M3_CUE_MIGRATION.md`. Software preparation performs no device
+write. Wired NVS apply and physical set/delete/restore/reboot remain NOT RUN.
+
+Phase 5 software gate PASS: complete host runner with `-Qualification`, all
+three IDF 6.0.2 targets, unchanged locks and compact/wide screenshot baselines
+pass. M3-policy 300 s dual-deck MT soak passes with zero source-clock drift,
+no detected clicks or clipping. Mandatory committed MP3/WAV/FLAC/PDB/ANLZ
+fixtures now have checked hashes; qualification cannot silently skip them.
+Lossless PCM is checked sample-for-sample, including short/final EOF batches,
+and mixed-rate seek executes both production decoders.
+
+Real VBR media reproduced position-dependent seek onset with the original
+four-frame reservoir lead. Sixteen-frame preparation makes all three seek
+positions retain the same full-decoded PCM/codec-delay mapping; the MP3 relative
+onset bound is 96 frames, WAV/FLAC one frame. PVBR regressions retain byte/frame
+identity and update their preparation-time bound accordingly. Full-track WAV
+export rewinds and is no longer described as proof of acoustic seek.
+
+LOAD replacement now reserves the semantic deck transport from final admission
+through audio replacement and loaded-track publication. MIDI/touch/web actions
+share the same actor boundary. If PLAY wins, LOAD is refused without mutation;
+if LOAD wins, transport cannot enter between check and reset. Generation tokens
+prevent stale completion from releasing a newer reservation. The real deck-core
+tests cover both orders, other-deck independence and LOAD LOCK off. Physical
+seek/loop/CUE, replacement races and opposite-pitch acceptance remain NOT RUN.
+
+Phase 6 software gate PASS: full host qualification exits 0, all nine simulator
+configurations pass, and all three IDF 6.0.2 builds pass with unchanged locks:
+JC4880 2,604,448 B, JC1060 2,661,616 B, M3 2,565,616 B.
+Display integration adds a product M3 simulator using the shared board
+capabilities, waveform-first update and top-to-bottom scheduling. Artwork uses
+a board layout policy: the M3 cover fits inside the title row, preserving both
+648 x 141 main waveforms at x=82/y=0,142 and the accepted 392 x 45 full-track
+waveforms. JC layout and screenshot baselines remain unchanged. M3 retains
+Wi-Fi ON and PCM5102A MAIN/USB cue in its simulated Settings.
+
+The M3 scripted scenario checks all five zoom geometries and includes reviewed
+screenshots for playlists/folders/export order, memory cues, source/local Hot
+Cues, missing/restored artwork, PWV4, screensaver and Settings restoration.
+These are software rendering/navigation checks, not physical scanout timing,
+touch or audio acceptance. Final hardware gates remain NOT RUN.
+
+Phase 7 software gate PASS: full host qualification and all three IDF 6.0.2
+builds exit 0 with unchanged dependency locks and Phase 6 image sizes.
+It uses the existing shared USB/controller infrastructure on every board:
+the sole MSC mount owner, deferred/coalesced semantic input, connection and
+transport epochs, nonblocking MIDI OUT and producer fencing before teardown.
+The MSC transfer object and sector count both retain the 8 KiB byte bound,
+including sector sizes other than 512 B. Recovery is scoped by immutable root
+roles; unknown device routing defers admission and cannot trigger a global
+power cycle. M3 retains 256 MIDI OUT queue entries, including shifted pad banks.
+Profiles v2/v3/v4 use the same compiler/parser/storage/runtime, atomic activation
+and held-state reconciliation; built-in fallback is exact FLX4 VID/PID only.
+
+The frozen M3 mapper/LED code is test-only and its original source hashes are
+verified after reversing namespacing. Direct parity executes 1,834,758 messages
+and 131,072 LED combinations. Two documented donor FX-target differences are
+retained: wrong-channel selector notes are rejected and redundant identical
+target publications are permitted. Valid selectors retain the same semantic
+state, including both/release fallback; all other input and LED bytes agree.
+USB CIN padding beyond message length is ignored by both semantic mappers.
+M3 storage throughput, actual root enumeration/reconnect, FAT32/exFAT playback
+and profile/UAC hardware acceptance remain NOT RUN.
+
+Phase 8 software gate PASS: complete host qualification exits 0, all nine
+simulator configurations retain their baselines, and all three regular IDF
+6.0.2 builds pass with unchanged dependency locks: JC4880 2,583,840 B,
+JC1060 2,642,288 B, M3 2,565,136 B. M3 recorder (2,578,416 B), alternative UI
+(2,580,400 B) and STA Link (2,627,504 B) build independently with fresh config.
+CI now requires these M3 variants alongside existing JC variants and the shared
+host gate. The board verifier checks every canonical core component's path,
+single BSP, feature class, compiled source and application identity.
+
+Pro DJ Link browse/download/cache/sync now lives in the shared core and receives
+an explicit network provider. JC1060 retains Ethernet; M3's optional experiment
+uses STA only, with no AP/default-route fallback. Normal M3 does not start Link.
+Recorder/preview remain separate experiments. Network clock mutation now shares
+the LOAD transport reservation and is tested against an active replacement.
+
+The FIR/history feature stores no inactive arrays on JC. Linked two-deck states
+use 6,576 B on JC versus 36,304 B on M3, reclaiming 29,728 B on each JC target.
+JC and M3 five-minute production keylock soaks retain zero clock drift and no
+detected clicks/clipping. USB/SD wrappers are linked; resampler objects contain
+no software double helpers. Runtime heap/stack reserves still need hardware.
+
+Existing bounded retained audio-WDT/library-load journals, rotated service
+journal, allocation callback and self-sampled stack counters are shared.
+The monitor performs GET only, binds board/project/source/ELF, detects resets and
+strict counter loss, and preserves original output-late investigation rules.
+Five executed tests cover clean/isolated-late, losses, bursts, missing/changed
+identity, reboot and workload mismatch. `/api/firmware` exposes IDF running-image
+state separately from OTA transfer state; a signed manifest binds ELF and full
+binary/bundle digests. Physical crash/restart/resource and experiment gates
+remain NOT RUN.
+
+Migration software gate PASS: twelve executed tests cover full/region backup,
+old/new signed project identity, MAC/security/layout, app checksum/appended SHA,
+stale flash refusal, factory readback failure, interrupted selection write,
+unchanged settings/other regions, source-bound cue-only follow-up and signed
+pending-to-VALID observation. The real esptool adapter is pinned to 5.3.1 and
+has no full-chip erase path. Offline plan is reviewable; every device mutation
+stage is recorded before the write and failures do not request a reboot.
+See `M3_SHARED_CORE_MIGRATION.md`. Serial/HTTP behavior is mocked in this gate;
+actual device migration, operator settings and physical acceptance are NOT RUN.
+
+README remains English. Active architecture/profile/parser paths, development,
+startup, OTA, board policies, documentation status and risk register now point
+to the canonical shared architecture. Earlier source/release validation records
+retain their hashes/paths and do not qualify the integrated image. The final
+clean build, signed package and exact-SHA CI are separate candidate evidence;
+no public channel or existing release asset was changed.
+
+| Finding | Implemented software outcome | Open integrated-image acceptance |
+| --- | --- | --- |
+| P01 | Separate signed project/chip/version, channel and embedded descriptor checks | M3 signed rejection/interruption/rollback gates closed; other targets separate |
+| P02 | Full media identity, source/local merge, tombstones/restore, explicit legacy migration | Cue migration/set/delete/restore/reboot on selected exports |
+| P03 | Default-on shared LOAD LOCK and atomic worker/transport reservation | Web gate and ordinary physical FLX4/touch playing-deck refusals closed; physical variants/races remain open |
+| P04 | Standard tagged PCPT parsing and memory/Hot Cue list type | Real export comparison |
+| P05 | PQTZ phase 1-4 and downbeat 1 | Real export grid/phase review |
+| P06 | PDB title index 17 | Real export metadata/UI review |
+| P07 | Decoder seek/preroll/length/loop/CDJ and required PCM/media regressions | MAIN/PFL seek/onset/EOF/loops/CUE/MT/mixed rates |
+| P08 | Critical initialization plus requested real AP/DHCP/HTTP pending gate | M3 injected timeout/unconfirmed-restart rollback closed; other targets separate |
+| P09 | Three ordinary targets, experiment matrix, no-SKIP qualification, isolation/budget/locks | Current-source hosted CI SKIPPED BY OPERATOR (quota); hardware gates remain open |
+| P10 | Canonical docs/provenance/migration/capabilities and evidence separation | Final installed/operator campaign record |
+
+No integrated target has a new production PASS until its hardware gates pass.
+Candidate qualification requires the exact-source 12-job board/host matrix,
+the separate USB software-harness workflow and documentation integrity. Missing,
+failed, cancelled or skipped jobs reject candidate evidence. The USB harness
+links the pure shared capability descriptions without pulling a physical BSP;
+production adapters retain exactly one board provider. Historical documentation
+links point to their frozen source revisions when a referenced artifact is not
+part of the canonical repository.
+
+Current M3 waveform/zoom-8 Campaign B and OTA/web-load outcomes are recorded above.
+Physical Campaign A is SKIPPED BY OPERATOR; remaining artwork/library/control and
+other-board physical gates remain open. Isolated output-late stays monitoring,
+not zero-late.
+
+The initial comparison is retained in `reviews/2026-10-06-ddj-ffl4-port-comparison.md`.
+Its successful tests describe the two source trees, not the integrated image.
+Integrated builds/tests and physical gates will be recorded separately here.
+
+The initial M3 candidate from clean source 95e6573c has now been installed and
+confirmed VALID in ota_0 after signed local OTA. GUI/touch/backlight and preserved
+settings were confirmed before OTA. See the
+[installation record](validation/M3_SHARED_CORE_INSTALL_20261006.md) for exact
+digests, the operator-authorized existing-image recovery mode, manual RESET and
+remaining physical gates. Migration tooling now has 19 passing regressions.
+
+The preceding ordinary candidate is clean source 11574f4e, signed and installed
+VALID in M3 ota_1. Its status exposes MT/loop state and its read-only monitor
+supports the common catalog contract with seven passing regressions. All three
+ordinary builds and exact-source CI passed. The replacement medium contains 324
+tracks; 44.1/48-kHz loads and stopped loop/pitch preflight passed. See the
+[current image record](validation/M3_SHARED_CORE_11574_20261006.md).
+Active-playback/operator, Campaign A/B and startup-timeout/rollback gates remain
+open. These updates supersede the earlier installed-state and test counts above;
+they do not extend earlier physical acceptance to the new image.
+
+The 11574f4e timing attempt failed on operator-confirmed watery dual waveforms.
+Solo D1 was sharp; dual playback also failed without API polling. The current
+clean candidate c698fa67 reserves the early frame for both waveform phases
+before either deck's status/artwork/chrome, preserving the board policies and
+one interpolation per deck. It passed host qualification, existing simulator
+baselines, all three ordinary builds and exact-source CI, and is installed VALID
+in M3 ota_0. Its operator retest failed: watery waveforms persisted and visual
+stutter appeared while audio remained clean. Bounded RAM scanout timing counters
+are the next diagnostic step. Physical acceptance remains failed in the
+[regression/retest record](validation/M3_SHARED_WAVEFORM_REGRESSION_20261006.md).
+
+Measurement candidate 2fa8a637 is now signed and installed VALID in M3 ota_1.
+All three builds and exact-source CI passed. The operator again confirmed solo
+D1 sharp, dual deformed and clean sound. A roughly 12-second dual window measured
+57 coalesced refreshes and a 15.5-ms mean lower-waveform finish after refresh.
+The next focused repair removes duplicate PPA cache sync and unchanged-frame
+resampling; neither this measurement nor a successful build is visual acceptance.
+
+Repair source 180b008c passed all three clean-source ordinary builds, unchanged
+locks, existing simulator baselines, full host qualification and exact-source
+matrix/USB/documentation CI. Its signed M3 package returned HTTP 200, but the
+installation helper expired before observing VALID. On 2026-10-07 the live
+runtime confirmed the exact source/ELF, clean identity, VALID ota_0 and idle OTA.
+The later observation does not establish startup time within the earlier
+deadline. The same 324-track mixed-rate preflight is prepared for physical
+solo/dual retest. The operator confirmed solo sharp, dual deformed and clean
+sound; 55 refreshes coalesced during the short dual window. This is another
+visual FAIL. Both decks were stopped and the new full soak was NOT RUN.
+
+Clean e4536de2 passed full host qualification, unchanged product simulator
+baselines, all three full-clean builds/locks, exact-source matrix/USB/docs CI
+and signed packages. It is now installed VALID in M3 ota_1 with the matching
+source/ELF, observed before the helper polling deadline. The operator retest
+still failed: solo sharp, dual deformed, audio clean. The short dual window
+coalesced 65 refreshes; no service records were written in the measured windows.
+Both decks are stopped and the full soak remains NOT RUN. See the
+[diagnostic-overhead review](validation/M3_DIAGNOSTIC_OVERHEAD_REVIEW_20261007.md)
+and the waveform record for remaining loop-query waits and diagnostic risks.
+
+Clean ee54f0d1 subsequently passed full host qualification, unchanged product
+simulators, M3 IDF 6.0.2 build and signed M3 packaging, and is installed VALID in
+M3 ota_0 with exact source/ELF. The operator reports increased visual stuttering;
+the visual gate remains failed. See the waveform record for immutable bench
+artifact identities and actual measurement conditions.
+
+The operator now requires M3-first bench iterations: defer JC4880/JC1060 builds
+and full cross-board CI until the M3 repair is physically confirmed. The
+already-running matrix was cancelled and local JC1060 configure interrupted;
+JC4880 had already built successfully. Separate M3 bench evidence does not claim
+full software or hardware qualification. Final integration, physical campaigns
+and publication authorization remain required.
+
+The initial completed-frame image 6d55ce2a failed physically. Persistent boot
+327 logs additionally confirm audio/UAC losses after the captured solo window;
+dual measurement and final automatic stop were not completed. The bench was
+returned to signed ee54f0d1, VALID in ota_0. The next focused revision keeps
+explicit submit/retire ownership but carries old damage after rendering using
+exact pixel coverage, eliminating copies of fully redrawn strips. The pre-v3
+IDF 6.0.2 contract is unchanged; v3-only builds need a separate retirement
+provider. Exact M3 software/physical gates remain required. Interpolation and
+audio implementation are unchanged.

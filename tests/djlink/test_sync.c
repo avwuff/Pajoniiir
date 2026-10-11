@@ -77,6 +77,12 @@ static void test_handoff_and_publisher(void)
     assert(!dj_link_sync_ingest(&s,&d,0x0a000004,buf,(size_t)n,1080,send_packet,NULL));
     assert(s.local_master==-1);
     assert(dj_link_sync_ingest(&s,&d,d.peers[0].ip,buf,(size_t)n,1080,send_packet,NULL));
+    assert(s.local_master==-1 && s.pending_deck==0); /* ACK alone is no grant */
+    dj_link_sync_tick(&s,&d,local,1090,NULL,NULL);
+    assert(s.local_master==-1);
+    d.peers[0].status.master_handoff=1;
+    d.peers[0].status_rx_ms=1095;
+    dj_link_sync_tick(&s,&d,local,1095,NULL,NULL);
     assert(s.local_master==0 && s.pending_deck==-1);
     dj_link_sync_tick(&s,&d,local,1100,NULL,NULL);assert(s.clock.valid && s.clock.player==1);
     assert(!dj_link_sync_ingest(&s,&d,d.peers[0].ip,buf,(size_t)n,1100,send_packet,NULL)); /* duplicate */
@@ -145,6 +151,9 @@ static void test_peer_inventory_does_not_revoke_claim(void)
     djlink_handoff_resp_t resp={.name="CDJ",.requester_number=3};
     int n=djlink_handoff_resp_build(&resp,buf,sizeof(buf));
     assert(dj_link_sync_ingest(&s,&d,d.peers[0].ip,buf,(size_t)n,1100,send_packet,NULL));
+    assert(s.local_master==-1);
+    d.peers[0].status.master_handoff=1;
+    d.peers[0].status_rx_ms=1120;
     ++d.epoch;dj_link_sync_tick(&s,&d,local,1120,NULL,NULL);
     assert(s.local_master==0);
     ++d.ip; /* reject commands immediately, even before the next worker tick */
@@ -156,10 +165,40 @@ static void test_peer_inventory_does_not_revoke_claim(void)
     assert(!dj_link_sync_master(&s,&d,0,1180,send_packet,NULL));
 }
 
+static void test_handoff_confirmation_fences(void)
+{
+    for (unsigned scenario=0;scenario<3;++scenario) {
+        dj_link_discovery_t d=discovery();dj_link_sync_t s;dj_link_sync_init(&s);
+        dj_link_local_clock_t local[2]={{0}};
+        d.peers[0].status.master_handoff=1;d.peers[0].status_rx_ms=1000;
+        dj_link_sync_tick(&s,&d,local,1000,NULL,NULL);
+        assert(dj_link_sync_master(&s,&d,0,1040,send_packet,NULL));
+        uint8_t buf[DJLINK_MAX_PACKET];
+        djlink_handoff_resp_t response={.name="CDJ",.requester_number=3};
+        int n=djlink_handoff_resp_build(&response,buf,sizeof(buf));
+        buf[0x2b]=0;
+        assert(!dj_link_sync_ingest(&s,&d,d.peers[0].ip,buf,(size_t)n,1080,NULL,NULL));
+        assert(!s.pending_accepted && s.local_master==-1);
+        buf[0x2b]=1;
+        assert(dj_link_sync_ingest(&s,&d,d.peers[0].ip,buf,(size_t)n,1080,NULL,NULL));
+        dj_link_sync_tick(&s,&d,local,1090,NULL,NULL);
+        assert(s.local_master==-1); /* old announcement cannot grant a new request */
+        d.peers[0].status_rx_ms=1100;d.peers[0].status.master_handoff=2;
+        dj_link_sync_tick(&s,&d,local,1100,NULL,NULL);assert(s.local_master==-1);
+        d.peers[0].status.master_handoff=1;
+        if (scenario==1) ++d.peers[0].source_epoch;
+        dj_link_sync_tick(&s,&d,local,scenario==2 ? 4040 : 1120,NULL,NULL);
+        if (!scenario) assert(s.local_master==0 && s.pending_deck==-1);
+        else assert(s.local_master==-1);
+        if (scenario==2) assert(s.pending_deck==-1 && s.handoff_timeouts==1);
+    }
+}
+
 int main(void)
 {
     test_sticky_clock_loss_reorder_epoch();test_handoff_and_publisher();
     test_announced_remote_handoff();
     test_peer_inventory_does_not_revoke_claim();
+    test_handoff_confirmation_fences();
     puts("djlink sync: loss/reorder/epoch/handoff/status/beat tests passed");return 0;
 }

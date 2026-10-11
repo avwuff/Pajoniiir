@@ -1653,6 +1653,13 @@ static void test_loop_in_out_sets_requested_deck_loop_from_audio_position(void)
     ctrl_event_t loop_out = deck_button(CTRL_ID_DECK2_LOOP_OUT);
 
     deck_core_test_apply_event(&loop_in);
+    deck_core_loop_display_t observed = deck_core_get_loop_display_observed(
+        CTRL_DECK_2, false, 0, 0);
+    assert(observed.armed && !observed.active && observed.start_ms == 1000);
+    /* The display must consume its supplied observation even if the decoder
+     * fake currently disagrees. It must not query that backend again. */
+    observed = deck_core_get_loop_display_observed(CTRL_DECK_2, true, 800, 1800);
+    assert(observed.active && !observed.armed && observed.start_ms == 800 && observed.end_ms == 1800);
     audio_engine_stub_deck_position_ms[CTRL_DECK_2] = 2600;
     deck_core_test_apply_event(&loop_out);
 
@@ -3087,6 +3094,53 @@ static void test_load_lock_uses_actual_target_deck_transport(void)
     assert(deck_core_load_allowed(CTRL_DECK_2));
 }
 
+void deck_core_test_replacement_contention(void);
+static void test_load_play_race_reserves_actual_semantic_transport(void)
+{
+    deck_core_test_reset();
+    reset_audio_engine_stub();
+    deck_core_test_replacement_contention();
+    ctrl_event_t play1 = deck_button(CTRL_ID_DECK1_PLAY);
+    ctrl_event_t play2 = deck_button(CTRL_ID_DECK2_PLAY);
+    ctrl_event_t cue1 = deck_button(CTRL_ID_DECK1_CUE);
+    // PLAY wins: replacement must preserve the already-playing target.
+    deck_core_test_apply_event(&play1);
+    assert(deck_core_test_get_deck_state(0).playing);
+    assert(deck_core_begin_track_replacement(0) == 0);
+    assert(deck_core_test_get_deck_state(0).playing);
+    deck_core_test_apply_event(&play1);
+    assert(!deck_core_test_get_deck_state(0).playing);
+    // LOAD wins: transport events cannot start the old/new track before publish.
+    uint32_t token = deck_core_begin_track_replacement(0);
+    assert(token >= 2 && deck_core_track_replacement_active(0));
+    assert(!deck_core_load_allowed(0) && deck_core_begin_track_replacement(0) == 0);
+    deck_core_test_apply_event(&play1);
+    deck_core_test_apply_event(&cue1);
+    assert(!deck_core_test_get_deck_state(0).playing);
+    deck_core_test_apply_event(&play2);
+    assert(deck_core_test_get_deck_state(1).playing);
+    assert(!deck_core_test_get_deck_state(0).playing);
+    deck_core_end_track_replacement(0, token + 100);
+    assert(deck_core_track_replacement_active(0));
+    deck_core_end_track_replacement(0, token);
+    assert(!deck_core_track_replacement_active(0));
+    uint32_t next = deck_core_begin_track_replacement(0);
+    assert(next >= 2 && next != token);
+    deck_core_end_track_replacement(0, token); // stale completion cannot release next
+    assert(deck_core_track_replacement_active(0));
+    deck_core_end_track_replacement(0, next);
+    deck_core_test_apply_event(&play1);
+    assert(deck_core_test_get_deck_state(0).playing);
+    // Explicit LOAD LOCK off still allows replacement of playback.
+    deck_core_set_load_lock(false);
+    token = deck_core_begin_track_replacement(0);
+    assert(token >= 2);
+    deck_core_end_track_replacement(0, token);
+    assert(deck_core_begin_track_replacement(2) == 0);
+    deck_core_test_reset();
+    reset_audio_engine_stub();
+}
+
 static void test_imported_hot_cues_recall_and_local_deletion_survive_reload(void)
 {
     deck_core_test_reset();
@@ -3237,10 +3291,32 @@ static void test_network_sync_semantic_path_and_replacement(void)
     assert(audio_engine_stub_deck_seek_count[0]==0);
     assert(deck_core_get_deck_state(0).network_sync==DECK_NET_SYNC_WAIT);
     ctrl_event_t play=deck_button(CTRL_ID_DECK1_PLAY);deck_core_test_apply_event(&play);
+    deck_core_set_load_lock(false);
+    uint32_t replacement=deck_core_begin_track_replacement(0);
+    assert(replacement);
+    audio_engine_stub_deck_position_ms[0]=100;
+    deck_state_t held=deck_core_get_deck_state(0);
+    deck_core_network_tick(1000,1,48000);
+    assert(audio_engine_stub_deck_seek_count[0]==0 && audio_engine_stub_deck_position_ms[0]==100);
+    assert(!network_local[0].loaded);
+    assert(deck_core_get_deck_state(0).network_sync==held.network_sync);
+    assert(deck_core_track_replacement_active(0));
+    deck_core_end_track_replacement(0,replacement);
+    deck_core_set_load_lock(true);
     audio_engine_stub_deck_position_ms[0]=100;
     deck_core_network_tick(1000,1,48000);
     assert(audio_engine_stub_deck_seek_count[0]==1 && audio_engine_stub_deck_position_ms[0]==20);
     assert(network_local[0].loaded && network_local[0].session==42 && network_local[0].calibrated);
+    /* A new alignment near EOF must not seek to/past the decoder boundary. */
+    audio_engine_stub_duration_ms[0]=1000;
+    audio_engine_stub_deck_position_ms[0]=900;
+    network_clock.beat_in_bar=4;
+    deck_core_test_apply_event(&sync);
+    deck_core_test_apply_event(&sync);
+    deck_core_network_tick(1000,1,48000);
+    assert(audio_engine_stub_deck_position_ms[0]==999);
+    audio_engine_stub_duration_ms[0]=0;
+    network_clock.beat_in_bar=1;
     network_clock.valid=false;float pitch=audio_engine_stub_pitch_percent[0];
     deck_core_network_tick(1400,0,44100);
     assert(audio_engine_stub_pitch_percent[0]==pitch && !network_local[0].calibrated);
@@ -3251,7 +3327,7 @@ static void test_network_sync_semantic_path_and_replacement(void)
     assert(deck_core_get_deck_state(0).sync_master);
     network_master=-1;audio_engine_stub_session_generation[0]=43;
     network_clock.valid=true;deck_core_network_tick(1480,1,48000);
-    assert(!network_local[0].loaded && audio_engine_stub_deck_seek_count[0]==1);
+    assert(!network_local[0].loaded && audio_engine_stub_deck_seek_count[0]==2);
     assert(deck_core_publish_loaded_track_session(0,1,102,&id,120,300000,&meta,43)==ESP_OK);
     deck_core_network_tick(1520,1,48000);
     assert(!deck_core_get_deck_state(0).sync_enabled);
@@ -3266,9 +3342,68 @@ static void test_network_sync_semantic_path_and_replacement(void)
     deck_core_set_network_ops(NULL);
 }
 
+void deck_core_test_prepare_input_queue(void);
+int deck_core_test_input_queue_sends(void);
+ctrl_event_t deck_core_test_last_queued_event(void);
+static bool s_test_screensaver_shown;
+static unsigned s_test_activity_calls;
+static bool test_activity_notice(void)
+{
+    ++s_test_activity_calls;
+    return s_test_screensaver_shown;
+}
+
+static void test_physical_controller_input_uses_wake_policy(void)
+{
+    deck_core_test_reset();
+    reset_audio_engine_stub();
+    deck_core_test_prepare_input_queue();
+    deck_core_set_activity_cb(test_activity_notice);
+    assert(control_link_init(NULL) == ESP_ERR_INVALID_ARG);
+    assert(control_link_init(deck_core_queue_event) == ESP_OK);
+    s_test_activity_calls = 0;
+    s_test_screensaver_shown = true;
+    /* Execute the real local adapter and production deck queue policy, not a
+     * fake USB path. Every operator event wakes; none executes while covered. */
+    assert(control_link_inject_semantic(CTRL_TYPE_BUTTON, CTRL_ID_DECK1_PLAY, 1) == ESP_OK);
+    assert(control_link_inject_semantic(CTRL_TYPE_ENCODER, CTRL_ID_DECK2_JOG_BEND, 1) == ESP_OK);
+    assert(control_link_inject_semantic(CTRL_TYPE_ENCODER, CTRL_ID_BROWSE_DELTA, 1) == ESP_OK);
+    assert(control_link_inject_semantic(CTRL_TYPE_PITCH, CTRL_ID_DECK2_TEMPO, 100) == ESP_OK);
+    assert(s_test_activity_calls == 4);
+    assert(deck_core_test_input_queue_sends() == 0);
+    assert(!audio_engine_stub_deck_playing[CTRL_DECK_1]);
+    /* A USB disconnect must reach held-state cleanup without waking the UI. */
+    assert(control_link_inject_semantic(CTRL_TYPE_STATE, CTRL_ID_FLX4_CONNECTION,
+                                       CTRL_FLX4_DISCONNECTED) == ESP_OK);
+    assert(deck_core_test_input_queue_sends() == 1);
+    assert(s_test_activity_calls == 4);
+    /* Once the UI dismisses the overlay, a subsequent PLAY reaches transport. */
+    s_test_screensaver_shown = false;
+    assert(control_link_inject_semantic(CTRL_TYPE_BUTTON, CTRL_ID_DECK1_PLAY, 1) == ESP_OK);
+    assert(deck_core_test_input_queue_sends() == 2);
+    ctrl_event_t event = deck_core_test_last_queued_event();
+    assert(event.id == CTRL_ID_DECK1_PLAY && event.deck == CTRL_DECK_1);
+    deck_core_test_apply_event(&event);
+    assert(audio_engine_stub_deck_playing[CTRL_DECK_1]);
+    /* Authenticated remote actions still wake and execute as before. */
+    s_test_screensaver_shown = true;
+    assert(deck_core_queue_remote_event(&event) == ESP_OK);
+    assert(deck_core_test_input_queue_sends() == 3);
+    assert(control_link_inject_semantic(0xff, 0, 0) == ESP_ERR_INVALID_ARG);
+    assert(s_test_activity_calls == 6);
+    deck_core_wake_diagnostics_t wake;
+    deck_core_get_wake_diagnostics(&wake);
+    assert(wake.physical_events == 5 && wake.wake_consumed == 4);
+    assert(wake.last_consumed_id == CTRL_ID_DECK2_TEMPO);
+    assert(wake.last_forwarded_id == CTRL_ID_DECK1_PLAY);
+    deck_core_set_activity_cb(NULL);
+}
+
 int main(void)
 {
+    test_physical_controller_input_uses_wake_policy();
     test_load_lock_uses_actual_target_deck_transport();
+    test_load_play_race_reserves_actual_semantic_transport();
     test_decks_track_transport_independently();
     test_cdj_cue_hold_release_and_play_commit();
     test_cdj_mode_releases_vinyl_owner_and_survives_track_reset();

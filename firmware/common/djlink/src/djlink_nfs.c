@@ -520,7 +520,6 @@ int djlink_rpc_reply_build(uint8_t *out, size_t cap, uint32_t xid, uint32_t acce
 #define SLOT_FREE     0u
 #define SLOT_WAITING  1u
 #define SLOT_RECEIVED 2u
-#define BACKOFF_SHIFT_MAX 6u
 
 static const char *phase_name(djlink_nfs_phase_t phase)
 {
@@ -552,7 +551,7 @@ static void fail(djlink_nfs_t *c, djlink_nfs_error_t err, uint32_t status, const
 
 static uint32_t backoff_ms(const djlink_nfs_t *c, uint8_t tries)
 {
-    uint8_t shift = tries > BACKOFF_SHIFT_MAX ? BACKOFF_SHIFT_MAX : tries;
+    uint8_t shift = tries > DJLINK_NFS_BACKOFF_SHIFT_MAX ? DJLINK_NFS_BACKOFF_SHIFT_MAX : tries;
     return c->cfg.retransmit_ms << shift;
 }
 
@@ -955,6 +954,7 @@ djlink_nfs_error_t djlink_nfs_fetch(djlink_nfs_t *c, const djlink_nfs_fetch_cfg_
         strlen(cfg->export_path) >= sizeof(c->export_path) ||
         strlen(cfg->path) >= sizeof(c->path) ||
         (cfg->charset != DJLINK_NFS_NAMES_UTF16LE && cfg->charset != DJLINK_NFS_NAMES_BYTES) ||
+        cfg->retransmit_ms > DJLINK_NFS_RETRANSMIT_MAX_MS ||
         (cfg->read_size != 0 &&
          (cfg->read_size < DJLINK_NFS_READ_MIN || cfg->read_size > DJLINK_NFS_MAXDATA))) {
         fail(c, DJLINK_NFS_E_ARG, 0, "BAD FETCH CONFIG");

@@ -146,8 +146,33 @@ static void test_null_is_inert(void)
     assert(ui_idle_remaining_ms(NULL, 0u, false, false) == UINT32_MAX);
 }
 
+static void test_atomic_wake_signal_keeps_pre_wake_visibility(void)
+{
+    ui_idle_signal_t signal = {0};
+    assert(!ui_idle_signal_notice(&signal));
+    assert(ui_idle_signal_take_activity(&signal));
+    assert(!ui_idle_signal_take_activity(&signal));
+    ui_idle_signal_set_shown(&signal, true);
+    assert(ui_idle_signal_is_shown(&signal));
+    bool consume_press = ui_idle_signal_notice(&signal);
+    /* UI may consume activity and hide before the controller uses the result. */
+    assert(ui_idle_signal_take_activity(&signal));
+    ui_idle_signal_set_shown(&signal, false);
+    assert(!ui_idle_signal_is_shown(&signal));
+    assert(consume_press);
+    assert(!ui_idle_signal_notice(&signal));
+    /* A producer racing visibility publication must not lose its pending bit. */
+    ui_idle_signal_set_shown(&signal, true);
+    assert(ui_idle_signal_take_activity(&signal));
+    assert(ui_idle_signal_notice(&signal));
+    ui_idle_signal_set_shown(&signal, false);
+    assert(ui_idle_signal_take_activity(&signal));
+    assert(!ui_idle_signal_take_activity(&signal));
+}
+
 int main(void)
 {
+    test_atomic_wake_signal_keeps_pre_wake_visibility();
     test_shows_only_after_the_full_timeout();
     test_activity_dismisses_and_restarts_the_countdown();
     test_playback_inhibits_and_rearms_the_countdown();

@@ -40,7 +40,7 @@
       "type": "button",
       "event": "browser.load_deck1",
       "status": "0x91",
-      "data1": 24
+      "data1": 19
     },
     {
       "type": "button",
@@ -100,7 +100,7 @@
       "type": "button",
       "event": "browser.load_deck2",
       "status": "0x93",
-      "data1": 24
+      "data1": 19
     },
     {
       "type": "button",
@@ -131,6 +131,30 @@
       "first_data1": 3,
       "count": 8,
       "mode": "hot_cue"
+    },
+    {
+      "type": "button",
+      "event": "browser.press",
+      "status": "0x91",
+      "data1": 24
+    },
+    {
+      "type": "encoder_rel64",
+      "event": "browser.delta",
+      "status": "0xb1",
+      "data1": 25
+    },
+    {
+      "type": "button",
+      "event": "browser.press",
+      "status": "0x93",
+      "data1": 24
+    },
+    {
+      "type": "encoder_rel64",
+      "event": "browser.delta",
+      "status": "0xb3",
+      "data1": 25
     }
   ],
   "outputs": [

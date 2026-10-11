@@ -8,6 +8,14 @@
 #include <unistd.h>
 
 static int s_failed;
+static bool s_fail_close;
+int __real_fclose(FILE *fp);
+int __wrap_fclose(FILE *fp)
+{
+    int rc = __real_fclose(fp);
+    if (s_fail_close) { s_fail_close = false; return EOF; }
+    return rc;
+}
 #define CHECK(ok) do { if (!(ok)) { fprintf(stderr, "FAIL %s:%d: %s\n", __FILE__, __LINE__, #ok); ++s_failed; } } while (0)
 
 void library_load_trace_mark(library_load_phase_t phase, uint32_t key)
@@ -47,6 +55,10 @@ int main(void)
 
     media_persistent_id_t id = {.valid = true};
     memset(id.bytes, 0x11, sizeof(id.bytes));
+    anlz_metadata_t missing = {0};
+    struct stat absent;
+    CHECK(track_meta_cache_load(42, &id, "tc/track.dat", "tc/track.ext", true, &missing) == ESP_ERR_NOT_FOUND);
+    CHECK(stat("tc/meta", &absent) != 0); /* read miss must not create directories */
     anlz_beat_t beat = {.beat_phase = 1, .time_ms = 250};
     uint8_t high[3] = {4, 5, 6};
     uint8_t color[12] = {20, 0, 0, 40, 1, 2, 30, 0, 0, 1, 40, 2};
@@ -90,6 +102,27 @@ int main(void)
     CHECK(loaded.waveform_span_ms == meta.waveform_span_ms);
     anlz_free(&loaded);
 
+    meta.cues[0].start_ms = 999;
+    s_fail_close = true;
+    CHECK(track_meta_cache_save(42, &id, "tc/track.dat", "tc/track.ext", &meta) == ESP_FAIL);
+    CHECK(track_meta_cache_load(42, &id, "tc/track.dat", "tc/track.ext", true, &loaded) == ESP_OK);
+    CHECK(loaded.cues[0].start_ms == 100); /* old valid entry survives close failure */
+    anlz_free(&loaded);
+    meta.cues[0].start_ms = 100;
+
+    anlz_beat_t *long_beats = calloc(UINT16_MAX, sizeof(*long_beats));
+    CHECK(long_beats != NULL);
+    if (long_beats) {
+        meta.beats = long_beats; meta.beat_count = UINT16_MAX;
+        long_beats[UINT16_MAX-1].time_ms = 1234567;
+        CHECK(track_meta_cache_save(42, &id, "tc/track.dat", "tc/track.ext", &meta) == ESP_OK);
+        CHECK(track_meta_cache_load(42, &id, "tc/track.dat", "tc/track.ext", true, &loaded) == ESP_OK);
+        CHECK(loaded.beat_count == UINT16_MAX && loaded.beats && loaded.beats[UINT16_MAX-1].time_ms == 1234567);
+        anlz_free(&loaded);free(long_beats);
+        meta.beats = &beat; meta.beat_count = 1;
+        CHECK(track_meta_cache_save(42, &id, "tc/track.dat", "tc/track.ext", &meta) == ESP_OK);
+    }
+
     anlz_metadata_t preview_only = {0};
     CHECK(track_meta_cache_load(42, &id, "tc/track.dat", "tc/track.ext",
                                 false, &preview_only) == ESP_OK);
@@ -99,6 +132,27 @@ int main(void)
           memcmp(preview_only.color_preview, color, sizeof(color)) == 0);
     CHECK(preview_only.waveform_span_ms == meta.waveform_span_ms);
     anlz_free(&preview_only);
+
+    /* A valid v5 record must miss after the EXT cue-import fix, even when
+     * identity and DAT/EXT stat fields are unchanged. Rebuild only metadata. */
+    char cache_path[112], hex[65];
+    memset(hex, '1', 64u); hex[64] = '\0';
+    snprintf(cache_path, sizeof(cache_path), "tc/meta/v4/%s/meta.bin", hex);
+    FILE *old = fopen(cache_path, "r+b");
+    CHECK(old != NULL);
+    if (old) {
+        CHECK(fseek(old, 4, SEEK_SET) == 0); /* uint16 version after magic */
+        const uint16_t version = 5u;
+        CHECK(fwrite(&version, sizeof(version), 1u, old) == 1u);
+        CHECK(fclose(old) == 0);
+    }
+    CHECK(track_meta_cache_load(42, &id, "tc/track.dat", "tc/track.ext",
+                                true, &loaded) == ESP_ERR_INVALID_RESPONSE);
+    CHECK(loaded.cue_count == 0u && loaded.waveform_high == NULL);
+    CHECK(track_meta_cache_save(42, &id, "tc/track.dat", "tc/track.ext", &meta) == ESP_OK);
+    CHECK(track_meta_cache_load(42, &id, "tc/track.dat", "tc/track.ext",
+                                true, &loaded) == ESP_OK && loaded.cue_count == 1u);
+    anlz_free(&loaded);
 
     source = fopen("tc/track.dat", "ab");
     CHECK(source != NULL);
@@ -121,6 +175,6 @@ int main(void)
     rmdir("tc");
 
     if (s_failed) return 1;
-    puts("track_meta_cache v5 tests passed");
+    puts("track_meta_cache v6 tests passed");
     return 0;
 }

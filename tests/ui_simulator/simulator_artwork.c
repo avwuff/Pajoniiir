@@ -11,9 +11,13 @@ static ui_artwork_thumb_t s_quad;
 static ui_artwork_thumb_t s_gray;
 static bool s_ready;
 static bool s_available = true;
+static uint32_t s_revision;
+
+uint32_t ui_artwork_content_revision(void) { return s_revision; }
 
 void ui_simulator_artwork_set_available(bool available)
 {
+    if (s_available != available) ++s_revision;
     s_available = available;
 }
 
@@ -29,6 +33,7 @@ const uint16_t *ui_artwork_get(uint32_t track_key, ui_artwork_size_t size)
                                          &s_work, &s_gray);
         if (!q || !g) return NULL;
         s_ready = true;
+        ++s_revision;
     }
     const ui_artwork_thumb_t *art = track_key == 1001u ? &s_quad :
                                     track_key == 1003u ? &s_gray : NULL;

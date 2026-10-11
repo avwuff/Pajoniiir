@@ -3,7 +3,7 @@
 #include <assert.h>
 #include <stdint.h>
 #include <stdio.h>
-static char internal[8192], external[1024];
+static char internal[8192], external[1024], non_dma[512];
 static unsigned allocations, checks;
 static bool allocation_fails = true;
 static int64_t timer;
@@ -13,6 +13,7 @@ void *heap_caps_aligned_alloc(size_t align, size_t bytes, unsigned caps) {
     return allocation_fails ? NULL : internal;
 }
 bool esp_ptr_external_ram(const void *buf) { return buf == external; }
+bool esp_ptr_dma_capable(const void *buf) { return buf == internal; }
 bool sdmmc_host_check_buffer_alignment(int slot, const void *buf, size_t bytes) {
     assert(slot == 0 && buf == internal && bytes == 512); ++checks; return true;
 }
@@ -34,6 +35,7 @@ int main(void) {
     assert(board_sd_dma_configure(&host, true) == ESP_OK);
     assert(host.dma_aligned_buffer == internal && host.unaligned_multi_block_rw_max_chunk_size == 16);
     assert(!host.check_buffer_alignment(0, external, 512) && !checks);
+    assert(!host.check_buffer_alignment(0, non_dma, 512) && !checks);
     assert(host.check_buffer_alignment(0, internal, 512) && checks == 1);
     assert(board_sd_dma_configure(&other, true) == ESP_OK && allocations == 2 && other.dma_aligned_buffer == internal);
     sdmmc_card_t card = {0};

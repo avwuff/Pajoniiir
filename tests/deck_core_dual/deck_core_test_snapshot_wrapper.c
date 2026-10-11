@@ -1,6 +1,7 @@
 /* Host-only adapter matching the production deck actor publication model. */
-#include "../../firmware/main-deck-p4/components/deck_core/include/deck_core.h"
-#include "../../firmware/main-deck-p4/components/control_link/include/flx4_led_snapshot.h"
+#include <assert.h>
+#include "../../firmware/p4-core/components/deck_core/include/deck_core.h"
+#include "../../firmware/p4-core/components/control_link/include/flx4_led_snapshot.h"
 
 static esp_err_t deck_core_test_live_led_publish(
     flx4_led_publisher_t *publisher,
@@ -9,18 +10,68 @@ static esp_err_t deck_core_test_live_led_publish(
     flx4_led_send_fn_t send,
     void *ctx);
 static void deck_core_test_live_send_led_deck(led_id_t led, uint8_t state, uint8_t deck);
+static int s_host_queue_sends;
+static ctrl_event_t s_host_queued_event;
+static int host_queue_send(QueueHandle_t queue, const void *event, unsigned ticks)
+{
+    (void)queue;
+    (void)ticks;
+    s_host_queued_event = *(const ctrl_event_t *)event;
+    ++s_host_queue_sends;
+    return pdTRUE;
+}
 
 #define deck_core_test_reset deck_core_test_reset_unpublished
 #define deck_core_test_apply_event deck_core_test_apply_event_unpublished
 #define deck_core_test_get_beat_fx_state deck_core_test_get_beat_fx_state_unpublished
 #define flx4_led_publisher_publish deck_core_test_live_led_publish
 #define control_link_send_led_deck deck_core_test_live_send_led_deck
-#include "../../firmware/main-deck-p4/components/deck_core/deck_core.c"
+#define xQueueSend host_queue_send
+#include "freertos/task.h"
+static void host_transport_yield(void);
+#define taskYIELD host_transport_yield
+#include "../../firmware/p4-core/components/deck_core/deck_core.c"
+#undef taskYIELD
+#undef xQueueSend
 #undef control_link_send_led_deck
 #undef flx4_led_publisher_publish
 #undef deck_core_test_reset
 #undef deck_core_test_apply_event
 #undef deck_core_test_get_beat_fx_state
+
+static unsigned s_transport_yields;
+static bool s_finish_transport_on_yield;
+static void host_transport_yield(void)
+{
+    ++s_transport_yields;
+    if (s_finish_transport_on_yield && s_transport_yields == 3u)
+        __atomic_store_n(&s_transport_owner[0], 0u, __ATOMIC_RELEASE);
+}
+
+void deck_core_test_replacement_contention(void)
+{
+    s_transport_yields = 0u;
+    s_finish_transport_on_yield = true;
+    s_transport_owner[0] = 1u;
+    uint32_t token = deck_core_begin_track_replacement(0);
+    assert(token >= 2u && s_transport_yields == 3u);
+    s_transport_yields = 0u;
+    assert(deck_core_begin_track_replacement(0) == 0u && !s_transport_yields);
+    deck_core_end_track_replacement(0, token);
+    s_finish_transport_on_yield = false;
+    s_transport_owner[0] = 1u;
+    assert(deck_core_begin_track_replacement(0) == 0u && s_transport_yields == 50u);
+    s_transport_owner[0] = 0u;
+}
+
+void deck_core_test_prepare_input_queue(void)
+{
+    s_queue = (QueueHandle_t)1;
+    s_host_queue_sends = 0;
+}
+
+int deck_core_test_input_queue_sends(void) { return s_host_queue_sends; }
+ctrl_event_t deck_core_test_last_queued_event(void) { return s_host_queued_event; }
 
 static esp_err_t deck_core_test_live_led_publish(
     flx4_led_publisher_t *publisher,

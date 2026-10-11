@@ -147,7 +147,10 @@ target (lwIP, BSD sockets, mocks). Keep all I/O outside this component.
 ## Host tests
 
 ```
-make -C test/host && make -C test/host run
+# From the canonical repository root (Windows codec/core suites):
+./tests/run_p4_host_tests.ps1 -Suite djlink_test,djlink_test2,djlink_sync
+# Linux/WSL: codec, POSIX NFS/socket/core and network lifecycle sanitizers:
+bash tests/djlink/run_linux_sanitizers.sh
 ```
 
 Two codec suites (`djlink_test`, `test2`) cover byte-exact roundtrips,

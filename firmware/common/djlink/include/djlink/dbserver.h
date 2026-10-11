@@ -13,8 +13,9 @@ extern "C" {
  * Flow: TCP connect to port 12523 of the player -> send the port query ->
  * read a 2-byte big-endian reply port -> connect to that port -> send the
  * setup greeting (int32 field 1) -> send query-context setup message ->
- * metadata/render requests and replies. All integers big-endian here
- * (unlike ANLZ files, whose beat-grid times are little-endian).
+ * metadata/render requests and replies. Message framing integers are big-endian;
+ * binary reply payloads follow their own format (for example, DB beat-grid
+ * entries are little-endian, while ANLZ PQTZ entries are big-endian).
  */
 
 #define DJLINK_DBSERVER_DISCOVERY_PORT 12523u

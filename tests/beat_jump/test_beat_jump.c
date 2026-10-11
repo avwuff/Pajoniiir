@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <limits.h>
 #include <stdint.h>
 #include <stdio.h>
 
@@ -39,6 +40,8 @@ static void test_clamps_beatgrid_edges(void)
 
     assert(beat_jump_calculate_target_ms(900, 120, -32, &meta) == 1000);
     assert(beat_jump_calculate_target_ms(3800, 120, 32, &meta) == 4000);
+    assert(beat_jump_calculate_target_ms(3800, 120, INT_MAX, &meta) == 4000);
+    assert(beat_jump_calculate_target_ms(3800, 120, INT_MIN, &meta) == 1000);
 }
 
 static void test_falls_back_to_bpm_and_clamps_zero(void)

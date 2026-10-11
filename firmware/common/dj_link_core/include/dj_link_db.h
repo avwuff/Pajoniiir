@@ -38,6 +38,7 @@
 #include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
+#include "djlink/dbserver.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -207,6 +208,7 @@ typedef struct {
     bool     blob_body;         /* head consumed: streaming blob then tail */
     uint32_t blob_left;         /* blob bytes still to come */
     uint8_t  blob_tail;         /* integer arguments after the blob */
+    uint8_t  blob_tail_fields[DJLINK_DB_MAX_ARGS]; /* declared types, in order */
     char     error[32];
 
     size_t   rx_len;

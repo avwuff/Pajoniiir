@@ -25,6 +25,18 @@ static void *reservation_worker(void *arg)
 }
 
 static int s_failures = 0;
+static void *gate_worker(void *arg)
+{
+    (void)arg;
+    for (unsigned i=0;i<10000;i++) {
+        sd_io_gate_begin();
+        if (__atomic_add_fetch(&owners,1u,__ATOMIC_SEQ_CST)!=1u)
+            __atomic_add_fetch(&collisions,1u,__ATOMIC_RELAXED);
+        __atomic_sub_fetch(&owners,1u,__ATOMIC_SEQ_CST);
+        sd_io_gate_end();
+    }
+    return NULL;
+}
 
 #define CHECK(cond)                                                            \
     do {                                                                       \
@@ -111,6 +123,10 @@ int main(void)
     test_admit_recording();
     test_gate_mutex();
     test_recorder_flag();
+    CHECK(pthread_create(&recorder,NULL,gate_worker,NULL)==0);
+    CHECK(pthread_create(&download,NULL,gate_worker,NULL)==0);
+    CHECK(pthread_join(recorder,NULL)==0 && pthread_join(download,NULL)==0);
+    CHECK(!owners && !collisions);
 
     if (s_failures == 0) {
         printf("sd_io_gate tests passed\n");
