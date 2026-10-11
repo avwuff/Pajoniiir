@@ -2,33 +2,32 @@
 
 Status: **current documentation authority, reconciled 2026-10-06**.
 
-Latest installed diagnostic/Hercules-support baseline: clean `90fba690`,
-`M3-dev-g90fba6906338`, VALID `ota_1`, API idle. The full host qualification
-suite passes without SKIP; the single M3 ESP-IDF 6.0.2 build, board identity,
-image budget, restart-capture link/raw gates, documentation and signed package
-checks pass. Its matching BIN/ELF and hashed verification artifacts are
-retained locally. Signed OTA and atomic Hercules v4 profile replacement pass;
-the registry reports the 5592-byte exact `06F8:B12B` profile. Other profiles
-are preserved. The operator confirmed the GUI returned normally. Hercules MIDI
-and profile binding are active, but audio startup is rejected before control
-configuration; physical audio/controls remain pending. Original crash
-bytes remain unchanged. S2 testing stays operator-closed and no public channel
-or release was updated. Details: [Hercules record](validation/HERCULES_INPULSE_500_PREPARATION_20261010.md).
+Latest installed diagnostic/Hercules-support baseline: clean `04f0cfb6`,
+`M3-dev-g04f0cfb6dba3`, VALID `ota_0`, API idle, both decks stopped. Hercules
+`06F8:B12B` MIDI/profile and UAC1 full-speed packed 24-bit/44100-Hz playback
+are active. Explicit feedback updates grow without invalid values. The missing
+HCD integration was its 512-byte HS periodic FIFO, below Hercules MPS 540;
+the experiment now uses 640 bytes while standard layouts remain unchanged.
+Full host qualification of the claim diagnostic passed without SKIP; the final
+FIFO patch additionally passes four compiled policy configurations. The exact
+final M3 ESP-IDF 6.0.2 build, board identity/budget, restart link/raw gates,
+signed bundle/manifest and local OTA pass. Matching BIN/ELF and hashed evidence
+are retained. JC builds and public release were not run.
 
-The operator subsequently confirmed the GUI and Hercules connection. Exact
-`06F8:B12B` MIDI/profile activation passes; the full-speed captured descriptor
-exposes asynchronous UAC1, packed 24-bit/4ch/44100 Hz with explicit 3-byte
-feedback. The shared UAC1 feedback implementation passes full host qualification
-and the M3 build and is installed as `90fba690`. Its startup selects 24-bit
-44100 Hz but cannot claim the audio interface. A diagnostic extension preserves
-the exact claim rejection code without changing MIDI or recovery behavior;
-focused allocation/ownership tests pass, build/install pending. The initial
-OTA observer timed out while the PC was disconnected; subsequent Wi-Fi
-reconnection verified the exact image VALID. Physical audio remains NOT RUN.
-Generated HCD analysis then identified its HS periodic FIFO limit of 512 bytes,
-below Hercules MPS 540. The next candidate raises only the experimental HS
-controller capacity to 640 bytes; executable four-configuration FIFO admission
-tests pass, preserving standard layouts and bulk/MIDI capacity.
+The operator-confirmed combined 60.078-s test passes MAIN/headphones, both
+jogs/Browse, PFL D1/D2, native headphone Mix/Volume and fluid waveforms. All 85
+samples were audited: all 22 strict deltas zero, 649 MIDI packets, output-late
+delta zero. This is a short smoke, not full Hercules qualification. Profile is
+5592 bytes, v4; other stored profiles remain unchanged. Details and remaining
+gates: [Hercules record](validation/HERCULES_INPULSE_500_PREPARATION_20261010.md).
+
+The outgoing `90fba690` OTA restart produced a natural panic even though the
+new image reached VALID. The 7776-byte raw dump and captured core-0 register
+sequence decode against its exact retained ELF into `Cache_WriteBack_All`.
+Capture/export is proven; the reason for the bus fault and restart reliability
+remain open. The original historical dump is preserved separately. See
+[natural restart capture](validation/RESTART_BUS_CAPTURE_20261010.md#first-natural-captured-ota-restart-fault).
+S2 testing stays operator-closed; no push, release or public OTA occurred.
 
 [Restart bus capture implementation](validation/RESTART_BUS_CAPTURE_20261010.md)
 adds bounded shared IRAM hooks and 256 bytes of internal RTC user-coredump memory

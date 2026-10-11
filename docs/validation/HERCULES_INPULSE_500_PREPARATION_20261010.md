@@ -1,6 +1,7 @@
 # Hercules Inpulse 500 preparation, 2026-10-10
 
-Status: matching firmware/profile installed; physical M3 Hercules checks pending.
+Status: matching firmware/profile installed; combined physical 60-second smoke
+passed on `04f0cfb6`; full Hercules qualification remains open.
 The initial Windows/offline preparation below did not alter the then-running
 `3f3605a7` S2 soak, controller profile, firmware, USB connections or workload.
 The later software qualification and installation are recorded separately below.
@@ -240,3 +241,53 @@ remain unchanged. An executable gate compiles the actual CMake replacement
 block for all four board/experiment combinations and checks packet admission,
 bulk/MIDI capacity, total FIFO bounds and unchanged standard layouts. It passes.
 The claim-code diagnostic is retained to distinguish any further startup error.
+
+## FIFO correction installed and combined physical smoke
+
+Clean source `04f0cfb6dba310e29192f784ac5c06f84dd20c86` is installed as
+`M3-dev-g04f0cfb6dba3`, VALID `ota_0`, matching ELF
+`43ff2a28650883994261fcd8dfcc6072bb9591660d6271ea1653ce1bdba5542c`.
+BIN: 2,602,208 bytes, SHA-256
+`8ae0b087143f17231e8e88632b343c401707e0bc8a1979d73929a2e54c8a56a6`.
+Signed bundle: 2,602,396 bytes, SHA-256
+`56db91057350e4aa3cb3fb68b3749465ee1e2916ec7e7627a030dbf8bd884b71`.
+The M3 ESP-IDF 6.0.2 build, board/budget, linked capture/raw gates and signature
+checks pass. The full host qualification of the claim diagnostic passed exit 0,
+no SKIP; the subsequent FIFO-only change passes the additional four-configuration
+production-policy executable gate. No JC build was run. Matching artifacts and
+verification scope are retained at
+`.cache/hercules-fifo-candidate-04f0cfb6/pajoniiir-m3-M3-dev-g04f0cfb6dba3/`.
+
+One marked local OTA returned HTTP 200 and the new image reached VALID/idle.
+Hercules audio starts without claim/configuration/prime error: full-speed,
+44100 Hz, packed 24-bit, subslot 3. Feedback updates grow, invalid count remains
+zero. Both decks were stopped. Installation evidence:
+`.cache/hercules-fifo-wireless/20261010T221928Z/`.
+
+The outgoing `90fba690` restart also produced a natural 7776-byte panic in
+`ota_reboot`. It was exported and checksum/identity-validated against the exact
+outgoing ELF; the captured register sequence resolves to `Cache_WriteBack_All`.
+This is not a clean-restart PASS. See the separate
+[natural restart evidence](RESTART_BUS_CAPTURE_20261010.md#first-natural-captured-ota-restart-fault).
+The historical 7456-byte original is preserved, not overwritten in the host
+archive. No further reset or intentional fault was introduced.
+
+The combined 60.078-s test used Casanova Action (44100 Hz, +5%) and Ritam moj
+(48000 Hz, -5%), both MT and 4-beat loops, operator-confirmed zoom 8, normal
+Wi-Fi, PCM5102A MAIN 48000 Hz and Hercules headphones 44100 Hz. The operator
+rotated both jogs/Browse and checked PFL D1/D2 plus native headphone Mix/Volume.
+All controls, both audio outputs and waveforms were confirmed normal.
+
+All 85 samples pass the independent audit: exact source, active healthy
+44100-Hz stream, both MT/loops/playing, all 22 strict counters unchanged.
+There were 649 new MIDI packets and zero new output-late events. The idle
+underflow baseline 4,709,681 predates this test; its playback delta is zero,
+not a claim that the since-boot counter was zero. Both decks were safely stopped.
+Evidence: `.cache/hercules-inpulse-500/combined-60s-20261010T222234Z/`, including
+original result, final status/firmware/UI/descriptor/bus trace, separate operator
+confirmation/sample audit and SHA-256 manifest.
+
+This closes the combined short smoke only. Full pad/FX/LED/load/screensaver
+coverage, reconnect/power and long Hercules qualification remain NOT RUN;
+RCA MAIN is not the PCM5102A reference. Restart fault root cause also remains
+open. No S2 gate is reopened, and no push, release or public OTA is authorized.

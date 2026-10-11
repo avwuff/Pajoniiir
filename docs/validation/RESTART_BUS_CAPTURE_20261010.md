@@ -168,3 +168,40 @@ above; no new PANIC replaced it during this OTA. Outgoing `58f09941` and install
 `0b08fb90` matching ELF archives are retained. The user did not request a new
 flash-image backup. Future natural PANIC capture and restart reliability remain
 NOT RUN; no fault is intentionally induced and S2 tests stay closed.
+
+## First natural captured OTA restart fault
+
+The authorized local OTA from clean `90fba690` to `04f0cfb6` with Hercules
+attached completed upload and booted the exact new image VALID, but replaced
+the device's crash slot with a natural outgoing `ota_reboot` panic. Both decks
+were stopped. The old 7456-byte original remains byte-identical in its separate
+archive; no intentional fault or repeat upload was performed.
+
+The new raw dump is 7776 bytes, SHA-256
+`356d0a050d773a9eb287f7a1da51a1e9ba1c67bdb9d99e0af85d47d6902a4a14`.
+It is retained as `natural-ota-panic.bin` under
+`.cache/hercules-fifo-wireless/20261010T221928Z/`, together with download
+headers/status, decoded JSON, matching-symbol results and disassembly.
+The decoder validates checksum, exact extent, full outgoing BIN/ELF association
+and the dump's `38c637996` prefix against outgoing ELF SHA-256
+`38c63799653e616c0f707ddda7433b70423681aa5c8d1c86dd7463a950315387`.
+Its nine-character stored prefix remains the explicit dump association limit.
+Export occurred with stopped decks and the new idle USB stream active; this
+was outside a playback qualification window. The new image was not reset.
+
+Core 0's captured record is valid at restart phase 2 (`esp_restart_noos`).
+The frame's PC is `0x4ff0c8e0`, cause `0x7`, fault address `0x3ff1009c`;
+the contemporaneous CSR cause is `0x30000007`. Three valid queued-store PCs
+resolve to `Cache_WriteBack_All` at `0x4ff0c8d0`, `0x4ff0c8d4` and
+`0x4ff0c8de`, targeting `0x3ff100a0`, `0x3ff100a4`, `0x3ff10098`.
+The return address resolves to `esp_restart_noos_inner`, line 165 of the pinned
+ESP-IDF 6.0.2 source. Disassembly also identifies the preceding store at
+`0x4ff0c8cc` to `CACHE_SYNC_MAP_REG` (`0x3ff1009c`). This explains the
+normalized summary PC and establishes the cache-writeback register sequence
+as the fault context. It does not establish why the bus rejected the access,
+or prove that a specific peripheral caused it. Core 1 has no captured record.
+Sampling is sequential on one core, not an atomic bus snapshot.
+
+Natural raw capture/export/decoding now has actual-device evidence. Restart
+reliability remains open even though installation reached VALID; no cache
+writeback operation was bypassed or disabled as a speculative fix.
