@@ -2,7 +2,22 @@
 
 Status: **current documentation authority, reconciled 2026-10-11**.
 
-Latest installed restart/Hercules-support candidate: clean `ac9287af`,
+Latest installed manual-loop candidate: clean `e16ecfb5`,
+`M3-dev-ge16ecfb5e7b0`, VALID `ota_0`, exact ELF
+`96279a267ef9a93f89148ba01de95519c93a87d6581f609e576739002323252f`.
+Complete host qualification without SKIP, M3 ESP-IDF 6.0.2 build, identity/budget,
+restart link placement and signed packaging pass. One local OTA returned HTTP
+200; the exact image reached VALID and both decks remained stopped. Hercules
+MIDI/UAC1 44100-Hz stream is healthy. Operator confirmed GUI restoration and
+readiness for the targeted manual-loop retest. That 90.406-s / 164-sample test
+passes all 22 strict deltas and output-late delta zero. Both physical IN/OUT/Exit
+routes and decoder prefix publications are observed, with both decks stopped.
+Operator confirmed normal loop/Exit response, clean MAIN/Hercules headphones
+and fluid waveforms. The observed manual-OUT PCM regression is closed for this
+exact tested configuration; other gates stay open.
+No JC build, push, release or public OTA was performed.
+
+Previous installed restart/Hercules-support candidate: clean `ac9287af`,
 `M3-dev-gac9287af4a4c`, VALID `ota_1`, API idle, both decks stopped. Hercules
 `06F8:B12B` MIDI/profile and UAC1 full-speed packed 24-bit/44100-Hz stream
 are active; decks are stopped. Explicit feedback updates grow without invalid values. The missing
@@ -54,8 +69,10 @@ Both decks stopped; operator noticed no symptom and identified D2 loop controls.
 The decoder's FLAC-only retained-IN prefix left indexed MP3 with only a 2048-frame
 reseek reserve. A bounded correction extends prefix eligibility to verified-index
 MP3; real decoder/prefix continuation and slow-seek host regressions pass.
-The complete host qualification suite passes without SKIP; M3 build/package
-and physical retest remain pending.
+The complete host qualification suite and the exact M3 build/package pass;
+the new `e16ecfb5` is installed VALID. Targeted manual-loop telemetry passes;
+operator audio/visual confirmation also passes. Previously checked CUE/PLAY
+handoff and Sync are retained per operator clarification; no repeat scheduled.
 Evidence and limits: [manual loop failure](validation/HERCULES_INPULSE_500_PREPARATION_20261010.md#manual-loop-transport-failure-and-bounded-mp3-correction-2026-10-11).
 
 On earlier exact `04f0cfb6`, the operator-confirmed combined 60.078-s test passes MAIN/headphones, both

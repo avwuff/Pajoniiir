@@ -470,3 +470,67 @@ Original failed result/status/diagnostic evidence, operator context, independent
 `.cache/hercules-inpulse-500/transport-loop-20261011T113112Z/`. The original
 runner's empty `final:` error follows its strict-counter assertion; subsequent
 post-stop snapshots were saved separately without rewriting original evidence.
+
+### Exact manual-loop candidate and installation
+
+Clean source `e16ecfb5e7b0daef81e4640ba46e9f9409184963`, version
+`M3-dev-ge16ecfb5e7b0`, passes the M3 ESP-IDF 6.0.2 build with the unchanged
+experimental USB3-controller/USB2-storage configuration. Board/component
+isolation and identity, image budget, linked restart IRAM/interception and signed
+bundle/manifest checks pass. JC builds were deliberately not run while the
+physical bug is still under validation.
+
+| Artifact | Bytes | SHA-256 |
+| --- | --- | --- |
+| BIN | 2602528 | `9d686b07b36c94cfc5526d867ef02ad3ccbb410454ca0633b7a891f54b268f80` |
+| Signed bundle | 2602716 | `41cac594022ec0f3c38383b419bebb48ee2adf27f9da410b55a674d9f6e46e24` |
+| Image ELF identity | -- | `96279a267ef9a93f89148ba01de95519c93a87d6581f609e576739002323252f` |
+
+One stopped local OTA returned HTTP 200. The exact expected image reached
+VALID `ota_0` and API idle; both decks stayed stopped, Hercules profile and
+healthy 44100-Hz stream returned. The existing crash summary remained unchanged;
+this is summary equality, not a new raw-dump hash audit. The operator confirmed
+normal GUI restoration and readiness for a targeted manual-loop retest. The
+same Ena/Jura tracks were loaded, zero pitch/no MT/no active loop, and positioned
+at 8 s while stopped. Physical manual OUT and wider acceptance remain pending.
+
+Package and retained debug archive:
+`.cache/hercules-mp3-prefix-candidate/pajoniiir-m3-M3-dev-ge16ecfb5e7b0/`.
+Install evidence: `.cache/hercules-inpulse-500/mp3-prefix-ota-20261011T115334Z/`;
+prepared snapshot: `.cache/hercules-inpulse-500/manual-loop-prepared-20261011T115432Z/`.
+No push, release or public OTA was performed. S2 remains operator-closed.
+
+### Targeted manual IN/OUT/Exit retest
+
+On exact clean `e16ecfb5`, VALID `ota_0`, the targeted window completed
+90.406 s / 164 samples / 20 new MIDI packets. All 22 strict deltas and
+output-late delta are zero. A full-sample independent audit confirms stable
+identity, unchanged loaded titles, healthy Hercules 44100-Hz stream, no reboot
+and both decks stopped at the end.
+
+D2's manual 11466..13839-ms loop activated at 11.406 s and exited at 20.437 s;
+three position wraps were observed. D1's 10458..13375-ms loop activated at
+32.093 s and exited at 39.406 s; two wraps were observed. Both activations
+and exits occurred during playback. The production journal on boot 420 records
+`LOOP_PREFIX_PRIMED` for both decks: 44100 retained frames and continuation
+exactly 1000 ms after IN. This confirms that the new path was exercised, not
+merely that a counter happened to stay zero. Operator confirmed completing the
+sequence ("jesam") and then confirmed "Da, sve je bilo uredno" in response to
+the explicit loop/Exit, MAIN/Hercules headphones and waveform question.
+This closes the observed manual-OUT PCM regression for this exact image and
+tested two-track/zero-pitch/no-MT configuration: telemetry and physical PASS.
+It is not qualification of
+loop resize, all CUE/Sync actions, dual MT workload or final timing soak.
+
+Original baseline, JSONL, final snapshots/raw diagnostic text, runner,
+independent audit and SHA-256 manifest are retained at
+`.cache/hercules-inpulse-500/manual-loop-retest-20261011T115534Z/`.
+
+The operator subsequently clarified that CUE/PLAY handoff and Sync had already
+been checked. Retain those previous checks; do not schedule a repeat solely
+because the encompassing transport window ended on the separate manual-OUT
+failure. The saved `ac9287af` window directly observes D1 Sync ON at 83.313 s
+and OFF at 86.172 s, before the first PCM increase; it does not observe a D2
+Sync transition. The operator's wider previous-control report is kept separate
+from this sampled evidence and from the new-image manual-loop PASS. The MP3
+prefix change does not alter CUE/PLAY/Sync mapping or semantic admission.
