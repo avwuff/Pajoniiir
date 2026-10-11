@@ -2,6 +2,15 @@
 
 Status: **current documentation authority, reconciled 2026-10-11**.
 
+Latest Hercules wake/protection gates on unchanged clean `e16ecfb5`, VALID
+`ota_0`: first PLAY D1 wakes screensaver without playback; subsequent PLAY
+starts normally. Physical normal/Shift LOAD on each playing deck and web LOAD
+are refused, with unchanged tracks and operator-confirmed clean audio.
+The dual-playing window completed 90.485 s, all 22 strict deltas and output-late
+delta zero, final decks stopped. Full-sample audits pass. Cable reconnect/cold
+power, wider controls, final mixed-rate MT smoke and soak remain open.
+Evidence: [Hercules wake and LOAD LOCK](validation/HERCULES_INPULSE_500_PREPARATION_20261010.md#hercules-screensaver-wake-and-load-lock-2026-10-11).
+
 Latest pad/FX/LED observation on `e16ecfb5`: 180.281 s / 313 samples /
 136 MIDI packets, all 22 strict deltas and output-late delta zero, both decks
 finally stopped. Sampled loop changes are incomplete relative to the requested

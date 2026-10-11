@@ -36,6 +36,13 @@ previous CUE/PLAY handoff and Sync checks without scheduling duplicates.
 See the preparation record for exact
 hashes, evidence and the combined remaining operator blocks.
 
+On unchanged `e16ecfb5`, first physical PLAY D1 wakes screensaver without
+starting either deck; the next PLAY starts normally. Both decks also pass
+normal/Shift LOAD LOCK and authenticated web admission during a 90.485-s
+dual-playing window, with all 22 strict deltas/output-late zero and operator
+confirmation of clean audio. Cable reconnect/cold power and final qualification
+remain separate open gates.
+
 The manufacturer documents 24-bit, 44100-Hz audio, MAIN channels 1/2 and
 headphones 3/4. The JSON `audio` section is descriptive: the compiler does
 not serialize its channel/rate fields. The corrected 44100 preference

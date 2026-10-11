@@ -371,10 +371,10 @@ them or expand the profile solely to finish a checklist.
 
 | Combined block | Checks and completion evidence | Current-image state |
 | --- | --- | --- |
-| Navigation, protection and transport | Both LOAD/Shift+LOAD routes with stopped decks, LOAD LOCK on each playing deck, CUE hold/release and PLAY handoff, Sync/Shift+Sync, Quantize/range, loop rotary/In/Out/exit; exact titles and other-deck preservation | PARTIAL: stopped normal/shifted LOAD and Browse accepted; previous CUE/PLAY/Sync checks retained per operator; manual IN/OUT/Exit passes on `e16ecfb5`; protection/range and remaining rotary coverage open |
+| Navigation, protection and transport | Both LOAD/Shift+LOAD routes with stopped decks, LOAD LOCK on each playing deck, CUE hold/release and PLAY handoff, Sync/Shift+Sync, Quantize/range, loop rotary/In/Out/exit; exact titles and other-deck preservation | PARTIAL: stopped normal/shifted LOAD and Browse accepted; previous CUE/PLAY/Sync checks retained per operator; manual IN/OUT/Exit and playing normal/Shift LOAD LOCK plus web admission pass on `e16ecfb5`; Quantize/range and complete rotary coverage open |
 | Mixer, pads/FX and visible feedback | Both pitch/fader/trim/EQ/filter endpoints, crossfader and intentional PCM MASTER; each implemented pad bank on both decks, press/release and Shift behavior; mode/transport/PFL/loop LEDs, pad colours and VU. Use existing source cue recall; local cue writes/deletion require an explicitly disposable test track | PARTIAL: pitch/fader/Gain/EQ/filter/crossfader response observed; exact analog calibration, MASTER, pads/FX/LED sweep open |
 | Dual audio and controls | One short monitored mixed-rate MT/loop block, opposite pitch and zoom 8: rotate both jogs/Browse, check PFL D1/D2 and native headphone blend/volume endpoints, then hands off for listening/dual waveform observation. Restore mixer centers/faders before starting. Audit actual MIDI growth and all 22 playback strict deltas | NOT RUN on `ac9287af`; historical `04f0cfb6` smoke retained |
-| Wake and lifecycle | First controller action only wakes screensaver; next action operates normally, with no ghost action/stuck release. Three stopped cable reconnects with matching profile/healthy 44100-Hz stream and LED resync; separate cold-power check. Controller reconnect, software restart and cold power are distinct evidence | Only one stopped software restart and GUI restoration confirmed |
+| Wake and lifecycle | First controller action only wakes screensaver; next action operates normally, with no ghost action/stuck release. Three stopped cable reconnects with matching profile/healthy 44100-Hz stream and LED resync; separate cold-power check. Controller reconnect, software restart and cold power are distinct evidence | First physical PLAY D1 wake and subsequent PLAY pass on `e16ecfb5`; prior stopped software restart/GUI restoration retained. Cable reconnect and cold power remain open |
 | Final timing window | Run the agreed long gate only on the final unchanged image/configuration, with operator listening/visual confirmation and strict loss counters. Keep isolated output-late findings separate | NOT RUN for Hercules |
 
 Capture one continuous record per short operator block and combine independent
@@ -565,3 +565,48 @@ qualification remains limited by the sampled coverage above.
 Original records, runner, independent audit and hashes:
 `.cache/hercules-inpulse-500/pads-fx-led-20261011T121720Z/`.
 No firmware change/build, OTA, push or release was performed for this window.
+
+### Hercules screensaver wake and LOAD LOCK, 2026-10-11
+
+Both windows retain exact clean `e16ecfb5`, ELF
+`96279a267ef9a93f89148ba01de95519c93a87d6581f609e576739002323252f`,
+VALID `ota_0`, Hercules MIDI/profile/UAC1 44100 Hz, and USB2 storage. No
+firmware/profile change, OTA or reboot was needed. Initial screensaver state
+was already shown; no synthetic idle timeout or forced UI state was used.
+
+The bounded read-only wake capture completed 31.641 s / 52 samples. The first
+physical PLAY D1 changed screensaver shown true -> false, `wake_consumed`
+0 -> 1, with `last_consumed_id=16` (`CTRL_ID_DECK1_PLAY`). Both decks remained
+stopped throughout and for at least five seconds after wake; MIDI packets
+increased by two. All 22 strict deltas are zero. Operator explicitly confirmed
+"GUI se probudio; oba decka zaustavljena". This accepts this first-PLAY wake
+and release sequence, not every possible controller wake input or touch case.
+
+In the following capture the next physical PLAY D1 was sampled as starting
+D1 at 42.516 s; PLAY D2 started D2 at 49.047 s. The protection window then ran
+90.485 s (139.532 s total / 215 samples / 16 new MIDI packets). Both original
+Ena/Jura titles remained unchanged and both decks played continuously until
+the runner's final safe stop. All 22 strict deltas and output-late delta are
+zero. The existing D2 loop remained active; this is a protection/control window,
+not a mixed-rate/MT or long timing qualification.
+
+The operator selected a different track and confirmed all four physical
+attempts were refused: normal LOAD D1, Shift+LOAD D1, normal LOAD D2 and
+Shift+LOAD D2, with clean MAIN/Hercules headphones. Status samples directly
+observe forwarded semantic IDs 97, 102, 98 and 103 respectively, along with
+PLAY/Shift IDs; this complements the operator report without claiming raw MIDI
+packet address inspection. Authenticated web requests to load the different
+catalog track `I'm Alive Tonight {320}` returned HTTP 409
+`Deck is playing (load lock)` independently for both decks. No accepted LOAD or
+metadata replacement occurred. Touch LOAD and admission-race tests were not
+repeated in this Hercules block.
+
+Independent audits cover every sample, exact firmware endpoints/ELF/slot,
+monotonic uptime, titles, all counter paths, stream/storage and final stopped
+state. Original results keep operator status pending; separate operator-context
+files retain the actual replies without rewriting telemetry. Runners, shared
+helper, full audits and hashes are archived at
+`.cache/hercules-inpulse-500/screensaver-wake-20261011T122450Z/` and
+`.cache/hercules-inpulse-500/load-lock-20261011T122626Z/`.
+Cable reconnect/cold power, wider control coverage, final mixed-rate MT smoke
+and the final timing soak remain open. S2 stays operator-closed.
