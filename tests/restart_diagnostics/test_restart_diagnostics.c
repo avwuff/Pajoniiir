@@ -3,6 +3,7 @@
 #include "riscv/rvruntime-frames.h"
 #include "riscv/csr.h"
 #include <assert.h>
+#include <stdbool.h>
 #include <setjmp.h>
 #include <stdio.h>
 #include <string.h>
