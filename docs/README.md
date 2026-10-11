@@ -1,12 +1,19 @@
 # Pajoniiir documentation
 
-Status: **reconciled 2026-10-06; M2.5 published; A-L merged into master**.
+Status: **reconciled 2026-10-12; stable M2.5 and shared P4 beta published**.
 
 Start with the [user manual](index.html) for operation and
 [DOCUMENTATION_STATUS.md](DOCUMENTATION_STATUS.md) for current support.
 The published configuration is JC4880 / DDJ-FLX4 / PCM5102A MAIN / FLX4 cue,
 frozen at `M2.5`. JC1060/DDJ-400/real Link peers remain
 software-verified development configurations. No S3 firmware is active.
+
+The [shared P4 beta](validation/SHARED_P4_BETA_1_20261011.md) has separate
+JC4880, JC1060 and M3 packages. The manual now covers board-specific port/audio/
+network selection, FLX4/Hercules/S2/DDJ-400 support scopes, profile setup,
+screensaver wake and signed beta installation. All existing UI screenshots remain.
+New beta images are not physically accepted by publication; JC1060 checks are
+deferred to Kayrosen, and the JC4880 long soak is explicitly waived, NOT RUN.
 
 The [M2.5 release record](validation/M2_5_RELEASE_20261006.md) records final
 artifacts, publication, short hardware/listening checks and the explicit waiver
@@ -16,7 +23,7 @@ of a new long soak. Historical v91 evidence remains tied to v91.
 
 | Document | Purpose |
 | --- | --- |
-| [User manual](index.html) | Current JC4880/FLX4 controls, media, network and maintenance |
+| [User manual](index.html) | Board/controller selection, reference FLX4 operation, media, web/network and stable/beta maintenance |
 | [Project overview](PROJECT_OVERVIEW.md) | Capabilities, topology, published vs development scope |
 | [Startup checklist](STARTUP_CHECKLIST.md) | Normal operation, new-image gates and explicit NOT RUN variants |
 | [Hardware wiring](HARDWARE_WIRING.md) / [JC4880 pinout](../firmware/main-deck-p4/PINOUT_P4.md) | Accepted topology; requalify after wiring/supply changes |
@@ -33,7 +40,7 @@ of a new long soak. Historical v91 evidence remains tied to v91.
 | [Integration/provenance](FORK_IMPROVEMENTS.md) | A-L implementation, collaborator [kayrozen](https://github.com/kayrozen), frozen donor SHA and licenses |
 | [Controller schema](CONTROLLER_PROFILE_SCHEMA.md) / [upload procedure](CONTROLLER_PROFILE_UPDATE.md) | JSON v1 and S3CP v2/v3/v4, compatibility and activation |
 | [FLX4 mapping](DDJ_FLX4_MIDI_MAP.md) | Verified MIDI addresses and per-control historical acceptance |
-| [Hercules candidate](HERCULES_INPULSE_500_MIDI_MAP.md) / [DDJ-400 candidate](../controllers/pioneer_ddj_400/README.md) | Software profile evidence; hardware NOT RUN |
+| [Hercules profile](HERCULES_INPULSE_500_MIDI_MAP.md) / [S2 scope](validation/S2_MK3_PROFILE_PREPARATION_20261007.md) / [DDJ-400 profile](../controllers/pioneer_ddj_400/README.md) | Exact-image controller evidence and partial/waived/unrun controls; DDJ-400 hardware NOT RUN |
 | [Rekordbox format](rekordbox-format-analysis.md) | PDB/ANLZ interpretation, current bounds and historical observations |
 | [JC1060 build guide](../firmware/main-deck-jc1060/README.md) | Separate entrypoint/lock, native layout, Ethernet and unrun bring-up |
 | [Simulator guide](../tests/ui_simulator/README.md) | Actual product/preview/Link presentation regression modes |

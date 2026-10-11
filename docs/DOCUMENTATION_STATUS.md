@@ -2,6 +2,15 @@
 
 Status: **current documentation authority, reconciled 2026-10-11**.
 
+Manual revision 2026-10-12: [GitHub Pages user manual](index.html) now covers
+JC4880/JC1060/M3 port/audio/network policies, FLX4/Hercules/S2/DDJ-400 support
+limits, profile setup, screensaver first-event wake and board-specific signed
+beta installation. Stable M2.5 instructions and all five original screenshots
+remain. Desktop/mobile QA checks board/controller/display/update sections,
+anchor targets, loaded images and page overflow; mobile tables scroll locally.
+M3 APSTA service behavior is distinguished from JC4880 temporary STA visits.
+Publication is through the existing Pages workflow, separate from firmware CI.
+
 The operator authorized PR #46 push/merge and GitHub beta `shared-p4-beta.1`.
 The English README is reconciled while preserving all original image embeds and
 operational instructions. The [beta record](validation/SHARED_P4_BETA_1_20261011.md)
