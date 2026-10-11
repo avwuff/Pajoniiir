@@ -8,6 +8,10 @@ item from ten service findings. All nine simulator screenshot gates, the
 full host qualification and an ordinary M3 build pass; controller-runtime
 review reports no findings in seven files. This is scoped review evidence,
 not whole-PR approval or acceptance of a new installed image.
+The separate 13-file USB-audio review found a confirmed major FS 48-kHz
+feedback packet-capacity defect. Its local repair and synthetic 16/24-bit
+regressions are recorded in the same review; physical controller formats and
+the installed accepted firmware remain unchanged.
 
 [PR 46 scoped audio review](reviews/2026-10-11-pr46-audio-review.md) reports two
 confirmed minor CodeRabbit issues repaired locally: FX-ready publication and

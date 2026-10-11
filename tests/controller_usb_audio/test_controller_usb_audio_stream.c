@@ -735,6 +735,59 @@ static void test_hs_reconnect_under_heap_pressure(void)
     puts("PASS 30 host HS reconnects: bounded retained payload, no new OUT allocation, FS releases all transfers");
 }
 
+static void test_fs_48000_fast_feedback(uint8_t sample_bytes)
+{
+    /* Synthetic FS asynchronous endpoint; this does not change the captured
+     * Hercules descriptor, whose actual advertised rate remains 44.1 kHz. */
+    uint8_t config[sizeof(hercules_fs_config)];
+    memcpy(config, hercules_fs_config, sizeof(config));
+    const unsigned packet_bytes = 50u * 4u * sample_bytes;
+    for (size_t off = 9; off < sizeof(config); off += config[off]) {
+        if (config[off] == 11 && config[off+1] == 0x24 &&
+            config[off+2] == 2 && config[off+4] == 4) {
+            config[off+5] = sample_bytes; config[off+6] = sample_bytes * 8u;
+            config[off+8] = 0x80; config[off+9] = 0xbb; config[off+10] = 0;
+        }
+        if (config[off+1] == 5 && config[off+2] == 1) {
+            config[off+4] = (uint8_t)packet_bytes;
+            config[off+5] = (uint8_t)(packet_bytes >> 8);
+        }
+    }
+    assert(controller_usb_audio_stream_is_quiesced());
+    assert(controller_usb_audio_stream_set_policy(false, true, false) == ESP_OK);
+    assert(controller_usb_audio_stream_start((void*)1, (void*)2,
+        config, sizeof(config), (void*)3, 10, 5) == ESP_OK);
+    s_control->status = USB_TRANSFER_STATUS_COMPLETED;
+    control_callback(s_control);
+    assert(s_streaming && s_target_rate == 48000 && s_format.requires_feedback);
+    const uint32_t q14 = (48u << 14) + 164u; /* approximately 48.01 frames/ms */
+    const uint8_t feedback[] = {(uint8_t)q14, (uint8_t)(q14 >> 8), (uint8_t)(q14 >> 16)};
+    assert(flx4_uac_feedback_q16(&s_format, feedback, sizeof(feedback), 48000, &s_feedback_q16));
+    s_feedback_phase = 0;
+    unsigned extra_packets = 0;
+    for (unsigned n = 0; n < 250; ++n) {
+        s_isoc_active[0] = false; /* completed ownership */
+        assert(prepare_and_submit(s_isoc[0]) == ESP_OK);
+        for (int p = 0; p < s_isoc[0]->num_isoc_packets; ++p) {
+            const unsigned frames = s_isoc[0]->isoc_packet_desc[p].num_bytes / (4u * sample_bytes);
+            assert(frames == 48 || frames == 49);
+            extra_packets += frames == 49;
+        }
+    }
+    assert(extra_packets == 10 && s_streaming && !s_faulted);
+    s_format.max_packet_size = 48u * 4u * sample_bytes;
+    uint32_t ignored;
+    assert(!flx4_uac_feedback_q16(&s_format, feedback, sizeof(feedback), 48000, &ignored));
+    s_feedback_q16 = 49u << 16; s_feedback_phase = 0;
+    s_isoc_active[0] = false;
+    const unsigned submits = review_submits;
+    assert(prepare_and_submit(s_isoc[0]) == ESP_ERR_INVALID_SIZE);
+    assert(review_submits == submits);
+    controller_usb_audio_stream_request_stop(false);
+    retire_transfers(); finish_cleanup();
+    puts("PASS FS 48-kHz fast feedback: 49-frame packets and endpoint bounds");
+}
+
 static void test_hercules_fs_feedback(void)
 {
     flx4_uac_descriptor_result_t parsed;
@@ -864,6 +917,8 @@ int main(void)
     test_generic_fixed_16bit(44100);
     test_generic_fixed_16bit(48000);
     test_hercules_fs_feedback();
+    test_fs_48000_fast_feedback(2);
+    test_fs_48000_fast_feedback(3);
     test_uac2();
     test_clock_settle();
     test_uac2_44100_fallback();

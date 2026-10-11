@@ -13,6 +13,9 @@
 
 #define STREAM_RATE_HZ 44100u
 #define STREAM_CHANNELS 4u
+/* FS 48-kHz feedback permits +5% clock correction: ceil(48 * 1.05).
+ * Endpoint and transfer byte bounds still determine each packet's limit. */
+#define STREAM_MAX_PACKET_FRAMES 51u
 #define STREAM_BYTES_PER_SAMPLE 2u
 #define STREAM_RING_FRAMES 2048u
 #define STREAM_TRANSFER_COUNT 3u
@@ -307,11 +310,11 @@ static esp_err_t prepare_and_submit(usb_transfer_t *transfer)
         } else frames = flx4_uac_packetizer_next_frames(&s_packetizer);
         const size_t bytes =
             (size_t)frames * STREAM_CHANNELS * s_format.bytes_per_sample;
-        if (frames > 48u || bytes > s_format.max_packet_size ||
+        if (frames > STREAM_MAX_PACKET_FRAMES || bytes > s_format.max_packet_size ||
             offset + bytes > transfer->data_buffer_size) {
             return ESP_ERR_INVALID_SIZE;
         }
-        int16_t pcm[48u * STREAM_CHANNELS];
+        int16_t pcm[STREAM_MAX_PACKET_FRAMES * STREAM_CHANNELS];
         int16_t *samples = s_format.bytes_per_sample == 2u ?
             (int16_t *)&transfer->data_buffer[offset] : pcm;
         portENTER_CRITICAL(&s_mux);

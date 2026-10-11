@@ -11,8 +11,12 @@ directory covered 7 files and reported no issues. Both service results were
 They do not constitute whole-PR approval. The full request previously exceeded
 the service's 150-file limit.
 
+The separate USB-audio review covered 13 files and reported one major issue,
+with service outcome `completed`. It used the same source and base above.
+
 Raw outputs are retained at `.cache/coderabbit-pr46-ui-ada14dea.ndjson` and
 `.cache/coderabbit-pr46-controller-ada14dea.ndjson`.
+The USB-audio output is `.cache/coderabbit-pr46-usb-audio-ada14dea.ndjson`.
 
 ## UI dispositions
 
@@ -31,6 +35,35 @@ Raw outputs are retained at `.cache/coderabbit-pr46-ui-ada14dea.ndjson` and
 
 Nine issues are repaired; the font issue has a documented partial disposition
 and remains open. No hardware fault is inferred from a service finding alone.
+
+## USB-audio disposition
+
+The FS asynchronous packet preparation path rejected more than 48 frames,
+although the existing feedback validator accepts a slightly faster 48-kHz
+device clock when the endpoint has capacity. A 48.01-frame/ms feedback value
+periodically requires 49 frames and previously reached `ESP_ERR_INVALID_SIZE`,
+causing the completion path to fault the stream.
+
+Packet staging and its frame bound now share a 51-frame capacity:
+`ceil(48 * 1.05)`, the upper bound of the existing supported-rate feedback
+validator. Endpoint packet bytes and transfer capacity remain authoritative
+additional checks. Staging grows by only 24 bytes (four int16 channels, three
+extra frames). The supported rates and feedback-validation tolerance are
+unchanged. This is a generic FS 48-kHz repair; the captured Hercules format
+still advertises 44.1 kHz and this does not identify a cause of earlier S2 losses.
+
+The actual stream-owner regression uses synthetic asynchronous FS endpoints
+for both 16-bit and packed 24-bit formats. It generates 1,000 packets at
+approximately 48.01 frames/ms, verifies ten 49-frame packets without a stream
+fault, and checks that an endpoint limited to 48 frames rejects the feedback
+and cannot submit an oversized packet. The captured controller fixtures are
+unchanged. The focused controller USB-audio suite passes (exit 0).
+An isolated copy with the old 48-frame guard restored fails the new regression
+at packet preparation, confirming that it detects the repaired boundary.
+After this repair, the full host qualification passes again (exit 0, no SKIP),
+including the newly registered production RGB565 fill regression, and the
+ordinary M3 ESP-IDF 6.0.2 rebuild passes (exit 0). Documentation integrity and
+`git diff --check` pass. These are local software gates; no OTA was performed.
 
 ## Validation and artifact boundary
 
