@@ -8,79 +8,6 @@
 
 # Pajoniiir
 
-**A standalone dual-deck DJ system with one ESP32-P4 firmware core for Guiton
-JC4880P443C_I_W, JC1060P470C_I_W_Y and JC-ESP32P4-M3-DEV boards. Note that JC-ESP32P4-M3-DEV board has EYOYO 5 Inch Touchscreen  **
-
-Pajoniiir hosts a Rekordbox-exported USB library and a USB DJ controller,
-renders the touchscreen UI, and runs both playback decks, DSP mixer,
-controller feedback, web control and signed OTA updates on the P4.
-
-## Shared P4 beta
-
-The shared-core development line is distributed as
-[`shared-p4-beta.1`](https://github.com/dvucinozd/Pajoniiir/releases/tag/shared-p4-beta.1),
-a **GitHub prerelease for contributor testing**. It includes separate signed
-packages for each board, compiled controller profiles, source/configuration
-provenance and SHA-256 inventories. Select the package by project identity;
-the board images are not interchangeable.
-
-The published **M2.5 JC4880/DDJ-FLX4 stable release and public OTA channels
-remain unchanged**. Beta assets are downloaded from GitHub and installed
-manually. The M3 beta uses its own `M3-dev-g<source SHA>` version and has no
-automatic pull-update discovery. This beta does not claim full production
-acceptance on every board or controller.
-
-| Target | Entrypoint / signed project | Ordinary product policy | Physical evidence |
-| --- | --- | --- | --- |
-| JC4880P443C_I_W | `firmware/main-deck-p4` / `main-deck-p4` | 800 x 480, PCM5102A MAIN, controller USB1 / storage USB0 | Named Hercules audio/control/MT/loop/seek/CUE/PFL blocks accepted on `e22ff334`; long soak explicitly waived |
-| JC1060P470C_I_W_Y | `firmware/main-deck-jc1060` / `main-deck-jc1060` | 1024 x 600, controller USB MAIN/cue, Ethernet provider, controller USB0 / storage USB1 | NOT RUN; contributor Kayrosen will test later |
-| JC-ESP32P4-M3-DEV | `firmware/main-deck-m3` / `main-deck-m3` | DSI506/FT5426 800 x 480, fixed-48-kHz PCM5102A MAIN, Wi-Fi ON, controller USB2 FS / storage USB3 HS | Historical exact-image waveform/controller/soak acceptance; later images have their own recorded scope |
-
-All three entrypoints link the same production audio, deck, Rekordbox,
-controller, UI, web and OTA modules in `firmware/p4-core`. Peripheral providers
-and product policies live under `firmware/boards`; independent protocols remain
-in `firmware/common`. Dependency versions stay pinned to ESP-IDF **6.0.2**.
-
-The shared core includes:
-
-- PDB/ANLZ metadata corrections, playlist/folder catalogs, artwork workers,
-  color waveforms, memory cues/loops and persistent media identities.
-- Source/local Hot Cue merging with slot overrides, deletion tombstones and
-  restore-source behavior. Legacy track-ID-only cues require explicit migration.
-- Shared seek/preroll/loop handling, CUE/PLAY semantics and default-ON LOAD LOCK
-  across MIDI, touch and web, including asynchronous load admission.
-- M3 FIR/search-cache and consumer-owned PCM timeline fixes, plus board-specific
-  waveform scheduling without a second playback implementation.
-- S3CP v2/v3/v4 controller profiles, connection epochs, held-state reconciliation,
-  LED feedback and descriptor-driven audio admission using the selected USB root.
-- Board/project/source identity checks, signed OTA startup health/rollback,
-  bounded journals and crash diagnostics.
-
-FLX4 remains the ordinary reference controller. The
-[Hercules Inpulse 500](controllers/hercules_djcontrol_inpulse_500/README.md) and
-[Traktor Kontrol S2 MK3](controllers/ni_traktor_s2_mk3_full/README.md) profiles
-document their supported controls and individual limits. M3 Hercules/S2 testing
-uses an **explicit experimental port swap: controller USB3, storage USB2**;
-these ordinary beta M3 assets retain the FLX4 port policy. S2 work is closed by
-operator decision with remaining checks waived. A historical hour soak qualifies
-only its exact image and configuration; it does not qualify the new beta assets.
-
-Local three-target builds, board/component/lock/image-budget checks and the full
-required-fixture host qualification passed on `722bb976`. Product UI simulator
-results and unchanged-source equivalence are recorded in the
-[final software matrix](docs/validation/SHARED_P4_FINAL_BUILD_MATRIX_20261011.md).
-Hosted CI and wider real-media/controller/physical coverage retain their explicit
-dispositions. Output-late observations remain monitoring findings, not zero-late
-claims. Recorder, alternate DJ UI and M3 Ethernet/Pro DJ Link remain experimental
-or disabled in ordinary builds.
-
-Use the [final handoff](docs/reviews/2026-10-11-shared-core-final-handoff.md),
-[integration ledger](docs/SHARED_P4_CORE_INTEGRATION.md),
-[board policies](docs/SHARED_P4_BOARDS.md),
-[JC1060 contributor handoff](docs/JC1060_BETA_HANDOFF_20261011.md) and
-[beta delivery record](docs/validation/SHARED_P4_BETA_1_20261011.md) for exact
-versions, installation boundaries and remaining gates.
-
 [![Latest release](https://img.shields.io/github/v/release/dvucinozd/Pajoniiir)](https://github.com/dvucinozd/Pajoniiir/releases/latest)
 [![Platform](https://img.shields.io/badge/platform-ESP32--P4-E7352C?logo=espressif&logoColor=white)](https://www.espressif.com/en/products/socs/esp32-p4)
 [![License: MIT](https://img.shields.io/github/license/dvucinozd/Pajoniiir)](LICENSE)
@@ -88,9 +15,15 @@ versions, installation boundaries and remaining gates.
 
 ![Pajoniiir running the dual-deck Overview screen](docs/images/Pajoniiir1.jpg)
 
-Pajoniiir plays a Rekordbox-exported USB library without a laptop. The
-ESP32-P4 hosts both the USB drive and selected controller, renders the touchscreen UI,
-runs the two playback decks and mixer, and sends MAIN and headphone-cue audio.
+**A standalone dual-deck DJ system powered by one ESP32-P4.**
+
+Pajoniiir plays a Rekordbox-exported USB library without a laptop. The P4
+hosts the USB drive and DJ controller, renders the touchscreen UI, runs both
+playback decks and DSP mixer, and provides MAIN and headphone-cue audio.
+
+One shared firmware core serves the Guition **JC4880P443C_I_W**,
+**JC1060P470C_I_W_Y** and **JC-ESP32P4-M3-DEV** boards. The M3 reference build
+uses an **EYOYO 5-inch DSI506 touchscreen**.
 
 Read the **[online user manual](https://docs.pajoniiir.eu/)** for setup,
 controls and update instructions.
@@ -103,7 +36,32 @@ controls and update instructions.
 - Headphone cue is returned through the selected supported USB controller.
 - Signed local and remote OTA updates are supported.
 
-## Release and support
+## Supported DJ controllers
+
+Support depends on the controller profile, board and firmware configuration.
+The table distinguishes tested functions from profiles awaiting hardware checks.
+
+| DJ controller | Support status | Audio and setup | Coverage and limits |
+| --- | --- | --- | --- |
+| [Pioneer DDJ-FLX4](docs/DDJ_FLX4_MIDI_MAP.md) | Reference controller; stable JC4880 support and accepted historical M3 configurations | USB MIDI/LED feedback and UAC1 headphone cue; ordinary port policy | Transport, mixer, jogs, pads, loops and effects. Exact board/image qualification is recorded separately. |
+| [Hercules DJControl Inpulse 500](controllers/hercules_djcontrol_inpulse_500/README.md) | Beta support; tested on M3 and JC4880 | USB MIDI/LED feedback, UAC1 headphones and native headphone Mix/Volume; M3 requires the experimental USB port swap | M3 exact-image hour and JC4880 short functional blocks accepted. Individual pad/FX/LED coverage remains partial; controller RCA MAIN is unqualified. |
+| [Native Instruments Traktor Kontrol S2 MK3](controllers/ni_traktor_s2_mk3_full/README.md) | Experimental M3 support; operator-closed with explicit waivers | MIDI mode, shared MIDI/LED profile and HS UAC2 headphones; controller USB3 / storage USB2 | Historical exact-image 48/44.1-kHz hours accepted. Remaining checks were waived, not passed; other boards are unqualified. |
+| [Pioneer DDJ-400](controllers/pioneer_ddj_400/README.md) | Software profile available; hardware acceptance NOT RUN | Shared MIDI/LED and USB audio implementation | Source-backed mapping; local MIDI/LED/audio/reconnect qualification is pending. Eight memory-call/store/delete inputs remain omitted. |
+
+FLX4 remains the ordinary reference controller. M3 Hercules/S2 testing uses an
+**explicit experimental port swap: controller USB3, storage USB2**; the ordinary
+beta M3 download retains FLX4 on USB2 and storage on USB3. Select a matching
+firmware configuration before activating a profile. S2 work is closed by
+operator decision with remaining checks waived.
+
+The release also includes a limited S2 basic profile and a generic MIDI-CI
+fixture for development. They are not additional hardware-qualified DJ models.
+A historical hour soak qualifies only its exact image and configuration;
+it does not qualify newly built beta assets.
+
+## Releases
+
+### Stable: JC4880 / DDJ-FLX4
 
 The current release for **JC4880 + DDJ-FLX4** is
 [`M2.5`](https://github.com/dvucinozd/Pajoniiir/releases/tag/M2.5),
@@ -123,6 +81,21 @@ M2.5 adds a built-in Pajoniiir logo for tracks without artwork in Overview
 and Library. The final image passed short OTA/startup/audio checks; the operator
 waived a new 180-minute soak because audio code is unchanged. Historical v91
 evidence remains tied to its original image.
+
+### Shared P4 beta
+
+The shared-core development line is distributed as
+[`shared-p4-beta.1`](https://github.com/dvucinozd/Pajoniiir/releases/tag/shared-p4-beta.1),
+a **GitHub prerelease for contributor testing**. It includes separate signed
+packages for each board, compiled controller profiles, source/configuration
+provenance and SHA-256 inventories. Select the package by project identity;
+the board images are not interchangeable.
+
+The published **M2.5 JC4880/DDJ-FLX4 stable release and public OTA channels
+remain unchanged**. Beta assets are downloaded from GitHub and installed
+manually. The M3 beta uses its own `M3-dev-g<source SHA>` version and has no
+automatic pull-update discovery. This beta does not claim full production
+acceptance on every board or controller.
 
 ## Improvements and collaboration
 
@@ -145,6 +118,18 @@ These contributions were integrated with the existing persistent track
 identity, audio timeline, worker ownership and signed OTA paths.
 See the [integration notes and source attribution](docs/FORK_IMPROVEMENTS.md)
 for module provenance and the detailed implementation history.
+
+## Supported boards
+
+| Target | Entrypoint / signed project | Ordinary product policy | Physical evidence |
+| --- | --- | --- | --- |
+| JC4880P443C_I_W | `firmware/main-deck-p4` / `main-deck-p4` | 800 x 480, PCM5102A MAIN, controller USB1 / storage USB0 | Named Hercules audio/control/MT/loop/seek/CUE/PFL blocks accepted on `e22ff334`; long soak explicitly waived |
+| JC1060P470C_I_W_Y | `firmware/main-deck-jc1060` / `main-deck-jc1060` | 1024 x 600, controller USB MAIN/cue, Ethernet provider, controller USB0 / storage USB1 | NOT RUN; contributor Kayrosen will test later |
+| JC-ESP32P4-M3-DEV | `firmware/main-deck-m3` / `main-deck-m3` | DSI506/FT5426 800 x 480, fixed-48-kHz PCM5102A MAIN, Wi-Fi ON, controller USB2 FS / storage USB3 HS | Historical exact-image waveform/controller/soak acceptance; later images have their own recorded scope |
+
+See the [board policies](docs/SHARED_P4_BOARDS.md) for BSP geometry, USB roots,
+audio outputs and network capabilities. Physical evidence remains tied to each
+recorded firmware image.
 
 ## Hardware
 
@@ -308,7 +293,7 @@ verification, rollback and wired-recovery instructions.
   </tr>
 </table>
 
-## DEMO Video
+## Demo video
 
 [![Watch the video](https://img.youtube.com/vi/3RuC3cYCGyE/hqdefault.jpg)](https://youtu.be/3RuC3cYCGyE)
 
@@ -328,6 +313,44 @@ The printable enclosure and assembly references are stored in
 
 Confirm dimensions, orientation, supports and material settings in your slicer
 before printing.
+
+## Shared core and development
+
+All three entrypoints link the same production audio, deck, Rekordbox,
+controller, UI, web and OTA modules in `firmware/p4-core`. Peripheral providers
+and product policies live under `firmware/boards`; independent protocols remain
+in `firmware/common`. Dependency versions stay pinned to ESP-IDF **6.0.2**.
+
+The shared core includes:
+
+- PDB/ANLZ metadata corrections, playlist/folder catalogs, artwork workers,
+  color waveforms, memory cues/loops and persistent media identities.
+- Source/local Hot Cue merging with slot overrides, deletion tombstones and
+  restore-source behavior. Legacy track-ID-only cues require explicit migration.
+- Shared seek/preroll/loop handling, CUE/PLAY semantics and default-ON LOAD LOCK
+  across MIDI, touch and web, including asynchronous load admission.
+- M3 FIR/search-cache and consumer-owned PCM timeline fixes, plus board-specific
+  waveform scheduling without a second playback implementation.
+- S3CP v2/v3/v4 controller profiles, connection epochs, held-state reconciliation,
+  LED feedback and descriptor-driven audio admission using the selected USB root.
+- Board/project/source identity checks, signed OTA startup health/rollback,
+  bounded journals and crash diagnostics.
+
+Local three-target builds, board/component/lock/image-budget checks and the full
+required-fixture host qualification passed on `722bb976`. Product UI simulator
+results and unchanged-source equivalence are recorded in the
+[final software matrix](docs/validation/SHARED_P4_FINAL_BUILD_MATRIX_20261011.md).
+Hosted CI and wider real-media/controller/physical coverage retain their explicit
+dispositions. Output-late observations remain monitoring findings, not zero-late
+claims. Recorder, alternate DJ UI and M3 Ethernet/Pro DJ Link remain experimental
+or disabled in ordinary builds.
+
+Use the [final handoff](docs/reviews/2026-10-11-shared-core-final-handoff.md),
+[integration ledger](docs/SHARED_P4_CORE_INTEGRATION.md),
+[board policies](docs/SHARED_P4_BOARDS.md),
+[JC1060 contributor handoff](docs/JC1060_BETA_HANDOFF_20261011.md) and
+[beta delivery record](docs/validation/SHARED_P4_BETA_1_20261011.md) for exact
+versions, installation boundaries and remaining gates.
 
 ## Build from source
 
