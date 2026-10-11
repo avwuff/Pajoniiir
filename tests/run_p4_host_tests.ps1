@@ -3557,6 +3557,15 @@ if ($pythonSource) {
     Invoke-Step -Name "run explicit S2 DMA policy admission" `
         -WorkingDirectory $RepoRoot -Executable $pythonSource `
         -Arguments @("tests/board_adapter/test_s2_dma_policy.py")
+    Invoke-Step -Name "run relocated board build verifier" `
+        -WorkingDirectory $RepoRoot -Executable $pythonSource `
+        -Arguments @("tests/board_adapter/test_build_verifier.py")
+    Invoke-Step -Name "run incremental board identity generation" `
+        -WorkingDirectory $RepoRoot -Executable $pythonSource `
+        -Arguments @("tests/board_adapter/test_build_identity.py")
+    Invoke-Step -Name "run M3 DMA reclock boundary" `
+        -WorkingDirectory $RepoRoot -Executable $pythonSource `
+        -Arguments @("tests/board_adapter/test_m3_dma_reclock.py")
     Invoke-Step -Name "run ota_signing" `
         -WorkingDirectory (Join-Path $RepoRoot "tests/ota_signing") `
         -Executable $pythonSource `

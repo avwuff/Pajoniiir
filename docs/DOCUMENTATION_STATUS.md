@@ -2,6 +2,17 @@
 
 Status: **current documentation authority, reconciled 2026-10-11**.
 
+[PR 46 startup/board/build review](reviews/2026-10-11-pr46-startup-board-build-review.md)
+covers six further scopes (51 files, three confirmed service findings), all
+repaired locally. Build-time identity refresh prevents stale SHA/dirty metadata;
+SD DMA eligibility and the M3 I2S reclock diagnostic boundary are corrected.
+Manual repairs support relocated build verification and selected-board startup
+reporting. Full host qualification and the ordinary M3 ESP-IDF 6.0.2 build pass,
+including actual image/isolation verification; dependency locks are unchanged.
+Ubuntu/WSL identity execution remains NOT RUN because Ninja is absent; CI now
+declares CMake/Ninja installation explicitly, without claiming a new CI run.
+The installed firmware and frozen delivery artifacts remain unchanged.
+
 [PR 46 web/OTA/library/storage review](reviews/2026-10-11-pr46-web-storage-review.md)
 covers eight further directories (71 files, 11 findings), all addressed locally.
 Repairs preserve HTTP during optional mDNS failure, fence an activated OTA

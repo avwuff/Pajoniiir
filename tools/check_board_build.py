@@ -34,10 +34,13 @@ def verify(build: Path, project: str, experimental_recorder: bool = False,
     for link_component in ("djlink", "dj_link_core", "dj_link_service"):
         assert link_component in components, "shared network component missing"
     assert {"board_adapter", "audio_engine", "deck_core", "library", "ui"} <= components
-    # Build directories may be build_recorder/build_link; their parent remains
-    # the board entrypoint. Every portable component in the graph must come
+    # IDF permits build directories outside the entrypoint, and Docker records
+    # container paths. Resolve source paths from this checkout's verifier.
+    # Every portable component in the graph must come
     # from the canonical core, including optional archives that GC later drops.
-    core = build.resolve().parent.parent / "p4-core/components"
+    root = Path(__file__).resolve().parents[1]
+    project_path = root / "firmware" / project
+    core = root / "firmware/p4-core/components"
     names = set(path.name for path in core.iterdir() if (path / "CMakeLists.txt").is_file())
     required_core = {"p4_app", "board_adapter", "board_capabilities", "audio_engine", "deck_core", "library", "ui",
                      "web_server", "p4_ota", "controller_profile_manager", "controller_profile_runtime",
@@ -73,7 +76,6 @@ def verify(build: Path, project: str, experimental_recorder: bool = False,
         assert "#define CONFIG_BSP_ES8311_MONITOR 1" not in config, "USB-only sink must not use codec pacing"
     # CI builds inside /project in Docker, then checks from the runner host.
     # The recorded container path is not a filesystem path on that host.
-    project_path = build.resolve().parent
     lock = (project_path / "dependencies.lock").read_text()
     lvgl = re.search(r"^  lvgl/lvgl:\n((?:    .*\n|\n)*)", lock, re.MULTILINE)
     assert lvgl and "version: 9.5.0" in lvgl.group(1), "LVGL version drift"
@@ -86,10 +88,9 @@ def verify(build: Path, project: str, experimental_recorder: bool = False,
     assert re.fullmatch(r"[0-9a-f]{40}", identity["source_sha"]), "invalid compiled source SHA"
     assert identity["source_dirty"] in (0, 1), "invalid source cleanliness flag"
     assert identity["source_sha"].encode() in image, "source metadata not bound into the application"
-    root = project_path.parent.parent
     current_sha = subprocess.check_output(["git", "-C", str(root), "rev-parse", "HEAD"], text=True).strip()
     dirty = bool(subprocess.check_output(["git", "-C", str(root), "status", "--porcelain"], text=True).strip())
-    assert identity == {"source_sha": current_sha, "source_dirty": int(dirty)}, "stale build identity; reconfigure and rebuild"
+    assert identity == {"source_sha": current_sha, "source_dirty": int(dirty)}, "stale build identity; rebuild from current source"
     print(f"PASS {project}: {len(image)} bytes, isolated BSP, LVGL 9.5.0, app identity")
 
 

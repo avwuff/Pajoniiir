@@ -7,7 +7,7 @@
 static void *s_bounce;
 static bool buffer_aligned(int slot, const void *buffer, size_t bytes)
 {
-    if (esp_ptr_external_ram(buffer)) return false;
+    if (esp_ptr_external_ram(buffer) || !esp_ptr_dma_capable(buffer)) return false;
     return sdmmc_host_check_buffer_alignment(slot, buffer, bytes);
 }
 esp_err_t board_sd_dma_configure(sdmmc_host_t *host, bool internal_bounce)

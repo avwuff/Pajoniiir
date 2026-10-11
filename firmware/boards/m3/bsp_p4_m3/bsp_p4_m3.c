@@ -786,6 +786,7 @@ esp_err_t bsp_audio_main_i2s_set_sample_rate(uint32_t sample_rate)
     }
     i2s_std_clk_config_t clk_cfg = I2S_STD_CLK_DEFAULT_CONFIG(sample_rate);
     ESP_RETURN_ON_ERROR(i2s_channel_reconfig_std_clock(s_i2s_tx_pcm5102, &clk_cfg), TAG, "pcm5102 clock reconfig failed");
+    s_main_dma_last_us = 0u;
     ESP_RETURN_ON_ERROR(i2s_channel_enable(s_i2s_tx_pcm5102), TAG, "pcm5102 enable failed");
     s_i2s_tx_pcm5102_enabled = true;
     return ESP_OK;

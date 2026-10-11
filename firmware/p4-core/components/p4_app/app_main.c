@@ -365,7 +365,7 @@ void pajoniiir_common_app_main(void)
     ESP_ERROR_CHECK(p4_ota_init());
 
     ESP_LOGI(TAG, "Pajoniiir P4 main deck firmware starting");
-    ESP_LOGI(TAG, "Board: JC4880P443C_I_W (ESP32-P4)");
+    ESP_LOGI(TAG, "Board: %s (ESP32-P4)", board_capabilities_get()->name);
     // Log the reason for the most recent reset. A spontaneous reboot during use
     // that reports BROWNOUT points at power (bus-powered USB drive current
     // spike); PANIC/WDT points at firmware. Visible at the default WARN level.
@@ -377,7 +377,7 @@ void pajoniiir_common_app_main(void)
         board_capabilities_get()->wifi && app_settings_get().wifi_remote;
     ESP_ERROR_CHECK(media_io_gate_init());
 
-    // ── Board support (stubs until hardware arrives) ─────────────────────────
+    // ── Selected board support ──────────────────────────────────────────────
     firmware_resources_phase("display");
     ESP_ERROR_CHECK(bsp_display_init());
     ESP_ERROR_CHECK(bsp_touch_init());

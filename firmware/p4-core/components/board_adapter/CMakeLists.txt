@@ -16,25 +16,20 @@ idf_component_register(SRCS "board_sd_dma.c" "board_build_identity.c" INCLUDE_DI
     PRIV_REQUIRES esp_timer)
 
 find_package(Git REQUIRED)
-execute_process(COMMAND "${GIT_EXECUTABLE}" rev-parse HEAD
-    WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}"
-    RESULT_VARIABLE source_result OUTPUT_VARIABLE PAJONIIIR_SOURCE_SHA
-    OUTPUT_STRIP_TRAILING_WHITESPACE)
-string(LENGTH "${PAJONIIIR_SOURCE_SHA}" sha_bytes)
-if(NOT source_result EQUAL 0 OR NOT sha_bytes EQUAL 40 OR
-   NOT PAJONIIIR_SOURCE_SHA MATCHES "^[0-9a-f]+$")
-    message(FATAL_ERROR "A verified Git source SHA is required")
-endif()
-execute_process(COMMAND "${GIT_EXECUTABLE}" status --porcelain
-    WORKING_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}"
-    RESULT_VARIABLE source_result OUTPUT_VARIABLE source_dirty)
-if(NOT source_result EQUAL 0)
-    message(FATAL_ERROR "Cannot verify source cleanliness")
-endif()
-set(PAJONIIIR_SOURCE_DIRTY 0)
-if(source_dirty)
-    set(PAJONIIIR_SOURCE_DIRTY 1)
-endif()
-configure_file(board_build_identity_generated.h.in board_build_identity_generated.h @ONLY)
-configure_file(board_build_identity.json.in "${CMAKE_BINARY_DIR}/board_build_identity.json" @ONLY)
+set(PAJONIIIR_IDENTITY_SOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}")
+set(PAJONIIIR_IDENTITY_HEADER "${CMAKE_CURRENT_BINARY_DIR}/board_build_identity_generated.h")
+set(PAJONIIIR_IDENTITY_JSON "${CMAKE_BINARY_DIR}/board_build_identity.json")
+set(identity_generator "${CMAKE_CURRENT_LIST_DIR}/../../cmake/generate_board_identity.cmake")
+include("${identity_generator}")
+add_custom_target(board_build_identity_refresh
+    COMMAND "${CMAKE_COMMAND}"
+        "-DGIT_EXECUTABLE=${GIT_EXECUTABLE}"
+        "-DPAJONIIIR_IDENTITY_SOURCE_DIR=${PAJONIIIR_IDENTITY_SOURCE_DIR}"
+        "-DPAJONIIIR_IDENTITY_HEADER=${PAJONIIIR_IDENTITY_HEADER}"
+        "-DPAJONIIIR_IDENTITY_JSON=${PAJONIIIR_IDENTITY_JSON}"
+        "-DPAJONIIIR_RELEASE_BUILD=${PAJONIIIR_RELEASE_BUILD}"
+        -P "${identity_generator}"
+    BYPRODUCTS "${PAJONIIIR_IDENTITY_HEADER}" "${PAJONIIIR_IDENTITY_JSON}"
+    VERBATIM)
+add_dependencies(${COMPONENT_LIB} board_build_identity_refresh)
 target_include_directories(${COMPONENT_LIB} PRIVATE "${CMAKE_CURRENT_BINARY_DIR}")
