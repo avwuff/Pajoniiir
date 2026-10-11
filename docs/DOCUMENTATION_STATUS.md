@@ -11,15 +11,20 @@ automatically opens healthy 44.1-kHz packed-24 UAC1. The 30.516-s combined smoke
 passes all 22 strict deltas and output-late delta zero with 2424 MIDI packets;
 both decks ended stopped. Operator confirms GUI, controls, MAIN and waveforms;
 headphone sound was separately confirmed after enabling the previously off PFL.
-This is short-smoke scope, not full qualification. Only JC4880 was
-built for this repair; no publication or wider qualification is implied.
+This is short-smoke scope, not full qualification. Only JC4880 was built for
+the initial OTA repair; its subsequent matrix follow-up is recorded below.
+No publication or wider qualification is implied.
 
 The subsequent 60.140-s JC4880 functional block passes all 22 strict deltas,
 output-late delta zero and 546 MIDI packets. Operator confirms MT/opposite pitch,
 loops, seek, CUE-to-PLAY, PFL/Mix/Volume and both audio/display paths. A fresh
 ordinary matrix and UI simulators pass on `95c1befb`; the subsequent M3-HS
 physical-root admission correction has passing targeted regressions, with its
-final build/host checks pending. Installed JC4880 remains `e22ff334`.
+final three-target builds and full required-fixture host qualification now PASS
+on clean `722bb976`, with no SKIP. Eight root/FIFO policies and JC4880/M3-HS
+production stream tests are covered. Installed JC4880 remains `e22ff334`;
+final matrix images were not flashed. Hosted CI and wider physical gates remain
+open. The final handoff now separates this bench from the last verified M3.
 
 [Final development handoff](reviews/2026-10-11-shared-core-final-handoff.md)
 consolidates implementation, software results, installed identity and outstanding

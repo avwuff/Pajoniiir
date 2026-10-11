@@ -84,7 +84,7 @@ after enabling it. This is a subsequent listening confirmation, not a claim
 that headphones were monitored throughout the original 30-s window. No second
 firmware change or retest was needed for that operator setup issue.
 This short smoke is not a soak or full JC4880/controller qualification.
-Only JC4880 was built for this repair. No new M3 or JC1060 physical qualification,
+Only JC4880 was built at the initial OTA repair stage. No new M3 or JC1060 physical qualification,
 push, public OTA or release is implied.
 
 ## Combined JC4880 functional block
@@ -122,5 +122,9 @@ Device speed still selects UAC protocol/pacing. The capacity regression executes
 eight board/root/diagnostic combinations and matches admission to the selected
 root's generated HCD FIFO. The standalone production stream runner tests both
 JC4880 and M3-HS, including the captured Hercules descriptor; both now pass.
-Final incremental builds and full host qualification for this follow-up remain
-pending until recorded in the final matrix.
+Final incremental builds of all three ordinary targets and full host qualification
+on clean `722bb9762bbfc1010b1faf437797bd33fe3e0360` now pass, including all
+board/identity/isolation/linked-wrapper/lock/budget audits and no qualification
+SKIP. The [final matrix](SHARED_P4_FINAL_BUILD_MATRIX_20261011.md) distinguishes
+the original fresh builds from the follow-up and unchanged UI simulator source.
+Installed JC4880 is still `e22ff334`; the software follow-up was not flashed.

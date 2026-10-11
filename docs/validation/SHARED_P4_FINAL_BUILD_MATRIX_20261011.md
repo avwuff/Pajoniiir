@@ -1,5 +1,63 @@
 # Shared P4 final local build matrix
 
+## Latest FIFO follow-up qualification
+
+Date: 2026-10-11. Final checked clean source:
+`722bb9762bbfc1010b1faf437797bd33fe3e0360`.
+
+| Target | Project | Application bytes | Remaining below 0x380000 | Final build / board audit |
+| --- | --- | ---: | ---: | --- |
+| JC4880 | `main-deck-p4` | 2,608,240 | 1,061,776 | PASS |
+| JC1060 | `main-deck-jc1060` | 2,666,912 | 1,003,104 | PASS |
+| M3 | `main-deck-m3` | 2,601,600 | 1,068,416 | PASS |
+
+All three ordinary targets first completed fresh ESP-IDF 6.0.2 builds on clean
+`95c1befbaa90db27e7991d2868fb36caf6c7cb7d`, using empty build directories,
+new dedicated SDKCONFIGs, committed defaults and unchanged locks. Configurations
+were serialized to avoid shared dependency-cache locking. The actual produced
+BIN/ELF/map/identity/bootloader/partition artifacts were frozen before reuse.
+
+That verification found a controller-root admission regression in the M3
+role-swap configuration: a Full Speed Hercules uses the HS root's periodic
+FIFO. The subsequent `722bb976` repair restores admission according to physical
+root capacity without changing the JC4880 640-byte allocation. The captured
+production stream test failed before the repair and passes after it. Capacity
+tests execute eight board/root/diagnostic configurations, including M3 with
+and without HS-role swap. This is software evidence, not new M3 physical acceptance.
+
+The three final builds above are **incremental follow-ups** in the freshly
+verified build directories, with explicit reconfiguration and clean `722bb976`
+source identity. Every final board verifier, linked DWC/SD-wrapper check,
+resampler no-double-helper check, dependency lock comparison and image budget
+passes. Final artifacts and hashes were archived separately.
+
+`tests/run_p4_host_tests.ps1 -Qualification` exits 0 on `722bb976`, with required
+fixtures and no SKIP. Its standalone production stream test runs both JC4880
+and M3-HS controller policies. The earlier eight-case FIFO test and newly
+captured M3-HS failure remain preserved as regression provenance.
+
+Three product UI simulators passed on `95c1befb` without baseline changes.
+No UI, board-adapter/capability or UI-simulator file changed between that source
+and `722bb976`; this equivalence is recorded rather than repeating unchanged
+screenshots. Their physical display scope is separate from simulation.
+
+Evidence roots:
+
+- `.cache/final-matrix-95c1befb-20261011/`: original fresh build/configure logs,
+  matrix audit, three simulator logs and `frozen-95c1befb` artifacts per target.
+- `.cache/final-matrix-722bb976-20261011/`: final configure/build logs, full
+  qualification log, matrix audit/result, separate artifacts, before/after
+  M3-HS regression and UI-source-equivalence record.
+
+JC4880's actual installed and physically tested image remains `e22ff334`, with
+the named 30-s smoke and 60-s MT/transport/PFL acceptance documented in the
+[JC4880 record](JC4880_HERCULES_FIFO_20261011.md). None of the final matrix
+images were flashed or published. JC1060 physical acceptance, current hosted CI
+(operator quota waiver), long exact-image qualification and broader shared-core
+gates remain open. S2 stays operator-closed and was not physically retested.
+
+## Historical clean matrix before FIFO follow-up
+
 Date: 2026-10-11. Exact tested source:
 `b913818052de99af61c3a8c752b814185794b50e` (clean).
 This matrix follows the completed manual protocol review. It verifies the

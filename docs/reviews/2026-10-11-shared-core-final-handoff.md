@@ -9,12 +9,23 @@ release or completion of every original physical acceptance criterion.
 
 Canonical repository is `dvucinozd/Pajoniiir`, worktree
 `D:/AI/Pajoniiir-shared-p4-core`, branch `codex/shared-p4-core-m3`.
-Installed clean firmware source is `6166d93627304895857b626e719032de3b4f884d`,
+The current reachable bench is **JC4880**, installed clean source
+`e22ff334e01f7e9da6515970ea6ab8e9cef86073`, `M2.5-209-ge22ff334`,
+project `main-deck-p4`, VALID `ota_1`, ELF SHA-256
+`5d63acf5665091a82be61110769aed4b0a464b8c2a19dcdd40497df80f9e8558`.
+Hercules is controller FS/root1, storage HS/root0, library 260 and Wi-Fi ON.
+Both decks ended stopped after the accepted functional block. The
+[JC4880 FIFO/acceptance record](../validation/JC4880_HERCULES_FIFO_20261011.md)
+contains signed artifact hashes, local OTA and exact physical test scopes.
+
+The last verified M3 installation remains source
+`6166d93627304895857b626e719032de3b4f884d`,
 `M3-dev-g6166d9362730`, project `main-deck-m3`, VALID `ota_1`.
 ELF SHA-256 is `b0778c33f32757a80c59630cd9fd2426600da51167d0c4eb2678ff8f31aea448`.
-Subsequent handoff commits are documentation only.
+Subsequent controller-root FIFO repairs were built and qualified locally;
+their final `722bb976` images have not been flashed on either bench.
 
-The controller bench retains **Hercules USB3/root0, music stick USB2/root1**,
+That M3 controller bench retains **Hercules USB3/root0, music stick USB2/root1**,
 normal Wi-Fi, PCM5102A MAIN 48 kHz and Hercules UAC1 FS 44.1 kHz packed-24.
 This configuration differs from ordinary FLX4 USB2/controller and USB3/storage.
 The catalog has 260 tracks. Both decks are stopped after testing.
@@ -45,15 +56,20 @@ the operator explicitly authorized manual review. Deferred review dispositions
 remain documented and are not silently converted to completed repairs.
 
 The [latest ordinary matrix](../validation/SHARED_P4_FINAL_BUILD_MATRIX_20261011.md)
-passes on clean `b913818052de99af61c3a8c752b814185794b50e`: clean ESP-IDF 6.0.2
-builds, one BSP, common-component isolation, unchanged locks, source/project
-identity, linked DWC/SD wrappers, resampler checks and budgets for JC4880,
-JC1060 and M3. Image sizes are 2,608,224 / 2,666,912 / 2,601,600 bytes.
+passes on clean `722bb9762bbfc1010b1faf437797bd33fe3e0360`: fresh ESP-IDF 6.0.2
+builds on `95c1befb`, followed by incremental builds of the root-admission
+repair on `722bb976`. One BSP, common-component isolation, unchanged locks,
+source/project identity, linked DWC/SD wrappers, resampler checks and budgets
+pass for JC4880, JC1060 and M3. Image sizes are
+2,608,240 / 2,666,912 / 2,601,600 bytes.
 Three product UI simulators pass 21/21/26 exact captures with no baseline edits.
-Complete required-fixture host qualification without SKIP and Linux ASan/UBSan
-passed in the preceding protocol review. Earlier nine-variant simulator and
+The complete required-fixture host qualification on `722bb976` exits 0 without
+SKIP, including JC4880 and M3-HS production stream policies and eight FIFO
+configurations. UI source is unchanged from the freshly tested `95c1befb`.
+Linux ASan/UBSan retains its preceding protocol-review source/scope; it was not
+rerun for this FIFO follow-up. Earlier nine-variant simulator and
 both keylock-policy qualifications retain their own source/configuration scope.
-The current controller bench build is separately verified; its generated config
+The last M3 controller bench build is separately verified; its generated config
 header equals the accepted e16ecfb5 Hercules header byte-for-byte.
 
 | Findings | Software state | Physical limits still relevant |
@@ -63,12 +79,30 @@ header equals the accepted e16ecfb5 Hercules header byte-for-byte.
 | P03 LOAD LOCK | One semantic admission path and asynchronous recheck | Earlier FLX4/touch/Hercules refusal passed; simultaneous physical LOAD/PLAY race and lock OFF remain unrun |
 | P05 phase/downbeat | PQTZ phase/downbeat regression coverage | Independent physical phase/downbeat review remains unrun |
 | P07 transport/DSP | Shared seek/decoder loops/CUE/jog/DSP with production tests | Named earlier MT/manual-loop scopes passed; full EOF/seek/removal matrix is not implied |
-| P09 qualification | Three-target workflows, required fixtures and local matrix | Current hosted CI skipped by operator quota; JC physical targets not available |
+| P09 qualification | Three-target workflows, required fixtures and final local matrix | Current hosted CI skipped by operator quota; JC4880 named short blocks accepted, JC1060 physical checks NOT RUN |
 | P10 delivery/docs | Canonical docs, tools, provenance, signed artifacts and hashes | No push/merge/publication in this handoff; acceptance is configuration/image specific |
 
 ## Exact-image physical acceptance
 
-The new installed image passed a 30.094-s / 51-sample dual mixed-rate smoke
+### JC4880 current bench
+
+Installed `e22ff334` passed a 30.516-s / 54-sample smoke with 2424 MIDI packets,
+all 22 strict deltas zero and no output-late event. Operator confirmed GUI,
+controls, MAIN and waveforms; headphone sound was subsequently confirmed after
+enabling the previously off PFL.
+
+The combined functional block completed 60.140 s / 94 samples with 546 MIDI
+packets, all 22 strict deltas zero and no output-late event. Both decks used MT,
+D1 -5% / D2 +5%, 44.1/48-kHz sources, initial four-beat loops and zoom 8.
+PCM5102A MAIN/Hercules UAC1 output was 44.1 kHz. Automated loop exit and seek
+were verified; samples directly record CUE stops and PLAY resumes on each deck.
+The operator confirmed every named step, PFL/native Mix/Volume, both clean audio
+paths and fluid waveforms. Both decks ended stopped. This is short functional
+acceptance, not an hour soak, all transport cases or acceptance of `722bb976`.
+
+### M3 last verified installation
+
+The M3 `6166d936` image passed a 30.094-s / 51-sample dual mixed-rate smoke
 with all 22 strict deltas zero and output-late delta zero. Operator confirmed
 normal GUI/touch, clean MAIN/headphones and fluid waveforms. Controls were not
 rotated during that window and were initially NOT RUN.
@@ -87,11 +121,12 @@ snapshots, runner, raw diagnostic log, operator confirmation and SHA-256 invento
 
 | Hardware/campaign | Disposition |
 | --- | --- |
-| Current Hercules 6166d936 | OTA/startup, GUI/touch and short audio/display plus active jog/Browse smoke PASS for named scope |
+| M3 Hercules 6166d936 | OTA/startup, GUI/touch and short audio/display plus active jog/Browse smoke PASS for named scope |
 | Historical Hercules e16ecfb5 | Exact-image hour PASS, 15 output-late events / maximum 12,534 us; broader pad/FX/LED scope remains PARTIAL/NOT RUN |
 | S2 a9f66bcd | Operator-closed with explicit waivers, accepted historical 48/44.1-kHz hours; no further S2 tests requested |
 | Historical FLX4/M3 fb5 and later feature images | Recorded waveform/soak/cue/LOAD/wake acceptance retains its exact image/configuration scope |
-| JC4880/JC1060 new shared images | Local software/build PASS; physical acceptance NOT RUN |
+| JC4880 e22ff334 / Hercules | OTA/startup, GUI/touch, short active-control/audio/display and 60-s MT/loop/seek/CUE/PFL scope PASS; long soak and wider board acceptance open |
+| JC1060 / final 722bb976 matrix images | Local software/build PASS; physical acceptance NOT RUN |
 | Physical Campaign A | Operator-excluded cycles remain NOT RUN; software reboot supplement is not physical PASS |
 
 First PLAY merely waking the screensaver is intentional; the operator confirmed
@@ -104,7 +139,8 @@ closed as operator context, without claiming a firmware causal fix.
 ## Explicit remaining boundaries
 
 - Hosted CI is SKIPPED BY OPERATOR (quota), not current CI PASS.
-- JC physical topology/display/audio checks need their hardware and operator.
+- JC4880 named short checks are accepted on `e22ff334`; its long soak and wider
+  topology matrix remain open. JC1060 physical checks remain NOT RUN.
 - Real nested playlist order, artwork stale-media, source memory-loop/PWV4,
   independent downbeat and cross-media variants require suitable exports.
 - Broader transport/active-removal/race/FAT/throughput and individual controller
@@ -122,7 +158,9 @@ without changed assumptions or a reproduced defect.
 
 ## Next delivery step
 
-Reconcile the PR title/body with the final implementation and this handoff;
+The requested JC4880 short functional block and final three-target software
+follow-up are complete for their named scopes. Reconcile the PR title/body with
+the final implementation and this handoff;
 preserve the deliberate experimental topology, exact hashes and open gates.
 Push/merge requires the user's next authorized scope. Public release/channel
 publication requires separate authorization and the relevant board acceptance.
