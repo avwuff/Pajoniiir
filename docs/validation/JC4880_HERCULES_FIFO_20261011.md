@@ -128,3 +128,15 @@ board/identity/isolation/linked-wrapper/lock/budget audits and no qualification
 SKIP. The [final matrix](SHARED_P4_FINAL_BUILD_MATRIX_20261011.md) distinguishes
 the original fresh builds from the follow-up and unchanged UI simulator source.
 Installed JC4880 is still `e22ff334`; the software follow-up was not flashed.
+
+## Operator disposition on 2026-10-11
+
+The operator explicitly requested skipping the JC4880 long soak. Its disposition
+is SKIPPED BY OPERATOR / NOT RUN, not PASS. The accepted short smoke and 60-s
+functional block retain their exact `e22ff334` scope; this waiver does not
+qualify the uninstalled final matrix images or close wider board acceptance.
+
+JC1060 hardware is currently unavailable to the operator. Contributor Kayrosen
+will perform its physical checks later; physical acceptance remains NOT RUN
+until the tested image, configuration, telemetry and operator results are
+recorded. No contributor contact or completed test is implied by this assignment.

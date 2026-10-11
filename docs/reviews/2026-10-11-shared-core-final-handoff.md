@@ -125,8 +125,9 @@ snapshots, runner, raw diagnostic log, operator confirmation and SHA-256 invento
 | Historical Hercules e16ecfb5 | Exact-image hour PASS, 15 output-late events / maximum 12,534 us; broader pad/FX/LED scope remains PARTIAL/NOT RUN |
 | S2 a9f66bcd | Operator-closed with explicit waivers, accepted historical 48/44.1-kHz hours; no further S2 tests requested |
 | Historical FLX4/M3 fb5 and later feature images | Recorded waveform/soak/cue/LOAD/wake acceptance retains its exact image/configuration scope |
-| JC4880 e22ff334 / Hercules | OTA/startup, GUI/touch, short active-control/audio/display and 60-s MT/loop/seek/CUE/PFL scope PASS; long soak and wider board acceptance open |
-| JC1060 / final 722bb976 matrix images | Local software/build PASS; physical acceptance NOT RUN |
+| JC4880 e22ff334 / Hercules | OTA/startup, GUI/touch, short active-control/audio/display and 60-s MT/loop/seek/CUE/PFL scope PASS; long soak SKIPPED BY OPERATOR / NOT RUN; wider board acceptance open |
+| JC1060 | Local software/build PASS; physical acceptance NOT RUN, deferred to contributor Kayrosen because the operator has no board available |
+| Final 722bb976 matrix images | Local software/build PASS; not installed or physically accepted |
 | Physical Campaign A | Operator-excluded cycles remain NOT RUN; software reboot supplement is not physical PASS |
 
 First PLAY merely waking the screensaver is intentional; the operator confirmed
@@ -139,8 +140,12 @@ closed as operator context, without claiming a firmware causal fix.
 ## Explicit remaining boundaries
 
 - Hosted CI is SKIPPED BY OPERATOR (quota), not current CI PASS.
-- JC4880 named short checks are accepted on `e22ff334`; its long soak and wider
-  topology matrix remain open. JC1060 physical checks remain NOT RUN.
+- JC4880 named short checks are accepted on `e22ff334`. On 2026-10-11 the
+  operator explicitly waived its long soak: SKIPPED BY OPERATOR / NOT RUN,
+  not PASS. Its wider topology matrix remains open.
+- JC1060 hardware is unavailable to the operator. Physical checks are deferred
+  to contributor Kayrosen and remain NOT RUN until exact-image evidence is
+  recorded; no contact or testing by that contributor is implied here.
 - Real nested playlist order, artwork stale-media, source memory-loop/PWV4,
   independent downbeat and cross-media variants require suitable exports.
 - Broader transport/active-removal/race/FAT/throughput and individual controller

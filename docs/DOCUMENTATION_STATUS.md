@@ -26,6 +26,12 @@ production stream tests are covered. Installed JC4880 remains `e22ff334`;
 final matrix images were not flashed. Hosted CI and wider physical gates remain
 open. The final handoff now separates this bench from the last verified M3.
 
+Operator disposition on 2026-10-11: the JC4880 long soak is explicitly waived,
+SKIPPED BY OPERATOR / NOT RUN, without changing its accepted short-test scope.
+JC1060 hardware is unavailable to the operator; contributor Kayrosen will test
+it later. Its physical acceptance remains NOT RUN pending exact-image evidence.
+These are recorded dispositions, not additional physical PASS results.
+
 [Final development handoff](reviews/2026-10-11-shared-core-final-handoff.md)
 consolidates implementation, software results, installed identity and outstanding
 acceptance/publication gates. The 6166d936 active-control supplement now passes

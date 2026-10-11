@@ -52,9 +52,13 @@ Evidence roots:
 JC4880's actual installed and physically tested image remains `e22ff334`, with
 the named 30-s smoke and 60-s MT/transport/PFL acceptance documented in the
 [JC4880 record](JC4880_HERCULES_FIFO_20261011.md). None of the final matrix
-images were flashed or published. JC1060 physical acceptance, current hosted CI
-(operator quota waiver), long exact-image qualification and broader shared-core
-gates remain open. S2 stays operator-closed and was not physically retested.
+images were flashed or published. On 2026-10-11 the operator explicitly waived
+the JC4880 long soak (SKIPPED BY OPERATOR / NOT RUN, not PASS). JC1060 hardware
+is unavailable to the operator; contributor Kayrosen will perform its physical
+checks later, with acceptance remaining NOT RUN until evidence is recorded.
+Current hosted CI is skipped under the operator quota waiver. Other exact-image
+qualification and broader shared-core gates retain their recorded dispositions.
+S2 stays operator-closed and was not physically retested.
 
 ## Historical clean matrix before FIFO follow-up
 
