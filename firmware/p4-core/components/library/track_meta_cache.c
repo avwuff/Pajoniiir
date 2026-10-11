@@ -99,13 +99,13 @@ static esp_err_t mkdir_if_missing(const char *path)
 
 static esp_err_t cache_paths(const media_persistent_id_t *persistent_id,
                              char *dir, size_t dir_len,
-                             char *path, size_t path_len)
+                             char *path, size_t path_len, bool create_dirs)
 {
     if (sd_available() != ESP_OK) {
         return ESP_ERR_NOT_FOUND;
     }
-    if (mkdir_if_missing(CACHE_PARENT) != ESP_OK ||
-        mkdir_if_missing(CACHE_ROOT) != ESP_OK) {
+    if (create_dirs && (mkdir_if_missing(CACHE_PARENT) != ESP_OK ||
+        mkdir_if_missing(CACHE_ROOT) != ESP_OK)) {
         return ESP_FAIL;
     }
     if (!persistent_id || !persistent_id->valid) return ESP_ERR_INVALID_ARG;
@@ -120,7 +120,7 @@ static esp_err_t cache_paths(const media_persistent_id_t *persistent_id,
     if (written < 0 || written >= (int)dir_len) {
         return ESP_ERR_INVALID_SIZE;
     }
-    if (mkdir_if_missing(dir) != ESP_OK) {
+    if (create_dirs && mkdir_if_missing(dir) != ESP_OK) {
         return ESP_FAIL;
     }
     written = snprintf(path, path_len, "%s/meta.bin", dir);
@@ -146,7 +146,7 @@ static bool header_matches(const track_meta_cache_header_t *header,
            header->dat_mtime == dat_mtime &&
            header->ext_size == ext_size &&
            header->ext_mtime == ext_mtime &&
-           header->beat_count <= 0x4000u &&
+           /* uint16_t beat_count covers the parser's full 0xFFFF limit. */
            header->cue_count <= ANLZ_MAX_CUES &&
            header->memory_cue_count <= ANLZ_MAX_MEMORY_CUES &&
            (header->metadata_flags & ~(TRACK_META_CACHE_MEMORY_TRUNC |
@@ -236,7 +236,7 @@ static esp_err_t track_meta_cache_load_gated(uint32_t track_key,
 
     char dir[96];
     char path[112];
-    esp_err_t rc = cache_paths(persistent_id, dir, sizeof(dir), path, sizeof(path));
+    esp_err_t rc = cache_paths(persistent_id, dir, sizeof(dir), path, sizeof(path), false);
     if (rc != ESP_OK) {
         return rc;
     }
@@ -370,7 +370,7 @@ static esp_err_t track_meta_cache_save_gated(uint32_t track_key,
 
     char dir[96];
     char path[112];
-    esp_err_t rc = cache_paths(persistent_id, dir, sizeof(dir), path, sizeof(path));
+    esp_err_t rc = cache_paths(persistent_id, dir, sizeof(dir), path, sizeof(path), true);
     if (rc != ESP_OK) {
         return rc;
     }
@@ -438,7 +438,7 @@ static esp_err_t track_meta_cache_save_gated(uint32_t track_key,
     }
     if (ok) ok = write_exact(fp, meta->color_preview, header.color_preview_len);
     library_load_trace_mark(LIBRARY_LOAD_PHASE_CACHE_SAVE_CLOSE, track_key);
-    fclose(fp);
+    if (fclose(fp) != 0) ok = false;
 
     if (!ok) {
         unlink(part);

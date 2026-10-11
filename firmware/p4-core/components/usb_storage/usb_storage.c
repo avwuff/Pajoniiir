@@ -444,6 +444,9 @@ static esp_err_t mount_desired_device(uint32_t epoch, uint8_t dev_addr)
     }
 
     /* A previous transient attempt may have left a partially opened handle. */
+    if (s_announced_mounted) {
+        publish_unmounted();
+    }
     if (s_mount || s_msc_dev) {
         release_device();
     }

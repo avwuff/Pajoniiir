@@ -2729,6 +2729,25 @@ static esp_err_t catch_all_handler(httpd_req_t *req)
     return ESP_OK;
 }
 
+/* Name discovery is optional; the AP IP remains the recovery/OTA path. */
+static void web_server_start_mdns(void)
+{
+    esp_err_t rc = mdns_init();
+    const bool owned = rc == ESP_OK;
+    if (rc == ESP_OK) rc = mdns_hostname_set("pajoniiir");
+    if (rc == ESP_OK) rc = mdns_instance_name_set("Pajoniiir");
+    if (rc == ESP_OK) rc = mdns_service_add(NULL, "_http", "_tcp", 80, NULL, 0);
+    if (rc != ESP_OK) {
+        ESP_LOGW(TAG, "mDNS startup failed: %s; HTTP remains available by IP",
+                 esp_err_to_name(rc));
+        /* Do not free an mDNS instance owned by another component. */
+        if (owned) mdns_free();
+        return;
+    }
+    s_mdns_started = true;
+    ESP_LOGI(TAG, "web UI available at http://%s", WEB_API_CANONICAL_HOSTNAME);
+}
+
 esp_err_t web_server_start(void)
 {
     if (s_web_server != NULL) {
@@ -3048,25 +3067,7 @@ esp_err_t web_server_start(void)
     rc = register_uri_or_stop(s_web_server, &catch_all_uri);
     if (rc != ESP_OK) return rc;
 
-    rc = mdns_init();
-    if (rc == ESP_OK) {
-        rc = mdns_hostname_set("pajoniiir");
-    }
-    if (rc == ESP_OK) {
-        rc = mdns_instance_name_set("Pajoniiir");
-    }
-    if (rc == ESP_OK) {
-        rc = mdns_service_add(NULL, "_http", "_tcp", 80, NULL, 0);
-    }
-    if (rc != ESP_OK) {
-        ESP_LOGE(TAG, "mDNS startup failed: %s", esp_err_to_name(rc));
-        mdns_free();
-        httpd_stop(s_web_server);
-        s_web_server = NULL;
-        return rc;
-    }
-    s_mdns_started = true;
-    ESP_LOGI(TAG, "web UI available at http://%s", WEB_API_CANONICAL_HOSTNAME);
+    web_server_start_mdns();
 
     return ESP_OK;
 }

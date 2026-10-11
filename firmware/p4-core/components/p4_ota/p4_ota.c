@@ -85,11 +85,13 @@ esp_err_t p4_ota_begin(const ddj_ota_manifest_t *manifest)
     if (!manifest || manifest->target != DDJ_OTA_TARGET_P4) return ESP_ERR_INVALID_ARG;
     size_t image_size = manifest->image_size;
     xSemaphoreTake(s_lock, portMAX_DELAY);
-    if (s_status.state == P4_OTA_RECEIVING) {
+    if (s_status.state == P4_OTA_RECEIVING ||
+        s_status.state == P4_OTA_READY_TO_REBOOT) {
         xSemaphoreGive(s_lock);
         return ESP_ERR_INVALID_STATE;
     }
 
+    close_receive_resources_locked();
     s_target = esp_ota_get_next_update_partition(NULL);
     if (!s_target || !p4_ota_policy_size_valid(image_size, s_target->size)) {
         copy_text(s_status.last_error, sizeof(s_status.last_error),
@@ -148,10 +150,12 @@ esp_err_t p4_ota_write(const void *data, size_t size)
             rc = ESP_FAIL;
             copy_text(s_status.last_error, sizeof(s_status.last_error), "SHA-256 update failed");
             s_status.state = P4_OTA_FAILED;
+            close_receive_resources_locked();
         }
     } else {
         copy_text(s_status.last_error, sizeof(s_status.last_error), esp_err_to_name(rc));
         s_status.state = P4_OTA_FAILED;
+        close_receive_resources_locked();
     }
     xSemaphoreGive(s_lock);
     return rc;
@@ -238,6 +242,11 @@ void p4_ota_abort(const char *reason)
 {
     if (!s_lock) return;
     xSemaphoreTake(s_lock, portMAX_DELAY);
+    /* A late duplicate abort cannot reopen admission to an activated slot. */
+    if (s_status.state == P4_OTA_READY_TO_REBOOT) {
+        xSemaphoreGive(s_lock);
+        return;
+    }
     close_receive_resources_locked();
     copy_text(s_status.last_error, sizeof(s_status.last_error), reason ? reason : "aborted");
     s_status.state = P4_OTA_FAILED;

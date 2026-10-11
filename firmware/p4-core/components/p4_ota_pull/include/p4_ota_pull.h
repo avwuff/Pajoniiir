@@ -38,8 +38,10 @@ typedef struct {
     uint32_t downloaded;     /* bytes written so far, for a progress readout */
 } p4_ota_pull_status_t;
 
-/* Rejected with ESP_ERR_INVALID_ARG when no update URL is configured, and with
- * ESP_ERR_INVALID_STATE when a check is already running or Wi-Fi is off. The
+/* ESP_ERR_INVALID_ARG: missing SSID/URL or invalid URL.
+ * ESP_ERR_INVALID_STATE: another operation or Wi-Fi transition holds the lease.
+ * ESP_ERR_NOT_SUPPORTED: the running version does not support pull updates.
+ * ESP_ERR_NO_MEM: worker creation failed. Wi-Fi state is not checked here. The
  * caller must refuse while audio is playing - this component knows nothing
  * about decks. */
 esp_err_t p4_ota_pull_check_start(void);
@@ -58,7 +60,9 @@ p4_ota_pull_status_t p4_ota_pull_get_status(void);
  * manifest, verified by the same ota_manifest code before a byte reaches
  * flash. Nothing about the bundle is trusted because it arrived over TLS.
  *
- * Rejected with ESP_ERR_INVALID_STATE unless a check has just reported that
- * release as available.
+ * ESP_ERR_INVALID_STATE: busy operation/transition, unavailable or expired
+ * offer, or incomplete offer metadata.
+ * ESP_ERR_INVALID_ARG: missing or mismatched expected_release.
+ * ESP_ERR_NO_MEM: offer allocation or worker creation failed.
  */
 esp_err_t p4_ota_pull_install_start(const char *expected_release);

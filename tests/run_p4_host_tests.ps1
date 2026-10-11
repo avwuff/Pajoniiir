@@ -3285,6 +3285,7 @@ $tests = @(
         Args = @(
             "-Wall", "-Wextra", "-Wpedantic", "-Werror=implicit-function-declaration", "-std=c11",
             "-DTRACK_META_CACHE_STANDALONE_TEST",
+            "-Wl,--wrap=fclose",
             "-I../support/stubs",
             "-I../../firmware/p4-core/components/library/include",
             "-I../../firmware/p4-core/components/media_identity/include",
@@ -3310,6 +3311,25 @@ $tests = @(
             "-I../../firmware/p4-core/components/media_identity/include",
             "-I../../firmware/p4-core/components/media_io_gate/include",
             "-o", "test_library_anlz.exe",
+            "-DWIN32", "test_library_anlz.c",
+            "../../firmware/p4-core/components/library/library.c",
+            "../../firmware/p4-core/components/media_identity/media_identity.c",
+            "../../firmware/p4-core/components/library/library_load_trace.c"
+        )
+    },
+    @{
+        Name = "library_anlz_cache_write"
+        MinTestsRun = 207
+        Dir = "tests/library_anlz"
+        Target = "test_library_anlz_cache_write.exe"
+        Args = @(
+            "-Wall", "-Wextra", "-Wpedantic", "-Werror=implicit-function-declaration", "-std=c11",
+            "-DLIBRARY_LOAD_TRACE_HOST_TEST", "-DCONFIG_LIBRARY_ANLZ_CACHE_WRITE=1",
+            "-I../support/stubs",
+            "-I../../firmware/p4-core/components/library/include",
+            "-I../../firmware/p4-core/components/media_identity/include",
+            "-I../../firmware/p4-core/components/media_io_gate/include",
+            "-o", "test_library_anlz_cache_write.exe",
             "-DWIN32", "test_library_anlz.c",
             "../../firmware/p4-core/components/library/library.c",
             "../../firmware/p4-core/components/media_identity/media_identity.c",
@@ -4034,6 +4054,12 @@ Invoke-Step -Name "run production paired RGB565 fill regression" -WorkingDirecto
     -Executable $pythonSource -Arguments @("tests/ui_framebuffer_pair/test_backend_fill.py")
 Invoke-Step -Name "run production controller profile rescan regression" -WorkingDirectory $RepoRoot `
     -Executable $pythonSource -Arguments @("tests/controller_profile_manager/test_rescan_runtime.py")
+Invoke-Step -Name "run production optional mDNS startup regression" -WorkingDirectory $RepoRoot `
+    -Executable $pythonSource -Arguments @("tests/web_api_helpers/test_mdns_startup.py")
+Invoke-Step -Name "run production OTA receive lifecycle regression" -WorkingDirectory $RepoRoot `
+    -Executable $pythonSource -Arguments @("tests/p4_ota/test_receive_lifecycle.py")
+Invoke-Step -Name "run production USB storage mount reconciliation regression" -WorkingDirectory $RepoRoot `
+    -Executable $pythonSource -Arguments @("tests/usb_storage_session/test_mount_reconciliation.py")
 Invoke-Step -Name "run production network mutation lifecycle regression" -WorkingDirectory $RepoRoot `
     -Executable $pythonSource -Arguments @("tests/deck_net_sync/test_network_lifecycle.py")
 Invoke-Step -Name "run firmware artwork identity ownership regression" `

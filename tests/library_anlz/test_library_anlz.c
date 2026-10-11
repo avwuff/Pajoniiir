@@ -93,6 +93,9 @@ static void make_meta(anlz_metadata_t *m, uint16_t bpm, uint16_t beat_count, boo
 }
 
 /* ── controllable stub state ───────────────────────────────────────────────── */
+#ifndef CONFIG_LIBRARY_ANLZ_CACHE_WRITE
+#define CONFIG_LIBRARY_ANLZ_CACHE_WRITE 0
+#endif
 static int s_cache_load_calls, s_parse_dat_calls, s_parse_ext_calls, s_save_calls;
 static esp_err_t s_cache_load_result = ESP_ERR_NOT_FOUND;
 static esp_err_t s_parse_dat_result = ESP_OK;
@@ -398,7 +401,7 @@ static void test_cache_miss(void)
 
     CHECK(library_load_anlz(&tr) == ESP_OK);
     CHECK(s_cache_load_calls == 1);
-    CHECK(s_parse_dat_calls == 1 && s_parse_ext_calls == 1 && s_save_calls == 1);
+    CHECK(s_parse_dat_calls == 1 && s_parse_ext_calls == 1 && s_save_calls == CONFIG_LIBRARY_ANLZ_CACHE_WRITE);
     CHECK(tr.bpm == 120 && tr.duration_ms == 8000u);
     CHECK(current_beats() == 8);
 
@@ -415,7 +418,7 @@ static void test_cache_rejection_fallback(void)
     make_track(&tr);
 
     CHECK(library_load_anlz(&tr) == ESP_OK);
-    CHECK(s_parse_dat_calls == 1 && s_save_calls == 1);
+    CHECK(s_parse_dat_calls == 1 && s_save_calls == CONFIG_LIBRARY_ANLZ_CACHE_WRITE);
     CHECK(current_beats() == 5);
 
     library_free_current_anlz();
@@ -432,7 +435,7 @@ static void test_write_failure_non_fatal(void)
     make_track(&tr);
 
     CHECK(library_load_anlz(&tr) == ESP_OK);   /* parse OK, save failed, still OK */
-    CHECK(s_save_calls == 1);
+    CHECK(s_save_calls == CONFIG_LIBRARY_ANLZ_CACHE_WRITE);
     CHECK(current_bpm() == 130);
 
     library_free_current_anlz();

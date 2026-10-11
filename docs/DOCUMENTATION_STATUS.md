@@ -2,6 +2,20 @@
 
 Status: **current documentation authority, reconciled 2026-10-11**.
 
+[PR 46 web/OTA/library/storage review](reviews/2026-10-11-pr46-web-storage-review.md)
+covers eight further directories (71 files, 11 findings), all addressed locally.
+Repairs preserve HTTP during optional mDNS failure, fence an activated OTA
+slot against a second upload, release failed receive resources, distinguish
+HTTP server errors, keep cache reads free of mkdir, preserve cache entries on
+close failure, support full beat counts, align both tested cache-write policies,
+clear failed media IDs and publish fast-reconnect unmount edges. These changes
+extend scoped software review; the installed image and frozen packages remain
+unchanged. Whole-PR, current CI and physical board gates remain separate.
+Full host qualification passes without SKIP, both library cache policies pass,
+and the ordinary M3 ESP-IDF 6.0.2 build passes with unchanged locks. The final
+storage mount regression passes separately; its runner registration is ready
+for subsequent full runs.
+
 [PR 46 profile/USB-host/LED review](reviews/2026-10-11-pr46-profile-host-led-review.md)
 covers five further directories (26 files, six findings). Five confirmed
 repairs address queue-reset starvation, malformed MIDI output admission,

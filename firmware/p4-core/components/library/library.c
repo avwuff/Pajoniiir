@@ -19,7 +19,7 @@
 /* Host suites compile this source without sdkconfig.h and exercise the product
  * default. Firmware receives the Kconfig value from ESP-IDF. */
 #if defined(WIN32) && !defined(CONFIG_LIBRARY_ANLZ_CACHE_WRITE)
-#define CONFIG_LIBRARY_ANLZ_CACHE_WRITE 1
+#define CONFIG_LIBRARY_ANLZ_CACHE_WRITE 0
 #endif
 
 /* Referenced only by the ESP_LOG* macros, which the PC host stubs compile away.

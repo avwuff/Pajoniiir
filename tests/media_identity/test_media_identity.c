@@ -2,6 +2,7 @@
 
 #include <assert.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 static void hex(const uint8_t digest[32], char out[65])
@@ -32,6 +33,27 @@ int main(void)
     assert(!media_persistent_id_equal(&a,&d));
     media_persistent_id_clear(&b);
     assert(!media_persistent_id_equal(&a,&b));
+    char *oversized = malloc((size_t)UINT16_MAX + 2u);
+    assert(oversized);
+    memset(oversized, 'x', (size_t)UINT16_MAX + 1u);
+    oversized[(size_t)UINT16_MAX + 1u] = '\0';
+    const char *invalid_paths[] = {NULL, "", oversized};
+    const uint8_t zeros[32] = {0};
+    for (size_t i=0; i<3; i++) {
+        b=a;
+        assert(!media_persistent_id_derive(digest,invalid_paths[i],1234u,5678,&b));
+        assert(!b.valid && memcmp(b.bytes,zeros,32)==0);
+    }
+    b=a;
+    assert(!media_persistent_id_derive(NULL,"song",1234u,5678,&b));
+    assert(!b.valid && memcmp(b.bytes,zeros,32)==0);
+    assert(!media_persistent_id_derive(digest,"song",1234u,5678,NULL));
+    /* Preserve valid derivation when its input digest aliases the output. */
+    b=a;
+    assert(media_persistent_id_derive(a.bytes,"song",1234u,5678,&c));
+    assert(media_persistent_id_derive(b.bytes,"song",1234u,5678,&b));
+    assert(media_persistent_id_equal(&b,&c));
+    free(oversized);
     puts("media_identity tests passed");
     return 0;
 }

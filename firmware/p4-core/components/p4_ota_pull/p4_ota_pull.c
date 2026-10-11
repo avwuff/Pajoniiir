@@ -25,6 +25,12 @@
 
 static const char *TAG = "ota_pull";
 
+static esp_err_t http_status_error(int status)
+{
+    return status == 200 ? ESP_OK :
+           status == 404 ? ESP_ERR_NOT_FOUND : ESP_ERR_INVALID_RESPONSE;
+}
+
 /* The channel document is small by design. A cap rather than a growing buffer
  * means a server that streams megabytes - or an SPA catch-all that answers 200
  * with a landing page, which this deck's own update host did until it was
@@ -210,7 +216,7 @@ static int fetch_channel_doc(const char *base_url, char *buf, size_t cap)
          * only distinguishable because the server serves files rather than a
          * catch-all. */
         ESP_LOGW(TAG, "%s answered HTTP %d", url, status);
-        result = -ESP_ERR_NOT_FOUND;
+        result = -http_status_error(status);
         goto done;
     }
     if (len > (int64_t)cap) {
@@ -382,8 +388,10 @@ static esp_err_t download_and_install(const char *base_url, const char *rel_url,
         rc = len == -(int64_t)ESP_ERR_HTTP_EAGAIN ? ESP_ERR_TIMEOUT : ESP_FAIL;
         goto done;
     }
-    if (esp_http_client_get_status_code(client) != 200) {
-        rc = ESP_ERR_NOT_FOUND;
+    const int status = esp_http_client_get_status_code(client);
+    if (status != 200) {
+        ESP_LOGW(TAG, "bundle answered HTTP %d", status);
+        rc = http_status_error(status);
         goto done;
     }
     /* The channel document already told us the size. A mismatch means the two

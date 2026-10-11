@@ -117,9 +117,16 @@ bool media_persistent_id_derive(const uint8_t export_digest[32],
                                 media_persistent_id_t *out)
 {
     static const char domain[] = "pajoniiir.hotcue.v2";
-    if (!export_digest || !usb_relative_path || !out) return false;
+    if (!out) return false;
+    if (!export_digest || !usb_relative_path) {
+        media_persistent_id_clear(out);
+        return false;
+    }
     size_t path_len = strlen(usb_relative_path);
-    if (path_len == 0u || path_len > UINT16_MAX) return false;
+    if (path_len == 0u || path_len > UINT16_MAX) {
+        media_persistent_id_clear(out);
+        return false;
+    }
     media_sha256_ctx_t ctx;
     media_sha256_init(&ctx);
     media_sha256_update(&ctx, domain, sizeof(domain) - 1u);
