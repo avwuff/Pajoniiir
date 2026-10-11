@@ -1,4 +1,5 @@
 #pragma once
+#include "audio_format.h"
 #include "audio_pcm_timeline.h"
 
 /* Decoder-owned, fixed-storage copy of the first second after manual LOOP IN.
@@ -12,6 +13,11 @@ typedef struct {
 typedef struct {
     uint32_t frames, period_frames, seek_ms;
 } audio_loop_prefix_plan_t;
+
+/* A copied prefix resumes mid-loop. MP3 therefore requires the verified frame
+ * index; estimated/PVBR-only seeks cannot guarantee the adjoining source frame.
+ * WAV keeps its inexpensive direct seek and existing reserve policy. */
+bool audio_loop_prefix_supports_source(audio_format_t format, bool mp3_index_complete);
 
 bool audio_loop_prefix_capture(audio_loop_prefix_t *p,
                                const audio_pcm_timeline_t *timeline,

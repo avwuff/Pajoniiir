@@ -16,6 +16,7 @@
 #include "audio_engine.h"
 #include "audio_output_mixer.h"
 #include "audio_pcm_ring.h"
+#include "audio_loop_prefix.h"
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -1705,6 +1706,83 @@ static int16_t qualification_sample(uint32_t frame, uint32_t rate)
                                       : 21000 - (int32_t)(phase * 28000 / period));
 }
 
+/* The actual decoder's retained IN samples must join its indexed seek at the
+ * prefix endpoint. This does not simulate ESP-IDF task timing; the independent
+ * slow-seek runway test exercises bounded publication and consumer exhaustion. */
+static void test_loop_prefix_decoder_continuation(void)
+{
+    const char *paths[] = {"../fixtures/p4/onset-44100.mp3",
+                          "../fixtures/p4/onset-48000.flac"};
+    const audio_format_t formats[] = {AUDIO_FORMAT_MP3, AUDIO_FORMAT_FLAC};
+    const uint32_t rates[] = {44100, 48000};
+    static int16_t decoded[320000 * 2], prefix_pcm[48000 * 2];
+    int16_t batch[4608];
+    for (unsigned fixture = 0; fixture < 2; ++fixture) {
+        EXPECT(audio_engine_init() == ESP_OK, "prefix decoder reset");
+        EXPECT(audio_engine_deck_load(0, paths[fixture], NULL, 6500) == ESP_OK,
+               "required prefix decoder fixture loads");
+        uint32_t frames = 0;
+        for (;;) {
+            int n = audio_engine_test_read_pcm(0, batch, 2304);
+            if (n < 0) break;
+            if (frames + (uint32_t)n > 320000u) break;
+            memcpy(decoded + frames * 2u, batch, (size_t)n * 2u * sizeof(int16_t));
+            frames += (uint32_t)n;
+        }
+        EXPECT(frames > rates[fixture] * 3u, "decoded source covers capture and continuation");
+        audio_pcm_timeline_t timeline;
+        audio_pcm_timeline_init(&timeline, decoded, 320000u);
+        /* Push the already decoded samples through the production timeline. */
+        bool pushed = true;
+        for (uint32_t i = 0; i < frames; ++i) {
+            if (!audio_pcm_timeline_push(&timeline, decoded[i * 2u], decoded[i * 2u + 1u])) {
+                pushed = false;
+                break;
+            }
+        }
+        EXPECT(pushed, "decoded PCM enters retained timeline");
+        audio_loop_prefix_t prefix = {.pcm = prefix_pcm, .capacity = 48000};
+        const uint32_t start_ms = 1500;
+        const uint32_t start_frame = rates[fixture] * start_ms / 1000u;
+        EXPECT(audio_loop_prefix_supports_source(formats[fixture], true) &&
+               audio_loop_prefix_capture(&prefix, &timeline, start_frame, start_ms,
+                                         rates[fixture], 42),
+               "supported decoder captures actual manual IN PCM");
+        audio_loop_prefix_plan_t plan = audio_loop_prefix_plan(&prefix, 42, start_ms, 5000);
+        EXPECT(plan.frames == rates[fixture] && plan.seek_ms == 2500,
+               "one second of IN PCM resumes at its exact endpoint");
+        uint32_t mismatches = 0;
+        for (uint32_t i = 0; i < plan.frames; ++i) {
+            audio_mixer_frame_t f;
+            if (!audio_loop_prefix_frame(&prefix, &plan, i, &f) ||
+                f.left != decoded[(start_frame + i) * 2u] ||
+                f.right != decoded[(start_frame + i) * 2u + 1u]) ++mismatches;
+        }
+        EXPECT(mismatches == 0, "prefix retains the exact decoded stereo source");
+        EXPECT(audio_engine_deck_seek(0, plan.seek_ms) == ESP_OK,
+               "production decoder seeks to copied prefix endpoint");
+        uint32_t resume_frame = rates[fixture] * plan.seek_ms / 1000u;
+        uint32_t resumed = 0;
+        mismatches = 0;
+        for (unsigned decode = 0; decode < 80 && resumed < rates[fixture] / 2u; ++decode) {
+            int n = audio_engine_test_read_pcm(0, batch, 2304);
+            if (n < 0) break;
+            /* Reservoir preroll can legitimately return zero published PCM. */
+            for (int i = 0; i < n; ++i) {
+                uint32_t source_frame = resume_frame + resumed + (uint32_t)i;
+                if (batch[i * 2u] != decoded[source_frame * 2u] ||
+                    batch[i * 2u + 1u] != decoded[source_frame * 2u + 1u])
+                    ++mismatches;
+            }
+            resumed += (uint32_t)n;
+        }
+        printf("  prefix fixture=%s resumed_frames=%u mismatches=%u\n", paths[fixture], resumed, mismatches);
+        EXPECT(resumed >= rates[fixture] / 2u && mismatches == 0,
+               "indexed/reservoir-warmed continuation rejoins full decode without skipped PCM");
+        EXPECT(audio_engine_deck_stop(0) == ESP_OK, "prefix fixture retires");
+    }
+}
+
 static void test_required_media_fixtures(void)
 {
     printf("\n[Qualification] Required production decoder/seek fixtures\n");
@@ -1874,6 +1952,7 @@ int main(int argc, char *argv[])
     test_stale_session_cannot_stop_newer_load();
     test_transition_barrier_blocks_load_until_resume();
     test_required_media_fixtures();
+    test_loop_prefix_decoder_continuation();
 
     if (argc >= 2) {
         uint32_t max_ms = (argc >= 3) ? (uint32_t)atoi(argv[2]) : 0u;

@@ -2262,6 +2262,7 @@ $tests = @(
             "test_audio_engine.c",
             "../../firmware/p4-core/components/audio_engine/audio_engine.c",
             "../../firmware/p4-core/components/audio_engine/audio_track_length.c",
+            "../../firmware/p4-core/components/audio_engine/audio_loop_prefix.c",
             "../../firmware/p4-core/components/audio_engine/audio_seek_skip.c",
             "../../firmware/p4-core/components/audio_engine/audio_eof_policy.c",
             "../../firmware/p4-core/components/audio_engine/audio_format.c",

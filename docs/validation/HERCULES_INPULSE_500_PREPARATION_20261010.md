@@ -371,8 +371,8 @@ them or expand the profile solely to finish a checklist.
 
 | Combined block | Checks and completion evidence | Current-image state |
 | --- | --- | --- |
-| Navigation, protection and transport | Both LOAD/Shift+LOAD routes with stopped decks, LOAD LOCK on each playing deck, CUE hold/release and PLAY handoff, Sync/Shift+Sync, Quantize/range, loop rotary/In/Out/exit; exact titles and other-deck preservation | NOT RUN on `ac9287af` |
-| Mixer, pads/FX and visible feedback | Both pitch/fader/trim/EQ/filter endpoints, crossfader and intentional PCM MASTER; each implemented pad bank on both decks, press/release and Shift behavior; mode/transport/PFL/loop LEDs, pad colours and VU. Use existing source cue recall; local cue writes/deletion require an explicitly disposable test track | NOT RUN on `ac9287af` |
+| Navigation, protection and transport | Both LOAD/Shift+LOAD routes with stopped decks, LOAD LOCK on each playing deck, CUE hold/release and PLAY handoff, Sync/Shift+Sync, Quantize/range, loop rotary/In/Out/exit; exact titles and other-deck preservation | PARTIAL: stopped normal/shifted LOAD and Browse block accepted; protection/transport still open |
+| Mixer, pads/FX and visible feedback | Both pitch/fader/trim/EQ/filter endpoints, crossfader and intentional PCM MASTER; each implemented pad bank on both decks, press/release and Shift behavior; mode/transport/PFL/loop LEDs, pad colours and VU. Use existing source cue recall; local cue writes/deletion require an explicitly disposable test track | PARTIAL: pitch/fader/Gain/EQ/filter/crossfader response observed; exact analog calibration, MASTER, pads/FX/LED sweep open |
 | Dual audio and controls | One short monitored mixed-rate MT/loop block, opposite pitch and zoom 8: rotate both jogs/Browse, check PFL D1/D2 and native headphone blend/volume endpoints, then hands off for listening/dual waveform observation. Restore mixer centers/faders before starting. Audit actual MIDI growth and all 22 playback strict deltas | NOT RUN on `ac9287af`; historical `04f0cfb6` smoke retained |
 | Wake and lifecycle | First controller action only wakes screensaver; next action operates normally, with no ghost action/stuck release. Three stopped cable reconnects with matching profile/healthy 44100-Hz stream and LED resync; separate cold-power check. Controller reconnect, software restart and cold power are distinct evidence | Only one stopped software restart and GUI restoration confirmed |
 | Final timing window | Run the agreed long gate only on the final unchanged image/configuration, with operator listening/visual confirmation and strict loss counters. Keep isolated output-late findings separate | NOT RUN for Hercules |
@@ -382,3 +382,91 @@ observations inside it. Repeat only failed or ambiguous portions. Stop both
 decks at each playback block's end or first strict error. An operator must be
 present for listening, visible LEDs/waveforms, physical inputs and cable/power
 actions; unattended USB liveness cannot close these gates. S2 stays closed.
+
+## Stopped navigation and mixer blocks, 2026-10-11
+
+The operator returned, and live preflight confirmed the same clean `ac9287af`
+and exact ELF, VALID `ota_1`, active Hercules MIDI/profile and healthy UAC1
+FS/44100-Hz stream, with 260 library tracks. Both decks were initially unloaded.
+No firmware/profile/USB change was made.
+
+The first 180.234-s window recorded 328 samples and 11,574 new MIDI packets.
+The operator reported "sve uredo". Normal LOAD D1 changed only D1 to
+`GTS_Project_-_Disco_Italo_Radio_Edit_(Hydr0.org)`; LOAD D2 changed only D2 to
+`Joezi & voodoochild - Styler`. Both pitch values varied; both channel faders,
+crossfader, EQ and filters varied. Both Gain values remained at 8192, and only
+two load transitions were observed, so shifted LOAD and Gain were not inferred
+from the generic operator confirmation. The other portions were not repeated.
+
+A focused 60.469-s supplement recorded 110 samples and 3304 new MIDI packets.
+The announced actions were held left/right Gain movements followed by
+Shift+LOAD D1/D2 with distinct selected tracks. The operator replied "jesam".
+D1 Gain varied 0..16383, D2 0..16109. The first transition changed only D1 to
+`Jall aux yeux feat. Darko Rundek - Ena`; the second changed only D2 to
+`Jura Stublić & Film - Srce na cesti (Official video)`. Both pitch values were
+8192 throughout this supplement. These observed routes support the operator's
+shifted-load context; status sampling itself does not expose raw modifier MIDI.
+
+Every sample retained exact clean source, no reboot and both decks stopped;
+final firmware endpoints independently retain the expected ELF and VALID slot.
+The bounded monitors reported no new guarded ISO/drop/overflow, MIDI/queue or
+service-log errors. These were variable loaded/stopped control windows, not
+22-counter playback qualification. Sampling can miss brief extrema; movement
+and operator response do not establish calibrated analog endpoints, all LED
+behaviors, LOAD LOCK during playback or CUE/loop/pad behavior.
+
+Original status/result files are unchanged. Separate observations, operator
+context, archived runners/audit and renewed SHA-256 manifests are retained at
+`.cache/hercules-inpulse-500/navigation-mixer-20261011T112336Z/` and
+`.cache/hercules-inpulse-500/navigation-mixer-20261011T112733Z/`.
+
+## Manual loop transport failure and bounded MP3 correction, 2026-10-11
+
+The following 180-s operator PLAY/CUE/loop/Sync window on clean `ac9287af`
+stopped at 110.719 s / 199 samples: `diagnostics.pcm_underrun2` increased by
+795; the other 21 strict deltas and output-late delta remained zero. Both decks
+were safely stopped. Post-stop firmware independently confirms the same ELF,
+VALID `ota_1`, and no reboot. The operator reported no audible/visual disturbance
+and identified D2 Loop IN/OUT or size/Exit as the last action. This remains a
+strict PCM FAIL; it does not qualify the whole transport/Sync block.
+
+D2 was playing, with IN at 8826 ms observed at 107.438 s. The first active
+8826..11605-ms loop was observed at 110.172 s with PCM2 still zero; at the next
+sample, 110.719 s, PCM2 was 795. The journal records `AUDIO_UNDERRUN` on the
+same boot 419. PCM counters count failed source reads, not lost USB packets.
+Half-second sampling cannot measure the transient seek latency. A recovered
+two-second future buffer in the sampled snapshots does not exclude a shorter
+empty-buffer interval between them.
+
+Production manual OUT sets loop bounds without a user seek/reset. Its decoder
+withdraws already-published post-OUT PCM and retains 2048 frames while reseeking.
+The existing decoder-owned IN prefix was used only for FLAC. Indexed MP3 must
+also locate/warm up its reservoir and discard preroll before publishing new
+PCM, but had no prefix runway. This is a concrete unprotected path consistent
+with the observed first-OUT failure; actual hardware seek latency was not
+captured, so it is not presented as a measured sole cause.
+
+The correction extends the existing fixed-storage prefix to MP3 with a complete
+verified frame index. Both capture admission and publication use the same
+source policy. Estimated/PVBR-only MP3 and WAV retain their existing path; no
+extra steady-state allocation, larger post-OUT reserve, controller remapping,
+USB change or counter suppression is introduced. Existing session/IN/epoch,
+timeline-generation, scratch and user-seek ownership checks remain in force.
+
+Focused host suites `audio_loop_prefix`, `audio_track_length` and `audio_engine`
+pass; the engine reports 570 assertions and zero failures. The added required
+MP3/FLAC fixture regression captures actual production-decoded IN PCM and checks
+the prefix plus at least half a second of resumed decoder PCM against full
+decode, sample-for-sample. Existing prefix tests exercise slow-seek reserve
+exhaustion, short laps, stale/missing history and resize continuation. These
+host tests do not execute the ESP-IDF worker schedule or close physical manual
+OUT acceptance. The complete `-Qualification` host suite passes without SKIP,
+and the documentation checker passes 113 Markdown/HTML files and 134 retired
+paths. The exact M3 build/package and a targeted physical retest are pending
+at this checkpoint.
+
+Original failed result/status/diagnostic evidence, operator context, independent
+199-sample failure audit and hashes are retained at
+`.cache/hercules-inpulse-500/transport-loop-20261011T113112Z/`. The original
+runner's empty `final:` error follows its strict-counter assertion; subsequent
+post-stop snapshots were saved separately without rewriting original evidence.

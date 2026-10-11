@@ -3403,7 +3403,8 @@ static void ae_decode_task(void *arg)
                     }
                     uint64_t published = eng->frames_since_seek - (uint64_t)samples;
                     if (published > keep_frames) {
-                        if (eng->format == AUDIO_FORMAT_FLAC)
+                        if (audio_loop_prefix_supports_source(eng->format,
+                                                              eng->mp3_index.complete))
                             prefix_plan = audio_loop_prefix_plan(&s_loop_prefix[ctx->deck],
                                 eng->loaded_session_generation,
                                 eng->loop_start_ms, eng->loop_end_ms);
@@ -3453,7 +3454,7 @@ static void ae_decode_task(void *arg)
         size_t file_pos = eng->file_pos;
         AE_UNLOCK();
 
-        /* Publish actual IN PCM before the expensive FLAC reseek. Preserve
+        /* Publish actual IN PCM before FLAC reseek or indexed MP3 preroll. Preserve
          * the existing small transition reserve; do not grow post-OUT overrun.
          * Prefix publication is decoder-owned and runs with interrupts enabled.
          * A later user seek flushes this data through the normal generation gate. */
@@ -5374,7 +5375,9 @@ void audio_engine_deck_prepare_loop_in(uint8_t deck, uint32_t start_ms)
     s_loop_prefix[deck].valid = false;
     ++eng->loop_prefix_epoch;
     atomic_store_bool(&eng->loop_prefix_requested, false);
-    if (eng->loaded && eng->format == AUDIO_FORMAT_FLAC && eng->sample_rate &&
+    if (eng->loaded &&
+        audio_loop_prefix_supports_source(eng->format, eng->mp3_index.complete) &&
+        eng->sample_rate &&
         timeline_active(deck) && s_loop_prefix[deck].pcm && !eng->loop_active &&
         !eng->seek_requested && !atomic_load_bool(&s_scratch_playing[deck])) {
         uint32_t pos = eng->output_base_ms +

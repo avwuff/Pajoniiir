@@ -37,6 +37,27 @@ controller README/MIDI acceptance state is reconciled, with combined remaining
 operator blocks prepared. No new build/OTA/playback or S2 retest was performed.
 Evidence and limits: [unattended Hercules observation](validation/HERCULES_INPULSE_500_PREPARATION_20261010.md#unattended-unloaded-idle-observation-2026-10-11).
 
+On the same `ac9287af`, the returned operator completed the stopped navigation
+and mixer window (180.234 s / 328 samples / 11,574 MIDI packets) and its focused
+Gain/Shift+LOAD supplement (60.469 s / 110 samples / 3304 MIDI packets).
+Normal and shifted load routes preserve the other deck; both Gain, pitch,
+faders, EQ/filter and crossfader movements are observed, with operator-normal
+response. No reboot or guarded connection/ISO errors occurred; both decks stayed
+stopped. This is partial controller coverage, not playback, analog calibration,
+pad/LED or full transport acceptance. Details:
+[stopped controls](validation/HERCULES_INPULSE_500_PREPARATION_20261010.md#stopped-navigation-and-mixer-blocks-2026-10-11).
+
+The subsequent manual transport window is strict PCM2 FAIL at 110.719 s / 199
+samples: PCM2 +795 immediately after the first observed D2 IN/OUT loop,
+other 21 strict deltas and output-late delta zero, no new USB loss or reboot.
+Both decks stopped; operator noticed no symptom and identified D2 loop controls.
+The decoder's FLAC-only retained-IN prefix left indexed MP3 with only a 2048-frame
+reseek reserve. A bounded correction extends prefix eligibility to verified-index
+MP3; real decoder/prefix continuation and slow-seek host regressions pass.
+The complete host qualification suite passes without SKIP; M3 build/package
+and physical retest remain pending.
+Evidence and limits: [manual loop failure](validation/HERCULES_INPULSE_500_PREPARATION_20261010.md#manual-loop-transport-failure-and-bounded-mp3-correction-2026-10-11).
+
 On earlier exact `04f0cfb6`, the operator-confirmed combined 60.078-s test passes MAIN/headphones, both
 jogs/Browse, PFL D1/D2, native headphone Mix/Volume and fluid waveforms. All 85
 samples were audited: all 22 strict deltas zero, 649 MIDI packets, output-late

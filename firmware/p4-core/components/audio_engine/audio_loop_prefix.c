@@ -1,6 +1,12 @@
 #include "audio_loop_prefix.h"
 #include <stddef.h>
 
+bool audio_loop_prefix_supports_source(audio_format_t format, bool mp3_index_complete)
+{
+    return format == AUDIO_FORMAT_FLAC ||
+           (format == AUDIO_FORMAT_MP3 && mp3_index_complete);
+}
+
 bool audio_loop_prefix_capture(audio_loop_prefix_t *p,
                                const audio_pcm_timeline_t *t,
                                uint64_t seq, uint32_t start_ms,

@@ -55,6 +55,11 @@ static void test_stale_and_missing_history(void)
 
 static void test_manual_out_slow_seek_runway(void)
 {
+    assert(audio_loop_prefix_supports_source(AUDIO_FORMAT_FLAC, false));
+    assert(audio_loop_prefix_supports_source(AUDIO_FORMAT_MP3, true));
+    assert(!audio_loop_prefix_supports_source(AUDIO_FORMAT_MP3, false));
+    assert(!audio_loop_prefix_supports_source(AUDIO_FORMAT_WAV, true));
+    assert(!audio_loop_prefix_supports_source(AUDIO_FORMAT_UNKNOWN, true));
     audio_loop_prefix_t p=captured(44100);
     audio_loop_prefix_plan_t plan=audio_loop_prefix_plan(&p,42,2000,5000);
     audio_pcm_timeline_reset(&timeline);
