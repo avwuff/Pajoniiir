@@ -274,6 +274,10 @@ The single restart completed without new panic evidence and without a second
 request. Records: `.cache/restart-cache-join-check/20261011T080821Z/`.
 
 This is **one stopped normal restart observation**, not a long restart campaign,
-playback/audio qualification, new-image eyes-on GUI confirmation, or proof that
+playback/audio qualification or proof that
 the historical cache fault's cause is resolved. No cache registers are sampled
 from the fault handler and no writeback is skipped. The S2 closeout stays closed.
+
+On 2026-10-11 the operator confirmed "Gui je uredan" after the candidate's
+restart. New-image GUI restoration is operator-confirmed; this does not add
+listening, controller-control, playback or broader restart-campaign evidence.

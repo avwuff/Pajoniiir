@@ -309,6 +309,7 @@ unchanged, Hercules MIDI/UAC1 44100-Hz stream restored. Both decks remain
 stopped. This is not a USB cable reconnect, cold power cycle, listening test,
 or new-image playback qualification. The operator-confirmed 60-second smoke
 above still belongs to `04f0cfb6`; it is not transferred to this candidate.
-New-image physical GUI confirmation is pending, and historical fault causality
-and wider restart reliability remain open. Full artifact identities and records
+On 2026-10-11 the operator confirmed: "Gui je uredan". This closes new-image
+GUI restoration only; historical fault causality, wider restart reliability
+and new-image playback/audio qualification remain open. Full artifact identities and records
 are in [the restart observation](RESTART_BUS_CAPTURE_20261010.md#exact-candidate-and-stopped-restart-observation).

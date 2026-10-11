@@ -21,7 +21,8 @@ One authorized local OTA installed it. A subsequent stopped normal restart
 passes boot 418 -> 419, reset `SW`, the same exact VALID image and byte-identical
 crash dump, with Hercules MIDI/UAC1 44100 Hz restored. The peer-reset/cache-sync
 serialization gap is addressed; causality and broader restart reliability remain
-open. New-image physical GUI confirmation is pending. Evidence and scope:
+open. The operator confirmed that the new-image GUI is normal on 2026-10-11.
+This confirms GUI restoration, not new-image playback/audio qualification. Evidence and scope:
 [restart candidate](validation/RESTART_BUS_CAPTURE_20261010.md#cache-synchronization-candidate-after-the-natural-fault).
 
 On earlier exact `04f0cfb6`, the operator-confirmed combined 60.078-s test passes MAIN/headphones, both
