@@ -3,8 +3,10 @@
 Date: 2026-10-11. Firmware source is clean
 `6166d93627304895857b626e719032de3b4f884d`; application identity is
 `main-deck-m3`, version `M3-dev-g6166d9362730`.
-This is a locally built and signed development candidate, **not installed,
-physically accepted or published**. No device controls or profiles were changed.
+At the packaging checkpoint this was a locally built and signed development
+candidate, not installed, physically accepted or published. No device controls
+or profiles were changed during packaging. The subsequently authorized local
+OTA and short smoke are recorded below; no public release was published.
 
 ## Build and package verification
 
@@ -95,3 +97,40 @@ of GUI, MAIN/headphones and controller responsiveness. No new S2 campaign is
 requested. Current CI is operator-deferred due to quota; JC4880/JC1060 physical
 acceptance and remaining shared-core gates are not closed by this package.
 No push, release tag, public OTA channel or published artifact was changed.
+
+## Authorized local OTA and short smoke
+
+On 2026-10-11 the operator authorized local OTA and a short smoke. One signed
+upload returned HTTP 200. Startup reached `valid` / OTA service `idle` in
+`ota_1`, with exact source `6166d93627304895857b626e719032de3b4f884d`, clean
+identity, version `M3-dev-g6166d9362730` and the expected ELF hash above.
+The pre-existing crash summary was unchanged across the restart. Hercules MIDI
+In/Out and UAC1 44,100-Hz packed-24 streaming recovered, and the catalog had
+260 tracks. The operator confirmed GUI/touch were normal.
+
+An intervening operator report that first PLAY required a second press was
+clarified: the first press only woke the visible screensaver. This is the
+intentional consume-first-wake behavior, not a reproduced playback defect.
+Read-only logs also contain two earlier D1 259-frame underruns (518 total),
+USB/controller recovery and storage disconnect/remount history. Their causal
+association is unproven. They remain historical observations, not cleared errors
+or symptoms attributable to the wake press.
+
+The subsequent bounded mixed-rate dual smoke ran **30.094 seconds / 51 samples**
+with D1 Casanova Action 44.1 kHz, D2 Ritam moj 48 kHz, pitch zero, no MT or loops,
+MAIN 48 kHz and Hercules headphones 44.1 kHz. All 22 strict counter deltas were
+present and zero; output-late delta was zero. The nonzero pre-existing counters,
+including 518 D1 underruns, one invalid feedback and stopped headphone underflow,
+were retained as the baseline. No heap walk was performed during playback.
+Both decks were confirmed stopped at the end. The operator confirmed clean MAIN
+and headphones and fluid waveforms. Only two MIDI packets were observed and the
+operator did not rotate jogs/Browse: active-control qualification is **NOT RUN**
+for this smoke. No extra controller campaign or long soak was started.
+
+Evidence is `.cache/final-m3-candidate-6166d936/ota-20261011T183237Z/` and
+`smoke-30s-20261011T202456Z/`, containing before/after identity and status,
+result, baseline, all samples and final stopped/firmware/UI/USB snapshots.
+The smoke archive also contains the runner, operator confirmation, raw diagnostic
+log and SHA-256 inventory. This is a short exact-image audio/display smoke, not
+full new-image qualification or evidence that historical underrun causes are fixed.
+S2 remains operator-closed with waivers and was not physically connected/tested.

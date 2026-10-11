@@ -2,14 +2,26 @@
 
 Status: **current documentation authority, reconciled 2026-10-11**.
 
+[Authorized M3 OTA and short smoke](validation/M3_FINAL_CONTROLLER_CANDIDATE_20261011.md#authorized-local-ota-and-short-smoke)
+installed `M3-dev-g6166d9362730`, clean source `6166d93627304895857b626e719032de3b4f884d`,
+as VALID `ota_1`; exact ELF identity and unchanged historical crash summary were
+verified. Hercules MIDI/UAC and the 260-track library returned. A 30.094-s
+mixed-rate dual smoke passed all 22 strict deltas and output-late delta zero,
+with operator-confirmed GUI/touch, clean MAIN/headphones and fluid waveforms.
+Controls were not exercised during playback (NOT RUN); both decks ended stopped.
+First PLAY only woke screensaver as designed. Two historical D1 underruns remain
+unresolved observations, not a demonstrated wake defect. No full new-image
+qualification, S2 retest, push or public release was performed.
+
 [Final local M3 controller candidate](validation/M3_FINAL_CONTROLLER_CANDIDATE_20261011.md)
 is built and signed on clean source `6166d93627304895857b626e719032de3b4f884d`,
 version `M3-dev-g6166d9362730`. The 2,605,008-byte application / 2,605,196-byte
 bundle pass experimental board, signature, identity, configuration and ELF audits.
 Both Hercules and full S2 profile artifacts are included and match their tracked
 binaries. Its SDKCONFIG header matches the accepted Hercules bench configuration,
-with controller USB3 and storage USB2. This candidate is not installed, physically
-accepted or published. S2 remains operator-closed with waivers; no S2 tests were
+with controller USB3 and storage USB2. At packaging it was not installed or
+accepted; the subsequent local OTA/short-smoke scope is recorded above. It is
+not publicly published. S2 remains operator-closed with waivers; no S2 tests were
 reopened and no stored profiles or device controls were changed.
 
 [Final local three-target matrix](validation/SHARED_P4_FINAL_BUILD_MATRIX_20261011.md)
