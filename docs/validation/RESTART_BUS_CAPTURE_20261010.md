@@ -205,3 +205,34 @@ Sampling is sequential on one core, not an atomic bus snapshot.
 Natural raw capture/export/decoding now has actual-device evidence. Restart
 reliability remains open even though installation reached VALID; no cache
 writeback operation was bypassed or disabled as a speculative fix.
+
+## Cache synchronization candidate after the natural fault
+
+The pinned IDF normal restart calls shutdown handlers, disables preemption on
+the restart task, then enters `esp_restart_noos`. That function resets/stalls
+the other core before its unguarded `Cache_WriteBack_All` call. Normal `msync`
+and mmap invalidation operations instead use the shared `esp_mm` cache sync
+critical section. Resetting a peer in such an operation is an unjoined
+transition; the dump does not contain the cache busy state needed to prove
+that this transition caused the observed bus rejection.
+
+The shared normal restart wrapper now joins that existing IDF critical section
+after shutdown handlers and before the peer reset. The no-return reset retains
+the lock, allowing an earlier sync to finish and excluding subsequent peer
+sync operations from the final writeback. It retains IDF's writeback, watchdog,
+peripheral reset and CPU reset sequence. There is no steady-state hook, delay,
+polling, allocation or added log in playback.
+
+Architecture exceptions and SoC pseudo-exceptions both set an internal SRAM
+panic marker before delegating to the original IDF handler. A direct noos
+restart, invalid core, or restart after either panic path bypasses the join:
+the other core may already be stalled while owning the lock. The pseudo-panic
+hook only marks this bypass; it does not claim new watchdog/abort bus capture.
+The existing 256-byte raw capture ABI and old dump decoder remain unchanged.
+
+Production host cases exercise normal restarts on both cores, frozen exception
+restarts, direct noos entry and a pseudo-panic during shutdown. The actual ELF
+gate additionally requires IRAM placement of the cache join, an internal SRAM
+panic marker and interception/delegation of the SoC panic hook. This candidate
+addresses the synchronization gap; physical restart reliability and causality
+remain unqualified until a matching installed candidate is observed.

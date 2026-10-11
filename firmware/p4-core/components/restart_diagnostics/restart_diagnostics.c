@@ -1,9 +1,11 @@
 #include "restart_diagnostics.h"
+#include <stdbool.h>
 #include "esp_attr.h"
 #include "esp_private/panic_internal.h"
 #include "riscv/csr.h"
 #include "riscv/rvruntime-frames.h"
 #include "soc/soc_caps.h"
+#include "esp_private/esp_cache_private.h"
 
 #if !SOC_ASYNCHRONOUS_BUS_ERROR_MODE
 #error "P4 diagnostic CSR contract requires asynchronous bus-error support"
@@ -15,8 +17,11 @@ COREDUMP_NOINIT_ATTR volatile p4_restart_capture_t
     p4_restart_capture[P4_RESTART_CAPTURE_CORES];
 /* BSS resets each boot even though the dump region itself is noinit. */
 static DRAM_ATTR volatile uint32_t s_capture_ready;
+/* Separate BSS marker covers pseudo-exceptions without changing the dump ABI. */
+DRAM_ATTR uint32_t p4_restart_panic_seen;
 
 void __real_panic_arch_fill_info(void *frame, panic_info_t *info);
+void __real_panic_soc_fill_info(void *frame, panic_info_t *info);
 void __real_esp_restart(void) __attribute__((noreturn));
 void __real_esp_restart_noos(void) __attribute__((noreturn));
 
@@ -72,12 +77,28 @@ void IRAM_ATTR __attribute__((noreturn)) __wrap_esp_restart(void)
 
 void IRAM_ATTR __attribute__((noreturn)) __wrap_esp_restart_noos(void)
 {
+    /* Only the normal esp_restart path can safely wait for a live peer.
+     * A panic/abort can have already stalled a peer which owns the cache lock.
+     * IDF 6.0.2 resets that peer before Cache_WriteBack_All(), without joining
+     * the lock used by msync/mmap. Hold the same lock across the no-return reset
+     * so an in-flight sync finishes before the peer is reset, and no new sync
+     * can overlap the final writeback. Do this after shutdown handlers. */
+    p4_restart_capture_init();
+    const uint32_t core = RV_READ_CSR(mhartid);
+    const bool normal_restart = core < P4_RESTART_CAPTURE_CORES &&
+        !__atomic_load_n(&p4_restart_panic_seen, __ATOMIC_ACQUIRE) &&
+        p4_restart_capture[core].restart_phase == P4_RESTART_PHASE_REQUESTED &&
+        !(p4_restart_capture[core].flags & P4_RESTART_CAPTURE_VALID);
     mark_restart(P4_RESTART_PHASE_NOOS);
+    if (normal_restart) {
+        esp_cache_sync_ops_enter_critical_section();
+    }
     __real_esp_restart_noos();
 }
 
 void IRAM_ATTR __wrap_panic_arch_fill_info(void *frame, panic_info_t *info)
 {
+    __atomic_store_n(&p4_restart_panic_seen, 1u, __ATOMIC_RELEASE);
     /* Also handle an exception after BSS init but before common app startup. */
     p4_restart_capture_init();
     uint32_t core = RV_READ_CSR(mhartid);
@@ -112,4 +133,13 @@ void IRAM_ATTR __wrap_panic_arch_fill_info(void *frame, panic_info_t *info)
     }
     /* Preserve IDF PC normalization, summary, dump and restart behavior. */
     __real_panic_arch_fill_info(frame, info);
+}
+
+void IRAM_ATTR __wrap_panic_soc_fill_info(void *frame, panic_info_t *info)
+{
+    /* Watchdog/abort/cache pseudo-exceptions skip the architecture hook.
+     * Never wait for their potentially stalled cache-lock owner. */
+    __atomic_store_n(&p4_restart_panic_seen, 1u, __ATOMIC_RELEASE);
+    p4_restart_capture_init();
+    __real_panic_soc_fill_info(frame, info);
 }

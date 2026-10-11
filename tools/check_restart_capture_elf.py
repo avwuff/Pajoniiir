@@ -20,8 +20,15 @@ def verify(build):
                 raise ValueError(f"missing or ambiguous symbol {name}")
             return items[0]
 
-        wrapper_names = ["__wrap_panic_arch_fill_info", "__wrap_esp_restart", "__wrap_esp_restart_noos"]
+        wrapper_names = ["__wrap_panic_arch_fill_info", "__wrap_panic_soc_fill_info",
+                         "__wrap_esp_restart", "__wrap_esp_restart_noos"]
         addresses = {}
+        join = symbol("esp_cache_sync_ops_enter_critical_section")
+        if elf.get_section(join["st_shndx"]).name != ".iram0.text":
+            raise ValueError("restart cache join is not in internal IRAM")
+        panic_marker = symbol("p4_restart_panic_seen")
+        if not 0x4ff00000 <= panic_marker["st_value"] < 0x50000000:
+            raise ValueError("panic bypass marker is not in internal SRAM")
         for name in wrapper_names:
             item = symbol(name)
             if elf.get_section(item["st_shndx"]).name != ".iram0.text":
@@ -68,6 +75,9 @@ def verify(build):
             raise ValueError(f"no real linked caller intercepts {wrapped}")
         callers[wrapped] = found
     panic = functions["__wrap_panic_arch_fill_info"]
+    noos = functions["__wrap_esp_restart_noos"]
+    if not re.search(r"\b(?:jal|jalr|j|jr)\b[^\n]*<esp_cache_sync_ops_enter_critical_section>", noos):
+        raise ValueError("normal restart does not join the actual IDF cache lock")
     for csr in ("0x7e1", "0x7c5", "0xbf0", "0xbf1", "0xbf2", "0xbf8", "0xbf9", "0xbfa"):
         if csr not in panic:
             raise ValueError(f"panic hook omits CSR {csr}")

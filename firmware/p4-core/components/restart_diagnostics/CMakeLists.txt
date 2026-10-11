@@ -1,6 +1,6 @@
 idf_component_register(SRCS "restart_diagnostics.c"
                        INCLUDE_DIRS "include"
-                       PRIV_REQUIRES esp_system espcoredump riscv)
+                       PRIV_REQUIRES esp_system espcoredump riscv esp_mm)
 # Requirements discovery executes this file before sdkconfig is available.
 # idf_component_register returns early in that pass; validate only afterwards.
 if(NOT IDF_TARGET STREQUAL "esp32p4" OR NOT CONFIG_ESP_COREDUMP_ENABLE_TO_FLASH)
@@ -9,6 +9,7 @@ endif()
 # External IDF calls are intercepted without editing the installed SDK.
 target_link_libraries(${COMPONENT_LIB} INTERFACE
     "-Wl,--wrap=panic_arch_fill_info"
+    "-Wl,--wrap=panic_soc_fill_info"
     "-Wl,--wrap=esp_restart"
     "-Wl,--wrap=esp_restart_noos")
 
