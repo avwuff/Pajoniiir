@@ -73,9 +73,9 @@ bool controller_profile_runtime_activate(const uint8_t *blob, size_t len,
     s_active = true;
     s_ready = s_profile.init_sysex_len == 0;
     RT_UNLOCK();
-    free(parsed);
     RT_LOGI("dynamic profile active: VID=0x%04X PID=0x%04X inputs=%u",
-            s_profile.vid, s_profile.pid, (unsigned)s_profile.input_count);
+            parsed->vid, parsed->pid, (unsigned)parsed->input_count);
+    free(parsed);
     return true;
 }
 

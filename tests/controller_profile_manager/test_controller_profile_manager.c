@@ -94,6 +94,17 @@ static void refresh_crc(uint8_t *blob, size_t len)
 
 static void test_meta_parse(void)
 {
+    uint8_t malformed[CPM_MAX_PROFILE_SIZE];
+    const size_t output = CPM_HEADER_SIZE +
+        (g_blob[24] | ((size_t)g_blob[25] << 8)) * CPM_INPUT_ENTRY_SIZE;
+    for (size_t field = 3; field <= 7; ++field) {
+        memcpy(malformed, g_blob, g_blob_len);
+        malformed[output + field] = field == 3 ? 0xf0 : 0x80;
+        refresh_crc(malformed, g_blob_len);
+        controller_profile_meta_t invalid;
+        assert(controller_profile_meta_parse(malformed, g_blob_len, &invalid) == ESP_ERR_INVALID_ARG);
+        assert(!invalid.valid);
+    }
     controller_profile_meta_t meta;
 
     /* Real FLX4 fixture: the committed compiler output must parse. */
@@ -540,7 +551,7 @@ static void test_v4_upload(void)
     wr_u16(b + 24, 1); wr_u16(b + 26, 1); wr_u16(b + 30, 3);
     b[29] = 2;
     b[32] = 0x94; b[34] = 9; b[35] = 0xff; b[36] = 1; b[37] = 0x77; b[40] = 2;
-    b[48 + 2] = 1; b[48 + 8] = 150;
+    b[48 + 2] = 1; b[48 + 3] = 0xb0; b[48 + 8] = 150;
     b[60] = 0xf0; b[61] = 1; b[62] = 0xf7;
     refresh_crc(b, sizeof(b));
     assert(controller_profile_meta_parse(b, sizeof(b), &meta) == ESP_OK);

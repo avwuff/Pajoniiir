@@ -127,7 +127,8 @@ esp_err_t controller_profile_meta_parse(const uint8_t *data, size_t len,
 
     for (uint16_t i = 0; i < output_count;
          i++, entry += CPM_OUTPUT_ENTRY_SIZE) {
-        if (entry[2] > CPM_MAX_OUTPUT_KIND) {
+        if (entry[2] > CPM_MAX_OUTPUT_KIND || entry[3] < 0x80 || entry[3] >= 0xF0 ||
+            ((entry[4] | entry[5] | entry[6] | entry[7]) & 0x80)) {
             return ESP_ERR_INVALID_ARG;
         }
     }
@@ -747,12 +748,16 @@ esp_err_t controller_profile_manager_scan_storage(void)
     esp_err_t rc = controller_profile_scan_dir(CONFIG_CONTROLLER_PROFILE_SD_PATH, scanned);
     sd_io_gate_end();
 
+    bool reactivate = false;
     if (rc == ESP_OK && cpm_lock()) {
         controller_profile_registry_apply_rescan(&s_registry, scanned);
+        reactivate = s_registry.controller_present;
         *scanned = s_registry;
         cpm_unlock();
     }
     __atomic_store_n(&s_storage_busy, false, __ATOMIC_RELEASE);
+
+    if (reactivate && s_reactivate_callback) s_reactivate_callback();
 
     if (rc == ESP_ERR_NOT_FOUND) {
         ESP_LOGW(TAG, "no %s directory (SD missing or no profiles)",

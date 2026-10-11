@@ -144,7 +144,8 @@ int cp_profile_parse(const uint8_t *data, size_t len, cp_profile_t *out)
         o->on_value = p[6];
         o->blink_value = p[7];
         o->value_scale = version >= 4 ? rd_u16(p + 8) : 0;
-        if (o->out_kind > CP_OUT_CC_VALUE) {
+        if (o->out_kind > CP_OUT_CC_VALUE || o->status < 0x80 || o->status >= 0xF0 ||
+            ((o->data1 | o->off_value | o->on_value | o->blink_value) & 0x80)) {
             return CP_ERR_BOUNDS;
         }
     }

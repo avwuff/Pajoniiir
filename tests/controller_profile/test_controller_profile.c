@@ -149,6 +149,26 @@ static void test_parse_validation(void)
     assert(profile.input_count == 9 && profile.output_count == 4);
     assert(profile.pair_slot_count == 2);
 
+    /* CRC-valid malformed output cannot inject MIDI status into data bytes. */
+    const size_t output = CP_HEADER_SIZE + profile.input_count * CP_INPUT_ENTRY_SIZE;
+    const uint8_t invalid_status[] = {0, 0x7f, 0xf0, 0xff};
+    for (size_t i = 0; i < sizeof(invalid_status); ++i) {
+        build_basic(&b);
+        b.buf[output + 3] = invalid_status[i];
+        wr_u32(b.buf + 12, cp_crc32(b.buf + 16, b.len - 16));
+        assert(cp_profile_parse(b.buf, b.len, &profile) == CP_ERR_BOUNDS);
+    }
+    for (size_t field = 4; field <= 7; ++field) {
+        build_basic(&b);
+        b.buf[output + field] = 0x80;
+        wr_u32(b.buf + 12, cp_crc32(b.buf + 16, b.len - 16));
+        assert(cp_profile_parse(b.buf, b.len, &profile) == CP_ERR_BOUNDS);
+    }
+    build_basic(&b);
+    memset(b.buf + output + 4, 0x7f, 4);
+    wr_u32(b.buf + 12, cp_crc32(b.buf + 16, b.len - 16));
+    assert(cp_profile_parse(b.buf, b.len, &profile) == CP_OK);
+
     /* bad magic */
     build_basic(&b);
     b.buf[0] = 'X';

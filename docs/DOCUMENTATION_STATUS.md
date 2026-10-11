@@ -2,6 +2,17 @@
 
 Status: **current documentation authority, reconciled 2026-10-11**.
 
+[PR 46 profile/USB-host/LED review](reviews/2026-10-11-pr46-profile-host-led-review.md)
+covers five further directories (26 files, six findings). Five confirmed
+repairs address queue-reset starvation, malformed MIDI output admission,
+rescan reactivation, activation logging and C++ LED linkage. The proposed
+14-bit pair change remains an explicit compatibility-sensitive deferred item;
+it is not reported as fixed. This extends scoped review evidence and does not
+change the installed accepted firmware or frozen delivery artifacts.
+Full host qualification (no SKIP), ordinary M3 ESP-IDF 6.0.2 build,
+documentation checks and focused production-boundary regressions pass.
+The existing six compiled controller profiles remain byte-identical.
+
 [PR 46 UI/controller review](reviews/2026-10-11-pr46-ui-controller-review.md)
 records nine local UI repairs and one unresolved font-permission/provenance
 item from ten service findings. All nine simulator screenshot gates, the

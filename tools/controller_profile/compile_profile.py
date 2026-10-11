@@ -232,6 +232,10 @@ class Entry:
 class Output:
     def __init__(self, led_id, deck, kind, status, data1,
                  off=0x00, on=0x7F, blink=0x7F, value_scale=0):
+        if not 0x80 <= status < 0xF0:
+            raise ValueError("output status must be a channel-voice MIDI status")
+        if any(not 0 <= value <= 0x7F for value in (data1, off, on, blink)):
+            raise ValueError("output data bytes must be 7-bit MIDI values")
         self.led_id = led_id
         self.deck = deck
         self.kind = kind

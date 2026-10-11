@@ -37,7 +37,9 @@ static BaseType_t routed_queue_reset(QueueHandle_t queue)
 {
     controller_midi_out_gate_stop(&s_output_gate);
     while (controller_midi_out_gate_active_producers(&s_output_gate) != 0u) {
-        taskYIELD();
+        /* A preempted producer may have lower priority on this same core.
+         * Yield alone cannot run it; block while it retires queue ownership. */
+        vTaskDelay(1);
     }
     return xQueueGenericReset(queue, pdFALSE);
 }

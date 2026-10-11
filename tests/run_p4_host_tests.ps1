@@ -4032,6 +4032,8 @@ Invoke-Step -Name "run codec publication and media fault backoff regression" -Wo
     -Executable $pythonSource -Arguments @("tests/audio_fw_runtime/test_review_boundaries.py")
 Invoke-Step -Name "run production paired RGB565 fill regression" -WorkingDirectory $RepoRoot `
     -Executable $pythonSource -Arguments @("tests/ui_framebuffer_pair/test_backend_fill.py")
+Invoke-Step -Name "run production controller profile rescan regression" -WorkingDirectory $RepoRoot `
+    -Executable $pythonSource -Arguments @("tests/controller_profile_manager/test_rescan_runtime.py")
 Invoke-Step -Name "run production network mutation lifecycle regression" -WorkingDirectory $RepoRoot `
     -Executable $pythonSource -Arguments @("tests/deck_net_sync/test_network_lifecycle.py")
 Invoke-Step -Name "run firmware artwork identity ownership regression" `

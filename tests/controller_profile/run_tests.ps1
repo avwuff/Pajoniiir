@@ -2,6 +2,8 @@ $ErrorActionPreference = "Stop"
 $RepoRoot = (Resolve-Path (Join-Path $PSScriptRoot "../..")).Path
 & python (Join-Path $PSScriptRoot "test_capture_midi.py")
 if ($LASTEXITCODE -ne 0) { throw "MIDI capture integrity tests failed" }
+& python (Join-Path $PSScriptRoot "test_output_validation.py")
+if ($LASTEXITCODE -ne 0) { throw "Profile output validation tests failed" }
 $BuildDir = Join-Path $PSScriptRoot "build"
 New-Item -ItemType Directory -Force -Path $BuildDir | Out-Null
 $Components = Join-Path $RepoRoot "firmware/p4-core/components"

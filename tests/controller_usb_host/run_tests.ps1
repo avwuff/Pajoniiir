@@ -30,5 +30,8 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 & $GateExe
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
+& python (Join-Path $PSScriptRoot "test_routed_queue_reset.py")
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
 & (Join-Path $RepoRoot "tests/controller_usb_audio/run_tests.ps1")
 exit $LASTEXITCODE
