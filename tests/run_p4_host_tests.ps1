@@ -2629,6 +2629,7 @@ $tests = @(
         Target = "test_controller_usb_audio_stream.exe"
         Args = @(
             "-Wall", "-Wextra", "-Wpedantic", "-Werror", "-std=c11", "-O2",
+            "-DCONFIG_PAJONIIIR_BOARD_JC4880=1",
             "-Istubs",
             "-I../../firmware/p4-core/components/controller_usb_audio",
             "-I../../firmware/p4-core/components/controller_usb_audio/include",

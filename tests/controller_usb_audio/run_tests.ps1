@@ -6,6 +6,7 @@ New-Item -ItemType Directory -Force -Path $BuildDir | Out-Null
 $Target = Join-Path $BuildDir "test_controller_usb_audio_stream"
 if ($env:OS -eq "Windows_NT") { $Target += ".exe" }
 gcc -std=c11 -O2 -Wall -Wextra -Wpedantic -Werror `
+    -DCONFIG_PAJONIIIR_BOARD_JC4880=1 `
     "-I$PSScriptRoot/stubs" "-I$Component" "-I$Component/include" `
     "-I$RepoRoot/firmware/p4-core/components/service_log/include" `
     (Join-Path $PSScriptRoot "test_controller_usb_audio_stream.c") `

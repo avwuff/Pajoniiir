@@ -12,6 +12,8 @@ class FifoCapacity(unittest.TestCase):
     def test_controller_and_storage_packet_limits(self):
         cmake = (ROOT / 'firmware/p4-core/cmake/apply_espressif_usb_fifo_patch.cmake').read_text()
         policy = re.search(r'set\(_pajoniiir_fifo_patched \[=\[\n(.*?)\]=\]\)', cmake, re.S)[1]
+        stream = (ROOT / 'firmware/p4-core/components/controller_usb_audio/controller_usb_audio_stream.c').read_text()
+        admission = re.search(r'#if[^\n]+\n#define STREAM_FS_FIFO_BYTES.*?#endif', stream, re.S)[0]
         harness = r'''
 #include <assert.h>
 #include <stdbool.h>
@@ -19,6 +21,7 @@ class FifoCapacity(unittest.TestCase):
 typedef struct { unsigned rx_fifo_lines, nptx_fifo_lines, ptx_fifo_lines; } fifo_t;
 typedef struct { fifo_t fifo_config; } port_t;
 typedef struct { struct { unsigned hsphy_type, fifo_size; } constant_config; } usb_dwc_hal_context_t;
+''' + admission + r'''
 static void calculate(port_t *port, const usb_dwc_hal_context_t *hal) {
 ''' + policy + r'''
 }
@@ -43,8 +46,10 @@ int main(void) {
     assert(p.fifo_config.rx_fifo_lines + p.fifo_config.nptx_fifo_lines + p.fifo_config.ptx_fifo_lines == 256);
     assert((p.fifo_config.rx_fifo_lines - 2) * 4 >= 64);
     assert(p.fifo_config.nptx_fifo_lines * 4 >= 64);
-#ifdef CONFIG_PAJONIIIR_BOARD_JC1060
+    assert(STREAM_FS_FIFO_BYTES == p.fifo_config.ptx_fifo_lines * 4);
+#if defined(CONFIG_PAJONIIIR_BOARD_JC4880) || defined(CONFIG_PAJONIIIR_BOARD_JC1060)
     assert(p.fifo_config.ptx_fifo_lines * 4 == 640);
+    assert(p.fifo_config.ptx_fifo_lines * 4 >= 540);
 #else
     /* The experiment changes only HS-root capacity; standard FLX4 stays 400. */
     assert(p.fifo_config.ptx_fifo_lines * 4 == 400);
@@ -56,12 +61,11 @@ int main(void) {
         with tempfile.TemporaryDirectory() as directory:
             source = pathlib.Path(directory) / 'fifo.c'
             source.write_text(harness)
-            for jc1060, experiment in ((False, False), (False, True), (True, False), (True, True)):
-                executable = pathlib.Path(directory) / f'fifo-{jc1060}-{experiment}.exe'
+            for board, experiment in ((board, experiment) for board in ('M3', 'JC4880', 'JC1060') for experiment in (False, True)):
+                executable = pathlib.Path(directory) / f'fifo-{board}-{experiment}.exe'
                 args = ['gcc', '-std=c11', '-Wall', '-Wextra', '-Werror',
                         f'-DCONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC={int(experiment)}']
-                if jc1060:
-                    args.append('-DCONFIG_PAJONIIIR_BOARD_JC1060=1')
+                args.append(f'-DCONFIG_PAJONIIIR_BOARD_{board}=1')
                 subprocess.run(args + [str(source), '-o', str(executable)], check=True)
                 subprocess.run([str(executable)], check=True)
 

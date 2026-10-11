@@ -56,10 +56,11 @@ set(_pajoniiir_fifo_patched [=[
                                           - port->fifo_config.ptx_fifo_lines
                                           - port->fifo_config.nptx_fifo_lines;
     } else {
-        // FS controller: MIDI uses 64-byte bulk packets and FLX4 UAC1 uses
-        // periodic OUT packets up to 384 bytes.
+        // FS controller: reserve 80 bytes for MIDI bulk OUT. JC controllers
+        // also accept Hercules packed-24 UAC1 (540-byte endpoint MPS).
+        // The 640-byte periodic FIFO leaves 296 usable RX bytes for MIDI.
         port->fifo_config.nptx_fifo_lines = 20;
-#ifdef CONFIG_PAJONIIIR_BOARD_JC1060
+#if defined(CONFIG_PAJONIIIR_BOARD_JC4880) || defined(CONFIG_PAJONIIIR_BOARD_JC1060)
         port->fifo_config.ptx_fifo_lines = 160;
 #else
         port->fifo_config.ptx_fifo_lines = 100;

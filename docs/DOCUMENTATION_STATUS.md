@@ -2,6 +2,12 @@
 
 Status: **current documentation authority, reconciled 2026-10-11**.
 
+[JC4880 Hercules FS FIFO repair](validation/JC4880_HERCULES_FIFO_20261011.md)
+records the installed shared-core baseline, operator-confirmed GUI/touch/Browse,
+and the reproduced 400-byte FIFO/admission limit rejecting Hercules's 540-byte
+endpoint. The repaired production policy and focused regressions pass; local
+build, installation and physical audio smoke remain pending in that record.
+
 [Final development handoff](reviews/2026-10-11-shared-core-final-handoff.md)
 consolidates implementation, software results, installed identity and outstanding
 acceptance/publication gates. The 6166d936 active-control supplement now passes
