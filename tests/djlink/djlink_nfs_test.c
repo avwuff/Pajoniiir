@@ -730,6 +730,11 @@ static void test_bad_config(void)
     cfg.read_size = 100;
     CHECK_EQ(djlink_nfs_fetch(&s_client, &cfg, &io, 0), DJLINK_NFS_E_ARG);
     base_cfg(&cfg, "a");
+    cfg.retransmit_ms = UINT32_MAX;
+    CHECK_EQ(djlink_nfs_fetch(&s_client, &cfg, &io, 0), DJLINK_NFS_E_ARG);
+    cfg.retransmit_ms = DJLINK_NFS_RETRANSMIT_MAX_MS + 1u;
+    CHECK_EQ(djlink_nfs_fetch(&s_client, &cfg, &io, 0), DJLINK_NFS_E_ARG);
+    base_cfg(&cfg, "a");
     io.write = NULL;
     CHECK_EQ(djlink_nfs_fetch(&s_client, &cfg, &io, 0), DJLINK_NFS_E_ARG);
     CHECK(strcmp(djlink_nfs_error_text(&s_client), "BAD FETCH CONFIG") == 0);

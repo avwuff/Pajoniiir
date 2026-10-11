@@ -17,7 +17,7 @@ typedef struct {
     bool present, has_mac, has_status, has_beat, has_position;
     uint8_t number, device_type, mac[6];
     char name[DJLINK_NAME_LEN + 1];
-    uint32_t ip, last_ms, beat_rx_ms, position_rx_ms;
+    uint32_t ip, last_ms, beat_rx_ms, position_rx_ms, status_rx_ms;
     uint64_t source_epoch;
     djlink_status_t status;
     djlink_beat_t beat;

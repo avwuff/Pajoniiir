@@ -70,6 +70,7 @@ bool dj_link_sync_master(dj_link_sync_t *s, const dj_link_discovery_t *d,
     int n=djlink_handoff_req_build(&req,buf,sizeof(buf));
     if (n<=0 || !send || !send(ctx,DJLINK_PORT_BEAT,p->ip,buf,(size_t)n)) return false;
     s->pending_deck=(int8_t)deck;s->pending_number=d->numbers[deck];
+    s->pending_accepted=false;s->pending_started_ms=now;
     s->deadline_ms=now+HANDOFF_MS;return true;
 }
 bool dj_link_sync_ingest(dj_link_sync_t *s, const dj_link_discovery_t *d,
@@ -83,8 +84,7 @@ bool dj_link_sync_ingest(dj_link_sync_t *s, const dj_link_discovery_t *d,
         if (s->pending_deck>=0 && p && p->ip==ip &&
             resp.requester_number==p->number && (int32_t)(now-s->deadline_ms)<0 &&
             dj_link_discovery_number(d,(unsigned)s->pending_deck)==s->pending_number) {
-            s->local_master=s->pending_deck;s->pending_deck=-1;s->peer=0;
-            ++s->master_epoch;s->clock.valid=false;s->have_beat=false;return true;
+            s->pending_accepted=true;return true;
         }
         ++s->rejected_controls;return false;
     }
@@ -200,6 +200,17 @@ void dj_link_sync_tick(dj_link_sync_t *s, const dj_link_discovery_t *d,
     s->enabled=true;
     if ((s->pending_deck>=0 || s->yield_number) && (int32_t)(now-s->deadline_ms)>=0) {
         s->pending_deck=-1;s->yield_number=0;++s->handoff_timeouts;
+    }
+    if (s->pending_deck>=0 && s->pending_accepted) {
+        const dj_link_peer_t *authority=peer(d,s->peer,s->peer_epoch);
+        /* Agreement precedes the outgoing master's fresh status announcement.
+         * Do not advertise two masters merely on receipt of its ACK. */
+        if (is_master(authority) &&
+            (int32_t)(authority->status_rx_ms-s->pending_started_ms)>=0 &&
+            authority->status.master_handoff==s->pending_number) {
+            s->local_master=s->pending_deck;s->pending_deck=-1;s->peer=0;
+            ++s->master_epoch;s->clock.valid=false;s->have_beat=false;
+        }
     }
     if (s->yield_number) {
         const dj_link_peer_t *p=peer(d,s->yield_number,s->peer_epoch);

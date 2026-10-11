@@ -10,6 +10,9 @@ Local corrections: DB typed-field tags are checked, short/empty blobs and string
 are not read as integers, oversized/null builder payloads are rejected, and a
 prefix parser reports consumed bytes for fragmented/coalesced TCP transport.
 Host suites include donor codec tests and focused malformed-frame coverage.
+Full-width wire names are copied with a 20-byte read bound, rather than strlen.
+Master-handoff responses require the affirmative wire value (1). Configurable
+NFS retransmit intervals are bounded so the capped 64x backoff cannot overflow.
 The donor POSIX NFS fixture supplied a 110-byte name from a 100-byte remaining
 buffer. ASan reproduced that fixture overread; the test now owns the full name
 buffer and retains all codec capacity checks.

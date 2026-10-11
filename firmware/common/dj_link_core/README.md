@@ -3,7 +3,7 @@
 `dj_link_discovery` is a single-owner, heap-free discovery and dual-player claim
 model. Claim stages/timing and the 5/6 keep-alive compatibility byte derive from
 kayrozen/Pajoniiir `428b97dd4a175f03d3a172c8db9c4d5ed94195fb`,
-`firmware/boards/jc1060/dj_link/dj_link_session.c` (MIT).
+`firmware/main-deck-jc1060/components/dj_link/dj_link_session.c` (MIT).
 The associated codec and its license are preserved in `../djlink`.
 `LICENSE` retains kayrozen's codec attribution; `LICENSE.Pajoniiir` preserves
 the frozen donor application's MIT copyright notice for the derived session
@@ -68,7 +68,10 @@ the old deck. Owned metadata/artwork publish only after accepted audio binding.
 `dj_link_sync` is the heap-free worker-owned master coordinator. Peer inventory
 epochs cannot revoke our own player claim. Selection remains sticky after loss;
 explicit follow can choose a new authority. Handoff checks source IP/epoch,
-claimed destination and a three-second deadline. Status goes to known peers on
+claimed destination and a three-second deadline. An affirmative ACK records
+agreement only; the requested deck becomes master after a fresh status from
+that same source announces its player number as the handoff destination.
+Status goes to known peers on
 50002; beats/handoff use the Ethernet-bound 50001 socket. No local library is
 advertised. The shared `deck_net_sync` follower derives from frozen donor
 428b97dd under the root MIT license, with periodic hard resync removed.

@@ -2,6 +2,17 @@
 
 Status: **current documentation authority, reconciled 2026-10-11**.
 
+[PR 46 full protocol-directory review completion](reviews/2026-10-11-pr46-dj-link-protocol-completion.md)
+finishes the operator-authorized manual inspection of all 45 tracked files in
+`common/djlink` and `common/dj_link_core`. Four additional confirmed defects
+(full-width name overread, premature master handoff, nonaffirmative ACK and NFS
+backoff overflow) have repairs and failing-before/passing-after regressions.
+Full host qualification has no SKIP; Linux ASan/UBSan and the ordinary M3
+ESP-IDF 6.0.2 build/verifier pass (2,601,280 bytes). Documentation/provenance
+is corrected and dependency locks remain unchanged. This completes that manual
+review scope, not CodeRabbit service review, real Pro DJ Link interoperability
+or shared-core acceptance. Installed firmware and frozen packages are unchanged.
+
 [PR 46 inherited DJ Link protocol review](reviews/2026-10-11-pr46-dj-link-protocol-review.md)
 records the operator-authorized manual review after CodeRabbit rejected the
 service request. Reproduced DBServer streaming tag and incomplete path-response
