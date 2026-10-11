@@ -1,8 +1,9 @@
 # Hercules DJControl Inpulse 500 preparation
 
 The source-backed profile is software-qualified and installed on the M3 bench.
-A combined physical smoke passed on `04f0cfb6`; full hardware acceptance and
-playback qualification on the current `ac9287af` remain open. See the [MIDI map](../../docs/HERCULES_INPULSE_500_MIDI_MAP.md)
+A combined physical smoke passed on `04f0cfb6`. The current `e16ecfb5` also
+passes the targeted manual IN/OUT/Exit retest on both MP3 decks; full hardware
+acceptance and final playback qualification remain open. See the [MIDI map](../../docs/HERCULES_INPULSE_500_MIDI_MAP.md)
 and [M3 preparation record](../../docs/validation/HERCULES_INPULSE_500_PREPARATION_20261010.md).
 
 The current fixture is S3CP v4, 5592 bytes, with 268 expanded inputs and
@@ -26,10 +27,13 @@ profiles. MASTER intentionally controls PCM5102A volume; controller RCA MAIN
 is not the reference output and remains unqualified.
 
 The first matching clean firmware was `eafdb7a5`. The current installed image
-is clean `ac9287af`, VALID `ota_1`; its M3 build, full host qualification and
+is clean `e16ecfb5`, VALID `ota_0`; its M3 build, full host qualification and
 signed local OTA pass. The profile remains active and unchanged. One stopped
-software restart and GUI restoration are confirmed on this image; the earlier
-audio/control smoke belongs to `04f0cfb6`. See the preparation record for exact
+software restart is recorded on `ac9287af`; GUI restoration and the targeted
+90-s manual-loop audio/visual retest are confirmed on `e16ecfb5`. The earlier
+combined audio/control smoke belongs to `04f0cfb6`. Retain the operator's
+previous CUE/PLAY handoff and Sync checks without scheduling duplicates.
+See the preparation record for exact
 hashes, evidence and the combined remaining operator blocks.
 
 The manufacturer documents 24-bit, 44100-Hz audio, MAIN channels 1/2 and
@@ -40,6 +44,11 @@ does not configure the USB driver or establish format support. Actual USB descri
 Headphone level/mix and master-headphone selection remain native hardware
 controls. Verify both blend endpoints and PFL physically before accepting this
 route. No arbitrary initialization SysEx is sent.
+
+Pad FX banks currently implement filters on pads 1/2 and echo on pads 3/4.
+Pads 5..8 have no DSP preset. Normal empty Hot Cue pads create persistent cues;
+Shift+Hot Cue pads delete them. A read-only performance sweep must avoid these
+writes unless a disposable track or explicit cue-edit scope has been selected.
 
 S2 work is closed by the operator. With both decks stopped:
 

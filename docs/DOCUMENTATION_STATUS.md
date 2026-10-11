@@ -2,6 +2,15 @@
 
 Status: **current documentation authority, reconciled 2026-10-11**.
 
+Latest pad/FX/LED observation on `e16ecfb5`: 180.281 s / 313 samples /
+136 MIDI packets, all 22 strict deltas and output-late delta zero, both decks
+finally stopped. Sampled loop changes are incomplete relative to the requested
+sequence and no global FX change was observed. Operator reports
+"sve je bilo uredno" for the listed controls/audio/visual question; no
+individual completion list was supplied. This is not full pad/FX/LED
+qualification. See the
+[combined observation](validation/HERCULES_INPULSE_500_PREPARATION_20261010.md#combined-padfxled-observation-2026-10-11).
+
 Latest installed manual-loop candidate: clean `e16ecfb5`,
 `M3-dev-ge16ecfb5e7b0`, VALID `ota_0`, exact ELF
 `96279a267ef9a93f89148ba01de95519c93a87d6581f609e576739002323252f`.

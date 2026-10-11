@@ -534,3 +534,34 @@ and OFF at 86.172 s, before the first PCM increase; it does not observe a D2
 Sync transition. The operator's wider previous-control report is kept separate
 from this sampled evidence and from the new-image manual-loop PASS. The MP3
 prefix change does not alter CUE/PLAY/Sync mapping or semantic admission.
+
+### Combined pad/FX/LED observation, 2026-10-11
+
+On the same exact clean `e16ecfb5`, VALID `ota_0`, an operator-ready window
+completed 180.281 s / 313 samples / 136 new MIDI packets. Both decks played
+the unchanged Ena/Jura tracks with Hercules UAC1 44100 Hz and were safely
+stopped afterwards. All 22 present strict deltas and output-late delta are zero.
+An independent full-sample audit verifies identity, uptime, titles, storage,
+healthy stream, all counter paths and final firmware/ELF/slot.
+
+The requested sequence was Beat Loop/resize/Exit and momentary roll, Pad FX 1/2
+press/release, Beat Jump and global FX/LED checks, each on both decks. Hot Cue
+pad presses were excluded: an empty normal slot creates persistent data and
+Shift+pad deletes it. Pad FX currently have DSP presets only on pads 1..4.
+
+Observed coverage is narrower than the requested sequence. D1 reactivated its
+remembered 10458..13375-ms loop at 39.515 s, expanded OUT to 16292 ms at
+108.796 s and cleared the loop at 170.593 s. D2 activated a
+196921..198529-ms loop at 179.781 s, just before automatic stop. No sampled
+global Beat FX change occurred. These observations do not establish the pad
+mode, all releases, both-deck resize/roll, Beat Jump, audible pad FX or LED
+colours individually. In response to the question listing completed steps,
+control response, sound, waveforms, pad colours and VU, the operator replied
+"sve je bilo uredno". Retain this overall satisfactory physical report without
+inventing an individual completion list or raw pad-address proof. The window
+has bounded telemetry PASS and an overall operator report; complete per-control
+qualification remains limited by the sampled coverage above.
+
+Original records, runner, independent audit and hashes:
+`.cache/hercules-inpulse-500/pads-fx-led-20261011T121720Z/`.
+No firmware change/build, OTA, push or release was performed for this window.

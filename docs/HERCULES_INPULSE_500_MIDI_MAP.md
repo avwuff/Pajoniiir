@@ -1,8 +1,10 @@
 # Hercules DJControl Inpulse 500 MIDI Map
 
 Status: host-qualified Pajoniiir controller profile; combined physical smoke
-passed on `04f0cfb6`. Full MIDI/LED/lifecycle coverage and playback on current
-`ac9287af` remain open.
+passed on `04f0cfb6`. The current installed `e16ecfb5` has a separate physically
+accepted manual IN/OUT/Exit retest on both MP3 decks. Full MIDI/LED/lifecycle
+coverage and final playback qualification remain open; the operator's prior
+CUE/PLAY handoff and Sync checks are retained without duplicate tests.
 
 The [2026-10-10 M3 preparation record](validation/HERCULES_INPULSE_500_PREPARATION_20261010.md)
 adds measured Windows identity and jog-touch addresses, current offline
@@ -90,6 +92,13 @@ its pads are intentionally unmapped.
 | Mode 6 | `0x14` | Pad FX 2 | `0x50..0x57` / `0x58..0x5F` |
 
 Deck 1 pads use status `0x96`; Deck 2 pads use `0x97`.
+
+Pad FX 1/2 currently provide low/high-pass filters on pads 1/2 and echo on
+pads 3/4. Pads 5..8 have no DSP preset; mapped addresses alone do not establish
+audible effect support. Press/release is momentary, with a bounded echo tail.
+Hot Cue recall is read-only only when the slot already exists: a normal empty
+pad creates a persistent local cue and Shift+pad deletes a cue. Avoid those
+writes in a performance sweep without an explicitly selected cue-edit scope.
 
 ## Mixer, browser and adapted FX
 
