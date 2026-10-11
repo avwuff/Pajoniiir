@@ -11,6 +11,15 @@ anchor targets, loaded images and page overflow; mobile tables scroll locally.
 M3 APSTA service behavior is distinguished from JC4880 temporary STA visits.
 Publication is through the existing Pages workflow, separate from firmware CI.
 
+The [2026-10-12 shared library follow-up](validation/SHARED_LIBRARY_EXPORT_AUDIT_20261012.md)
+passes ten focused host suites plus delayed-artwork and two-export cue isolation
+regressions. A read-only audit of the FAT32 260-track export confirms all metadata,
+three flat playlists/69 entries and 257 valid DAT/EXT/PWV4 pairs. It also retains
+missing music/analysis/cover files and inconsistent France Gall analysis headers
+as source-data findings, not an overall media PASS. Real folders/memory loops
+are absent; the operator deferred wider physical checks and requested retaining
+software/audit results only for now. Published beta firmware remains unchanged.
+
 The operator authorized PR #46 push/merge and GitHub beta `shared-p4-beta.1`.
 The English README is reconciled while preserving all original image embeds and
 operational instructions. The [beta record](validation/SHARED_P4_BETA_1_20261011.md)

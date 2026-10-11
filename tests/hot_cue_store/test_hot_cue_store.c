@@ -114,6 +114,42 @@ static void test_v2_slots_are_authoritative_until_explicit_reset(void)
     assert(hot_cue_store_load(&id,&loaded)==ESP_ERR_NOT_FOUND);
 }
 
+static void test_two_exports_keep_local_cues_isolated(void)
+{
+    uint8_t export_a[32], export_b[32];
+    media_sha256("export A", 8u, export_a);
+    media_sha256("export B", 8u, export_b);
+    media_persistent_id_t a={0}, b={0};
+    /* Same audio path/stat and raw Rekordbox ID; only export identity differs.
+     * Raw track ID intentionally does not enter persistent identity. */
+    assert(media_persistent_id_derive(export_a,"/Contents/same.wav",1234u,5678,&a));
+    assert(media_persistent_id_derive(export_b,"/Contents/same.wav",1234u,5678,&b));
+    assert(!media_persistent_id_equal(&a,&b));
+    hot_cue_store_blob_t source={.valid_mask=3u};
+    source.slots[0]=(hot_cue_store_slot_t){.pos_ms=1000u,.type=HOT_CUE_STORE_TYPE_SINGLE};
+    source.slots[1]=(hot_cue_store_slot_t){.pos_ms=2000u,.end_ms=4000u,.type=HOT_CUE_STORE_TYPE_LOOP};
+    hot_cue_store_blob_t local_a={.valid_mask=1u,.override_mask=3u};
+    local_a.slots[0]=(hot_cue_store_slot_t){.pos_ms=3000u,.type=HOT_CUE_STORE_TYPE_SINGLE};
+    assert(hot_cue_store_save(&a,&local_a)==ESP_OK); /* B loop deleted on A only */
+    hot_cue_store_blob_t loaded={0}, effective={0};
+    assert(hot_cue_store_load(&b,&loaded)==ESP_ERR_NOT_FOUND);
+    hot_cue_store_merge(&source,NULL,&effective);
+    assert(effective.valid_mask==3u && effective.slots[1].end_ms==4000u);
+    hot_cue_store_blob_t local_b={.valid_mask=1u,.override_mask=1u};
+    local_b.slots[0]=(hot_cue_store_slot_t){.pos_ms=9000u,.type=HOT_CUE_STORE_TYPE_SINGLE};
+    assert(hot_cue_store_save(&b,&local_b)==ESP_OK);
+    assert(hot_cue_store_load(&a,&loaded)==ESP_OK);
+    hot_cue_store_merge(&source,&loaded,&effective);
+    assert(effective.valid_mask==1u && effective.slots[0].pos_ms==3000u);
+    assert(hot_cue_store_reset_to_source(&a)==ESP_OK);
+    assert(hot_cue_store_load(&b,&loaded)==ESP_OK);
+    hot_cue_store_merge(&source,&loaded,&effective);
+    assert(effective.valid_mask==3u && effective.slots[0].pos_ms==9000u);
+    assert(hot_cue_store_clear(&a)==ESP_OK);
+    assert(hot_cue_store_load(&b,&loaded)==ESP_OK && loaded.slots[0].pos_ms==9000u);
+    assert(hot_cue_store_clear(&b)==ESP_OK);
+}
+
 int main(void)
 {
     test_save_load_clear_roundtrip();
@@ -121,6 +157,7 @@ int main(void)
     test_short_key_collision_is_fail_closed();
     test_source_merge_and_persistent_deletion();
     test_v2_slots_are_authoritative_until_explicit_reset();
+    test_two_exports_keep_local_cues_isolated();
     puts("hot_cue_store tests passed");
     return 0;
 }

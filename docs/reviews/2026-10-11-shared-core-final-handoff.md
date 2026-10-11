@@ -148,6 +148,10 @@ closed as operator context, without claiming a firmware causal fix.
   recorded; no contact or testing by that contributor is implied here.
 - Real nested playlist order, artwork stale-media, source memory-loop/PWV4,
   independent downbeat and cross-media variants require suitable exports.
+  The [2026-10-12 library audit](../validation/SHARED_LIBRARY_EXPORT_AUDIT_20261012.md)
+  adds real flat-playlist/PWV4/phase comparison and delayed-artwork/cross-export
+  cue software regressions, while retaining missing/corrupt source files.
+  The operator deferred the remaining physical/export-dependent checks.
 - Broader transport/active-removal/race/FAT/throughput and individual controller
   LED/held-state/pad/FX checks retain the partial or unrun ledger dispositions.
 - Recorder, alternate DJ UI, M3 Ethernet and Pro DJ Link stay experimental or
