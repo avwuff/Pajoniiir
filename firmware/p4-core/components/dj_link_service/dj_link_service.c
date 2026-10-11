@@ -211,8 +211,11 @@ bool dj_link_service_page(uint64_t request_id, uint32_t first, dj_link_browse_st
 }
 bool dj_link_service_take_load(dj_link_incoming_load_t *out)
 {
-    if (!out || !s_loads || xQueueReceive(s_loads,out,0)!=pdTRUE ||
+    if (!out || !s_loads || !s_snapshot_lock ||
         xSemaphoreTake(s_snapshot_lock,0)!=pdTRUE) return false;
+    if (xQueueReceive(s_loads,out,0)!=pdTRUE) {
+        xSemaphoreGive(s_snapshot_lock); return false;
+    }
     bool current=dj_link_browse_load_current(s_snapshot,out,(uint32_t)(esp_timer_get_time()/1000));
     xSemaphoreGive(s_snapshot_lock); return current;
 }

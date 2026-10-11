@@ -12,6 +12,8 @@ void audio_recorder_ring_init(audio_recorder_ring_t *ring,
     ring->capacity = capacity;
     ring->write_seq = 0u;
     ring->read_seq = 0u;
+    ring->write_slot = 0u;
+    ring->read_slot = 0u;
     ring->high_water = 0u;
     ring->dropped_blocks = 0u;
     ring->dropped_frames = 0u;
@@ -35,13 +37,19 @@ bool audio_recorder_ring_push(audio_recorder_ring_t *ring,
     }
 
     if (frames > AUDIO_RECORDER_BLOCK_FRAMES) {
-        frames = AUDIO_RECORDER_BLOCK_FRAMES;
+        ring->dropped_blocks++;
+        ring->dropped_frames += frames;
+        return false; /* Never publish a silently shortened recording. */
     }
-    audio_recorder_block_t *slot = &ring->slots[w % ring->capacity];
+    /* Physical cursors wrap at capacity, independently of uint32_t sequences.
+     * seq % capacity skips/reuses slots at UINT32_MAX for non-power-of-two
+     * capacities (including the configured PSRAM ring sizes). */
+    audio_recorder_block_t *slot = &ring->slots[ring->write_slot];
     slot->sample_rate = sample_rate;
     slot->frames = frames;
     memcpy(slot->samples, stereo, (size_t)frames * 2u * sizeof(int16_t));
 
+    if (++ring->write_slot == ring->capacity) ring->write_slot = 0u;
     __atomic_store_n(&ring->write_seq, w + 1u, __ATOMIC_RELEASE);
 
     uint32_t used = (w + 1u) - r;
@@ -62,7 +70,7 @@ const audio_recorder_block_t *audio_recorder_ring_peek(const audio_recorder_ring
     if (r == w) {
         return NULL;
     }
-    return &ring->slots[r % ring->capacity];
+    return &ring->slots[ring->read_slot];
 }
 
 void audio_recorder_ring_consume(audio_recorder_ring_t *ring)
@@ -75,6 +83,7 @@ void audio_recorder_ring_consume(audio_recorder_ring_t *ring)
     if (r == w) {
         return;   /* nothing to consume */
     }
+    if (++ring->read_slot == ring->capacity) ring->read_slot = 0u;
     __atomic_store_n(&ring->read_seq, r + 1u, __ATOMIC_RELEASE);
 }
 

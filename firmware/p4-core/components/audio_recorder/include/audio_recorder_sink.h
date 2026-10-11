@@ -5,7 +5,7 @@
  *
  * Owns the open recording file, writes PCM stereo/16-bit segments under
  * /sd/recordings, rolls to a new segment on a sample-rate change or the 1 GiB
- * cap, checkpoints the WAV sizes periodically for crash recovery, and finalizes
+ * cap, periodically flushes/fsyncs appended PCM for crash recovery, and finalizes
  * a segment by patching sizes, syncing and atomically renaming .wav.part ->
  * .wav. All FAT work is serialised through sd_io_gate. Only the low-priority
  * writer task uses this; no audio producer touches it.
@@ -54,8 +54,9 @@ esp_err_t audio_recorder_sink_write_block(audio_recorder_sink_t *s,
                                           const int16_t *samples, uint32_t frames,
                                           uint32_t sample_rate);
 
-/* Patch the WAV RIFF/data sizes at the file head and fsync without closing, so
- * a sudden power loss leaves a bounded, mountable file. */
+/* Flush and fsync appended PCM without closing or patching the WAV header.
+ * Boot recovery rebuilds sizes from the file length after a power loss; the
+ * in-session placeholder header is not suitable for playback elsewhere. */
 esp_err_t audio_recorder_sink_checkpoint(audio_recorder_sink_t *s);
 
 /* Finalize the current segment: patch sizes, fsync, close and atomically rename

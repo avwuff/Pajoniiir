@@ -90,6 +90,12 @@ int main(void) {
     assert(audio_recorder_stop()==ESP_OK && writes>0 && finalized==initial_final+1); retired();
     finalize_error=ESP_FAIL; assert(audio_recorder_start(48000)==ESP_OK);
     assert(audio_recorder_stop()==ESP_FAIL); retired();
+    unsigned before_abort = aborted, before_final = finalized;
+    assert(audio_recorder_start(48000)==ESP_OK);
+    assert(!audio_recorder_push_master(pcm,257,48000));
+    pending_writer(NULL);
+    assert(audio_recorder_stop()==ESP_ERR_NO_MEM);
+    assert(aborted==before_abort+1 && finalized==before_final); retired();
     free(s_control_lock);
     puts("PASS actual recorder overflow, START/STOP ownership, download exclusion, disk-full, IO/finalize faults and timeout retention");
 }

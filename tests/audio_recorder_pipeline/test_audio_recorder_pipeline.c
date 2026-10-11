@@ -210,12 +210,44 @@ static void test_writer_max_blocks(void)
     CHECK(audio_recorder_ring_used(&ring) == 3u);
 }
 
+static void test_sequence_overflow(void)
+{
+    audio_recorder_block_t slots[3];
+    audio_recorder_ring_t ring;
+    audio_recorder_ring_init(&ring, slots, 3u);
+    ring.write_seq = ring.read_seq = UINT32_MAX - 1u;
+    int16_t pcm[AUDIO_RECORDER_BLOCK_SAMPLES];
+    for (int i = 0; i < 3; ++i) {
+        fill_block(pcm, 16u, i + 1);
+        CHECK(audio_recorder_ring_push(&ring, pcm, 16u, 48000u));
+    }
+    for (int i = 0; i < 3; ++i) {
+        const audio_recorder_block_t *block = audio_recorder_ring_peek(&ring);
+        CHECK(block && block->samples[0] == (i + 1) * 1000);
+        audio_recorder_ring_consume(&ring);
+    }
+    CHECK(audio_recorder_ring_used(&ring) == 0u);
+}
+
+static void test_oversized_block(void)
+{
+    audio_recorder_block_t slots[2];
+    audio_recorder_ring_t ring;
+    audio_recorder_ring_init(&ring, slots, 2u);
+    int16_t pcm[AUDIO_RECORDER_BLOCK_SAMPLES] = {0};
+    CHECK(!audio_recorder_ring_push(&ring, pcm, 257u, 48000u));
+    CHECK(ring.dropped_blocks == 1u && ring.dropped_frames == 257u);
+    CHECK(audio_recorder_ring_peek(&ring) == NULL);
+}
+
 int main(void)
 {
     printf("=== audio_recorder_pipeline tests ===\n");
     test_ring_basic();
     test_ring_full_drop();
     test_ring_wrap_integrity();
+    test_sequence_overflow();
+    test_oversized_block();
     test_writer_drain_all();
     test_writer_drain_error();
     test_writer_max_blocks();

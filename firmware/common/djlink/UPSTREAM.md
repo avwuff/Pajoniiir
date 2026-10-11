@@ -2,7 +2,7 @@
 
 Imported from kayrozen/Pajoniiir
 `428b97dd4a175f03d3a172c8db9c4d5ed94195fb` (v323), directory
-`firmware/boards/jc1060/djlink`.
+`firmware/main-deck-jc1060/components/djlink`.
 MIT copyright/license and Deep Symmetry protocol credits are retained verbatim.
 No donor application, UI, audio or cache identity code is imported here.
 

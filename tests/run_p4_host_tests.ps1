@@ -2104,7 +2104,7 @@ $tests = @(
         Dir = "tests/audio_recorder_stop_gate"
         Target = "test_audio_recorder_stop_gate.exe"
         Args = @(
-            "-Wall", "-Wextra", "-Wpedantic", "-Werror", "-std=c99",
+            "-Wall", "-Wextra", "-Wpedantic", "-Werror", "-std=c99", "-pthread",
             "-DAUDIO_RECORDER_STOP_GATE_HOST_TEST",
             "-I../../firmware/p4-core/components/audio_recorder/include",
             "-o", "test_audio_recorder_stop_gate.exe",
@@ -4101,6 +4101,9 @@ Invoke-Step -Name "run production network mutation lifecycle regression" -Workin
 Invoke-Step -Name "run firmware artwork identity ownership regression" `
     -WorkingDirectory $RepoRoot `
     -Executable $pythonSource -Arguments @("tests/djlink/test_artwork_identity.py")
+Invoke-Step -Name "run production DJ Link load queue contention regression" `
+    -WorkingDirectory $RepoRoot `
+    -Executable $pythonSource -Arguments @("tests/djlink/test_service_load_queue.py")
 
 # Resolve the current PowerShell executable for both Windows PowerShell and pwsh.
 $HostShell = (Get-Process -Id $PID).Path

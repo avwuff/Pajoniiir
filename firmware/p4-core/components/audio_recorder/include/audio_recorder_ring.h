@@ -34,6 +34,8 @@ typedef struct {
     uint32_t capacity;               /* number of slots (>= 2) */
     uint32_t write_seq;              /* producer-owned; published with RELEASE */
     uint32_t read_seq;               /* consumer-owned; published with RELEASE */
+    uint32_t write_slot;             /* producer-owned physical cursor */
+    uint32_t read_slot;              /* consumer-owned physical cursor */
     uint32_t high_water;             /* max slots used observed (producer side) */
     uint32_t dropped_blocks;         /* full-ring drops (producer side) */
     uint64_t dropped_frames;         /* frames lost to drops (producer side) */
@@ -45,8 +47,8 @@ void audio_recorder_ring_init(audio_recorder_ring_t *ring,
                               audio_recorder_block_t *slots, uint32_t capacity);
 
 /* Producer: copy one rendered master block in. Returns false without blocking
- * when the ring is full (drop counters advance). `frames` is clamped to
- * AUDIO_RECORDER_BLOCK_FRAMES. Performs no allocation, logging or file work. */
+ * when the ring is full or the block is oversized (drop counters advance).
+ * Performs no allocation, logging or file work. */
 bool audio_recorder_ring_push(audio_recorder_ring_t *ring,
                               const int16_t *stereo, uint32_t frames,
                               uint32_t sample_rate);

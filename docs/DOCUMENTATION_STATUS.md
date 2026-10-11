@@ -2,6 +2,18 @@
 
 Status: **current documentation authority, reconciled 2026-10-11**.
 
+[PR 46 recorder/DJ Link review](reviews/2026-10-11-pr46-recorder-link-review.md)
+covers four service requests (24 returned reviewed-file entries, five issues),
+all addressed locally, plus a reproduced recorder ring sequence-wrap defect.
+Repairs cover STOP ordering, oversized blocks, checkpoint documentation, LOAD
+queue contention and donor provenance. The common protocol scopes contained
+only changed README/UPSTREAM files; inherited C code is not service-reviewed by
+this batch. New regressions pass on Windows and Ubuntu/WSL. The ordinary M3
+build/verifier passes at 2,601,280 bytes. Experimental services, installed
+firmware and frozen delivery packages remain unchanged.
+Full host qualification passes without SKIP; documentation integrity and
+`git diff --check` pass.
+
 [PR 46 diagnostics/media review](reviews/2026-10-11-pr46-diagnostics-media-review.md)
 covers six further scopes (52 candidate files, 17 service issues), all repaired
 locally, plus a reproduced stale service-log acknowledgement boundary and
