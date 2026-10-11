@@ -1368,6 +1368,7 @@ static esp_err_t ui_submit_track_load_request(ui_track_load_request_t *req)
      * by an apparently ignored LOAD button. The track-load worker is bounded,
      * non-ISR work and the board requires PSRAM, so an external 8-bit stack is
      * the appropriate allocation class. */
+    s_library_load_request_deck = req->deck;
     if (xTaskCreateWithCaps(ui_track_load_worker,
                             "ui_load",
                             UI_TRACK_LOAD_STACK,
@@ -1618,6 +1619,7 @@ static esp_err_t ui_library_simulated_remote_load(uint8_t deck,uint8_t peer,uint
         return rc;
     }
     if(!ui_library_try_begin_track_load())return ESP_ERR_INVALID_STATE;
+    s_library_load_request_deck = deck;
     anlz_metadata_t meta={0};
     rc=ui_library_publish_simulated_track(deck,&prepared,&meta);
     if(rc==ESP_OK) {
@@ -1654,6 +1656,7 @@ static esp_err_t ui_library_load_selected_deck(uint8_t deck)
         return ESP_ERR_INVALID_STATE;
     }
     ui_library_set_load_busy(true, "LOAD BUSY");
+    s_library_load_request_deck = deck;
 
 #ifdef WIN32
     library_track_t *track = library_get_ptr(catalog_row);
@@ -2959,6 +2962,7 @@ esp_err_t ui_library_load_track_index_for_deck(int index, uint8_t deck)
         return ESP_ERR_INVALID_STATE;
     }
     const uint32_t replacement_token = deck_core_begin_track_replacement(deck);
+    s_library_load_request_deck = deck;
     if (!replacement_token) {
         ui_library_finish_track_load();
         return ESP_ERR_INVALID_STATE;

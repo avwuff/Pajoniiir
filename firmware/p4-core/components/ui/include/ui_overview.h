@@ -51,10 +51,10 @@ void ui_overview_update_cue_markers(uint8_t deck,
 void ui_overview_update(const ui_frame_context_t *ctx);
 void ui_overview_cancel_holds(void);
 
-#ifdef __cplusplus
-}
-#endif
-
 /* Call after another LVGL screen (the idle screensaver) has been dismissed, so
  * the direct-PPA waveform strips are redrawn instead of coming back blank. */
 void ui_overview_note_screen_restored(void);
+
+#ifdef __cplusplus
+}
+#endif

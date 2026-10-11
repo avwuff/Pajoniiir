@@ -86,6 +86,7 @@ bool ui_settings_is_active_tab(int active_tab, int settings_tab_index)
 
 #include "esp_log.h"
 #include "ui_theme.h"
+#include "ui_status.h"
 
 #ifndef WIN32
 #include "app_settings.h"
@@ -124,8 +125,8 @@ static void main_sink_event_cb(lv_event_t *event)
         ? AUDIO_MAIN_SINK_PCM5102A : AUDIO_MAIN_SINK_USB;
     esp_err_t rc = audio_engine_set_main_sink(next);
     if (rc != ESP_OK) {
-        lv_label_set_text(s_label_main_sink, rc == ESP_ERR_INVALID_STATE
-            ? "STOP BOTH DECKS / REC" : "SINK UNAVAILABLE");
+        ui_status_hold(rc == ESP_ERR_INVALID_STATE
+            ? "STOP BOTH DECKS / REC" : "SINK UNAVAILABLE", COL_AMBER, 2000);
         return;
     }
     lv_label_set_text(s_label_main_sink, next == AUDIO_MAIN_SINK_USB

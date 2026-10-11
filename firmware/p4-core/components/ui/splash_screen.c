@@ -45,7 +45,7 @@ static void timer_cb(lv_timer_t *timer)
     }
 
     // 2. Now that main UI is active, we can safely delete the splash screen
-    if (splash_scr) {
+    if (splash_scr && splash_scr != lv_screen_active()) {
         lv_obj_del(splash_scr);
         splash_scr = NULL;
     }
@@ -71,7 +71,7 @@ void splash_screen_show(void (*loaded_cb)(void))
     splash_scr = splash_build(NULL);
 
     // Create a one-shot timer to end the splash after 3 seconds.  The timer will call timer_cb.
-    (void)lv_timer_create(timer_cb, 3000, (void *)loaded_cb);
+    if (loaded_cb) (void)lv_timer_create(timer_cb, 3000, (void *)loaded_cb);
 
     // Load the splash screen using LVGL 9 screen load
     lv_screen_load(splash_scr);

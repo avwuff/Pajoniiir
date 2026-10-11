@@ -807,6 +807,7 @@ static void refresh_load_btns(void)
 
 static void refresh_record(void)
 {
+    if (!g.rec_btn) return;
     if (g.recording) btn_style(g.rec_btn, C_ERR, C_DARK, C_ERR);
     else btn_style(g.rec_btn, C_PANEL, C_ERR, C_LINE);
     lv_label_set_text(lv_obj_get_child(g.rec_btn, 0), g.recording ? "STOP REC" : "RECORD");
@@ -2351,6 +2352,7 @@ void dj_ui_set_brightness(uint8_t pct)
 
 void dj_ui_set_wireless(bool on)
 {
+    if (!g.wl_sw || !g.wl_lbl) return;
     if (on) lv_obj_add_state(g.wl_sw, LV_STATE_CHECKED);
     else lv_obj_remove_state(g.wl_sw, LV_STATE_CHECKED);
     lv_label_set_text(g.wl_lbl, on ? "P4 REMOTE: ON" : "P4 REMOTE: OFF");
@@ -2358,6 +2360,7 @@ void dj_ui_set_wireless(bool on)
 
 void dj_ui_set_link_enabled(bool on)
 {
+    if (!g.link_sw) return;
     if (on) lv_obj_add_state(g.link_sw, LV_STATE_CHECKED);
     else lv_obj_remove_state(g.link_sw, LV_STATE_CHECKED);
 }
@@ -2365,6 +2368,7 @@ void dj_ui_set_link_enabled(bool on)
 void dj_ui_set_link_peers(const dj_ui_link_peer_t *peers, uint8_t count)
 {
     for (int r = 0; r < DJ_LINK_ROWS; r++) {
+        if (!g.peer_lbl[r]) continue;
         if (r >= count || !peers) { lv_label_set_text(g.peer_lbl[r], ""); continue; }
         const dj_ui_link_peer_t *p = &peers[r];
         char bpm[12];

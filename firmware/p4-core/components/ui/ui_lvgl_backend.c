@@ -957,11 +957,15 @@ esp_err_t ui_lvgl_backend_draw_rect_rgb565(const ui_overlay_rect_t *logical, uin
         }
     }
 
+#if UI_DSI_FB_COUNT == 2u
+    bool marked = ui_framebuffer_pair_dirty(&s_framebuffers,
+        physical.x, physical.y, physical.w, physical.h);
+    assert(marked);
+#endif
     // Cache sync to RAM for DMA controller to pick it up
-    esp_cache_msync((void *)(fb + (size_t)physical.y * stride),
+    return esp_cache_msync((void *)(fb + (size_t)physical.y * stride),
                     (size_t)physical.h * stride * sizeof(uint16_t),
                     ESP_CACHE_MSYNC_FLAG_DIR_C2M | ESP_CACHE_MSYNC_FLAG_UNALIGNED);
 
-    return ESP_OK;
 }
 #endif

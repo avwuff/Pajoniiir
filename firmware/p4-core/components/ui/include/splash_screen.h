@@ -21,7 +21,9 @@ extern "C" {
  * This function creates a new LVGL screen containing a label with the
  * text "Pajoniiir".  The text is displayed using the Musieer_80 font
  * and animated to fade continuously.  After three seconds the screen
- * is automatically removed and the supplied callback is invoked.
+ * invokes the supplied callback after three seconds. The splash is removed
+ * only after that callback loads another screen. With a NULL callback it
+ * remains visible until the caller replaces it.
  *
  * @param loaded_cb Function called when the splash has finished
  *        displaying.  Typically this should set up and load the main UI.

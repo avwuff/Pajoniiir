@@ -275,9 +275,9 @@ void ui_dj_bridge_update(const ui_frame_context_t *f)
         uint32_t speed = f->mixer_snapshot.scratch_position_authoritative[d] ? 0u :
             (f->mixer_snapshot.effective_speed_permille[d] ?
              f->mixer_snapshot.effective_speed_permille[d] : f->deck_speed_permille[d]);
-        uint32_t position = f->deck_duration_ms[d] ? ui_position_interpolator_update(
+        uint32_t position = f->deck_duration_ms[d] ? ui_position_interpolator_update_observed(
             &s->position, state->position_ms, f->deck_duration_ms[d],
-            state->playing, speed, f->now_us) : 0;
+            state->playing, speed, f->now_us, !f->deck_position_retained[d]) : 0;
         dj_ui_set_tempo(d, deck_core_pitch_percent(state));
         dj_ui_set_position(d, position);
         dj_ui_set_transport(d, state->playing, state->cue_held || !state->playing);

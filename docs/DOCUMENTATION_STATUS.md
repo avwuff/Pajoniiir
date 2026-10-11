@@ -2,6 +2,13 @@
 
 Status: **current documentation authority, reconciled 2026-10-11**.
 
+[PR 46 UI/controller review](reviews/2026-10-11-pr46-ui-controller-review.md)
+records nine local UI repairs and one unresolved font-permission/provenance
+item from ten service findings. All nine simulator screenshot gates, the
+full host qualification and an ordinary M3 build pass; controller-runtime
+review reports no findings in seven files. This is scoped review evidence,
+not whole-PR approval or acceptance of a new installed image.
+
 [PR 46 scoped audio review](reviews/2026-10-11-pr46-audio-review.md) reports two
 confirmed minor CodeRabbit issues repaired locally: FX-ready publication and
 media-fault retry spacing. The full service review was rejected at 707 files

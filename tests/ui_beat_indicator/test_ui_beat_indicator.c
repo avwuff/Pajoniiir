@@ -60,6 +60,20 @@ static void test_invalid_without_grid_or_bpm(void)
     assert(!state.valid);
 }
 
+static void test_fractional_beat_duration_does_not_drift(void)
+{
+    /* 128 BPM has a 468.75-ms beat. After a minute it must be exactly
+     * 128 beats, rather than the truncated 468-ms clock's partial beat. */
+    ui_beat_indicator_state_t state =
+        ui_beat_indicator_calculate(60000, NULL, 0, 128);
+    assert(state.valid && state.downbeat && state.phase == 0);
+    assert(state.progress_permille == 0);
+    state = ui_beat_indicator_calculate(60234, NULL, 0, 128);
+    assert(state.phase == 0 && state.progress_permille == 499);
+    state = ui_beat_indicator_calculate(3600000, NULL, 0, 128);
+    assert(state.downbeat && state.progress_permille == 0);
+}
+
 static void test_phase_delta_reports_deck2_late(void)
 {
     ui_beat_indicator_state_t deck1 = {
@@ -147,6 +161,7 @@ int main(void)
     test_grid_marks_downbeat_number_one();
     test_shifted_and_invalid_grid();
     test_bpm_fallback_without_grid();
+    test_fractional_beat_duration_does_not_drift();
     test_invalid_without_grid_or_bpm();
     test_phase_delta_reports_deck2_late();
     test_phase_delta_wraps_at_bar_boundary();

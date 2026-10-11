@@ -38,20 +38,15 @@ static ui_beat_indicator_state_t from_bpm(uint32_t position_ms, uint16_t bpm)
         return invalid_state();
     }
 
-    uint32_t beat_len_ms = 60000u / bpm;
-    if (beat_len_ms == 0) {
-        return invalid_state();
-    }
-
-    uint32_t beat_idx = position_ms / beat_len_ms;
-    uint32_t elapsed = position_ms % beat_len_ms;
+    uint64_t beat_units = (uint64_t)position_ms * bpm;
+    uint64_t beat_idx = beat_units / 60000u;
     uint8_t phase = (uint8_t)(beat_idx % 4u);
 
     return (ui_beat_indicator_state_t){
         .valid = true,
         .phase = phase,
         .downbeat = (phase == 0),
-        .progress_permille = clamp_progress(elapsed, beat_len_ms),
+        .progress_permille = (uint16_t)((beat_units % 60000u) * 1000u / 60000u),
     };
 }
 

@@ -15,6 +15,9 @@
 #include "splash_screen.h"
 #include "ui_status.h"
 #include "ui_overview.h"
+#if CONFIG_PAJONIIIR_DJ_OVERVIEW
+#include "dj_ui.h"
+#endif
 #ifdef UI_SIM_BOARD_POLICY
 #include "board_capabilities.h"
 #include "app_settings.h"
@@ -421,6 +424,11 @@ int main(int argc, char **argv)
     return link_scenario(argv[1]);
 #endif
 #if CONFIG_PAJONIIIR_DJ_OVERVIEW
+    /* Runtime Overview does not create native Settings widgets. */
+    dj_ui_set_wireless(true);
+    dj_ui_set_link_enabled(true);
+    dj_ui_set_link_peers(NULL, 0);
+    dj_ui_set_recording(false);
     if (count_objects(lv_screen_active(), &lv_table_class) != 0)
         fail("preview instantiated a hidden legacy Library table");
     if (count_objects(lv_screen_active(), &lv_canvas_class) != 0)
@@ -845,6 +853,13 @@ int main(int argc, char **argv)
         save_ppm(argv[1],network_capture[i]);
     }
 #endif
+
+    /* A splash with no transition callback remains a valid active screen. */
+    splash_screen_show(NULL);
+    lv_obj_t *held_splash = lv_screen_active();
+    pump(3200);
+    if (lv_screen_active() != held_splash || !lv_obj_is_valid(held_splash))
+        fail("callback-free splash deleted the active screen");
 
     if (s_failures != 0) {
         fprintf(stderr, "UI simulator E2E failed: %d failure(s)\n", s_failures);
