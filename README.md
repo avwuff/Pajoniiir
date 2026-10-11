@@ -22,6 +22,12 @@ coverage. The [current shared-core review](docs/reviews/2026-10-11-shared-core-h
 records final local software/build work, real-media and other-board gates;
 this development branch is not a new production release.
 
+[Local ordinary-target qualification](docs/validation/SHARED_P4_LOCAL_QUALIFICATION_20261011.md)
+passes on clean `5ff76b6c`: complete host gate, nine simulator configurations,
+both keylock policies and JC4880/JC1060/M3 ESP-IDF 6.0.2 builds with unchanged
+locks and verified identities/budgets. Hardware and publication gates remain
+separate; the installed Hercules bench image is unchanged.
+
 The [S2 MK3 performance candidate](controllers/ni_traktor_s2_mk3_full/README.md)
 adds source-backed mixer/pitch/jog/LED mappings and experimental descriptor-driven
 HS UAC2. Its M3 experiment uses S2 on USB3 and storage on USB2. S2 work is closed

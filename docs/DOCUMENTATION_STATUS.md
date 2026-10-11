@@ -555,6 +555,15 @@ and deferred functions. Final current local full qualification/build matrix,
 real-media/JC physical gates and historical restart causation remain open;
 hosted CI remains SKIPPED BY OPERATOR. This review does not flash or publish.
 
+[Ordinary local software qualification](validation/SHARED_P4_LOCAL_QUALIFICATION_20261011.md)
+subsequently passes on clean `5ff76b6c`: complete no-SKIP host suite, all nine
+unchanged simulator baselines, JC/M3 300-s keylock policies and fresh IDF 6.0.2
+builds JC4880 2605344 B / JC1060 2663424 B / M3 2598608 B. Board/component/source
+identity, unchanged locks, budgets and 15 BIN/ELF/MAP/identity/budget artifact
+hashes pass. The simulator CMake omission of shared `ui_idle.c` was corrected;
+production firmware and installed e16ecfb5 remain unchanged. Fresh experiment
+firmware matrix, physical gates, signed delivery and publication stay separate.
+
 Final Hercules exact-image `e16ecfb5` 44100-Hz playback soak completed
 3600.016 s / 5171 samples, wrapper exit 0. Every sample and final stopped
 snapshot have all 22 strict counter deltas zero; clean source/ELF/VALID ota_0,

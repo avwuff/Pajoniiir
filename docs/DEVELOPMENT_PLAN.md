@@ -4,9 +4,14 @@ Current shared-core work is reconciled in the
 [2026-10-11 phase/P01–P10 review](reviews/2026-10-11-shared-core-hercules-closeout.md).
 The Hercules source/fixture/support-scope review is complete: unchanged clean
 `e16ecfb5` has exact-image final playback acceptance, with individual pad/FX/LED
-limits still explicit. Next is final local software qualification and three-board
-build verification; hosted CI is skipped by operator quota decision. Real-media,
-JC physical and historical OTA-restart cause gates remain separate. Earlier
+limits still explicit.
+
+The [subsequent ordinary local qualification](validation/SHARED_P4_LOCAL_QUALIFICATION_20261011.md)
+now passes on clean `5ff76b6c`: complete host gate, nine simulators, both keylock
+policies and all three IDF 6.0.2 builds with unchanged locks and valid budgets.
+Next is configuration-specific delivery provenance; fresh experimental builds,
+real-media and physical acceptance remain separate. Hosted CI stays skipped.
+Historical OTA-restart causation remains open. Earlier
 installed-state and next-action paragraphs below are historical progression.
 
 The [S2 performance candidate](../controllers/ni_traktor_s2_mk3_full/README.md)

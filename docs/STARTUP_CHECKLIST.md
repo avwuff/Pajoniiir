@@ -9,6 +9,12 @@ USB1 is power-only on this bench; do not require a new serial connection for
 documentation closeout. Do not repeat accepted tests solely to fill historical
 unchecked boxes. Remaining individual profile and board gates stay explicit.
 
+The [ordinary local software matrix](validation/SHARED_P4_LOCAL_QUALIFICATION_20261011.md)
+passes on clean `5ff76b6c` with exact-source builds for all three boards.
+This is build evidence, not a request to install its ordinary M3 image over the
+accepted Hercules bench configuration. Keep configuration-specific packaging
+and physical acceptance separate; hosted CI remains skipped by operator decision.
+
 For the [S2 performance candidate](../controllers/ni_traktor_s2_mk3_full/README.md),
 keep S2 on USB3 HS and the stick on USB2 FS. The operator closed S2 work after
 full-hour 48/44.1-kHz playback acceptance and waived remaining physical checks.

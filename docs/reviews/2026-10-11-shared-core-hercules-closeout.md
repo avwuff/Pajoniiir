@@ -8,6 +8,11 @@ This review closes the Hercules source/fixture/support-scope reconciliation
 and updates the shared-core acceptance ledger. It does not declare the original
 whole-project completion criterion met.
 
+Subsequent [ordinary local qualification](../validation/SHARED_P4_LOCAL_QUALIFICATION_20261011.md)
+closes the full host/simulator/keylock and three ordinary board-build rows below
+for clean `5ff76b6c`. The following tables retain the review checkpoint's scope;
+fresh experiment firmware builds, physical and publication gates stay separate.
+
 Installed M3 remains clean source
 `e16ecfb5e7b0daef81e4640ba46e9f9409184963`, VALID `ota_0`, ELF
 `96279a267ef9a93f89148ba01de95519c93a87d6581f609e576739002323252f`.

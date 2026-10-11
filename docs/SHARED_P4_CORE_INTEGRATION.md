@@ -6,6 +6,12 @@ Status: implementation in progress; partial exact-image M3 acceptance, no public
 
 The [current phase/P01–P10 review](reviews/2026-10-11-shared-core-hercules-closeout.md)
 supersedes historical next-action and installed-state statements below.
+The subsequent [local ordinary-target qualification](validation/SHARED_P4_LOCAL_QUALIFICATION_20261011.md)
+passes on clean `5ff76b6c`: full no-SKIP host gate, nine unchanged simulator
+baselines, both 300-s keylock policies, all three fresh IDF 6.0.2 builds,
+single-BSP/source identity checks, unchanged locks and image budgets. A missing
+simulator `ui_idle.c` source was fixed in the test CMake list. Current-source
+experiment firmware matrix and physical/publication gates remain separate.
 All three entrypoints use the canonical core and board providers. Current
 installed M3 is clean `e16ecfb5`, VALID `ota_0`, with Hercules on USB3/root0
 and storage on USB2/root1 in the experimental role configuration. Its final
@@ -13,8 +19,8 @@ and storage on USB2/root1 in the experimental role configuration. Its final
 full-hour audio/visual PASS; 15 output-late events remain monitoring findings.
 S2 stays operator-closed. Hercules individual pad/FX/LED coverage remains partial.
 
-The review distinguishes implemented software from remaining acceptance: current
-local full qualification/build matrix, real playlist/artwork/source-loop variants,
+The review distinguishes implemented software from remaining acceptance: fresh
+experimental firmware builds, real playlist/artwork/source-loop variants,
 JC physical gates and historical OTA-restart causation. Hosted CI is SKIPPED BY
 OPERATOR; physical Campaign A was excluded, not passed. No whole-core/release
 PASS or public publication is implied. The following dated narrative and phase
