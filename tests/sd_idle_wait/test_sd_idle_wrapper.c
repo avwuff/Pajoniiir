@@ -20,7 +20,7 @@ int main(void) {
     assert(__wrap_sdmmc_wait_for_idle(&spi,0) == ESP_FAIL && real_calls == 1);
 #if CONFIG_PAJONIIIR_SD_IDLE_WAIT
     assert(__wrap_sdmmc_wait_for_idle(&sd,0) == ESP_OK);
-    assert(real_calls == 1 && probes == 2 && yields == 1);
+    assert(real_calls == 1 && probes == 2 && yields == 2);
     puts("PASS enabled SD wrapper, SPI passthrough and one-tick yielding");
 #else
     assert(__wrap_sdmmc_wait_for_idle(&sd,0) == ESP_FAIL);

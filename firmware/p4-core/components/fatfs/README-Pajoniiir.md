@@ -1,10 +1,10 @@
 # Pajoniiir P4 FatFs Override Notes
 
-Documentation status: active local integration note, reviewed 2026-10-06.
+Documentation status: active local integration note, reviewed 2026-10-11.
 FAT32/exFAT on superfloppy, MBR and GPT media is hardware-validated.
 
 The copied-source path below records original provenance, not the required
-build environment. Both current board entrypoints require ESP-IDF 6.0.2;
+build environment. All three current board entrypoints require ESP-IDF 6.0.2;
 their committed locks and existing USB fixes remain authoritative. Historical
 media acceptance does not qualify new JC1060 SD/DMA or recorder experiments.
 
@@ -24,6 +24,19 @@ Local delta:
 - `src/ffconf.h`: `FF_USE_LABEL` maps the optional
   `CONFIG_FATFS_USE_LABEL` Kconfig symbol to a numeric 0/1 value so exFAT code
   compiles when volume-label support is unset.
+- `Kconfig`: default to heap-backed LFN and hide the incompatible no-LFN
+  choice because this override always enables exFAT.
+- `vfs/vfs_fat.c`: release locks after failed directory seeks/full-disk
+  positional writes, restore the write cursor and use a read-only contiguous
+  check with a correctly sized output value.
+- `vfs/vfs_fat_sdmmc.c` and `vfs/vfs_fat_spiflash.c`: reject duplicate VFS
+  registration without removing an existing mount, recycle owned resources
+  on failure and propagate remount failures after formatting. SD formatting
+  also remounts after work-buffer allocation failure.
+
+These are local software repairs to inherited VFS code, validated by injected
+production-path tests and the M3 build. Historical media acceptance above does
+not qualify the repaired image or the SPI-flash formatting paths on hardware.
 
 Limitation:
 

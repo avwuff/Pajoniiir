@@ -152,6 +152,8 @@ esp_err_t esp_vfs_fat_spiflash_mount_rw_wl(const char* base_path,
     esp_err_t ret = ESP_OK;
     vfs_fat_spiflash_ctx_t *ctx = NULL;
     uint32_t ctx_id = FF_VOLUMES;
+    FATFS *fs = NULL;
+    bool vfs_registered = false;
 
     esp_partition_subtype_t subtype = partition_label ?
             ESP_PARTITION_SUBTYPE_ANY : ESP_PARTITION_SUBTYPE_DATA_FAT;
@@ -159,31 +161,32 @@ esp_err_t esp_vfs_fat_spiflash_mount_rw_wl(const char* base_path,
                                                 subtype, partition_label);
     ESP_RETURN_ON_FALSE(data_partition, ESP_ERR_NOT_FOUND, TAG, "Failed to find FATFS partition (type='data', subtype='fat', partition_label='%s'). Check the partition table.", partition_label);
 
-    ESP_RETURN_ON_ERROR(wl_mount(data_partition, wl_handle), TAG, "failed to mount wear levelling layer. ret = %i", ret);
+    ret = wl_mount(data_partition, wl_handle);
+    ESP_RETURN_ON_ERROR(ret, TAG, "failed to mount wear levelling layer. ret = %i", ret);
 
     // connect driver to FATFS
     BYTE pdrv = 0xFF;
     if (ff_diskio_get_drive(&pdrv) != ESP_OK) {
         ESP_LOGD(TAG, "the maximum count of volumes is already mounted");
+        wl_unmount(*wl_handle);
+        *wl_handle = WL_INVALID_HANDLE;
         return ESP_ERR_NO_MEM;
     }
     ESP_LOGD(TAG, "using pdrv=%i", pdrv);
     char drv[3] = {(char)('0' + pdrv), ':', 0};
     ESP_GOTO_ON_ERROR(ff_diskio_register_wl_partition(pdrv, *wl_handle), fail, TAG, "ff_diskio_register_wl_partition failed pdrv=%i, error - 0x(%x)", pdrv, ret);
 
-    FATFS *fs;
     esp_vfs_fat_conf_t conf = {
         .base_path = base_path,
         .fat_drive = drv,
         .max_files = mount_config->max_files,
     };
     ret = esp_vfs_fat_register_cfg(&conf, &fs);
-    if (ret == ESP_ERR_INVALID_STATE) {
-        // it's okay, already registered with VFS
-    } else if (ret != ESP_OK) {
+    if (ret != ESP_OK) {
         ESP_LOGD(TAG, "esp_vfs_fat_register_cfg failed 0x(%x)", ret);
         goto fail;
     }
+    vfs_registered = true;
 
     vfs_fat_x_ctx_flags_t flags = 0;
 
@@ -215,8 +218,14 @@ esp_err_t esp_vfs_fat_spiflash_mount_rw_wl(const char* base_path,
     return ESP_OK;
 
 fail:
-    esp_vfs_fat_unregister_path(base_path);
+    if (vfs_registered) {
+        f_mount(NULL, drv, 0);
+        esp_vfs_fat_unregister_path(base_path);
+    }
     ff_diskio_unregister(pdrv);
+    ff_diskio_clear_pdrv_wl(*wl_handle);
+    wl_unmount(*wl_handle);
+    *wl_handle = WL_INVALID_HANDLE;
     free(ctx);
     return ret;
 }
@@ -318,6 +327,7 @@ mount_back:
         esp_err_t err = s_f_mount_rw(s_ctx[id]->fs, drv, &s_ctx[id]->mount_config, NULL, sec_num);
         if (err != ESP_OK) {
             ESP_LOGE(TAG, "failed to mount back, go to recycle");
+            if (ret == ESP_OK) ret = err;
             goto recycle;
         }
     } else {
@@ -346,6 +356,8 @@ esp_err_t esp_vfs_fat_spiflash_mount_ro(const char* base_path,
     const esp_vfs_fat_mount_config_t* mount_config)
 {
     esp_err_t ret = ESP_OK;
+    FATFS *fs = NULL;
+    bool vfs_registered = false;
 
     const esp_partition_t *data_partition = esp_partition_find_first(ESP_PARTITION_TYPE_DATA,
             ESP_PARTITION_SUBTYPE_DATA_FAT, partition_label);
@@ -361,19 +373,17 @@ esp_err_t esp_vfs_fat_spiflash_mount_ro(const char* base_path,
     char drv[3] = {(char)('0' + pdrv), ':', 0};
     ESP_GOTO_ON_ERROR(ff_diskio_register_raw_partition(pdrv, data_partition), fail, TAG, "ff_diskio_register_raw_partition failed pdrv=%i, error - 0x(%x)", pdrv, ret);
 
-    FATFS *fs;
     esp_vfs_fat_conf_t conf = {
         .base_path = base_path,
         .fat_drive = drv,
         .max_files = mount_config->max_files,
     };
     ret = esp_vfs_fat_register_cfg(&conf, &fs);
-    if (ret == ESP_ERR_INVALID_STATE) {
-        // it's okay, already registered with VFS
-    } else if (ret != ESP_OK) {
+    if (ret != ESP_OK) {
         ESP_LOGD(TAG, "esp_vfs_fat_register_cfg failed 0x(%x)", ret);
         goto fail;
     }
+    vfs_registered = true;
 
     // Try to mount partition
     FRESULT fresult = f_mount(fs, drv, 1);
@@ -390,7 +400,10 @@ esp_err_t esp_vfs_fat_spiflash_mount_ro(const char* base_path,
     return ESP_OK;
 
 fail:
-    esp_vfs_fat_unregister_path(base_path);
+    if (vfs_registered) {
+        f_mount(NULL, drv, 0);
+        esp_vfs_fat_unregister_path(base_path);
+    }
     ff_diskio_unregister(pdrv);
     return ret;
 }

@@ -44,12 +44,15 @@ typedef struct {
      * silently steal or fabricate a wakeup — including after this barrier has
      * already timed out. */
     SemaphoreHandle_t ack_sem;
+    uint32_t barrier_id;
 } writer_item_t;
 
 static QueueHandle_t s_queue = NULL;
 static TaskHandle_t  s_writer = NULL;
 static SemaphoreHandle_t s_sync_ack = NULL;   /* writer -> one waiting syncer */
 static SemaphoreHandle_t s_sync_lock = NULL;  /* one barrier in flight */
+static uint32_t s_sync_next_id;              /* protected by s_sync_lock */
+static uint32_t s_sync_completed_id;         /* release-published by writer */
 static uint32_t      s_seq = 0u;
 static uint32_t      s_boot_id = 0u;
 static char          s_fw_version[SERVICE_LOG_TEXT_MAX] = "n/a";
@@ -139,6 +142,7 @@ static void rotate_generations(void)
 /* Caller is the writer task and holds sd_io_gate. */
 static esp_err_t open_active(void)
 {
+    s_available = false;
     if (mkdir(LOG_DIR, 0775) != 0 && errno != EEXIST) {
         s_last_error = ESP_FAIL;
         return ESP_FAIL;
@@ -235,16 +239,32 @@ static void ensure_open(void)
     sd_io_gate_end();
 }
 
+static void acknowledge_barrier(const writer_item_t *item)
+{
+    __atomic_store_n(&s_sync_completed_id, item->barrier_id, __ATOMIC_RELEASE);
+    if (item->ack_sem) xSemaphoreGive(item->ack_sem);
+}
+
 static void writer_task(void *arg)
 {
     (void)arg;
     for (;;) {
         writer_item_t item;
-        if (xQueueReceive(s_queue, &item, pdMS_TO_TICKS(WRITER_WAIT_MS)) != pdTRUE) {
+        if (xQueuePeek(s_queue, &item, pdMS_TO_TICKS(WRITER_WAIT_MS)) != pdTRUE) {
             flush_if_dirty(false);
             publish_status();
             continue;
         }
+
+        /* Preserve bounded queue order until storage exists. Do not consume
+         * boot records or barriers while the card is absent/unavailable. */
+        ensure_open();
+        if (!s_fp) {
+            publish_status();
+            vTaskDelay(pdMS_TO_TICKS(WRITER_WAIT_MS));
+            continue;
+        }
+        if (xQueueReceive(s_queue, &item, 0) != pdTRUE) continue;
 
         if (item.kind == WRITER_ITEM_SYNC) {
             /* Queue order is the barrier: every record enqueued before this item
@@ -252,7 +272,7 @@ static void writer_task(void *arg)
             ensure_open();
             flush_if_dirty(true);
             publish_status();
-            if (item.ack_sem) xSemaphoreGive(item.ack_sem);
+            acknowledge_barrier(&item);
             continue;
         }
 
@@ -272,7 +292,7 @@ static void writer_task(void *arg)
             write_record(&item.record);
             uint32_t batched = 1u;
             writer_item_t next;
-            while (batched < WRITER_BATCH &&
+            while (s_fp && batched < WRITER_BATCH &&
                    xQueuePeek(s_queue, &next, 0) == pdTRUE &&
                    next.kind == WRITER_ITEM_RECORD &&
                    xQueueReceive(s_queue, &next, 0) == pdTRUE) {
@@ -312,6 +332,10 @@ esp_err_t service_log_init(const char *fw_version, const char *partition,
     publish_status();
     if (xTaskCreate(writer_task, "svc_log", WRITER_STACK, NULL, WRITER_PRIO,
                     &s_writer) != pdPASS) {
+        vSemaphoreDelete(s_sync_ack);
+        s_sync_ack = NULL;
+        vSemaphoreDelete(s_sync_lock);
+        s_sync_lock = NULL;
         vQueueDelete(s_queue);
         s_queue = NULL;
         return ESP_ERR_NO_MEM;
@@ -362,8 +386,8 @@ void service_log_sync(void)
 {
     if (!s_queue || !s_writer || !s_sync_ack || !s_sync_lock) return;
 
-    /* One barrier in flight at a time, so the single ack semaphore always
-     * belongs to the caller currently holding this lock. */
+    /* Only one caller waits at a time. Older timed-out barriers can still be
+     * queued, so semaphore wakeups must also match the completed barrier ID. */
     if (xSemaphoreTake(s_sync_lock, pdMS_TO_TICKS(SYNC_WAIT_MS)) != pdTRUE) {
         ESP_LOGW("service_log", "sync barrier contended; skipping");
         return;
@@ -375,13 +399,21 @@ void service_log_sync(void)
     writer_item_t item = {
         .kind = WRITER_ITEM_SYNC,
         .ack_sem = s_sync_ack,
+        .barrier_id = ++s_sync_next_id,
     };
     if (xQueueSend(s_queue, &item, pdMS_TO_TICKS(SYNC_WAIT_MS)) != pdTRUE) {
         ESP_LOGW("service_log", "sync barrier enqueue timed out");
         xSemaphoreGive(s_sync_lock);
         return;
     }
-    if (xSemaphoreTake(s_sync_ack, pdMS_TO_TICKS(SYNC_WAIT_MS)) != pdTRUE) {
+    const TickType_t started = xTaskGetTickCount();
+    const TickType_t budget = pdMS_TO_TICKS(SYNC_WAIT_MS);
+    while (__atomic_load_n(&s_sync_completed_id, __ATOMIC_ACQUIRE) != item.barrier_id) {
+        const TickType_t elapsed = xTaskGetTickCount() - started;
+        if (elapsed >= budget ||
+            xSemaphoreTake(s_sync_ack, budget - elapsed) != pdTRUE) break;
+    }
+    if (__atomic_load_n(&s_sync_completed_id, __ATOMIC_ACQUIRE) != item.barrier_id) {
         ESP_LOGW("service_log", "sync barrier acknowledgement timed out");
     }
     xSemaphoreGive(s_sync_lock);

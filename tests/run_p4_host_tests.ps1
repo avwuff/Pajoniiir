@@ -2227,6 +2227,17 @@ $tests = @(
         )
     },
     @{
+        Name = "media_io_gate_concurrent"
+        Dir = "tests/media_io_gate"
+        Target = "test_concurrent_gate.exe"
+        Args = @(
+            "-std=c11", "-D_POSIX_C_SOURCE=200809L", "-Wall", "-Wextra", "-Werror", "-pthread",
+            "-DMEDIA_IO_GATE_STANDALONE_TEST", "-I../../firmware/p4-core/components/media_io_gate/include",
+            "test_concurrent_gate.c", "../../firmware/p4-core/components/media_io_gate/media_io_gate.c",
+            "-o", "test_concurrent_gate.exe"
+        )
+    },
+    @{
         Name = "audio_wav_decoder"
         Dir = "tests/audio_wav_decoder"
         Target = "test_audio_wav_decoder.exe"
@@ -4060,6 +4071,16 @@ Invoke-Step -Name "run Hosted shared SDMMC restart regression" -WorkingDirectory
     -Executable $pythonSource -Arguments @("tests/controller_usb_host/test_hosted_shared_sdmmc.py")
 Invoke-Step -Name "run diagnostic Wi-Fi TX limit regression" -WorkingDirectory $RepoRoot `
     -Executable $pythonSource -Arguments @("tests/controller_usb_host/test_wifi_tx_limit.py")
+Invoke-Step -Name "run production I/O gate initialization regression" -WorkingDirectory $RepoRoot `
+    -Executable $pythonSource -Arguments @("tests/media_io_gate/test_production_init.py")
+Invoke-Step -Name "run service log sync barrier regression" -WorkingDirectory $RepoRoot `
+    -Executable $pythonSource -Arguments @("tests/service_log/test_sync_barrier.py")
+Invoke-Step -Name "run service log writer lifecycle regression" -WorkingDirectory $RepoRoot `
+    -Executable $pythonSource -Arguments @("tests/service_log/test_writer_lifecycle.py")
+Invoke-Step -Name "run copied FatFs VFS fault boundary regression" -WorkingDirectory $RepoRoot `
+    -Executable $pythonSource -Arguments @("tests/service_log/test_fatfs_review.py")
+Invoke-Step -Name "run copied FatFs mount ownership regression" -WorkingDirectory $RepoRoot `
+    -Executable $pythonSource -Arguments @("tests/service_log/test_fatfs_mount_lifecycle.py")
 if (-not $pythonSource) { throw "Python is required for firmware lifecycle regression" }
 Invoke-Step -Name "run firmware lifecycle regression" -WorkingDirectory $RepoRoot `
     -Executable $pythonSource -Arguments @("tests/audio_fw_runtime/test_firmware_lifecycle.py")

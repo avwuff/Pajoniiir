@@ -173,11 +173,10 @@ static esp_err_t mount_to_vfs_fat(const esp_vfs_fat_mount_config_t *mount_config
     };
     err = esp_vfs_fat_register_cfg(&conf, &fs);
     *out_fs = fs;
-    if (err == ESP_ERR_INVALID_STATE) {
-        // it's okay, already registered with VFS
-    } else if (err != ESP_OK) {
+    if (err != ESP_OK) {
         ESP_LOGD(TAG, "esp_vfs_fat_register_cfg failed 0x(%x)", err);
-        goto fail;
+        ff_diskio_unregister(pdrv);
+        return err;
     }
 
     // Try to mount partition
@@ -495,7 +494,7 @@ esp_err_t esp_vfs_fat_sdcard_format_cfg(const char *base_path, sdmmc_card_t *car
     const size_t workbuf_size = 4096;
     void *workbuf = ff_memalloc(workbuf_size);
     if (workbuf == NULL) {
-        return ESP_ERR_NO_MEM;
+        ret = ESP_ERR_NO_MEM;
     }
 
     //format
@@ -516,7 +515,7 @@ esp_err_t esp_vfs_fat_sdcard_format_cfg(const char *base_path, sdmmc_card_t *car
                 s_ctx[id]->mount_config.allocation_unit_size);
     ESP_LOGI(TAG, "Formatting card, allocation unit size=%d", alloc_unit_size);
     const MKFS_PARM opt = {(BYTE)FM_ANY, (s_ctx[id]->mount_config.use_one_fat ? 1 : 2), 0, 0, alloc_unit_size};
-    res = f_mkfs(drv, &opt, workbuf, workbuf_size);
+    if (workbuf) res = f_mkfs(drv, &opt, workbuf, workbuf_size);
     free(workbuf);
     if (res != FR_OK) {
         ret = ESP_FAIL;
@@ -526,7 +525,8 @@ esp_err_t esp_vfs_fat_sdcard_format_cfg(const char *base_path, sdmmc_card_t *car
     //mount back
     esp_err_t err = s_f_mount(card, s_ctx[id]->fs, drv, pdrv, &s_ctx[id]->mount_config, NULL);
     if (err != ESP_OK) {
-        unmount_card_core(base_path, card);
+        esp_vfs_fat_sdcard_unmount(base_path, card);
+        if (ret == ESP_OK) ret = err;
         ESP_LOGE(TAG, "failed to format, resources recycled, please mount again");
     }
 

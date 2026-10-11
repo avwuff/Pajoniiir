@@ -2,6 +2,15 @@
 
 Status: **current documentation authority, reconciled 2026-10-11**.
 
+[PR 46 diagnostics/media review](reviews/2026-10-11-pr46-diagnostics-media-review.md)
+covers six further scopes (52 candidate files, 17 service issues), all repaired
+locally, plus a reproduced stale service-log acknowledgement boundary and
+adjacent SD format failure cleanup. FatFs has one service-unreviewed file and
+is not a complete-directory review PASS. New injected regressions pass on
+Windows and Ubuntu/WSL; full host qualification passes without SKIP. The final
+ordinary M3 build/image verifier passes at
+2,601,280 bytes. Installed firmware and frozen packages remain unchanged.
+
 [PR 46 deck/USB/Wi-Fi lifecycle review](reviews/2026-10-11-pr46-deck-lifecycle-review.md)
 covers nine further directories (48 files, 13 service findings): twelve findings
 have local repairs; acquisition-token lease hardening remains explicitly deferred

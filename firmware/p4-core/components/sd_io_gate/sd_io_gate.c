@@ -53,41 +53,37 @@ static bool s_recorder_active;
 
 esp_err_t sd_io_gate_init(void)
 {
-    s_locked = false;
-    s_recorder_active = false;
+    __atomic_store_n(&s_locked, false, __ATOMIC_RELEASE);
+    __atomic_store_n(&s_recorder_active, false, __ATOMIC_RELEASE);
     return ESP_OK;
 }
 
 void sd_io_gate_begin(void)
 {
-    while (s_locked) {
-    }
-    s_locked = true;
+    while (!sd_io_gate_try_begin(0)) {}
 }
 
 bool sd_io_gate_try_begin(uint32_t timeout_ms)
 {
     (void)timeout_ms;
-    if (s_locked) {
-        return false;
-    }
-    s_locked = true;
-    return true;
+    bool expected = false;
+    return __atomic_compare_exchange_n(&s_locked, &expected, true, false,
+                                      __ATOMIC_ACQUIRE, __ATOMIC_RELAXED);
 }
 
 void sd_io_gate_end(void)
 {
-    s_locked = false;
+    __atomic_store_n(&s_locked, false, __ATOMIC_RELEASE);
 }
 
 void sd_io_gate_set_recorder_active(bool active)
 {
-    s_recorder_active = active;
+    __atomic_store_n(&s_recorder_active, active, __ATOMIC_RELEASE);
 }
 
 bool sd_io_gate_recorder_active(void)
 {
-    return s_recorder_active || sd_io_gate_activity() == SD_ACTIVITY_RECORDER;
+    return __atomic_load_n(&s_recorder_active, __ATOMIC_ACQUIRE) || sd_io_gate_activity() == SD_ACTIVITY_RECORDER;
 }
 
 #else
@@ -119,26 +115,28 @@ static void note_inc(uint32_t *counter)
 
 esp_err_t sd_io_gate_init(void)
 {
-    if (s_gate) {
+    if (__atomic_load_n(&s_gate, __ATOMIC_ACQUIRE)) {
         return ESP_OK;
     }
-    s_gate = xSemaphoreCreateMutex();
-    if (!s_gate) {
+    SemaphoreHandle_t candidate = xSemaphoreCreateMutex();
+    if (!candidate) {
+        if (__atomic_load_n(&s_gate, __ATOMIC_ACQUIRE)) return ESP_OK;
         ESP_LOGE(TAG, "failed to create SD I/O mutex");
         return ESP_FAIL;
     }
+    SemaphoreHandle_t expected = NULL;
+    if (!__atomic_compare_exchange_n(&s_gate, &expected, candidate, false,
+                                    __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE))
+        vSemaphoreDelete(candidate);
     return ESP_OK;
 }
 
 void sd_io_gate_begin(void)
 {
-    if (!s_gate) {
-        if (sd_io_gate_init() != ESP_OK) {
-            return;
-        }
-    }
+    ESP_ERROR_CHECK(sd_io_gate_init());
     int64_t started = esp_timer_get_time();
-    xSemaphoreTake(s_gate, portMAX_DELAY);
+    if (xSemaphoreTake(__atomic_load_n(&s_gate, __ATOMIC_ACQUIRE), portMAX_DELAY) != pdTRUE)
+        ESP_ERROR_CHECK(ESP_ERR_INVALID_STATE);
     s_acquired_us = esp_timer_get_time();
     note_inc(&s_stats.waits);
     note_max(&s_stats.max_wait_us, s_acquired_us - started);
@@ -146,13 +144,13 @@ void sd_io_gate_begin(void)
 
 bool sd_io_gate_try_begin(uint32_t timeout_ms)
 {
-    if (!s_gate) {
+    if (!__atomic_load_n(&s_gate, __ATOMIC_ACQUIRE)) {
         if (sd_io_gate_init() != ESP_OK) {
             return false;
         }
     }
     int64_t started = esp_timer_get_time();
-    bool acquired = xSemaphoreTake(s_gate, pdMS_TO_TICKS(timeout_ms)) == pdTRUE;
+    bool acquired = xSemaphoreTake(__atomic_load_n(&s_gate, __ATOMIC_ACQUIRE), pdMS_TO_TICKS(timeout_ms)) == pdTRUE;
     int64_t now = esp_timer_get_time();
     note_inc(&s_stats.waits);
     note_max(&s_stats.max_wait_us, now - started);
@@ -163,9 +161,10 @@ bool sd_io_gate_try_begin(uint32_t timeout_ms)
 
 void sd_io_gate_end(void)
 {
-    if (s_gate) {
+    SemaphoreHandle_t gate = __atomic_load_n(&s_gate, __ATOMIC_ACQUIRE);
+    if (gate) {
         note_max(&s_stats.max_hold_us, esp_timer_get_time() - s_acquired_us);
-        xSemaphoreGive(s_gate);
+        xSemaphoreGive(gate);
     }
 }
 

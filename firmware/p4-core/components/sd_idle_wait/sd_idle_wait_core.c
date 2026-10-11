@@ -40,7 +40,9 @@ esp_err_t sd_idle_wait_run(void *ctx, uint32_t status, uint32_t timeout_us,
     uint32_t polls = 0;
     esp_err_t rc = ESP_OK;
     for (;;) {
-        if (polls) ops->yield_tick(ctx);
+        /* IDF already issued CMD13 for the initial status. Every additional
+         * probe follows a tick; a zero budget still times out immediately. */
+        if (timeout_us) ops->yield_tick(ctx);
         int64_t elapsed = ops->now_us(ctx) - started;
         if (elapsed < 0 || (uint64_t)elapsed >= timeout_us) {
             rc = ESP_ERR_TIMEOUT; break;

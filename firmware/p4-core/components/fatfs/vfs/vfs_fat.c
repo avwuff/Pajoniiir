@@ -559,7 +559,8 @@ static ssize_t vfs_fat_pwrite(void *ctx, int fd, const void *src, size_t size, o
     f_res = f_write(file, src, size, &wr);
     if (((wr == 0) && (size != 0)) && (f_res == 0)) {
         errno = ENOSPC;
-        return -1;
+        (void)f_lseek(file, prev_pos);
+        goto pwrite_release;
     }
     if (f_res == FR_OK) {
         ret = wr;
@@ -1006,7 +1007,7 @@ static void vfs_fat_seekdir(void* ctx, DIR* pdir, long offset)
         if (res != FR_OK) {
             ESP_LOGD(TAG, "%s: rewinddir fresult=%d", __func__, res);
             errno = fresult_to_errno(res);
-            return;
+            goto seekdir_release;
         }
         fat_dir->offset = 0;
     }
@@ -1015,10 +1016,11 @@ static void vfs_fat_seekdir(void* ctx, DIR* pdir, long offset)
         if (res != FR_OK) {
             ESP_LOGD(TAG, "%s: f_readdir fresult=%d", __func__, res);
             errno = fresult_to_errno(res);
-            return;
+            goto seekdir_release;
         }
         fat_dir->offset++;
     }
+seekdir_release:
     _lock_release(&fat_ctx->lock);
 }
 
@@ -1502,12 +1504,13 @@ esp_err_t esp_vfs_fat_test_contiguous_file(const char* base_path, const char* fu
     }
     memset(file, 0, sizeof(*file));
 
-    FRESULT res = f_open(file, file_path, FA_WRITE | FA_OPEN_ALWAYS);
+    FRESULT res = f_open(file, file_path, FA_READ | FA_OPEN_EXISTING);
     if (res != FR_OK) {
         goto fail;
     }
 
-    res = test_contiguous_file(file, (int*) is_contiguous);
+    int contiguous = 0;
+    res = test_contiguous_file(file, &contiguous);
     if (res != FR_OK) {
         f_close(file);
         goto fail;
@@ -1518,6 +1521,7 @@ esp_err_t esp_vfs_fat_test_contiguous_file(const char* base_path, const char* fu
         goto fail;
     }
 
+    *is_contiguous = contiguous != 0;
     _lock_release(&fat_ctx->lock);
     free(file);
 
