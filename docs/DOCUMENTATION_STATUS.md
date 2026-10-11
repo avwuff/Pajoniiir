@@ -4,8 +4,8 @@ Status: **current documentation authority, reconciled 2026-10-11**.
 
 Latest installed restart/Hercules-support candidate: clean `ac9287af`,
 `M3-dev-gac9287af4a4c`, VALID `ota_1`, API idle, both decks stopped. Hercules
-`06F8:B12B` MIDI/profile and UAC1 full-speed packed 24-bit/44100-Hz playback
-are active. Explicit feedback updates grow without invalid values. The missing
+`06F8:B12B` MIDI/profile and UAC1 full-speed packed 24-bit/44100-Hz stream
+are active; decks are stopped. Explicit feedback updates grow without invalid values. The missing
 HCD integration was its 512-byte HS periodic FIFO, below Hercules MPS 540;
 the experiment now uses 640 bytes while standard layouts remain unchanged.
 Full host qualification of the claim diagnostic passed without SKIP; the final
@@ -24,6 +24,18 @@ serialization gap is addressed; causality and broader restart reliability remain
 open. The operator confirmed that the new-image GUI is normal on 2026-10-11.
 This confirms GUI restoration, not new-image playback/audio qualification. Evidence and scope:
 [restart candidate](validation/RESTART_BUS_CAPTURE_20261010.md#cache-synchronization-candidate-after-the-natural-fault).
+
+An unattended read-only unloaded idle observation on exact `ac9287af` completed
+180.172 s / 171 audited samples: all 21 connection/loss counter deltas zero,
+45,121 new valid feedback updates, no USB disconnect or reboot, output-late
+delta zero. Hercules remained UAC1 FS/44100 Hz and both decks remained unloaded
+and stopped. Empty-ring zero-fill underflow grew by 7,960,226 frames with zero
+submitted producer frames; it is explicitly separate in this idle-only scope,
+not a zero-underflow claim or relaxation of the 22-counter playback gate.
+Deterministic local profile regeneration matches the existing SHA. Current
+controller README/MIDI acceptance state is reconciled, with combined remaining
+operator blocks prepared. No new build/OTA/playback or S2 retest was performed.
+Evidence and limits: [unattended Hercules observation](validation/HERCULES_INPULSE_500_PREPARATION_20261010.md#unattended-unloaded-idle-observation-2026-10-11).
 
 On earlier exact `04f0cfb6`, the operator-confirmed combined 60.078-s test passes MAIN/headphones, both
 jogs/Browse, PFL D1/D2, native headphone Mix/Volume and fluid waveforms. All 85

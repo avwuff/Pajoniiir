@@ -1,13 +1,15 @@
 # Hercules DJControl Inpulse 500 MIDI Map
 
-Status: host-qualified Pajoniiir controller profile; physical Inpulse 500 MIDI,
-LED, reconnect and USB-audio acceptance is still pending.
+Status: host-qualified Pajoniiir controller profile; combined physical smoke
+passed on `04f0cfb6`. Full MIDI/LED/lifecycle coverage and playback on current
+`ac9287af` remain open.
 
 The [2026-10-10 M3 preparation record](validation/HERCULES_INPULSE_500_PREPARATION_20261010.md)
 adds measured Windows identity and jog-touch addresses, current offline
 fixture verification, audio-rate/native-hardware-control audit findings and
 the short combined activation sequence. The current v4 fixture and matching
-firmware are installed on M3; physical controller activation remains pending.
+firmware are installed on M3; measured activation and the historical short
+audio/control smoke are recorded separately from current-image qualification.
 
 Authoritative mapping sources:
 
@@ -23,12 +25,12 @@ The committed source and compiled fixtures are
 
 | Parameter | Profile value | Status |
 | --- | --- | --- |
-| USB VID:PID | `06F8:B12B` | Matches published Inpulse 500 hardware IDs; confirm from the P4 USB descriptor report on the target unit |
+| USB VID:PID | `06F8:B12B` | Confirmed from the M3 descriptor and active profile |
 | Decks | 2 | Profile/runtime verified |
-| MIDI input/output | Enabled | Host verified; hardware pending |
-| Jog touch | Enabled | Host/profile path verified; hardware pending |
+| MIDI input/output | Enabled | M3 binding confirmed; earlier combined smoke passed, full input/output sweep open |
+| Jog touch | Enabled | Measured PC touch addresses and earlier M3 jog smoke; complete scratch/Shift sweep open |
 | Pitch | 14-bit CC | Host/profile path verified; hardware pending |
-| USB audio | 4 channels: MAIN 1/2, headphones 3/4 | Device capability is documented, but Pajoniiir routing is not hardware-qualified for Hercules |
+| USB audio | 4 channels: MAIN 1/2, headphones 3/4 | Measured UAC1 FS/44100/packed-24; earlier MAIN/PFL/native headphone smoke passed; current playback and long gate open |
 
 `06F8:B105` belongs to a different Hercules product family and must not match
 this profile. Exact VID/PID matching is intentional.
@@ -141,8 +143,10 @@ input mapping, Mode 6 addresses, RGB MIDI output, registry discovery, all 69
 remote LED IDs, the P4-local semantic vocabulary and P4 `sync_off`/`loop_size`
 behavior.
 
-Before this profile can be called hardware-supported, connect a physical
-Inpulse 500 and record:
+Before this profile can be called fully hardware-qualified, complete the
+[combined operator blocks](validation/HERCULES_INPULSE_500_PREPARATION_20261010.md#remaining-combined-operator-blocks)
+on the exact final image. Preserve the earlier smoke as historical evidence.
+The complete coverage still requires:
 
 1. P4 descriptor VID/PID/product and successful local match/activation.
 2. A two-deck MIDI input sweep, including releases and Shift variants.

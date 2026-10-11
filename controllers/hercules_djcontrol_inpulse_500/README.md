@@ -1,7 +1,8 @@
 # Hercules DJControl Inpulse 500 preparation
 
-The source-backed profile is software-qualified and installed on the M3 bench;
-physical hardware acceptance is pending. See the [MIDI map](../../docs/HERCULES_INPULSE_500_MIDI_MAP.md)
+The source-backed profile is software-qualified and installed on the M3 bench.
+A combined physical smoke passed on `04f0cfb6`; full hardware acceptance and
+playback qualification on the current `ac9287af` remain open. See the [MIDI map](../../docs/HERCULES_INPULSE_500_MIDI_MAP.md)
 and [M3 preparation record](../../docs/validation/HERCULES_INPULSE_500_PREPARATION_20261010.md).
 
 The current fixture is S3CP v4, 5592 bytes, with 268 expanded inputs and
@@ -24,10 +25,12 @@ LED output are omitted. Software headphone settings remain stored for other
 profiles. MASTER intentionally controls PCM5102A volume; controller RCA MAIN
 is not the reference output and remains unqualified.
 
-The first matching clean firmware is `eafdb7a5`; M3 build, full host
-qualification, signed local OTA and this profile's atomic replacement pass.
-The exact image is VALID `ota_0`. Physical Hercules activation/audio/controls
-remain pending; see the preparation record for hashes and installed evidence.
+The first matching clean firmware was `eafdb7a5`. The current installed image
+is clean `ac9287af`, VALID `ota_1`; its M3 build, full host qualification and
+signed local OTA pass. The profile remains active and unchanged. One stopped
+software restart and GUI restoration are confirmed on this image; the earlier
+audio/control smoke belongs to `04f0cfb6`. See the preparation record for exact
+hashes, evidence and the combined remaining operator blocks.
 
 The manufacturer documents 24-bit, 44100-Hz audio, MAIN channels 1/2 and
 headphones 3/4. The JSON `audio` section is descriptive: the compiler does
@@ -54,5 +57,8 @@ S2 work is closed by the operator. With both decks stopped:
 6. Check reconnect and screensaver wake, then qualify the final image/config
    with a separate soak. Repeat only failed or ambiguous checks.
 
-Hardware tests, USB root/speed, audio format and headphone routing remain
-**NOT RUN** until measured on M3. No profile is uploaded during the S2 soak.
+Measured M3 topology is Hercules on USB3/root0 as a full-speed UAC1 device,
+44100 Hz, packed 24-bit; storage is on USB2/root1. Historical short audio/control
+acceptance does not establish full qualification or transfer to a new image.
+S2 testing stays closed. No public release or production USB-default change
+is implied by this experimental arrangement.

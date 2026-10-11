@@ -313,3 +313,72 @@ On 2026-10-11 the operator confirmed: "Gui je uredan". This closes new-image
 GUI restoration only; historical fault causality, wider restart reliability
 and new-image playback/audio qualification remain open. Full artifact identities and records
 are in [the restart observation](RESTART_BUS_CAPTURE_20261010.md#exact-candidate-and-stopped-restart-observation).
+
+## Unattended unloaded idle observation, 2026-10-11
+
+On exact clean `ac9287af` / ELF
+`53808ea215b37addd063c783afbd995b219b4a3c000b9d8b332cc86230da9113`,
+VALID `ota_1`, a read-only 180.172-second observation completed with 171 samples.
+Both decks were unloaded IDLE throughout, the PCM codec remained closed, and
+Hercules MIDI/profile/UAC1 FS/44100-Hz packed-24 readiness and the USB2 storage
+mount remained present. Uptime increased from 5,376,170 to 5,556,653 ms; no
+reboot occurred inside this observed window. The preflight uptime alone is
+not evidence of an earlier continuously observed run.
+
+All 21 explicitly enumerated connection/loss counters have zero deltas,
+including ISO packet failures/lost frames, PCM underruns, dropped/overflow
+frames, invalid feedback, MIDI/queue errors, USB disconnect/recovery and
+service-log drops. Feedback updates increased by 45,121; output-late delta
+was zero. Every saved sample and both firmware endpoints passed an independent
+audit against exact identity, counter schema and unloaded/no-producer scope.
+
+The idle ring underflow counter increased by 7,960,226 frames and is reported
+separately, not hidden or treated as zero. Production `prepare_transfer()`
+calls `controller_audio_ring_read(..., true)`: an empty ring zero-fills the
+requested packets and counts unavailable frames. Here submitted frames/blocks
+and queued frames remained zero, with no loaded deck or active PCM producer.
+This narrowly scoped idle observation therefore does not apply the playback
+underflow gate. The existing 22-counter playback gate remains unchanged;
+this is neither audible silence verification nor a playback/soak PASS.
+
+Original baseline, JSONL, final status/firmware/bus trace, profile registry,
+runner, independent audit and SHA-256 manifest are retained at
+`.cache/hercules-inpulse-500/unloaded-idle-20261011T093801Z/`.
+Preflight and deterministic local profile regeneration are at
+`.cache/hercules-inpulse-500/unattended-ac9287af/`. Both runner and audit exit 0.
+There were no POST requests, playback, firmware/profile changes, resets or
+intentional physical changes in this observation. No monitor remains running.
+
+## Remaining combined operator blocks
+
+Prepared on 2026-10-11 while the operator was away. No playback, control,
+profile, firmware, USB, Wi-Fi or power change is needed for this preparation.
+The unchanged JSON recompiles byte-for-byte to the committed 5592-byte fixture,
+SHA-256 `570b59ecca6baa7319ef85ca92d7d3a11fbe11ea1f9c9c580a8779031a40f549`.
+The live registry reports valid exact VID/PID, active profile and matching size;
+it does not expose a raw installed-binary hash. Local regeneration is not a
+byte-for-byte readback of NVS.
+
+The existing host evidence covers compiler/semantic parity, representative
+transport/Shift/loop/pad and LED mappings, registry/atomic replacement, and the
+production native-headphone ownership path. The Hercules-specific test checks
+ignored native knobs/buttons, intentional PCM master volume, both jog-touch
+releases, v2/v3 capability rejection, missing-UAC rejection and activation/clear.
+These tests do not prove physical pad colours, knob endpoints, release behavior
+or audible routing. Key/Pitch Play pads, Vinyl/Slip, stutter-play, guide controls
+and physical modes 7/8 remain deliberately deferred; do not invent a PASS for
+them or expand the profile solely to finish a checklist.
+
+| Combined block | Checks and completion evidence | Current-image state |
+| --- | --- | --- |
+| Navigation, protection and transport | Both LOAD/Shift+LOAD routes with stopped decks, LOAD LOCK on each playing deck, CUE hold/release and PLAY handoff, Sync/Shift+Sync, Quantize/range, loop rotary/In/Out/exit; exact titles and other-deck preservation | NOT RUN on `ac9287af` |
+| Mixer, pads/FX and visible feedback | Both pitch/fader/trim/EQ/filter endpoints, crossfader and intentional PCM MASTER; each implemented pad bank on both decks, press/release and Shift behavior; mode/transport/PFL/loop LEDs, pad colours and VU. Use existing source cue recall; local cue writes/deletion require an explicitly disposable test track | NOT RUN on `ac9287af` |
+| Dual audio and controls | One short monitored mixed-rate MT/loop block, opposite pitch and zoom 8: rotate both jogs/Browse, check PFL D1/D2 and native headphone blend/volume endpoints, then hands off for listening/dual waveform observation. Restore mixer centers/faders before starting. Audit actual MIDI growth and all 22 playback strict deltas | NOT RUN on `ac9287af`; historical `04f0cfb6` smoke retained |
+| Wake and lifecycle | First controller action only wakes screensaver; next action operates normally, with no ghost action/stuck release. Three stopped cable reconnects with matching profile/healthy 44100-Hz stream and LED resync; separate cold-power check. Controller reconnect, software restart and cold power are distinct evidence | Only one stopped software restart and GUI restoration confirmed |
+| Final timing window | Run the agreed long gate only on the final unchanged image/configuration, with operator listening/visual confirmation and strict loss counters. Keep isolated output-late findings separate | NOT RUN for Hercules |
+
+Capture one continuous record per short operator block and combine independent
+observations inside it. Repeat only failed or ambiguous portions. Stop both
+decks at each playback block's end or first strict error. An operator must be
+present for listening, visible LEDs/waveforms, physical inputs and cable/power
+actions; unattended USB liveness cannot close these gates. S2 stays closed.
