@@ -2,6 +2,15 @@
 
 Status: **current documentation authority, reconciled 2026-10-11**.
 
+[Final local three-target matrix](validation/SHARED_P4_FINAL_BUILD_MATRIX_20261011.md)
+passes on clean source `b913818052de99af61c3a8c752b814185794b50e` with new
+ESP-IDF 6.0.2 build directories and dedicated default SDKCONFIGs. JC4880,
+JC1060 and M3 images are 2,608,224 / 2,666,912 / 2,601,600 bytes; all board,
+source identity, common-component isolation, lock, linked-wrapper and resampler
+checks pass. Three product UI simulators pass without baseline changes.
+This closes that local software matrix. Current CI and physical acceptance of
+these new images remain unrun; installed firmware and frozen packages are unchanged.
+
 [PR 46 full protocol-directory review completion](reviews/2026-10-11-pr46-dj-link-protocol-completion.md)
 finishes the operator-authorized manual inspection of all 45 tracked files in
 `common/djlink` and `common/dj_link_core`. Four additional confirmed defects
