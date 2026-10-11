@@ -52,4 +52,53 @@ finish and package verification must pass before any asset is published.
 The release contains board kits plus separate debug archives and compiled
 controller profiles. No private signing material is included.
 
-Final build/package/publication results are appended after verification.
+## Verified publication on 2026-10-12 (Europe/Zagreb)
+
+[PR #46](https://github.com/dvucinozd/Pajoniiir/pull/46) was updated, marked ready
+and merged. Exact merge/source commit:
+`40e72fcbf403a1650185a4c64509dd11bba9f73f`. The annotated distribution tag
+`shared-p4-beta.1` resolves to that commit; it is outside the M2/M3 ancestry-tag
+patterns. The [published release](https://github.com/dvucinozd/Pajoniiir/releases/tag/shared-p4-beta.1)
+is non-draft and explicitly prerelease, with `latest=false`.
+
+All three ordinary products completed fresh ESP-IDF 6.0.2 configure/builds from
+empty build directories and dedicated SDKCONFIGs on the clean, pushed merge
+source. Dependency configuration/patching was serial; independent compilation
+used four workers per board. Product source and tests are unchanged from the
+qualified `722bb976` baseline; the only intervening firmware change is the
+auxiliary USB spike component declaration. The historical full host/UI results
+are therefore recorded with source equivalence, not described as newly rerun.
+
+| Board / project | Embedded version | Image bytes | Remaining below 0x380000 |
+| --- | --- | ---: | ---: |
+| JC4880 / main-deck-p4 | M2.5-215-g40e72fcb | 2,607,712 | 1,062,304 |
+| JC1060 / main-deck-jc1060 | M2.5-215-g40e72fcb | 2,666,368 | 1,003,648 |
+| M3 / main-deck-m3 | M3-dev-g40e72fcbf403 | 2,600,960 | 1,069,056 |
+
+All board/project/source/component/configuration checks, unchanged locks and
+image budgets pass. Every signed bundle and board manifest verifies against
+the committed release public key. Application descriptor versions/projects,
+clean source SHA, BIN hashes and matching debug ELF hashes were independently
+checked. Ordinary M3 has no HS-controller role swap. The release-level manifest
+is also signed; each board kit carries its own signed OTA manifest.
+
+Fifteen assets were published: three signed OTA bundles, three board kits,
+three matching debug ZIPs, compiled profile ZIP, public verification key,
+release manifest/signature, release notes and SHA256SUMS. Every ZIP inventory
+was checked against its archived contents. All fifteen published assets were
+downloaded independently and SHA-256 matched to their originals; the downloaded
+release-manifest signature also verifies. `jc1060-beta-kit.zip` includes the
+Kayrosen handoff; no message was sent to the contributor.
+
+Stable latest remains the same M2.5 release ID and asset digests. The public
+`https://ota.pajoniiir.eu/latest.json` before/after hashes match. No public OTA
+channel was written, and no new image was installed. Exact beta hardware
+acceptance remains NOT RUN; JC4880 soak waiver, deferred JC1060 testing and
+other open gates retain their stated scope.
+
+Evidence root: `.cache/shared-p4-beta.1/`, containing build/configuration/package
+logs, `build-result.json`, `assets-audit.log`, per-board identities/configurations,
+signed assets and debug archives, `remote-asset-audit.json`, downloaded copies,
+stable-release/OTA before/after snapshots and packaging/audit scripts. The
+published `release-manifest.json` and `SHA256SUMS.txt` contain immutable hashes;
+GitHub source at the beta tag identifies the exact code used to build them.

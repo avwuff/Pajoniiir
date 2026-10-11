@@ -9,6 +9,13 @@ tracks immutable packaging/publication; the [JC1060 handoff](JC1060_BETA_HANDOFF
 defines deferred contributor testing. Existing stable releases/channels remain
 unchanged. Publication does not transfer historical physical acceptance.
 
+`shared-p4-beta.1` is now published as a GitHub prerelease from merged source
+`40e72fcbf403a1650185a4c64509dd11bba9f73f`. Fresh ordinary builds and signed
+packaging for all three boards pass; all fifteen downloaded assets hash-match,
+and stable M2.5/public OTA metadata are independently unchanged. The beta record
+contains exact identities and verification. No new beta asset is installed or
+physically accepted; current hosted CI remains operator-skipped.
+
 [JC4880 Hercules FS FIFO repair](validation/JC4880_HERCULES_FIFO_20261011.md)
 records the installed shared-core baseline, operator-confirmed GUI/touch/Browse,
 and the reproduced 400-byte FIFO/admission limit rejecting Hercules's 540-byte
