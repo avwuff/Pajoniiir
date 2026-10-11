@@ -29,6 +29,7 @@ add_executable(ui_simulator_e2e
     simulator_mocks.c
 
     "${UI_DIR}/ui.c"
+    "${UI_DIR}/ui_idle.c"
     "${UI_DIR}/splash_screen.c"
     "${UI_DIR}/Musieer_80.c"
     "${UI_DIR}/Musieer_48.c"
