@@ -2,6 +2,16 @@
 
 Status: **current documentation authority, reconciled 2026-10-11**.
 
+Latest Hercules shortened gates on unchanged clean `e16ecfb5`, VALID `ota_0`:
+three stopped USB reconnect/recovery observations with operator Browse/LED
+confirmation, one separate cold-power readiness/GUI check, 60.219-s mixed-rate
+dual MT/loop audio/visual PASS and 20.656-s active jog/Browse PASS (2044 MIDI
+packets). All 22 playback strict deltas/output-late zero; decks stopped.
+The combined lifecycle recorder remains INCOMPLETE; independent sample audit
+establishes three USB epochs, with middle-epoch MIDI growth unsampled.
+Final soak and wider control coverage remain open. See
+[shortened gates](validation/HERCULES_INPULSE_500_PREPARATION_20261010.md#shortened-lifecycle-and-mixed-rate-mt-gates-2026-10-11).
+
 Latest Hercules wake/protection gates on unchanged clean `e16ecfb5`, VALID
 `ota_0`: first PLAY D1 wakes screensaver without playback; subsequent PLAY
 starts normally. Physical normal/Shift LOAD on each playing deck and web LOAD

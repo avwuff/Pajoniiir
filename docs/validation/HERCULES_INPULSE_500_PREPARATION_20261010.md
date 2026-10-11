@@ -373,8 +373,8 @@ them or expand the profile solely to finish a checklist.
 | --- | --- | --- |
 | Navigation, protection and transport | Both LOAD/Shift+LOAD routes with stopped decks, LOAD LOCK on each playing deck, CUE hold/release and PLAY handoff, Sync/Shift+Sync, Quantize/range, loop rotary/In/Out/exit; exact titles and other-deck preservation | PARTIAL: stopped normal/shifted LOAD and Browse accepted; previous CUE/PLAY/Sync checks retained per operator; manual IN/OUT/Exit and playing normal/Shift LOAD LOCK plus web admission pass on `e16ecfb5`; Quantize/range and complete rotary coverage open |
 | Mixer, pads/FX and visible feedback | Both pitch/fader/trim/EQ/filter endpoints, crossfader and intentional PCM MASTER; each implemented pad bank on both decks, press/release and Shift behavior; mode/transport/PFL/loop LEDs, pad colours and VU. Use existing source cue recall; local cue writes/deletion require an explicitly disposable test track | PARTIAL: pitch/fader/Gain/EQ/filter/crossfader response observed; exact analog calibration, MASTER, pads/FX/LED sweep open |
-| Dual audio and controls | One short monitored mixed-rate MT/loop block, opposite pitch and zoom 8: rotate both jogs/Browse, check PFL D1/D2 and native headphone blend/volume endpoints, then hands off for listening/dual waveform observation. Restore mixer centers/faders before starting. Audit actual MIDI growth and all 22 playback strict deltas | NOT RUN on `ac9287af`; historical `04f0cfb6` smoke retained |
-| Wake and lifecycle | First controller action only wakes screensaver; next action operates normally, with no ghost action/stuck release. Three stopped cable reconnects with matching profile/healthy 44100-Hz stream and LED resync; separate cold-power check. Controller reconnect, software restart and cold power are distinct evidence | First physical PLAY D1 wake and subsequent PLAY pass on `e16ecfb5`; prior stopped software restart/GUI restoration retained. Cable reconnect and cold power remain open |
+| Dual audio and controls | Short monitored mixed-rate MT/loops, opposite pitch and zoom 8; active jogs/Browse with strict counters and separate operator confirmation | `e16ecfb5`: 60.219-s audio/visual and 20.656-s active jog/Browse windows pass; 2044 MIDI packets in supplement. Earlier PFL/native headphone checks retained; this supplement does not independently prove each native knob endpoint |
+| Wake and lifecycle | First controller action only wakes screensaver; next action operates normally. Three stopped cable reconnects with profile/healthy 44100-Hz stream and operator LED response; separate cold power | `e16ecfb5`: wake passes; three reconnects independently observed, operator Browse/LED confirmation; middle epoch MIDI growth not sampled. One cold power readiness/GUI/Browse/LED check passes. Combined lifecycle recorder incomplete; audited physical scopes are separate |
 | Final timing window | Run the agreed long gate only on the final unchanged image/configuration, with operator listening/visual confirmation and strict loss counters. Keep isolated output-late findings separate | NOT RUN for Hercules |
 
 Capture one continuous record per short operator block and combine independent
@@ -610,3 +610,59 @@ helper, full audits and hashes are archived at
 `.cache/hercules-inpulse-500/load-lock-20261011T122626Z/`.
 Cable reconnect/cold power, wider control coverage, final mixed-rate MT smoke
 and the final timing soak remain open. S2 stays operator-closed.
+
+### Shortened lifecycle and mixed-rate MT gates, 2026-10-11
+
+All scopes below use unchanged clean `e16ecfb5`, VALID `ota_0`, the same ELF,
+Hercules USB3/root0 UAC1 FS/44100-Hz packed-24 audio and USB2/root1 storage.
+No firmware/profile change, OTA or public publication was performed.
+
+The stopped reconnect JSONL independently observes three controller disconnects
+and three new healthy MIDI/profile/audio epochs. USB2 storage and loaded deck
+titles remained intact, both decks stayed stopped and uptime remained monotonic.
+ISO packet-failure/lost-frame values were zero throughout. The operator confirmed
+"Tri ciklusa gotova; Browse i LED-ovi uredni". The middle recovered epoch has
+no sampled MIDI-packet growth; the first/third do. Do not claim three independent
+sampled Browse-input proofs. Stopped audio counters reset during teardown and
+reinitialization; their changes are not playback zero-delta evidence.
+
+The combined lifecycle recorder counted only two cycles because its extra
+MIDI-growth condition was unmet in the middle epoch. It was interrupted on the
+host before cold-power stage and has no completed result: original recorder
+classification remains INCOMPLETE. A separate full-sample audit establishes the
+three USB disconnect/recovery observations and retains operator context; no
+additional physical reconnect was requested. Originals, observer-ending record,
+audit, script and hashes are retained at
+`.cache/hercules-inpulse-500/lifecycle-20261011T123427Z/`.
+
+One separately recorded operator 10-s cold power cycle completed a 48.797-s
+readiness window. Uptime dropped and the same expected VALID image returned,
+with Hercules MIDI/healthy 44100-Hz audio and all 260 catalog tracks. Operator
+confirmed "GUI, Browse i LED-ovi uredni". This combines reported physical power
+off with observed new boot/readiness; it is not a hardware POR reset-reason
+readback, playback test or repeated cold-power campaign. Evidence:
+`.cache/hercules-inpulse-500/cold-boot-20261011T123824Z/`.
+
+Prepared D1 `Casanova Action {320}` at 44100 Hz and D2 `Dino Dvornik - Ritam moj`
+at 48000 Hz, four-beat loops, verified +5/-5% pitch, both MT and zoom 8.
+The initial 60.063-s window has zero strict/late deltas but was missed by the
+operator; do not count it as physical acceptance. Its record remains at
+`.cache/hercules-inpulse-500/final-mt-60s-20261011T124129Z/`.
+The repeat completed 60.219 s / 88 samples, all 22 strict deltas and output-late
+delta zero, with operator-confirmed clean MAIN/Hercules headphones and normal
+waveforms. MIDI delta was zero: operator explicitly reported not turning controls.
+This qualifies the short listening/visual workload only.
+
+Only a 20-s active-input supplement was then requested. It completed 20.656 s /
+29 samples / 2044 new MIDI packets with all 22 strict deltas and output-late
+delta zero. Both decks played with unchanged source rates, titles, +5/-5% pitch,
+MT and loops until final safe stop. Operator explicitly confirmed both jogs/Browse
+responded as expected, clean MAIN/Hercules headphones and normal waveforms:
+"Da, sve je bilo uredno". This is telemetry plus physical PASS for the short
+active-control scope. It does not newly prove every PFL/native-knob endpoint or
+complete pad/FX qualification. Original results, separate operator reports,
+full-sample audits, runners and hashes are retained at
+`.cache/hercules-inpulse-500/final-mt-60s-20261011T124426Z/` and
+`.cache/hercules-inpulse-500/final-mt-controls-20s-20261011T124705Z/`.
+Both decks are stopped. Final Hercules timing soak remains NOT RUN; wider
+control limitations above remain explicit. S2 stays operator-closed.
