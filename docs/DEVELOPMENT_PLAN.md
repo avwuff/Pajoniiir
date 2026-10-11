@@ -9,8 +9,12 @@ limits still explicit.
 The [subsequent ordinary local qualification](validation/SHARED_P4_LOCAL_QUALIFICATION_20261011.md)
 now passes on clean `5ff76b6c`: complete host gate, nine simulators, both keylock
 policies and all three IDF 6.0.2 builds with unchanged locks and valid budgets.
-Next is configuration-specific delivery provenance; fresh experimental builds,
-real-media and physical acceptance remain separate. Hosted CI stays skipped.
+Configuration-specific signed delivery provenance is now complete. The
+[delivery-readiness ledger](reviews/2026-10-11-shared-core-delivery-readiness.md)
+and local PR description are prepared for review. Next work requires selecting
+its scope: matched restart investigation, separate experiment builds or a
+board-specific release gate. Real-media/physical acceptance remains separate;
+hosted CI stays skipped.
 Historical OTA-restart causation remains open. Earlier
 installed-state and next-action paragraphs below are historical progression.
 

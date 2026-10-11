@@ -2,6 +2,13 @@
 
 Status: **current documentation authority, reconciled 2026-10-11**.
 
+Current review handoff: [P01–P10 dispositions and residual gates](reviews/2026-10-11-shared-core-delivery-readiness.md)
+and [prepared PR description](reviews/2026-10-11-shared-core-pr-description.md).
+Finding labels now follow the original comparison (P05 beat phase; P06 PDB
+title). Software/package rows are closed for frozen `5ff76b6c`; historical
+restart causation, deferred experiments, coverage gaps and operator exclusions
+are separately classified. No device action or remote publication is implied.
+
 Latest local delivery: three ordinary `5ff76b6c` candidates are signed and
 independently verified, with BIN/ELF/MAP, configuration manifests, frozen
 qualification evidence and delivery hashes retained locally. The existing

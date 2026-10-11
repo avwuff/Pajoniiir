@@ -11,6 +11,14 @@ release asset or public channel is modified by the migration tools.
 
 ## Preconditions and immutable candidate
 
+The [current local delivery handoff](reviews/2026-10-11-shared-core-delivery-readiness.md)
+records ordinary signed `5ff76b6c` packages with hosted CI explicitly skipped
+by the operator. They are local review candidates, not output of the strict
+CI-qualified candidate creator below. That tool's CI requirements remain intact.
+The current bench already has `main-deck-m3` identity; do not repeat its wired
+factory migration. Historical devices still need the procedure and prerequisites
+below before their identity transition.
+
 Use ESP-IDF 6.0.2 and esptool 5.3.1 from its PowerShell profile. Build and package
 a clean source, push the development branch, and require every exact-SHA CI job.
 `tools/create_integration_candidate.py` requires all three exact-SHA GitHub run

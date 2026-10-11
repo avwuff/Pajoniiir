@@ -15,6 +15,12 @@ This is build evidence, not a request to install its ordinary M3 image over the
 accepted Hercules bench configuration. Keep configuration-specific packaging
 and physical acceptance separate; hosted CI remains skipped by operator decision.
 
+Three frozen-source ordinary signed packages and their debug/configuration
+manifests now verify locally. Review the
+[delivery handoff](reviews/2026-10-11-shared-core-delivery-readiness.md)
+before selecting a later installation. None of these new images is installed
+or physically accepted; the current Hercules bench remains unchanged.
+
 For the [S2 performance candidate](../controllers/ni_traktor_s2_mk3_full/README.md),
 keep S2 on USB3 HS and the stick on USB2 FS. The operator closed S2 work after
 full-hour 48/44.1-kHz playback acceptance and waived remaining physical checks.

@@ -4,6 +4,12 @@ Status: implementation in progress; partial exact-image M3 acceptance, no public
 
 ## Current closeout, 2026-10-11
 
+The [delivery-readiness ledger](reviews/2026-10-11-shared-core-delivery-readiness.md)
+is the current P01–P10/open-gate and migration handoff authority. Ordinary local
+qualification and three signed packages are complete on frozen `5ff76b6c`;
+the prepared review description is local only. Physical/experiment/restart and
+publication boundaries remain explicit; earlier next-action tables are historical.
+
 The [current phase/P01–P10 review](reviews/2026-10-11-shared-core-hercules-closeout.md)
 supersedes historical next-action and installed-state statements below.
 The subsequent [local ordinary-target qualification](validation/SHARED_P4_LOCAL_QUALIFICATION_20261011.md)
@@ -305,8 +311,8 @@ no public channel or existing release asset was changed.
 | P02 | Full media identity, source/local merge, tombstones/restore, explicit legacy migration | Cue migration/set/delete/restore/reboot on selected exports |
 | P03 | Default-on shared LOAD LOCK and atomic worker/transport reservation | Web gate and ordinary physical FLX4/touch playing-deck refusals closed; physical variants/races remain open |
 | P04 | Standard tagged PCPT parsing and memory/Hot Cue list type | Real export comparison |
-| P05 | PDB title index 17 | Real export metadata/UI review |
-| P06 | PQTZ phase 1-4 and downbeat 1 | Real export grid/phase review |
+| P05 | PQTZ phase 1-4 and downbeat 1 | Real export grid/phase review |
+| P06 | PDB title index 17 | Real export metadata/UI review |
 | P07 | Decoder seek/preroll/length/loop/CDJ and required PCM/media regressions | MAIN/PFL seek/onset/EOF/loops/CUE/MT/mixed rates |
 | P08 | Critical initialization plus requested real AP/DHCP/HTTP pending gate | M3 injected timeout/unconfirmed-restart rollback closed; other targets separate |
 | P09 | Three ordinary targets, experiment matrix, no-SKIP qualification, isolation/budget/locks | Current-source hosted CI SKIPPED BY OPERATOR (quota); hardware gates remain open |

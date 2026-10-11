@@ -28,6 +28,12 @@ both keylock policies and JC4880/JC1060/M3 ESP-IDF 6.0.2 builds with unchanged
 locks and verified identities/budgets. Hardware and publication gates remain
 separate; the installed Hercules bench image is unchanged.
 
+The [delivery-readiness ledger](docs/reviews/2026-10-11-shared-core-delivery-readiness.md)
+records all P01–P10 dispositions, remaining acceptance gates and migration
+boundaries. Three frozen-source ordinary signed candidates are retained locally;
+a [review description](docs/reviews/2026-10-11-shared-core-pr-description.md)
+is prepared. No new image is installed or published by this handoff.
+
 The [S2 MK3 performance candidate](controllers/ni_traktor_s2_mk3_full/README.md)
 adds source-backed mixer/pitch/jog/LED mappings and experimental descriptor-driven
 HS UAC2. Its M3 experiment uses S2 on USB3 and storage on USB2. S2 work is closed

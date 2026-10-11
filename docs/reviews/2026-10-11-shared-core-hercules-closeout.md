@@ -2,6 +2,11 @@
 
 ## Outcome
 
+The subsequent [delivery-readiness ledger](2026-10-11-shared-core-delivery-readiness.md)
+supersedes this checkpoint's remaining-work/next-action tables. Frozen-source
+ordinary software qualification and signed packaging are complete; physical,
+experimental and historical restart gates retain their stated limits.
+
 The common production architecture is implemented. JC4880, JC1060 and M3
 entrypoints select `firmware/p4-core/components` and their board directories.
 This review closes the Hercules source/fixture/support-scope reconciliation
@@ -78,8 +83,8 @@ each final build's component paths, BSP, identity and budgets.
 | P02 | Cue identity/merge/tombstone/restore implemented; selected M3 physical lifecycle passed | Legacy-record apply is not implied; cross-media physical variants remain unrun |
 | P03 | Shared default-on LOAD LOCK; FLX4/touch and Hercules normal/Shift refusal accepted in named records | Physical simultaneous LOAD/PLAY race and lock OFF not run |
 | P04 | Tagged PCPT and list type implemented; actual EXT Hot Cue D defect corrected and recall accepted | Real source memory-loop/playlist export coverage still limited |
-| P05 | Title/name layout correction and real-export metadata comparison passed | Evidence belongs to its export/image; not arbitrary exports |
-| P06 | PQTZ 1–4/downbeat binary regressions implemented | Independent physical beat-phase/downbeat review remains unrun |
+| P05 | PQTZ 1–4/downbeat binary regressions implemented | Independent physical beat-phase/downbeat review remains unrun |
+| P06 | Title/name layout correction and real-export metadata comparison passed | Evidence belongs to its export/image; not arbitrary exports |
 | P07 | Production decoder/DSP tests plus named mixed-rate/MT/manual-loop acceptance | Full broader physical transport matrix not implied |
 | P08 | Real startup readiness and injected rollback implemented/tested | Unresolved historical restart cause is separate from startup readiness |
 | P09 | Three-target/variant workflows and required fixtures implemented | Hosted Actions SKIPPED BY OPERATOR (quota); final local matrix still to run |
