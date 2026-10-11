@@ -2,6 +2,16 @@
 
 Status: **current documentation authority, reconciled 2026-10-11**.
 
+[Final local M3 controller candidate](validation/M3_FINAL_CONTROLLER_CANDIDATE_20261011.md)
+is built and signed on clean source `6166d93627304895857b626e719032de3b4f884d`,
+version `M3-dev-g6166d9362730`. The 2,605,008-byte application / 2,605,196-byte
+bundle pass experimental board, signature, identity, configuration and ELF audits.
+Both Hercules and full S2 profile artifacts are included and match their tracked
+binaries. Its SDKCONFIG header matches the accepted Hercules bench configuration,
+with controller USB3 and storage USB2. This candidate is not installed, physically
+accepted or published. S2 remains operator-closed with waivers; no S2 tests were
+reopened and no stored profiles or device controls were changed.
+
 [Final local three-target matrix](validation/SHARED_P4_FINAL_BUILD_MATRIX_20261011.md)
 passes on clean source `b913818052de99af61c3a8c752b814185794b50e` with new
 ESP-IDF 6.0.2 build directories and dedicated default SDKCONFIGs. JC4880,
