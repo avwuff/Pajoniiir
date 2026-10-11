@@ -42,7 +42,47 @@ disabled DHCP; the preserved later firmware snapshot independently confirmed
 the exact VALID image. This host connectivity incident is not a firmware boot
 failure.
 
-Full host suite, repaired JC4880 build, signed packaging, installed identity and
-physical audio/control smoke are pending in this record. No new M3 or JC1060
-build or physical qualification is implied. No push, public OTA or release is
-authorized by this local repair.
+The full host suite initially exposed a second standalone stream-test runner
+that did not select a board. Both runners now select the actual JC4880 policy.
+The repeated full host suite exits 0, as do the documentation integrity check,
+ESP-IDF 6.0.2 JC4880 build and board-isolation/identity/image-budget verifier.
+
+## Installed repair candidate
+
+- Clean source: `e22ff334e01f7e9da6515970ea6ab8e9cef86073`.
+- Version/project/board: `M2.5-209-ge22ff334` / `main-deck-p4` / `jc4880`.
+- Application: 2,607,824 bytes; SHA-256
+  `60e04a9bb8e6a2e4fdd7dc7ace50b3d51d749fedae73e981a5e5b05abe63e1e8`.
+- Signed bundle: 2,608,012 bytes; SHA-256
+  `3f596eb35bbb0e8fdacb03f8d0fcce03538f7e0a72e3f8862529eaf7e1619a4d`.
+- ELF identity:
+  `5d63acf5665091a82be61110769aed4b0a464b8c2a19dcdd40497df80f9e8558`.
+
+Local OTA returned HTTP 200. Startup health gate confirmed VALID `ota_1`,
+the exact clean source/ELF and idle OTA service. Hercules automatically opened
+UAC1 FS at 44,100 Hz, packed 24-bit / three-byte subslots, streaming without
+configuration fault. MIDI In/Out and the active Hercules profile are present;
+all six stored profiles and the 260-track library remain available.
+
+Mixed-rate test tracks (44.1/48 kHz) are loaded at 15 s, pitch zero, no MT or
+loops, both READY/stopped. Evidence and signed package are retained under
+`.cache/jc4880-hercules-fifo-20261011/`; full host log is
+`.cache/jc4880-fifo-host-final.log`.
+
+The operator confirmed normal GUI and readiness. The combined smoke ran
+30.516 s / 54 samples with 2424 MIDI packets, all 22 strict counter deltas zero
+and no new output-late event. Both decks ended stopped. The stopped baseline
+underflow count (1,158,854) and one earlier host recovery request were unchanged
+through playback; they are not new test losses. Exact image identity and healthy
+Hercules streaming were preserved. Artifacts are in
+`smoke-30s-20261011T205855Z/` under the repair evidence directory. The operator
+confirmed normal jogs/Browse, MAIN and waveforms, but initially reported silent
+headphones. Both PFL states were false in the recorded status; the profile uses
+native headphone controls and a cue-only software feed. The operator then
+clarified that PFL had not been pressed and confirmed headphone sound works
+after enabling it. This is a subsequent listening confirmation, not a claim
+that headphones were monitored throughout the original 30-s window. No second
+firmware change or retest was needed for that operator setup issue.
+This short smoke is not a soak or full JC4880/controller qualification.
+Only JC4880 was built for this repair. No new M3 or JC1060 physical qualification,
+push, public OTA or release is implied.

@@ -5,8 +5,14 @@ Status: **current documentation authority, reconciled 2026-10-11**.
 [JC4880 Hercules FS FIFO repair](validation/JC4880_HERCULES_FIFO_20261011.md)
 records the installed shared-core baseline, operator-confirmed GUI/touch/Browse,
 and the reproduced 400-byte FIFO/admission limit rejecting Hercules's 540-byte
-endpoint. The repaired production policy and focused regressions pass; local
-build, installation and physical audio smoke remain pending in that record.
+endpoint. Full host suite, JC4880 build, board verifier and signed local OTA now
+pass on clean `e22ff334`. `M2.5-209-ge22ff334` is VALID in `ota_1`, and Hercules
+automatically opens healthy 44.1-kHz packed-24 UAC1. The 30.516-s combined smoke
+passes all 22 strict deltas and output-late delta zero with 2424 MIDI packets;
+both decks ended stopped. Operator confirms GUI, controls, MAIN and waveforms;
+headphone sound was separately confirmed after enabling the previously off PFL.
+This is short-smoke scope, not full qualification. Only JC4880 was
+built for this repair; no publication or wider qualification is implied.
 
 [Final development handoff](reviews/2026-10-11-shared-core-final-handoff.md)
 consolidates implementation, software results, installed identity and outstanding
