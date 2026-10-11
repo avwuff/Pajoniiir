@@ -14,6 +14,13 @@ headphone sound was separately confirmed after enabling the previously off PFL.
 This is short-smoke scope, not full qualification. Only JC4880 was
 built for this repair; no publication or wider qualification is implied.
 
+The subsequent 60.140-s JC4880 functional block passes all 22 strict deltas,
+output-late delta zero and 546 MIDI packets. Operator confirms MT/opposite pitch,
+loops, seek, CUE-to-PLAY, PFL/Mix/Volume and both audio/display paths. A fresh
+ordinary matrix and UI simulators pass on `95c1befb`; the subsequent M3-HS
+physical-root admission correction has passing targeted regressions, with its
+final build/host checks pending. Installed JC4880 remains `e22ff334`.
+
 [Final development handoff](reviews/2026-10-11-shared-core-final-handoff.md)
 consolidates implementation, software results, installed identity and outstanding
 acceptance/publication gates. The 6166d936 active-control supplement now passes

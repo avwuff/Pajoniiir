@@ -86,3 +86,41 @@ firmware change or retest was needed for that operator setup issue.
 This short smoke is not a soak or full JC4880/controller qualification.
 Only JC4880 was built for this repair. No new M3 or JC1060 physical qualification,
 push, public OTA or release is implied.
+
+## Combined JC4880 functional block
+
+On the same installed `e22ff334` image, a subsequent authorized block completed
+60.140 s / 94 samples with 546 MIDI packets, all 22 strict deltas zero and no
+new output-late event. Workload: 44.1/48-kHz sources, D1 -5% / D2 +5%, both MT,
+four-beat loops and zoom 8. PCM5102A MAIN and Hercules UAC1 ran at 44.1 kHz.
+Both loops were cleared at approximately 22 s, then web seek requested D1 30 s
+and D2 45 s; advancing positions were verified at 28.5 s. Samples recorded
+physical CUE stopping D1 at 39.484 s and D2 at 42.562 s, followed by PLAY
+resuming at 40.640 / 44.047 s. MT and opposite pitch remained set in all samples.
+Both decks finally stopped, and exact clean image/ELF identity was preserved.
+
+The operator explicitly confirmed every requested step: MT/loops, seek,
+CUE-to-PLAY on both decks, PFL and native headphone Mix/Volume, clean MAIN and
+headphones, and fluid waveforms. This closes the named short functional block,
+not a long soak, every transport edge case or unrestricted board acceptance.
+Evidence, runner, independent sample audit, operator confirmation and hashes:
+`.cache/jc4880-hercules-fifo-20261011/functional-60s-20261011T210510Z/`.
+
+## Physical-root admission follow-up
+
+The standard fresh three-board build/UI matrix completed on `95c1befb`.
+Inspection during that qualification reproduced an admission regression in the
+M3 controller role-swap configuration: Hercules is a Full Speed device on the
+HS PHY/root. The initial `e22ff334` cleanup had tied its admission to the FS
+root's 400 bytes instead of the selected HS root's 640 bytes. The captured
+production stream test failed in the actual M3-HS configuration. This was found
+in software; no new M3 image was installed and no S2 physical tests were reopened.
+
+Admission now follows the controller root: JC4880/JC1060 640 bytes; ordinary
+M3 FS 400; M3 HS 512 without the diagnostic FIFO expansion and 640 with it.
+Device speed still selects UAC protocol/pacing. The capacity regression executes
+eight board/root/diagnostic combinations and matches admission to the selected
+root's generated HCD FIFO. The standalone production stream runner tests both
+JC4880 and M3-HS, including the captured Hercules descriptor; both now pass.
+Final incremental builds and full host qualification for this follow-up remain
+pending until recorded in the final matrix.

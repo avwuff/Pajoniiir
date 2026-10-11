@@ -27,12 +27,15 @@
 #define STREAM_HS_PACKETS_PER_TRANSFER 56
 #define RESAMPLE_INPUT_FRAMES 128u
 #define RESAMPLE_OUTPUT_FRAMES 142u
-/* Match the production HCD periodic FIFO policy. Host tests select a real
- * board policy instead of silently widening admission through PC_TEST. */
-#if defined(CONFIG_PAJONIIIR_BOARD_JC4880) || defined(CONFIG_PAJONIIIR_BOARD_JC1060)
-#define STREAM_FS_FIFO_BYTES 640u
+/* Packet admission follows the controller's physical root FIFO, not device
+ * speed: a Full Speed Hercules can be connected to M3's HS controller root.
+ * Host tests select real board/root policies instead of PC-only widening. */
+#if defined(CONFIG_PAJONIIIR_BOARD_JC4880) || defined(CONFIG_PAJONIIIR_BOARD_JC1060) || (CONFIG_BSP_M3_HS_CONTROLLER && CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC)
+#define STREAM_CONTROLLER_FIFO_BYTES 640u
+#elif CONFIG_BSP_M3_HS_CONTROLLER
+#define STREAM_CONTROLLER_FIFO_BYTES 512u
 #else
-#define STREAM_FS_FIFO_BYTES 400u
+#define STREAM_CONTROLLER_FIFO_BYTES 400u
 #endif
 
 static const char *TAG = "controller_uac";
@@ -226,7 +229,7 @@ static bool select_stream_format(const uint8_t *descriptor,
             for (uint8_t i = 0; i < parsed.format_count; ++i) {
                 const flx4_uac_playback_format_t *candidate = &parsed.formats[i];
                 if (candidate->channels == STREAM_CHANNELS &&
-                    candidate->max_packet_size <= STREAM_FS_FIFO_BYTES &&
+                    candidate->max_packet_size <= STREAM_CONTROLLER_FIFO_BYTES &&
                     (s_qualified_flx4 ? !candidate->requires_feedback :
                         (candidate->pcm_explicit && (candidate->sync_type >= 2u ||
                                                    candidate->requires_feedback))) &&
