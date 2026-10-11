@@ -164,9 +164,11 @@ without changed assumptions or a reproduced defect.
 ## Next delivery step
 
 The requested JC4880 short functional block and final three-target software
-follow-up are complete for their named scopes. Reconcile the PR title/body with
-the final implementation and this handoff;
-preserve the deliberate experimental topology, exact hashes and open gates.
-Push/merge requires the user's next authorized scope. Public release/channel
-publication requires separate authorization and the relevant board acceptance.
-This report and its accompanying document updates are locally committed only.
+follow-up are complete for their named scopes. The operator subsequently
+authorized README reconciliation, PR #46 push/merge, a JC1060 contributor kit
+and GitHub prerelease `shared-p4-beta.1`. The
+[beta delivery record](../validation/SHARED_P4_BETA_1_20261011.md) tracks fresh
+builds, exact source/configuration, packaging and publication. Preserve the
+experimental topology and all acceptance boundaries above. Beta publication
+does not authorize changing stable public OTA channels or transfer historical
+physical acceptance to newly built assets.

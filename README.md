@@ -8,125 +8,78 @@
 
 # Pajoniiir
 
-The [final development handoff](docs/reviews/2026-10-11-shared-core-final-handoff.md)
-records the current installed M3 controller candidate, successful short audio,
-display and active-input smokes, latest local three-target builds, and remaining
-physical/CI/publication gates. Historical acceptance remains image-specific;
-this development integration is not a new public production release.
+**A standalone dual-deck DJ system with one ESP32-P4 firmware core for
+JC4880, JC1060 and M3 boards.**
 
-Shared-core development: portable P4 firmware lives in `firmware/p4-core`,
-with hardware providers under `firmware/boards`. JC4880, JC1060 and M3 use linked
-common startup; the M3 entrypoint is `firmware/main-deck-m3`.
-See the [integration ledger](docs/SHARED_P4_CORE_INTEGRATION.md). This work does
-not change the published M2.5 release or its accepted hardware scope.
+Pajoniiir hosts a Rekordbox-exported USB library and a USB DJ controller,
+renders the touchscreen UI, and runs both playback decks, DSP mixer,
+controller feedback, web control and signed OTA updates on the P4.
 
-The [Hercules Inpulse 500 profile](controllers/hercules_djcontrol_inpulse_500/README.md)
-has an accepted exact-image M3 60-minute dual mixed-rate MT/loop playback scope,
-with clean MAIN/headphones and fluid waveforms. Its supported functions and
-deliberate pad/FX limits are documented separately from individual physical
-coverage. The [current shared-core review](docs/reviews/2026-10-11-shared-core-hercules-closeout.md)
-records final local software/build work, real-media and other-board gates;
-this development branch is not a new production release.
+## Shared P4 beta
 
-[Local ordinary-target qualification](docs/validation/SHARED_P4_LOCAL_QUALIFICATION_20261011.md)
-passes on clean `5ff76b6c`: complete host gate, nine simulator configurations,
-both keylock policies and JC4880/JC1060/M3 ESP-IDF 6.0.2 builds with unchanged
-locks and verified identities/budgets. Hardware and publication gates remain
-separate; the subsequent controller bench OTA is recorded in the final handoff.
+The shared-core development line is distributed as
+[`shared-p4-beta.1`](https://github.com/dvucinozd/Pajoniiir/releases/tag/shared-p4-beta.1),
+a **GitHub prerelease for contributor testing**. It includes separate signed
+packages for each board, compiled controller profiles, source/configuration
+provenance and SHA-256 inventories. Select the package by project identity;
+the board images are not interchangeable.
 
-The [delivery-readiness ledger](docs/reviews/2026-10-11-shared-core-delivery-readiness.md)
-records all P01–P10 dispositions, remaining acceptance gates and migration
-boundaries. Three frozen-source ordinary signed candidates are retained locally;
-a [review description](docs/reviews/2026-10-11-shared-core-pr-description.md)
-is prepared. That historical packaging handoff did not install or publish images;
-the later authorized local controller OTA did not change public releases.
+The published **M2.5 JC4880/DDJ-FLX4 stable release and public OTA channels
+remain unchanged**. Beta assets are downloaded from GitHub and installed
+manually. The M3 beta uses its own `M3-dev-g<source SHA>` version and has no
+automatic pull-update discovery. This beta does not claim full production
+acceptance on every board or controller.
 
-The [S2 MK3 performance candidate](controllers/ni_traktor_s2_mk3_full/README.md)
-adds source-backed mixer/pitch/jog/LED mappings and experimental descriptor-driven
-HS UAC2. Its M3 experiment uses S2 on USB3 and storage on USB2. S2 work is closed
-by operator decision: exact-image full-hour playback at 48/44.1 kHz is accepted,
-with remaining physical checks explicitly waived rather than passed. This does
-not replace FLX4 production defaults or establish unrestricted S2 production
-acceptance. Normal-power results, earlier 2-dBm diagnostics and remaining
-general memory/OTA-restart work are separated in the
-[bench evidence](docs/validation/S2_MK3_PROFILE_PREPARATION_20261007.md).
+| Target | Entrypoint / signed project | Ordinary product policy | Physical evidence |
+| --- | --- | --- | --- |
+| JC4880 | `firmware/main-deck-p4` / `main-deck-p4` | 800 x 480, PCM5102A MAIN, controller USB1 / storage USB0 | Named Hercules audio/control/MT/loop/seek/CUE/PFL blocks accepted on `e22ff334`; long soak explicitly waived |
+| JC1060 | `firmware/main-deck-jc1060` / `main-deck-jc1060` | 1024 x 600, controller USB MAIN/cue, Ethernet provider, controller USB0 / storage USB1 | NOT RUN; contributor Kayrosen will test later |
+| M3 | `firmware/main-deck-m3` / `main-deck-m3` | DSI506/FT5426 800 x 480, fixed-48-kHz PCM5102A MAIN, Wi-Fi ON, controller USB2 FS / storage USB3 HS | Historical exact-image waveform/controller/soak acceptance; later images have their own recorded scope |
 
-The M3 shared-core candidate uses `main-deck-m3`, a separate M3 version line and
-`/m3` OTA channel. Its initial wired migration preserves the existing partition
-layout and settings. Build verification does not qualify the new image on
-hardware. See [board policies](docs/SHARED_P4_BOARDS.md),
-[M3 migration](docs/M3_SHARED_CORE_MIGRATION.md) and the
-[reliability campaign](docs/RELIABILITY_MONITORING_PLAN.md).
+All three entrypoints link the same production audio, deck, Rekordbox,
+controller, UI, web and OTA modules in `firmware/p4-core`. Peripheral providers
+and product policies live under `firmware/boards`; independent protocols remain
+in `firmware/common`. Dependency versions stay pinned to ESP-IDF **6.0.2**.
 
-The [current M3 candidate record](docs/validation/M3_SHARED_WAVEFORM_REGRESSION_20261006.md)
-identifies the installed development candidate and its signed OTA health result.
-Audio/USB lifecycle campaigns and full hardware qualification remain open.
-The initial dual-deck timing attempt exposed a
-[waveform regression](docs/validation/M3_SHARED_WAVEFORM_REGRESSION_20261006.md);
-the signed development image has no production hardware PASS.
-Both paired-buffer bench revisions failed the physical test. The historical
-`b0c66744` image had operator-confirmed severe stutter when both decks played.
-The `1d3ee7b6` revision distinguishes
-retained position observations from fresh ones, with RAM age counters to check
-the mechanism on the device. The operator reports much improved visuals with
-slight residual stutter and clean sound; full fluidity remains open. The next
-M3 revision `bf2fdc47` removed repeated UI work on unchanged covers/hidden controls;
-its repeated physical test still showed slight stutter with clean sound.
-The `fb5cbca1` qualification image was installed VALID in ota_0 and removes a blocking
-audio-position read from jog-mode polling. Its short dual MT/zoom-8 retest passed
-with operator-confirmed fluid waveforms and clean MAIN/headphones sound.
-A subsequent short operator review confirmed all five zooms fluid with clean
-sound. Local JC4880/JC1060 builds then passed on the same clean source without
-rebuilding M3. Its exact-image 60-minute Campaign B soak passed telemetry and
-operator visual/listening acceptance on 2026-10-07, with zero new PCM/UAC/service-log
-losses and 11 output-late events retained for monitoring. Physical Campaign A
-was excluded by the operator; an [automatic software-reboot supplement](docs/validation/M3_AUTOMATIC_RECOVERY_20261007.md)
-observed ten recoveries with nine complete timing windows and retained host
-visibility flags. [M3 negative OTA and injected startup rollback tests](docs/validation/M3_OTA_NEGATIVE_ROLLBACK_20261007.md)
-then passed, restoring the same accepted image. Current-source GitHub Actions
-was skipped by the operator because of quota; it has no CI PASS.
-This is not a production release or a physical Campaign A PASS.
+The shared core includes:
 
-[Catalog/cue software and web LOAD LOCK checks](docs/validation/M3_LIBRARY_CUES_WEB_LOAD_LOCK_20261007.md)
-subsequently passed on the unchanged M3 image: 324 stable identities across a
-reboot and six refused playing-deck replacements. At that checkpoint, on-device Hot Cue mutation,
-physical MIDI/touch LOAD LOCK and independent export/UI review remain open.
+- PDB/ANLZ metadata corrections, playlist/folder catalogs, artwork workers,
+  color waveforms, memory cues/loops and persistent media identities.
+- Source/local Hot Cue merging with slot overrides, deletion tombstones and
+  restore-source behavior. Legacy track-ID-only cues require explicit migration.
+- Shared seek/preroll/loop handling, CUE/PLAY semantics and default-ON LOAD LOCK
+  across MIDI, touch and web, including asynchronous load admission.
+- M3 FIR/search-cache and consumer-owned PCM timeline fixes, plus board-specific
+  waveform scheduling without a second playback implementation.
+- S3CP v2/v3/v4 controller profiles, connection epochs, held-state reconciliation,
+  LED feedback and descriptor-driven audio admission using the selected USB root.
+- Board/project/source identity checks, signed OTA startup health/rollback,
+  bounded journals and crash diagnostics.
 
-The subsequent [read-only real-export audit](docs/validation/M3_REAL_EXPORT_AUDIT_20261007.md)
-found three reproducible import defects: 13 artist names, 12 album names and
-one EXT Hot Cue D are lost. The installed candidate is unchanged. All 324
-analysis pairs parse and 282 referenced JPEGs decode; this export contains no
-playlists or source loops, so their real-media gates remain open.
-Correction source `082d2c0a` now passes the same real-export comparisons, shared
-host tests, M3 build and signed packaging. Its candidate is now installed VALID
-in ota_1; the live 324-track library recovers all 13 artist names. The operator
-confirmed D1 A–D recall, with the API observing source D at 123347 ms. Cue
-[set/delete/restore persistence](docs/validation/M3_CUE_LIFECYCLE_20261007.md)
-now passes on this image: local D survived reboot, its deletion stayed effective,
-and HOLD RESTORE returned source D at 123347 ms after another reboot.
-Broader new-image physical acceptance remains open.
-Subsequent [physical LOAD LOCK checks](docs/validation/M3_PHYSICAL_LOAD_LOCK_20261007.md)
-passed ordinary FLX4 and touch LOAD refusal on each playing deck, with unchanged
-tracks, operator-confirmed uninterrupted sound and zero strict counter deltas.
-Selected [stopped-deck routing checks](docs/validation/M3_PHYSICAL_LOAD_ROUTING_20261007.md)
-also passed: FLX4 LOAD D1, touch LOAD D2 and FLX4 Shift+Load D1/D2.
-The remaining ordinary stopped LOAD combinations then passed, completing
-FLX4/touch on both decks. Repeated [playing Shift+Load checks](docs/validation/M3_PHYSICAL_SHIFT_LOAD_LOCK_20261007.md)
-also passed on both decks, with Comanchero selected and Combat Ready retained.
-The controller wake candidate `4620b83c` was installed VALID in ota_0
-to repair [controller screensaver wake](docs/validation/M3_CONTROLLER_SCREENSAVER_WAKE_20261007.md).
-Local USB semantics now enter the common wake policy; full default host tests
-and the M3 build/signed package passed. Physical wake retest failed because the
-first PLAY started playback. The current M3 bench is now clean `af4ca590`, VALID
-in ota_1, with an atomic UI activity handoff and read-only wake counters.
-Default host tests and M3 build/signed packaging pass. The operator confirmed
-first PLAY wakes only and subsequent PLAY works; the API confirms one consumed
-wake. Browse and touch wake regressions also pass on this exact image, with
-both decks finally stopped. The final soak remains deferred.
-Earlier cue/LOAD tests retain their 082d2c0a scope. The final soak is deferred.
+FLX4 remains the ordinary reference controller. The
+[Hercules Inpulse 500](controllers/hercules_djcontrol_inpulse_500/README.md) and
+[Traktor Kontrol S2 MK3](controllers/ni_traktor_s2_mk3_full/README.md) profiles
+document their supported controls and individual limits. M3 Hercules/S2 testing
+uses an **explicit experimental port swap: controller USB3, storage USB2**;
+these ordinary beta M3 assets retain the FLX4 port policy. S2 work is closed by
+operator decision with remaining checks waived. A historical hour soak qualifies
+only its exact image and configuration; it does not qualify the new beta assets.
 
-**A standalone dual-deck DJ system for the Pioneer DDJ-FLX4, powered by a
-single ESP32-P4 board.**
+Local three-target builds, board/component/lock/image-budget checks and the full
+required-fixture host qualification passed on `722bb976`. Product UI simulator
+results and unchanged-source equivalence are recorded in the
+[final software matrix](docs/validation/SHARED_P4_FINAL_BUILD_MATRIX_20261011.md).
+Hosted CI and wider real-media/controller/physical coverage retain their explicit
+dispositions. Output-late observations remain monitoring findings, not zero-late
+claims. Recorder, alternate DJ UI and M3 Ethernet/Pro DJ Link remain experimental
+or disabled in ordinary builds.
+
+Use the [final handoff](docs/reviews/2026-10-11-shared-core-final-handoff.md),
+[integration ledger](docs/SHARED_P4_CORE_INTEGRATION.md),
+[board policies](docs/SHARED_P4_BOARDS.md),
+[JC1060 contributor handoff](docs/JC1060_BETA_HANDOFF_20261011.md) and
+[beta delivery record](docs/validation/SHARED_P4_BETA_1_20261011.md) for exact
+versions, installation boundaries and remaining gates.
 
 [![Latest release](https://img.shields.io/github/v/release/dvucinozd/Pajoniiir)](https://github.com/dvucinozd/Pajoniiir/releases/latest)
 [![Platform](https://img.shields.io/badge/platform-ESP32--P4-E7352C?logo=espressif&logoColor=white)](https://www.espressif.com/en/products/socs/esp32-p4)
@@ -136,7 +89,7 @@ single ESP32-P4 board.**
 ![Pajoniiir running the dual-deck Overview screen](docs/images/Pajoniiir1.jpg)
 
 Pajoniiir plays a Rekordbox-exported USB library without a laptop. The
-ESP32-P4 hosts both the USB drive and DDJ-FLX4, renders the touchscreen UI,
+ESP32-P4 hosts both the USB drive and selected controller, renders the touchscreen UI,
 runs the two playback decks and mixer, and sends MAIN and headphone-cue audio.
 
 Read the **[online user manual](https://docs.pajoniiir.eu/)** for setup,
@@ -147,7 +100,7 @@ controls and update instructions.
 - Two independent decks provide waveforms, tempo control, Master Tempo,
   Hot Cues, loops, Beat Jump, Sync, Pad FX and Beat FX.
 - MAIN audio is available on the PCM5102A RCA output.
-- Headphone cue is returned through the DDJ-FLX4.
+- Headphone cue is returned through the selected supported USB controller.
 - Signed local and remote OTA updates are supported.
 
 ## Release and support
@@ -194,6 +147,10 @@ See the [integration notes and source attribution](docs/FORK_IMPROVEMENTS.md)
 for module provenance and the detailed implementation history.
 
 ## Hardware
+
+The parts, photographs, power precautions and wiring instructions below describe
+the JC4880 reference build. For JC1060 and M3, use the board policy table above
+and their BSP/wiring documentation; connector numbers differ between boards.
 
 | Part | Purpose |
 | --- | --- |
@@ -264,6 +221,8 @@ wiring documentation rather than relying on product photos.
 
 ## Connect the system
 
+### JC4880 reference build
+
 ![Pajoniiir M2 wiring diagram](docs/images/wiring_M2.jpg)
 
 1. With power off, connect the regulated system supply and common ground as
@@ -279,6 +238,19 @@ Both USB insertion orders and reconnect recovery have been physically tested.
 For connector details and electrical limits, use
 [`docs/HARDWARE_WIRING.md`](docs/HARDWARE_WIRING.md) as the source of truth.
 
+### Other boards
+
+For ordinary M3, USB1 supplies power/debug, FLX4 connects to USB2 FS and the
+Rekordbox drive to USB3 HS. PCM5102A BCK/LCK/DIN use GPIO1/2/3, with SCK grounded
+and shared ground. Preserve the accepted DSI506/FT5426 settings. The first
+transition from historical M3 `main-deck-p4` requires the
+[preserving wired migration](docs/M3_SHARED_CORE_MIGRATION.md), not cross-board OTA.
+
+JC1060 uses USB0 for the controller and USB1 for storage, controller USB audio
+for MAIN/cue, and its own display/touch/Ethernet provider. Do not enable the
+JC4880/M3 PCM5102A pins on JC1060; they conflict with Ethernet. Follow the
+[contributor handoff](docs/JC1060_BETA_HANDOFF_20261011.md) before installation.
+
 ## Touchscreen and controller workflow
 
 - **Overview** shows both deck waveforms, transport state, time, BPM, pitch,
@@ -290,7 +262,16 @@ For connector details and electrical limits, use
 - The DDJ-FLX4 controls transport, jog/vinyl, tempo, mixer/EQ, cue, loops,
   Beat Jump, Sync, pads and effects, with LED state restored after reconnect.
 
+The screensaver consumes the first controller action to wake the display;
+the second PLAY starts playback. Touch wake does not activate the control below
+the screensaver. LOAD LOCK refuses replacing a playing deck, including shifted
+LOAD; stop the deck before loading another track.
+
 ## Wi-Fi Remote and updates
+
+These Wi-Fi instructions apply to JC4880 and M3. JC1060 uses its Ethernet
+provider and has no Wi-Fi capability. Ordinary M3 starts with Wi-Fi enabled;
+its AP name is `Pajoniiir-M3` (use the name shown in Settings).
 
 1. Enable **Wi-Fi Remote** on the Settings screen.
 2. Connect a phone or computer to the `Pajoniiir` Wi-Fi network. The default
@@ -298,9 +279,12 @@ For connector details and electrical limits, use
 3. Open [`http://192.168.4.1`](http://192.168.4.1) or
    [`http://pajoniiir.local`](http://pajoniiir.local).
 
-For a local update, upload only the signed `main-deck-p4.ddjota` package. Keep
+For a JC4880 local update, upload only the signed `main-deck-p4.ddjota` package. Keep
 power stable, stop playback and wait for the device to reboot completely.
-Remote releases are published through `https://ota.pajoniiir.eu`.
+Remote stable releases are published through `https://ota.pajoniiir.eu`.
+JC1060 and M3 require `main-deck-jc1060.ddjota` and `main-deck-m3.ddjota`
+respectively. The beta does not update any public pull channel. Never upload a
+raw BIN through the signed OTA endpoint or select a different board's package.
 
 See the [OTA update procedure](docs/OTA-UPDATE.md) for installation,
 verification, rollback and wired-recovery instructions.
@@ -358,12 +342,16 @@ Set-Location "$repoRoot\firmware\main-deck-p4"
 idf.py build
 ```
 
+Select `firmware/main-deck-jc1060` or `firmware/main-deck-m3` instead for the
+other products. Use a fresh build directory and SDKCONFIG per target/experiment;
+do not reuse a role-swap configuration for an ordinary M3 release.
+
 Run the same P4 host regression suite used by CI:
 
 ```powershell
 Set-Location $repoRoot
 $env:Path = "$env:Path;C:\msys64\ucrt64\bin"
-.\tests\run_p4_host_tests.ps1
+.\tests\run_p4_host_tests.ps1 -Qualification
 ```
 
 Run the headless UI screenshot and navigation gate:
@@ -373,15 +361,17 @@ Run the headless UI screenshot and navigation gate:
 ```
 
 Generated build directories, local `sdkconfig` files, signing keys and release
-packages are intentionally excluded from Git. The reproducible dependency lock
-at `firmware/main-deck-p4/dependencies.lock` is committed.
+packages are intentionally excluded from Git. The reproducible dependency locks
+for all three product entrypoints are committed; builds must not change them.
 
 ## Project status and documentation
 
-The JC4880/FLX4 release is published and merged into `master`.
-JC1060/DDJ-400/Pro DJ Link hardware acceptance and broader controller
-qualification remain development work. Current status and acceptance limits
-are maintained in the [release record](docs/validation/JC4880_V91_RELEASE_20261005.md),
+The stable JC4880/FLX4 M2.5 release remains available. The shared P4 beta is a
+separate contributor prerelease, with JC1060 physical checks deferred and JC4880
+long soak explicitly skipped by the operator. DDJ-400/Pro DJ Link and broader
+controller/real-media qualification retain their development limits. Current
+status and acceptance limits are maintained in the
+[final handoff](docs/reviews/2026-10-11-shared-core-final-handoff.md),
 [documentation status](docs/DOCUMENTATION_STATUS.md) and
 [development plan](docs/DEVELOPMENT_PLAN.md).
 
@@ -396,8 +386,8 @@ are maintained in the [release record](docs/validation/JC4880_V91_RELEASE_202610
 - [Development plan](docs/DEVELOPMENT_PLAN.md)
 - [Risk register](docs/RISK_REGISTER.md)
 
-The production JC4880 entrypoint is `firmware/main-deck-p4`; the
-development JC1060 entrypoint is `firmware/main-deck-jc1060`. Both use a shared
+The JC4880, JC1060 and M3 entrypoints are `firmware/main-deck-p4`,
+`firmware/main-deck-jc1060` and `firmware/main-deck-m3`. All use one shared
 P4 core. Historical S3 and dual-processor material remains in Git history and
 is not part of the active product.
 

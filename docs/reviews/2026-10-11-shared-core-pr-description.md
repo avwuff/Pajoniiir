@@ -1,6 +1,7 @@
-# Draft PR: Share the P4 core across JC4880, JC1060 and M3
+# Share the P4 core across JC4880, JC1060 and M3
 
-This file is a prepared description for a future review; no remote PR is created.
+Description for [PR #46](https://github.com/dvucinozd/Pajoniiir/pull/46),
+reconciled with the final implementation and authorized beta delivery.
 
 ## Problem and resulting behavior
 
@@ -29,20 +30,33 @@ experiment; its hardware evidence does not qualify the ordinary packages.
   diagnostics and bounded experimental modules. Document controller limits.
 - Add required fixtures, board isolation/budget/lock checks, simulators and
   three-target workflows. Fix missing shared idle source in simulator linking.
+- Admit Hercules's 540-byte FS audio packet using the real controller-root
+  FIFO policy, with captured JC4880 and M3-HS production stream regressions.
+- Restore the USB spike's shared HAL dependencies, bus-trace source/include and
+  wrapper links after its historical missing-header CI failure.
+- Reconcile the English README while preserving all images and operational
+  instructions; prepare board-specific beta assets and the JC1060 handoff.
 
 ## Validation
 
-Frozen clean software/package source:
-`5ff76b6cb1474779c6e58ecd5b273dcee378a3ed`.
+Latest completed clean software matrix:
+`722bb9762bbfc1010b1faf437797bd33fe3e0360`.
+The beta record identifies its own exact pushed release source and fresh builds.
 
 - Full host `-Qualification` PASS without optional SKIP; actual committed
   MP3/WAV/FLAC/PDB/ANLZ fixtures.
-- Nine simulator presentations PASS with unchanged baselines; JC and M3
-  production keylock PC policies each PASS 300 virtual seconds.
-- All three fresh ordinary ESP-IDF 6.0.2 builds PASS with unchanged locks,
-  one matching BSP, canonical component graph, clean identities and budgets.
-- Local signed bundles/manifests and matching BIN/ELF/MAP/debug archives verify.
-  Exact sizes/hashes: [qualification record](../validation/SHARED_P4_LOCAL_QUALIFICATION_20261011.md).
+- Earlier nine simulator configurations and both keylock policies passed on
+  `5ff76b6c`; three product simulators passed on `95c1befb`. Their UI/adapter
+  source is unchanged in `722bb976`; no new physical UI claim is made.
+- Fresh ordinary ESP-IDF 6.0.2 builds passed on `95c1befb`, followed by corrected
+  incremental `722bb976` builds and full required-fixture host qualification:
+  unchanged locks, one matching BSP, canonical graph, clean identities/budgets,
+  eight root/FIFO policies and both captured production stream regressions.
+- Exact sizes/hashes and provenance:
+  [final matrix](../validation/SHARED_P4_FINAL_BUILD_MATRIX_20261011.md).
+- JC4880 `e22ff334` OTA/startup, 30-s active-controller smoke and 60-s mixed-rate
+  MT/loop/seek/CUE/PFL block passed all 22 strict deltas with operator audio/UI
+  confirmation. Its long soak is explicitly waived, NOT RUN rather than PASS.
 - Historical exact-image physical evidence is scoped independently. Installed
   Hercules M3 `e16ecfb5` completed 3600.016 s, 22 strict deltas zero, operator
   full-hour audio/visual PASS; 15 output-late events remain monitoring findings.
@@ -55,11 +69,16 @@ and NVS remain intact. Legacy cue records are never automatically bound to an
 unrelated export. Migration instructions and licence/provenance handoff are in
 [delivery readiness](2026-10-11-shared-core-delivery-readiness.md).
 
-Hosted CI is SKIPPED BY OPERATOR (quota), not PASS. New candidate physical
-acceptance, JC hardware, fresh experiment builds and wider real-media/transport
-coverage remain open. The operator clarified that the historical OTA restart
+Current-source hosted CI is not claimed PASS; its earlier quota waiver and
+historical spike failure remain distinct from local verification. JC1060
+physical acceptance is NOT RUN, deferred to Kayrosen. New-image, experiment and
+wider real-media/transport/controller qualification remain open.
+The operator clarified that the historical OTA restart
 was associated with moving the cable; it is closed as a cable-intervention
 event, not an outstanding firmware defect or a firmware-fix claim. S2 work remains
 operator-closed; Hercules individual pad/FX/LED scope is partial. This review
 does not reopen accepted controller campaigns or establish whole-core completion.
-No existing release tag/asset or public OTA channel is changed.
+The operator authorized push/merge and `shared-p4-beta.1` as a GitHub prerelease,
+with ordinary board-specific signed packages and the JC1060 contributor kit.
+No existing release tag/asset or public OTA channel is changed. Exact provenance
+and publication results: [beta record](../validation/SHARED_P4_BETA_1_20261011.md).

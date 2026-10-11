@@ -1,5 +1,11 @@
 # P4 post-release development plan
 
+The operator authorized shared-core PR #46 delivery and GitHub prerelease
+`shared-p4-beta.1`. See the [beta record](validation/SHARED_P4_BETA_1_20261011.md)
+and [JC1060 handoff](JC1060_BETA_HANDOFF_20261011.md). JC1060 physical testing
+is deferred to Kayrosen; JC4880 long soak is explicitly waived, NOT RUN.
+The following dated checkpoints retain their own source and acceptance scope.
+
 The [final development handoff](reviews/2026-10-11-shared-core-final-handoff.md)
 is the current delivery/open-gate authority. Installed clean 6166d936 is VALID
 ota_1 on the Hercules role-swap bench; short audio/display and active-control

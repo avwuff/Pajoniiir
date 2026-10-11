@@ -2,6 +2,13 @@
 
 Status: **current documentation authority, reconciled 2026-10-11**.
 
+The operator authorized PR #46 push/merge and GitHub beta `shared-p4-beta.1`.
+The English README is reconciled while preserving all original image embeds and
+operational instructions. The [beta record](validation/SHARED_P4_BETA_1_20261011.md)
+tracks immutable packaging/publication; the [JC1060 handoff](JC1060_BETA_HANDOFF_20261011.md)
+defines deferred contributor testing. Existing stable releases/channels remain
+unchanged. Publication does not transfer historical physical acceptance.
+
 [JC4880 Hercules FS FIFO repair](validation/JC4880_HERCULES_FIFO_20261011.md)
 records the installed shared-core baseline, operator-confirmed GUI/touch/Browse,
 and the reproduced 400-byte FIFO/admission limit rejecting Hercules's 540-byte

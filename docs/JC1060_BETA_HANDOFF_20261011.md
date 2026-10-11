@@ -1,0 +1,81 @@
+# JC1060 shared P4 beta contributor handoff
+
+Date: 2026-10-11. Future physical testing owner: contributor Kayrosen
+([kayrozen](https://github.com/kayrozen)). The operator has no JC1060 available.
+Physical acceptance is **NOT RUN**; preparing this handoff does not contact the
+contributor or imply that testing has begun.
+
+## Package and identity
+
+The [shared P4 beta prerelease](https://github.com/dvucinozd/Pajoniiir/releases/tag/shared-p4-beta.1)
+provides `jc1060-beta-kit.zip`, containing a signed `main-deck-jc1060.ddjota`,
+raw application BIN, signed manifest, board/source/build configuration, partition
+and bootloader artifacts, compiled profiles and SHA-256 inventory. Read
+`BETA-IDENTITY.json` and `SHA256SUMS.txt` in the kit for the exact source and
+image hashes; verify them before flashing. The matching ELF/map debug archive
+is published separately for crash analysis.
+
+The kit is an ordinary JC1060 configuration, not a recorder/alternate-UI/PSRAM
+DMA experiment. Its firmware project must be `main-deck-jc1060` and its board
+must be `jc1060`. An image or signed bundle for JC4880/M3 is not interchangeable.
+Historical and final local software results are in the
+[three-target matrix](validation/SHARED_P4_FINAL_BUILD_MATRIX_20261011.md);
+new beta packaging provenance is in the
+[beta record](validation/SHARED_P4_BETA_1_20261011.md).
+
+## Hardware and installation
+
+- Display: 1024 x 600, using the JC1060 BSP and its touch configuration.
+- Controller: board USB0 / root0; Rekordbox storage: board USB1 / root1.
+- MAIN and headphones: controller USB audio. Do not enable PCM5102A GPIO50/51/52
+  or the ES8311 pacing path; the pins conflict with Ethernet.
+- Network: board Ethernet provider. JC1060 has no Wi-Fi capability. Pro DJ Link
+  is compiled but runtime default OFF; network interoperability is a separate gate.
+- Refer to [board policies](SHARED_P4_BOARDS.md),
+  [hardware wiring](HARDWARE_WIRING.md) and [OTA procedure](OTA-UPDATE.md).
+
+For an already provisioned compatible layout and signed OTA runtime, upload
+only `main-deck-jc1060.ddjota` through the local web update UI, with stopped
+decks and stable power. Record startup and the exact accepted slot/identity.
+For a first installation, confirm the actual flash size, bootloader and partition
+layout before using wired ESP-IDF flashing. The package includes the build's
+`flasher_args.json`; do not guess offsets or write a different board's table.
+Application-only OTA cannot migrate the partition table. Preserve settings and
+recovery artifacts as appropriate; do not perform a full-chip erase.
+
+## Bounded first physical block
+
+Use FLX4 first as the reference controller; qualify any other controller
+separately. Record the controller VID/PID/profile, USB topology and source/ELF.
+
+1. Cold boot: GUI geometry/colors, touch/backlight, storage/library count and
+   Ethernet/web readiness. Confirm the exact board/project/source/version and
+   image state through `/api/firmware` and `/api/status` when reachable.
+2. With stopped decks, verify Browse and LOAD routing to both decks, LED state
+   and screensaver first-action wake. A first PLAY consumed by wake is expected.
+3. Run one short dual-deck block with a 44.1-kHz and a 48-kHz track, opposite
+   pitch, both MT, loops and zoom 8. Exercise jog/Browse, PFL D1/D2 and headphone
+   Mix/Volume; observe MAIN/cue and both waveforms. Include seek/loop exit and
+   CUE-to-PLAY on each deck, then stop both.
+4. Compare before/after counters: no new ISO packet/frame loss, PCM underrun,
+   UAC drop/overflow, reset/WDT or stale deck/controller/library state. A missing
+   counter is unavailable, not zero. Keep output-late separate and record its
+   count, maximum and clusters alongside operator observations.
+
+Avoid `/api/resources` heap walks and large diagnostic logs during playback;
+these have interfered with USB audio timing on the M3 bench. Capture crash/bus
+trace and large logs only after stopping. Do not reset away a first-fault capture.
+
+Return a dated validation record with hashes, firmware/status snapshots,
+before/after deltas, performed controls, physical audio/visual confirmation and
+explicit NOT RUN items. Stop on a hard failure and retain evidence; a clean
+short block is not long qualification. Subsequent reconnect/insertion-order,
+long timing, Ethernet/Link and wider controller coverage remain separate.
+
+## Operator dispositions and release boundary
+
+JC4880's long soak was explicitly skipped by the operator on 2026-10-11;
+that waiver is NOT RUN, not PASS and not a waiver for JC1060. S2 testing remains
+operator-closed. No existing physical result transfers to a new beta image.
+The beta is a GitHub prerelease, not a replacement for stable M2.5 or a public
+OTA-channel update. Publishing it does not establish full shared-core acceptance.

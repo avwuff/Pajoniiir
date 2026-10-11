@@ -1,5 +1,13 @@
 # P4 operation and release checklist
 
+For the authorized `shared-p4-beta.1` contributor distribution, use the
+[beta record](validation/SHARED_P4_BETA_1_20261011.md) and
+[JC1060 handoff](JC1060_BETA_HANDOFF_20261011.md). Verify the kit's board/project,
+source/ELF, signature and hashes before any installation. New beta assets are
+not installed or physically accepted merely by publication. Stable M2.5 and
+public OTA channels remain unchanged; JC4880 soak is waived and JC1060 physical
+testing is deferred to Kayrosen, both explicitly NOT RUN for those scopes.
+
 Current Hercules bench: clean `6166d936`, VALID `ota_1`, Hercules USB3/root0,
 storage USB2/root1, Wi-Fi ON. Local OTA/startup and short audio/display plus
 active jog/Browse smokes pass; both decks are stopped. The
