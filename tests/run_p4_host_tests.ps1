@@ -3566,6 +3566,12 @@ if ($pythonSource) {
     Invoke-Step -Name "run M3 DMA reclock boundary" `
         -WorkingDirectory $RepoRoot -Executable $pythonSource `
         -Arguments @("tests/board_adapter/test_m3_dma_reclock.py")
+    Invoke-Step -Name "run Wi-Fi lifecycle fault injection" `
+        -WorkingDirectory $RepoRoot -Executable $pythonSource `
+        -Arguments @("tests/wifi_link_retry/test_lifecycle_review.py")
+    Invoke-Step -Name "run USB manager startup completion isolation" `
+        -WorkingDirectory $RepoRoot -Executable $pythonSource `
+        -Arguments @("tests/controller_usb_host/test_manager_startup_completion.py")
     Invoke-Step -Name "run ota_signing" `
         -WorkingDirectory (Join-Path $RepoRoot "tests/ota_signing") `
         -Executable $pythonSource `

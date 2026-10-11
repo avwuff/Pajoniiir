@@ -5,6 +5,7 @@
 
 #include "esp_log.h"
 #include "freertos/queue.h"
+#include "freertos/semphr.h"
 #include "freertos/task.h"
 #include "usb_host_topology.h"
 
@@ -38,6 +39,8 @@ typedef enum {
 static usb_host_manager_config_t s_config;
 static TaskHandle_t s_daemon_task;
 static TaskHandle_t s_topology_task;
+static SemaphoreHandle_t s_startup_done, s_topology_done;
+static StaticSemaphore_t s_startup_done_storage, s_topology_done_storage;
 static TaskHandle_t s_recovery_task;
 static usb_host_client_handle_t s_topology_client;
 static QueueHandle_t s_recovery_queue;
@@ -140,7 +143,7 @@ static void topology_event_callback(
 
 static void topology_client_task(void *arg)
 {
-    const TaskHandle_t starter = (TaskHandle_t)arg;
+    (void)arg;
     const usb_host_client_config_t config = {
         .is_synchronous = false,
         .max_num_event_msg = TOPOLOGY_EVENT_DEPTH,
@@ -154,7 +157,7 @@ static void topology_client_task(void *arg)
     };
     const esp_err_t rc = usb_host_client_register(&config, &s_topology_client);
     s_install_result = rc;
-    xTaskNotifyGive(starter);
+    xSemaphoreGive(s_topology_done);
     if (rc != ESP_OK) {
         s_topology_task = NULL;
         vTaskDelete(NULL);
@@ -311,7 +314,7 @@ static void recovery_task(void *arg)
 
 static void usb_host_daemon_task(void *arg)
 {
-    TaskHandle_t starter = (TaskHandle_t)arg;
+    (void)arg;
     const usb_host_config_t host_config = {
         .skip_phy_setup = false,
         .root_port_unpowered = s_config.root_port_unpowered,
@@ -332,10 +335,10 @@ static void usb_host_daemon_task(void *arg)
     if (s_install_result == ESP_OK) {
         const BaseType_t topology_created = xTaskCreate(
             topology_client_task, "usb_topology", 4096u,
-            (void *)xTaskGetCurrentTaskHandle(),
+            NULL,
             s_config.daemon_priority + 2u, &s_topology_task);
         if (topology_created != pdPASS ||
-            ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(5000)) == 0u) {
+            xSemaphoreTake(s_topology_done, pdMS_TO_TICKS(5000)) != pdTRUE) {
             s_install_result = topology_created == pdPASS
                                    ? ESP_ERR_TIMEOUT
                                    : ESP_ERR_NO_MEM;
@@ -352,7 +355,7 @@ static void usb_host_daemon_task(void *arg)
         ESP_LOGE(TAG, "usb_host_install failed: %s",
                  esp_err_to_name(s_install_result));
     }
-    xTaskNotifyGive(starter);
+    xSemaphoreGive(s_startup_done);
 
     if (s_install_result != ESP_OK) {
         s_daemon_task = NULL;
@@ -409,6 +412,9 @@ esp_err_t usb_host_manager_init(const usb_host_manager_config_t *config)
     }
 
     s_config = *config;
+    s_startup_done = xSemaphoreCreateBinaryStatic(&s_startup_done_storage);
+    s_topology_done = xSemaphoreCreateBinaryStatic(&s_topology_done_storage);
+    configASSERT(s_startup_done && s_topology_done);
     s_install_result = ESP_ERR_INVALID_STATE;
     usb_host_topology_init(&s_topology);
     usb_host_recovery_arbiter_init(
@@ -435,17 +441,16 @@ esp_err_t usb_host_manager_init(const usb_host_manager_config_t *config)
                      config->root_port_unpowered ? 0u
                                                  : config->peripheral_map,
                      __ATOMIC_RELEASE);
-    const TaskHandle_t starter = xTaskGetCurrentTaskHandle();
 
     BaseType_t created;
     if (config->daemon_core_id == tskNO_AFFINITY) {
         created = xTaskCreate(usb_host_daemon_task, "usb_hostd",
-                              config->daemon_stack_size, (void *)starter,
+                              config->daemon_stack_size, NULL,
                               config->daemon_priority, &s_daemon_task);
     } else {
         created = xTaskCreatePinnedToCore(
             usb_host_daemon_task, "usb_hostd", config->daemon_stack_size,
-            (void *)starter, config->daemon_priority, &s_daemon_task,
+            NULL, config->daemon_priority, &s_daemon_task,
             config->daemon_core_id);
     }
 
@@ -460,7 +465,7 @@ esp_err_t usb_host_manager_init(const usb_host_manager_config_t *config)
         return ESP_ERR_NO_MEM;
     }
 
-    if (ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(5000)) == 0u) {
+    if (xSemaphoreTake(s_startup_done, pdMS_TO_TICKS(5000)) != pdTRUE) {
         return ESP_ERR_TIMEOUT;
     }
     return s_install_result;

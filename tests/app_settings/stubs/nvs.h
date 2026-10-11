@@ -43,6 +43,8 @@ typedef struct {
     size_t   blob_len;
     int      has_blob;
     uint32_t set_blob_calls;
+    unsigned legacy_mask;
+    unsigned erase_key_calls;
 } test_nvs_state_t;
 
 extern test_nvs_state_t g_test_nvs;
@@ -121,9 +123,13 @@ static inline esp_err_t nvs_get_str(nvs_handle_t handle, const char *key,
                                     char *out, size_t *len)
 {
     (void)handle;
-    (void)key;
-    (void)out;
-    (void)len;
+    const char *keys[]={"ota_ssid","ota_pass","ota_url"};
+    const char *values[]={"legacy-network","legacy-secret","https://legacy.example"};
+    for (unsigned i=0;i<3u;i++) if (!strcmp(key,keys[i]) && (g_test_nvs.legacy_mask&(1u<<i))) {
+        size_t needed=strlen(values[i])+1u;
+        if (*len<needed) return ESP_FAIL;
+        memcpy(out,values[i],needed); *len=needed; return ESP_OK;
+    }
     return ESP_ERR_NVS_NOT_FOUND;
 }
 
@@ -175,6 +181,9 @@ static inline esp_err_t nvs_commit(nvs_handle_t handle)
 static inline esp_err_t nvs_erase_key(nvs_handle_t handle, const char *key)
 {
     (void)handle;
-    (void)key;
+    g_test_nvs.erase_key_calls++;
+    const char *keys[]={"ota_ssid","ota_pass","ota_url"};
+    for (unsigned i=0;i<3u;i++) if (!strcmp(key,keys[i]))
+        g_test_nvs.legacy_mask&=~(1u<<i);
     return ESP_OK;
 }

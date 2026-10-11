@@ -36,8 +36,8 @@ uint32_t beat_jump_calculate_fractional_target_ms(uint32_t position_ms,
         }
 
         if ((beat_numerator % (int)denominator) == 0) {
-            int target_idx = (int)closest_idx +
-                             beat_numerator / (int)denominator;
+            int64_t target_idx = (int64_t)closest_idx +
+                                 (int64_t)beat_numerator / denominator;
             if (target_idx < 0) target_idx = 0;
             if (target_idx >= (int)meta->beat_count) {
                 target_idx = (int)meta->beat_count - 1;

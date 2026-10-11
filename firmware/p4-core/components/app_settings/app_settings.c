@@ -188,8 +188,9 @@ static void make_ota_config_blob(ota_config_blob_t *blob,
 static bool load_ota_config(nvs_handle_t handle,
                             char ssid[APP_SETTINGS_OTA_SSID_CAP],
                             char pass[APP_SETTINGS_OTA_PASS_CAP],
-                            char url[APP_SETTINGS_OTA_URL_CAP])
+                            char url[APP_SETTINGS_OTA_URL_CAP], bool *blob_valid)
 {
+    *blob_valid = false;
     ota_config_blob_t blob;
     size_t blob_len = sizeof(blob);
     if (nvs_get_blob(handle, OTA_CONFIG_BLOB_KEY, &blob, &blob_len) == ESP_OK &&
@@ -202,6 +203,7 @@ static bool load_ota_config(nvs_handle_t handle,
         memcpy(ssid, blob.ssid, APP_SETTINGS_OTA_SSID_CAP);
         memcpy(pass, blob.pass, APP_SETTINGS_OTA_PASS_CAP);
         memcpy(url, blob.url, APP_SETTINGS_OTA_URL_CAP);
+        *blob_valid = true;
         return false;
     }
     bool found_legacy = false;
@@ -215,6 +217,16 @@ static bool load_ota_config(nvs_handle_t handle,
     if (nvs_get_str(handle, "ota_url", url, &len) == ESP_OK) found_legacy = true;
     else url[0] = '\0';
     return found_legacy;
+}
+
+static esp_err_t retire_legacy_ota_keys(nvs_handle_t handle)
+{
+    const char *keys[] = {"ota_ssid", "ota_pass", "ota_url"};
+    for (unsigned i = 0; i < 3u; ++i) {
+        esp_err_t rc = nvs_erase_key(handle, keys[i]);
+        if (rc != ESP_OK && rc != ESP_ERR_NVS_NOT_FOUND) return rc;
+    }
+    return nvs_commit(handle);
 }
 
 static void make_ota_config_blob(ota_config_blob_t *blob,
@@ -256,23 +268,30 @@ esp_err_t app_settings_init(void)
     {
         uint8_t value;
         if (nvs_get_u8(handle, "audio_out", &value) == ESP_OK) next.audio_out = value;
-        if (nvs_get_u8(handle, "backlight", &value) == ESP_OK) next.backlight_pct = value > 100 ? 100 : value;
+        if (nvs_get_u8(handle, "backlight", &value) == ESP_OK)
+            next.backlight_pct = value > 100 ? 100 : (value < 10 ? 10 : value);
         if (nvs_get_u8(handle, "time_rem", &value) == ESP_OK) next.time_remain = value;
         if (nvs_get_u8(handle, "cue_mode", &value) == ESP_OK && value <= 1) next.cue_mode = value;
         if (nvs_get_u8(handle, "master_trim", &value) == ESP_OK && value <= 2) next.master_trim_preset = value;
         if (nvs_get_u8(handle, "wifi_rem", &value) == ESP_OK && value <= 1) next.wifi_remote = value;
         if (nvs_get_u8(handle, "dj_link", &value) == ESP_OK && value <= 1) next.dj_link = value;
-        bool migrate_legacy_ota = load_ota_config(handle, ota_ssid, ota_pass, ota_url);
+        bool ota_blob_valid = false;
+        bool migrate_legacy_ota = load_ota_config(handle, ota_ssid, ota_pass, ota_url, &ota_blob_valid);
         if (migrate_legacy_ota) {
             ota_config_blob_t blob;
             make_ota_config_blob(&blob, ota_ssid, ota_pass, ota_url);
             esp_err_t ota_migrate_rc = nvs_set_blob(handle, OTA_CONFIG_BLOB_KEY,
                                                     &blob, sizeof(blob));
             if (ota_migrate_rc == ESP_OK) ota_migrate_rc = nvs_commit(handle);
+            if (ota_migrate_rc == ESP_OK) ota_blob_valid = true;
             if (ota_migrate_rc != ESP_OK) {
                 ESP_LOGW(TAG, "legacy OTA config migration failed: %s",
                          esp_err_to_name(ota_migrate_rc));
             }
+        }
+        if (ota_blob_valid) {
+            esp_err_t cleanup_rc = retire_legacy_ota_keys(handle);
+            if (cleanup_rc != ESP_OK) ESP_LOGW(TAG, "legacy OTA key cleanup failed: %s", esp_err_to_name(cleanup_rc));
         }
 
         uint8_t stored_schema = 0u;
@@ -352,6 +371,7 @@ static uint8_t s_pending_backlight = 80u;
 static bool app_settings_commit_backlight(uint8_t value)
 {
     if (value > 100u) value = 100u;
+    if (value < 10u) value = 10u;
     app_settings_t current = app_settings_get();
     if (current.backlight_pct == value) return false;
     if (save_u8("backlight", value) != ESP_OK) return false;
@@ -414,6 +434,7 @@ static void settings_persist_worker(void *arg)
 void app_settings_set_backlight(uint8_t value)
 {
     if (value > 100u) value = 100u;
+    if (value < 10u) value = 10u;
     __atomic_store_n(&s_pending_backlight, value, __ATOMIC_RELEASE);
 
     /* Calls before app_settings_init() — tests, or an unusually early caller —

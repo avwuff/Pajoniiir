@@ -3094,10 +3094,12 @@ static void test_load_lock_uses_actual_target_deck_transport(void)
     assert(deck_core_load_allowed(CTRL_DECK_2));
 }
 
+void deck_core_test_replacement_contention(void);
 static void test_load_play_race_reserves_actual_semantic_transport(void)
 {
     deck_core_test_reset();
     reset_audio_engine_stub();
+    deck_core_test_replacement_contention();
     ctrl_event_t play1 = deck_button(CTRL_ID_DECK1_PLAY);
     ctrl_event_t play2 = deck_button(CTRL_ID_DECK2_PLAY);
     ctrl_event_t cue1 = deck_button(CTRL_ID_DECK1_CUE);
@@ -3305,6 +3307,16 @@ static void test_network_sync_semantic_path_and_replacement(void)
     deck_core_network_tick(1000,1,48000);
     assert(audio_engine_stub_deck_seek_count[0]==1 && audio_engine_stub_deck_position_ms[0]==20);
     assert(network_local[0].loaded && network_local[0].session==42 && network_local[0].calibrated);
+    /* A new alignment near EOF must not seek to/past the decoder boundary. */
+    audio_engine_stub_duration_ms[0]=1000;
+    audio_engine_stub_deck_position_ms[0]=900;
+    network_clock.beat_in_bar=4;
+    deck_core_test_apply_event(&sync);
+    deck_core_test_apply_event(&sync);
+    deck_core_network_tick(1000,1,48000);
+    assert(audio_engine_stub_deck_position_ms[0]==999);
+    audio_engine_stub_duration_ms[0]=0;
+    network_clock.beat_in_bar=1;
     network_clock.valid=false;float pitch=audio_engine_stub_pitch_percent[0];
     deck_core_network_tick(1400,0,44100);
     assert(audio_engine_stub_pitch_percent[0]==pitch && !network_local[0].calibrated);
@@ -3315,7 +3327,7 @@ static void test_network_sync_semantic_path_and_replacement(void)
     assert(deck_core_get_deck_state(0).sync_master);
     network_master=-1;audio_engine_stub_session_generation[0]=43;
     network_clock.valid=true;deck_core_network_tick(1480,1,48000);
-    assert(!network_local[0].loaded && audio_engine_stub_deck_seek_count[0]==1);
+    assert(!network_local[0].loaded && audio_engine_stub_deck_seek_count[0]==2);
     assert(deck_core_publish_loaded_track_session(0,1,102,&id,120,300000,&meta,43)==ESP_OK);
     deck_core_network_tick(1520,1,48000);
     assert(!deck_core_get_deck_state(0).sync_enabled);

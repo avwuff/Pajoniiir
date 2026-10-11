@@ -191,6 +191,7 @@ static void publish_state_snapshot(void)
         taskYIELD();
     }
     (void)__atomic_add_fetch(&s_snapshot_seq, 1u, __ATOMIC_RELEASE); /* odd */
+    __atomic_thread_fence(__ATOMIC_RELEASE);
     memcpy(s_published_decks, s_decks, sizeof(s_published_decks));
     memcpy(s_published_loop_shadow, s_loop_shadow, sizeof(s_published_loop_shadow));
     s_published_beat_fx = s_beat_fx;
@@ -220,6 +221,7 @@ static void copy_state_snapshot(uint8_t deck,
         if (out_deck) *out_deck = s_published_decks[deck];
         if (out_loop) *out_loop = s_published_loop_shadow[deck];
         if (out_fx) *out_fx = s_published_beat_fx;
+        __atomic_thread_fence(__ATOMIC_ACQUIRE);
         const uint32_t after = __atomic_load_n(&s_snapshot_seq, __ATOMIC_ACQUIRE);
         if (after == before) {
             return;     /* no write began or ended while we copied */
@@ -2986,6 +2988,10 @@ void deck_core_network_tick(uint32_t now, uint8_t sink, uint32_t rate)
             .latency_ms=latency,.current_pitch=deck_core_pitch_percent(state)};
         deck_net_sync_out_t out;
         deck_net_sync_step(sync,&clock,&in,now,&out);
+        if (out.seek) {
+            const uint32_t duration = loaded_track_duration_ms(deck, &loaded);
+            if (duration && out.seek_ms >= duration) out.seek_ms = duration - 1u;
+        }
         bool applied=valid && (!uses_audio || (!(out.seek || out.set_pitch) ||
             audio_engine_deck_apply_network(deck,loaded.audio_session_generation,
                 out.seek,out.seek_ms,out.set_pitch,out.pitch_percent)==ESP_OK));
@@ -3468,9 +3474,14 @@ uint32_t deck_core_begin_track_replacement(uint8_t deck)
     uint32_t token;
     do { token = __atomic_add_fetch(&s_next_replacement_token, 1u, __ATOMIC_RELAXED); }
     while (token < 2u);
-    uint32_t expected = 0;
-    if (!__atomic_compare_exchange_n(&s_transport_owner[deck], &expected, token,
-                                    false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)) return 0;
+    for (unsigned tries = 0u;; ++tries) {
+        uint32_t expected = 0u;
+        if (__atomic_compare_exchange_n(&s_transport_owner[deck], &expected, token,
+                                       false, __ATOMIC_ACQ_REL, __ATOMIC_ACQUIRE)) break;
+        if (expected >= 2u || tries >= 50u) return 0;
+        /* Let an in-flight actor event finish; never wait on another LOAD. */
+        taskYIELD();
+    }
     /* Actor events are excluded here; use the actual audio transport, not a
      * stale UI snapshot. LOAD LOCK off explicitly permits replacing playback. */
     const bool playing = deck_core_get_deck_control_state(deck).playing;

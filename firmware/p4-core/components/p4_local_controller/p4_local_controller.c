@@ -229,6 +229,7 @@ static void local_connection_callback(bool connected,
     }
 
     atomic_store_explicit(&s_local_connected, false, memory_order_release);
+    (void)atomic_fetch_add_explicit(&s_connection_epoch, 1u, memory_order_acq_rel);
     audio_engine_set_filter_requires_smart_cfx(true);
     audio_engine_set_native_headphones(false);
     set_semantic_connection(false);
@@ -284,12 +285,10 @@ static void local_bootstrap_task(void *arg)
         .callback_ctx = NULL,
         .publish_connection_events = true,
     };
-    esp_err_t rc = controller_runtime_init(&runtime_config);
-    if (rc != ESP_OK) {
+    esp_err_t rc;
+    while ((rc = controller_runtime_init(&runtime_config)) != ESP_OK) {
         record_bootstrap_failure(rc, "runtime init");
-        s_bootstrap_task = NULL;
-        vTaskDelete(NULL);
-        return;
+        vTaskDelay(pdMS_TO_TICKS(LOCAL_BOOTSTRAP_RETRY_MS));
     }
 
     while (!s_profile_queue) {

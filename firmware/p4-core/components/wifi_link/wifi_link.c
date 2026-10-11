@@ -699,6 +699,12 @@ esp_err_t wifi_link_probe_start(void)
     }
 
     s_probe_running = true;
+    /* The control worker may have stopped the radio before we acquired the lease. */
+    if (!s_active || s_sta_mode) {
+        s_probe_running = false;
+        wifi_transition_lease_release(WIFI_TRANSITION_OWNER_PROBE);
+        return ESP_ERR_INVALID_STATE;
+    }
     probe_note(WIFI_LINK_PROBE_RUNNING, ESP_OK, "starting");
     s_probe.address[0] = '\0';
     /* 5 KiB: the task itself does little, but wifi_link_switch_to_sta runs the
@@ -851,6 +857,7 @@ static void wifi_link_worker(void *arg)
                     /* Leave nothing half-initialised behind. */
                     wifi_link_stop();
                     status_publish(WIFI_LINK_MODE_ERROR, start_rc, false);
+                    wifi_link_retry_reset(&retry);
                     continue;
                 }
                 ESP_LOGW(TAG, "Wi-Fi start failed (attempt %u); retrying in %u ms",

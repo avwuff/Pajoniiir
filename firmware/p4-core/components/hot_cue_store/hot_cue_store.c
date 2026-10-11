@@ -177,11 +177,13 @@ esp_err_t hot_cue_store_save(const media_persistent_id_t *id,const hot_cue_store
 esp_err_t hot_cue_store_clear(const media_persistent_id_t *id)
 {
     if (!valid_id(id)) return ESP_ERR_INVALID_ARG;
-    char key[16]; make_key(id,key); test_entry_t *entry=find_key(key,0);
-    if (!entry) entry=find_key(key,1);
-    if (!entry) return ESP_OK;
-    if (memcmp(entry->record+8,id->bytes,32u)!=0) return ESP_ERR_INVALID_STATE;
-    memset(entry,0,sizeof(*entry)); return ESP_OK;
+    char key[16]; make_key(id,key);
+    test_entry_t *current=find_key(key,0), *legacy=find_key(key,1);
+    if ((current && memcmp(current->record+8,id->bytes,32u)!=0) ||
+        (legacy && memcmp(legacy->record+8,id->bytes,32u)!=0)) return ESP_ERR_INVALID_STATE;
+    if (legacy) memset(legacy,0,sizeof(*legacy));
+    if (current) memset(current,0,sizeof(*current));
+    return ESP_OK;
 }
 #else
 #include "nvs.h"
@@ -213,18 +215,29 @@ esp_err_t hot_cue_store_load(const media_persistent_id_t *id,hot_cue_store_blob_
     return rc==ESP_ERR_NOT_FOUND?
         load_namespace(NS_V2,id,key,RECORD_V2_SIZE,out):rc;
 }
+/* Corrupt payloads may be replaced only when their full identity is readable.
+ * Truncated identities, key collisions and NVS I/O errors remain fail-closed. */
+static esp_err_t check_record_owner(const char *ns,const char *key,const media_persistent_id_t *id)
+{
+    nvs_handle_t h; esp_err_t rc=nvs_open(ns,NVS_READONLY,&h);
+    if (rc==ESP_ERR_NVS_NOT_FOUND) return ESP_OK;
+    if (rc!=ESP_OK) return rc;
+    uint8_t record[RECORD_SIZE]; size_t len=sizeof(record);
+    rc=nvs_get_blob(h,key,record,&len); nvs_close(h);
+    if (rc==ESP_ERR_NVS_NOT_FOUND) return ESP_OK;
+    if (rc!=ESP_OK) return rc;
+    if (len<40u) return ESP_ERR_INVALID_SIZE;
+    return memcmp(record+8,id->bytes,32u)==0 ? ESP_OK : ESP_ERR_INVALID_STATE;
+}
 esp_err_t hot_cue_store_save(const media_persistent_id_t *id,const hot_cue_store_blob_t *blob)
 {
     if (!valid_id(id)||!blob) return ESP_ERR_INVALID_ARG;
     char key[16]; ESP_RETURN_ON_ERROR(make_key(id,key),TAG,"key");
-    hot_cue_store_blob_t existing={0};
-    esp_err_t rc=hot_cue_store_load(id,&existing);
-    if (rc!=ESP_OK&&rc!=ESP_ERR_NOT_FOUND) return rc;
+    ESP_RETURN_ON_ERROR(check_record_owner(NS_V3,key,id),TAG,"v3 owner");
+    ESP_RETURN_ON_ERROR(check_record_owner(NS_V2,key,id),TAG,"v2 owner");
     nvs_handle_t h; ESP_RETURN_ON_ERROR(nvs_open(NS_V3,NVS_READWRITE,&h),TAG,"nvs_open");
-    uint8_t old[RECORD_SIZE]; rc=read_record(h,key,old,RECORD_SIZE);
-    if (rc==ESP_OK&&memcmp(old+8,id->bytes,32u)!=0) rc=ESP_ERR_INVALID_STATE;
-    else if (rc==ESP_ERR_NOT_FOUND) rc=ESP_OK;
-    if (rc==ESP_OK) { uint8_t record[RECORD_SIZE]; encode_record(id,blob,record); rc=nvs_set_blob(h,key,record,sizeof(record)); }
+    uint8_t record[RECORD_SIZE]; encode_record(id,blob,record);
+    esp_err_t rc=nvs_set_blob(h,key,record,sizeof(record));
     if (rc==ESP_OK) rc=nvs_commit(h);
     nvs_close(h); return rc;
 }
@@ -232,17 +245,20 @@ esp_err_t hot_cue_store_clear(const media_persistent_id_t *id)
 {
     if (!valid_id(id)) return ESP_ERR_INVALID_ARG;
     char key[16]; ESP_RETURN_ON_ERROR(make_key(id,key),TAG,"key");
-    hot_cue_store_blob_t existing={0};
-    esp_err_t rc=hot_cue_store_load(id,&existing);
-    if (rc!=ESP_OK&&rc!=ESP_ERR_NOT_FOUND) return rc;
-    nvs_handle_t h; rc=nvs_open(NS_V3,NVS_READWRITE,&h);
-    if (rc==ESP_ERR_NVS_NOT_FOUND) return ESP_OK;
-    if (rc!=ESP_OK) return rc;
-    uint8_t old[RECORD_SIZE]; rc=read_record(h,key,old,RECORD_SIZE);
-    if (rc==ESP_ERR_NOT_FOUND) rc=ESP_OK;
-    else if (rc==ESP_OK&&memcmp(old+8,id->bytes,32u)!=0) rc=ESP_ERR_INVALID_STATE;
-    else if (rc==ESP_OK) { rc=nvs_erase_key(h,key); if (rc==ESP_ERR_NVS_NOT_FOUND) rc=ESP_OK; }
-    if (rc==ESP_OK) rc=nvs_commit(h);
-    nvs_close(h); return rc;
+    ESP_RETURN_ON_ERROR(check_record_owner(NS_V3,key,id),TAG,"v3 owner");
+    ESP_RETURN_ON_ERROR(check_record_owner(NS_V2,key,id),TAG,"v2 owner");
+    /* Remove legacy first so an interrupted clear cannot resurrect its bank. */
+    const char *namespaces[]={NS_V2,NS_V3};
+    for (unsigned i=0u;i<2u;++i) {
+        nvs_handle_t h; esp_err_t rc=nvs_open(namespaces[i],NVS_READWRITE,&h);
+        if (rc==ESP_ERR_NVS_NOT_FOUND) continue;
+        if (rc!=ESP_OK) return rc;
+        rc=nvs_erase_key(h,key);
+        if (rc==ESP_ERR_NVS_NOT_FOUND) rc=ESP_OK;
+        if (rc==ESP_OK) rc=nvs_commit(h);
+        nvs_close(h);
+        if (rc!=ESP_OK) return rc;
+    }
+    return ESP_OK;
 }
 #endif

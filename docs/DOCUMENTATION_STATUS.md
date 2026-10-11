@@ -2,6 +2,18 @@
 
 Status: **current documentation authority, reconciled 2026-10-11**.
 
+[PR 46 deck/USB/Wi-Fi lifecycle review](reviews/2026-10-11-pr46-deck-lifecycle-review.md)
+covers nine further directories (48 files, 13 service findings): twelve findings
+have local repairs; acquisition-token lease hardening remains explicitly deferred
+after auditing current callers. A manually reproduced Beat Jump overflow is also
+repaired. Changes cover LOAD contention, snapshot ordering, network seek bounds,
+cue recovery/legacy deletion, settings migration, controller bootstrap/epochs and
+USB/Wi-Fi startup races. Full host qualification passes without SKIP; the final
+settings refinement has a separate 91-check focused PASS. The final ordinary
+M3 build/image verifier passes at 2,600,528 bytes; new USB/Wi-Fi fault harnesses
+also pass on Ubuntu/WSL.
+Installed firmware and frozen packages remain unchanged.
+
 [PR 46 startup/board/build review](reviews/2026-10-11-pr46-startup-board-build-review.md)
 covers six further scopes (51 files, three confirmed service findings), all
 repaired locally. Build-time identity refresh prevents stale SHA/dirty metadata;

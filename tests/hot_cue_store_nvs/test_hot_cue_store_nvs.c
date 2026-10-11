@@ -149,13 +149,36 @@ static void test_truncated_or_corrupt_record_does_not_publish_or_get_overwritten
     memset(&sentinel,0x5a,sizeof(sentinel)); out=sentinel;
     e->len--; assert(hot_cue_store_load(&id,&out)==ESP_ERR_INVALID_SIZE); closed();
     assert(!memcmp(&out,&sentinel,sizeof(out)));
-    unsigned writes=sets; assert(hot_cue_store_save(&id,&local)==ESP_ERR_INVALID_SIZE); assert(sets==writes); closed();
+    assert(hot_cue_store_save(&id,&local)==ESP_OK); closed(); load_point(&id,7000);
     *e=intact; e->data[e->len-1]^=1;
     assert(hot_cue_store_load(&id,&out)==ESP_ERR_INVALID_CRC); closed();
     assert(!memcmp(&out,&sentinel,sizeof(out)));
-    assert(hot_cue_store_clear(&id)==ESP_ERR_INVALID_CRC); closed();
-    assert(hot_cue_store_save(&id,&local)==ESP_ERR_INVALID_CRC && sets==writes); closed();
+    assert(hot_cue_store_save(&id,&local)==ESP_OK); closed(); load_point(&id,7000);
+    e->data[e->len-1]^=1;
+    assert(hot_cue_store_clear(&id)==ESP_OK); closed();
+    assert(hot_cue_store_load(&id,&out)==ESP_ERR_NOT_FOUND); closed();
+    *e=intact; e->len=39u;
+    unsigned writes=sets;
+    assert(hot_cue_store_save(&id,&local)==ESP_ERR_INVALID_SIZE && sets==writes); closed();
+    assert(hot_cue_store_clear(&id)==ESP_ERR_INVALID_SIZE); closed();
     *e=intact; load_point(&id,7000);
+}
+static void test_clear_removes_legacy_before_current(void)
+{
+    media_persistent_id_t id=identity("legacy-clear");
+    hot_cue_store_blob_t local=point(8000), out={0};
+    assert(hot_cue_store_save(&id,&local)==ESP_OK); closed();
+    entry_t *current=NULL, *legacy=NULL;
+    for (unsigned i=0;i<16u;++i) {
+        if (entries[i].used && !memcmp(entries[i].data+8,id.bytes,32u)) current=&entries[i];
+        if (!entries[i].used) legacy=&entries[i];
+    }
+    assert(current && legacy);
+    *legacy=*current; strcpy(legacy->ns,"hotcue_v2");
+    /* A readable owned legacy payload must also be removed, even if corrupt. */
+    assert(hot_cue_store_clear(&id)==ESP_OK); closed();
+    assert(!current->used && !legacy->used);
+    assert(hot_cue_store_load(&id,&out)==ESP_ERR_NOT_FOUND); closed();
 }
 static void test_full_identity_collision_fails_closed(void)
 {
@@ -175,6 +198,7 @@ int main(void)
     test_api_failures_are_reported_and_handles_closed();
     test_truncated_or_corrupt_record_does_not_publish_or_get_overwritten();
     test_full_identity_collision_fails_closed();
+    test_clear_removes_legacy_before_current();
     puts("hot_cue_store_nvs: production NVS adapter contract tests passed");
     return 0;
 }
