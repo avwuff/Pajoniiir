@@ -2,6 +2,26 @@
 
 Status: implementation in progress; partial exact-image M3 acceptance, no publication.
 
+## Current closeout, 2026-10-11
+
+The [current phase/P01–P10 review](reviews/2026-10-11-shared-core-hercules-closeout.md)
+supersedes historical next-action and installed-state statements below.
+All three entrypoints use the canonical core and board providers. Current
+installed M3 is clean `e16ecfb5`, VALID `ota_0`, with Hercules on USB3/root0
+and storage on USB2/root1 in the experimental role configuration. Its final
+60-minute mixed-rate MT/loop playback has all 22 strict deltas zero and operator
+full-hour audio/visual PASS; 15 output-late events remain monitoring findings.
+S2 stays operator-closed. Hercules individual pad/FX/LED coverage remains partial.
+
+The review distinguishes implemented software from remaining acceptance: current
+local full qualification/build matrix, real playlist/artwork/source-loop variants,
+JC physical gates and historical OTA-restart causation. Hosted CI is SKIPPED BY
+OPERATOR; physical Campaign A was excluded, not passed. No whole-core/release
+PASS or public publication is implied. The following dated narrative and phase
+tables retain their historical source/evidence scope.
+
+## Historical implementation and bench progression
+
 Accepted M3 qualification baseline: clean source `fb5cbca13f33d21dfb4e16e0ba667c340399eb0c`,
 signed local OTA, observed VALID in ota_0 on 2026-10-07. Its short dual
 MT/zoom-8 retest passed: operator-confirmed fluid waveforms and clean sound.

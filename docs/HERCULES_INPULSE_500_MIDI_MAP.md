@@ -3,7 +3,9 @@
 Status: host-qualified Pajoniiir controller profile; combined physical smoke
 passed on `04f0cfb6`. The current installed `e16ecfb5` has a separate physically
 accepted manual IN/OUT/Exit retest on both MP3 decks. Full MIDI/LED/lifecycle
-coverage and final playback qualification remain open; the operator's prior
+coverage remains partial. Its final 60-minute playback soak and separate
+active jog/Browse, wake/LOAD LOCK and shortened lifecycle scopes pass;
+the operator's prior
 CUE/PLAY handoff and Sync checks are retained without duplicate tests.
 
 The [2026-10-10 M3 preparation record](validation/HERCULES_INPULSE_500_PREPARATION_20261010.md)
@@ -31,8 +33,8 @@ The committed source and compiled fixtures are
 | Decks | 2 | Profile/runtime verified |
 | MIDI input/output | Enabled | M3 binding confirmed; earlier combined smoke passed, full input/output sweep open |
 | Jog touch | Enabled | Measured PC touch addresses and earlier M3 jog smoke; complete scratch/Shift sweep open |
-| Pitch | 14-bit CC | Host/profile path verified; hardware pending |
-| USB audio | 4 channels: MAIN 1/2, headphones 3/4 | Measured UAC1 FS/44100/packed-24; earlier MAIN/PFL/native headphone smoke passed; current playback and long gate open |
+| Pitch | 14-bit CC | Host/profile path and mixed-rate +5/-5% playback accepted; exact endpoint calibration unrun |
+| USB audio | 4 channels: MAIN 1/2, headphones 3/4 | Measured UAC1 FS/44100/packed-24; earlier routing smoke and current 60-minute MAIN/headphone playback accepted; controller RCA MAIN unqualified |
 
 `06F8:B105` belongs to a different Hercules product family and must not match
 this profile. Exact VID/PID matching is intentional.

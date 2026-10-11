@@ -1,9 +1,12 @@
-# Hercules DJControl Inpulse 500 preparation
+# Hercules DJControl Inpulse 500 profile
 
 The source-backed profile is software-qualified and installed on the M3 bench.
-A combined physical smoke passed on `04f0cfb6`. The current `e16ecfb5` also
-passes the targeted manual IN/OUT/Exit retest on both MP3 decks; full hardware
-acceptance and final playback qualification remain open. See the [MIDI map](../../docs/HERCULES_INPULSE_500_MIDI_MAP.md)
+A combined physical smoke passed on `04f0cfb6`. The current `e16ecfb5` passes
+manual IN/OUT/Exit, screensaver wake, playing-deck LOAD LOCK, three stopped
+reconnects, one cold-power readiness check and the final 60-minute playback soak.
+The soak has all 22 strict deltas zero and operator-confirmed clean MAIN/headphones
+and fluid waveforms; 15 output-late events remain monitoring findings.
+Individual control/LED coverage remains partial. See the [MIDI map](../../docs/HERCULES_INPULSE_500_MIDI_MAP.md)
 and [M3 preparation record](../../docs/validation/HERCULES_INPULSE_500_PREPARATION_20261010.md).
 
 The current fixture is S3CP v4, 5592 bytes, with 268 expanded inputs and
@@ -40,8 +43,8 @@ On unchanged `e16ecfb5`, first physical PLAY D1 wakes screensaver without
 starting either deck; the next PLAY starts normally. Both decks also pass
 normal/Shift LOAD LOCK and authenticated web admission during a 90.485-s
 dual-playing window, with all 22 strict deltas/output-late zero and operator
-confirmation of clean audio. Cable reconnect/cold power and final qualification
-remain separate open gates.
+confirmation of clean audio. Lifecycle and final playback outcomes are recorded
+in the same validation ledger; they do not establish complete individual control coverage.
 
 The manufacturer documents 24-bit, 44100-Hz audio, MAIN channels 1/2 and
 headphones 3/4. The JSON `audio` section is descriptive: the compiler does
@@ -56,6 +59,27 @@ Pad FX banks currently implement filters on pads 1/2 and echo on pads 3/4.
 Pads 5..8 have no DSP preset. Normal empty Hot Cue pads create persistent cues;
 Shift+Hot Cue pads delete them. A read-only performance sweep must avoid these
 writes unless a disposable track or explicit cue-edit scope has been selected.
+
+## Supported scope and deliberate limits
+
+| Function | Implemented behavior | Acceptance scope |
+| --- | --- | --- |
+| Browse/LOAD/transport | Shared two-deck semantic input, stopped normal/Shift LOAD, playing LOAD LOCK, CUE/PLAY and Sync | Recorded physical checks retained; Quantize/range and full loop-rotary sweep still unrun |
+| Mixer/pitch | 14-bit pitch, faders, Gain/EQ/filter/crossfader, PCM MASTER adaptation | Combined response checks accepted; exact analog endpoints and PCM MASTER sweep unrun |
+| Jog/Browse under playback | Jog touch/bend/scratch and shared navigation | 2044-packet mixed-rate MT supplement accepted; not every Shift/scratch variant |
+| Hot Cue | Recall/set/delete through the shared persistent-cue model | Source-backed software support; no Hercules-specific disposable-track write acceptance |
+| Beat Loop / Beat Jump | Physical LOOP / SAMPLER adapt to shared loop and jump functions | Combined observation accepted; per-pad/release/size coverage partial |
+| Pad FX 1 | SLICER adaptation: pads 1/2 low/high-pass, pads 3/4 250/500-ms echo | Production DSP implemented; individual audible press/release sweep unrun |
+| Pad FX 2 | Shift+LOOP adaptation: pads 1/2 low/high-pass, pads 3/4 125/1000-ms echo | Production DSP implemented; individual audible press/release sweep unrun |
+| Pad FX pads 5–8 | No DSP preset in either bank | Unsupported; mapped input/LED addresses do not make these effects active |
+| Global FX | Four FX buttons adapt to effect/beat selection and Shift on/clear | Software mapping; combined record did not observe a global FX change |
+| Native headphones | Hardware level/blend, software PFL, UAC1 FS 44100-Hz packed-24 | Earlier physical routing/knob checks retained plus exact-image final playback PASS |
+| LEDs/VU | Profile outputs for transport, modes, pads and VU | Operator overall response/reconnect confirmation; individual colour/output sweep partial |
+| Key/Pitch Play, Vinyl/Slip, Shift+Play, guide controls, modes 7/8 | Deliberately deferred or unmapped | Unsupported; no physical PASS claimed |
+
+This closes the current source/fixture and evidence review, not unrestricted
+hardware certification. Do not add new mappings solely to fill the unsupported
+rows. Further features need a separately scoped shared-engine implementation.
 
 S2 work is closed by the operator. With both decks stopped:
 

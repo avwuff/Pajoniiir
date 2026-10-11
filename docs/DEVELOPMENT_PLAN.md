@@ -1,5 +1,14 @@
 # P4 post-release development plan
 
+Current shared-core work is reconciled in the
+[2026-10-11 phase/P01–P10 review](reviews/2026-10-11-shared-core-hercules-closeout.md).
+The Hercules source/fixture/support-scope review is complete: unchanged clean
+`e16ecfb5` has exact-image final playback acceptance, with individual pad/FX/LED
+limits still explicit. Next is final local software qualification and three-board
+build verification; hosted CI is skipped by operator quota decision. Real-media,
+JC physical and historical OTA-restart cause gates remain separate. Earlier
+installed-state and next-action paragraphs below are historical progression.
+
 The [S2 performance candidate](../controllers/ni_traktor_s2_mk3_full/README.md)
 uses the shared runtime for 80 inputs/26 outputs and experimental HS UAC2.
 S2 work is closed by explicit operator decision after exact-image full-hour

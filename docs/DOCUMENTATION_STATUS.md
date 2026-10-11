@@ -545,6 +545,16 @@ Root cause and remaining S2/shared-core gates stay open. Original hashes
 rechecked, operator confirmation and updated audit preserved,
 task removed after exit, automation paused; no firmware, restart or publication.
 
+The [2026-10-11 shared-core/Hercules scope review](reviews/2026-10-11-shared-core-hercules-closeout.md)
+reconciles original phases and P01–P10 with current source and acceptance.
+The unchanged Hercules fixture regenerates identically; focused profile,
+version/DMA, fixture and both migration regressions pass. All three entrypoints
+select one canonical set of reviewed modules and board providers. The profile
+support table now separates implemented pads 1–4 from unsupported FX pads 5–8
+and deferred functions. Final current local full qualification/build matrix,
+real-media/JC physical gates and historical restart causation remain open;
+hosted CI remains SKIPPED BY OPERATOR. This review does not flash or publish.
+
 Final Hercules exact-image `e16ecfb5` 44100-Hz playback soak completed
 3600.016 s / 5171 samples, wrapper exit 0. Every sample and final stopped
 snapshot have all 22 strict counter deltas zero; clean source/ELF/VALID ota_0,

@@ -5,6 +5,12 @@ All three products link the same audio/deck/library/controller/UI/web/OTA module
 checked at configure/link and by `tools/check_board_build.py` against the built
 component graph and application descriptor. Dependency versions remain pinned.
 
+The table below describes ordinary product defaults. The accepted Hercules bench
+on clean `e16ecfb5` uses the explicit M3 role experiment: controller USB3/root0,
+storage USB2/root1, PCM MAIN 48000 Hz and Hercules UAC1 FS 44100-Hz packed-24.
+Its exact-image final playback acceptance does not change ordinary defaults or
+qualify a newly built image. See the [current closeout](reviews/2026-10-11-shared-core-hercules-closeout.md).
+
 | Policy | JC4880 | JC1060 | M3 |
 | --- | --- | --- | --- |
 | Entrypoint/project | main-deck-p4 | main-deck-jc1060 | main-deck-m3 |

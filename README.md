@@ -14,6 +14,14 @@ common startup; the M3 entrypoint is `firmware/main-deck-m3`.
 See the [integration ledger](docs/SHARED_P4_CORE_INTEGRATION.md). This work does
 not change the published M2.5 release or its accepted hardware scope.
 
+The [Hercules Inpulse 500 profile](controllers/hercules_djcontrol_inpulse_500/README.md)
+has an accepted exact-image M3 60-minute dual mixed-rate MT/loop playback scope,
+with clean MAIN/headphones and fluid waveforms. Its supported functions and
+deliberate pad/FX limits are documented separately from individual physical
+coverage. The [current shared-core review](docs/reviews/2026-10-11-shared-core-hercules-closeout.md)
+records final local software/build work, real-media and other-board gates;
+this development branch is not a new production release.
+
 The [S2 MK3 performance candidate](controllers/ni_traktor_s2_mk3_full/README.md)
 adds source-backed mixer/pitch/jog/LED mappings and experimental descriptor-driven
 HS UAC2. Its M3 experiment uses S2 on USB3 and storage on USB2. S2 work is closed

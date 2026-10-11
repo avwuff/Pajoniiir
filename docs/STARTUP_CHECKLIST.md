@@ -1,5 +1,14 @@
 # P4 operation and release checklist
 
+Current Hercules bench: clean `e16ecfb5`, VALID `ota_0`, Hercules USB3/root0,
+storage USB2/root1, Wi-Fi ON. Final 60-minute playback and the shortened
+active-input/lifecycle scopes are accepted as documented in the
+[current closeout](reviews/2026-10-11-shared-core-hercules-closeout.md).
+This experimental arrangement does not change ordinary FLX4 defaults.
+USB1 is power-only on this bench; do not require a new serial connection for
+documentation closeout. Do not repeat accepted tests solely to fill historical
+unchecked boxes. Remaining individual profile and board gates stay explicit.
+
 For the [S2 performance candidate](../controllers/ni_traktor_s2_mk3_full/README.md),
 keep S2 on USB3 HS and the stick on USB2 FS. The operator closed S2 work after
 full-hour 48/44.1-kHz playback acceptance and waived remaining physical checks.
