@@ -2,6 +2,15 @@
 
 Status: **current documentation authority, reconciled 2026-10-12**.
 
+The [JC4880 controller lifecycle candidate](validation/JC4880_CONTROLLER_LIFECYCLE_20261012.md)
+is now installed as clean `M2.5-221-gc7d2e9cd`, VALID `ota_0`, with Hercules
+MIDI/44.1-kHz UAC and the 260-track library available. Its 150.359-s short
+mixed-rate playback passes all 22 strict deltas and output-late delta zero;
+the operator confirms both audio paths and display. Pad/global FX/LED/VU
+controls were explicitly not exercised in that window and remain NOT RUN,
+with a 90-s joint supplement awaiting readiness. Public beta assets/channels
+remain unchanged; this is not a new-image soak or reconnect qualification.
+
 The [2026-10-12 controller lifecycle software follow-up](reviews/2026-10-12-controller-lifecycle-review.md)
 reproduces and repairs stale unaccepted PLAY/LOAD/jog work after disconnect and
 LED packets crossing an output connection generation. It adds partial snapshot,
@@ -9,9 +18,9 @@ callback-race, bounded LED headroom/retry and symmetric D1/D2 LOAD/PLAY regressi
 Full required-fixture host qualification (no SKIP), a fresh ordinary M3 build
 under ESP-IDF v6.0.2 and its board/isolation/budget verifier pass. The build is a
 working-tree development artifact, not an installed clean release.
-The joint Hercules Pad FX/global FX/LED/VU block remains deferred. These software
-repairs are not installed; existing beta assets and physical acceptance remain
-unchanged.
+The joint Hercules Pad FX/global FX/LED/VU control block remains open. The
+subsequent JC4880 installation is separately scoped above; existing beta assets
+and historical physical acceptance retain their exact image boundaries.
 
 Manual revision 2026-10-12: [GitHub Pages user manual](index.html) now covers
 JC4880/JC1060/M3 port/audio/network policies, FLX4/Hercules/S2/DDJ-400 support
