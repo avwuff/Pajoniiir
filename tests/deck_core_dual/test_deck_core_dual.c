@@ -3095,50 +3095,58 @@ static void test_load_lock_uses_actual_target_deck_transport(void)
 }
 
 void deck_core_test_replacement_contention(void);
-static void test_load_play_race_reserves_actual_semantic_transport(void)
+static void check_load_play_race_for_deck(uint8_t target)
 {
+    const uint8_t other = (uint8_t)(1u - target);
     deck_core_test_reset();
     reset_audio_engine_stub();
     deck_core_test_replacement_contention();
-    ctrl_event_t play1 = deck_button(CTRL_ID_DECK1_PLAY);
-    ctrl_event_t play2 = deck_button(CTRL_ID_DECK2_PLAY);
-    ctrl_event_t cue1 = deck_button(CTRL_ID_DECK1_CUE);
+    ctrl_event_t play1 = deck_button(target == 0 ? CTRL_ID_DECK1_PLAY : CTRL_ID_DECK2_PLAY);
+    ctrl_event_t play2 = deck_button(other == 0 ? CTRL_ID_DECK1_PLAY : CTRL_ID_DECK2_PLAY);
+    ctrl_event_t cue1 = deck_button(target == 0 ? CTRL_ID_DECK1_CUE : CTRL_ID_DECK2_CUE);
     // PLAY wins: replacement must preserve the already-playing target.
     deck_core_test_apply_event(&play1);
-    assert(deck_core_test_get_deck_state(0).playing);
-    assert(deck_core_begin_track_replacement(0) == 0);
-    assert(deck_core_test_get_deck_state(0).playing);
+    assert(deck_core_test_get_deck_state(target).playing);
+    assert(deck_core_begin_track_replacement(target) == 0);
+    assert(deck_core_test_get_deck_state(target).playing);
     deck_core_test_apply_event(&play1);
-    assert(!deck_core_test_get_deck_state(0).playing);
+    assert(!deck_core_test_get_deck_state(target).playing);
     // LOAD wins: transport events cannot start the old/new track before publish.
-    uint32_t token = deck_core_begin_track_replacement(0);
-    assert(token >= 2 && deck_core_track_replacement_active(0));
-    assert(!deck_core_load_allowed(0) && deck_core_begin_track_replacement(0) == 0);
+    uint32_t token = deck_core_begin_track_replacement(target);
+    assert(token >= 2 && deck_core_track_replacement_active(target));
+    assert(!deck_core_load_allowed(target) && deck_core_begin_track_replacement(target) == 0);
     deck_core_test_apply_event(&play1);
     deck_core_test_apply_event(&cue1);
-    assert(!deck_core_test_get_deck_state(0).playing);
+    assert(!deck_core_test_get_deck_state(target).playing);
     deck_core_test_apply_event(&play2);
-    assert(deck_core_test_get_deck_state(1).playing);
-    assert(!deck_core_test_get_deck_state(0).playing);
-    deck_core_end_track_replacement(0, token + 100);
-    assert(deck_core_track_replacement_active(0));
-    deck_core_end_track_replacement(0, token);
-    assert(!deck_core_track_replacement_active(0));
-    uint32_t next = deck_core_begin_track_replacement(0);
+    assert(deck_core_test_get_deck_state(other).playing);
+    assert(!deck_core_test_get_deck_state(target).playing);
+    deck_core_end_track_replacement(target, token + 100);
+    assert(deck_core_track_replacement_active(target));
+    deck_core_end_track_replacement(target, token);
+    assert(!deck_core_track_replacement_active(target));
+    uint32_t next = deck_core_begin_track_replacement(target);
     assert(next >= 2 && next != token);
-    deck_core_end_track_replacement(0, token); // stale completion cannot release next
-    assert(deck_core_track_replacement_active(0));
-    deck_core_end_track_replacement(0, next);
+    deck_core_end_track_replacement(target, token); // stale completion cannot release next
+    assert(deck_core_track_replacement_active(target));
+    deck_core_end_track_replacement(target, next);
     deck_core_test_apply_event(&play1);
-    assert(deck_core_test_get_deck_state(0).playing);
+    assert(deck_core_test_get_deck_state(target).playing);
     // Explicit LOAD LOCK off still allows replacement of playback.
     deck_core_set_load_lock(false);
-    token = deck_core_begin_track_replacement(0);
+    token = deck_core_begin_track_replacement(target);
     assert(token >= 2);
-    deck_core_end_track_replacement(0, token);
+    deck_core_end_track_replacement(target, token);
     assert(deck_core_begin_track_replacement(2) == 0);
     deck_core_test_reset();
     reset_audio_engine_stub();
+}
+
+static void test_load_play_race_reserves_actual_semantic_transport(void)
+{
+    for (uint8_t target = 0; target < DECK_CORE_DECK_COUNT; ++target) {
+        check_load_play_race_for_deck(target);
+    }
 }
 
 static void test_imported_hot_cues_recall_and_local_deletion_survive_reload(void)

@@ -10,6 +10,8 @@ static flx4_control_event_t s_events[256];
 static size_t s_event_count;
 static unsigned s_fail_deliveries;
 static bool s_disconnect_in_callback;
+static bool s_disconnect_on_failure;
+static bool s_reconnect_in_callback;
 
 #define CHECK(expr) do { \
     s_checks++; \
@@ -24,6 +26,14 @@ static esp_err_t event_cb(const flx4_control_event_t *event, void *ctx)
     (void)ctx;
     if (s_fail_deliveries > 0u) {
         s_fail_deliveries--;
+        if (s_disconnect_on_failure) {
+            s_disconnect_on_failure = false;
+            controller_runtime_set_connected(false);
+            if (s_reconnect_in_callback) {
+                s_reconnect_in_callback = false;
+                controller_runtime_set_connected(true);
+            }
+        }
         return ESP_ERR_TIMEOUT;
     }
     if (s_event_count < sizeof(s_events) / sizeof(s_events[0])) {
@@ -52,6 +62,87 @@ static void dispatch_one_and_check(size_t expected_total)
 {
     CHECK(controller_runtime_dispatch_pending(1u) == 1u);
     CHECK(s_event_count == expected_total);
+}
+
+static void test_disconnect_retires_unaccepted_actions(void)
+{
+    const controller_runtime_config_t config = {
+        .event_cb = event_cb,
+        .publish_connection_events = true,
+    };
+    CHECK(controller_runtime_init(&config) == ESP_OK);
+    controller_runtime_set_builtin_flx4_enabled(true);
+    controller_runtime_set_connected(true);
+    (void)controller_runtime_dispatch_pending(256u);
+    s_event_count = 0u;
+
+    usb_midi_message_t message = midi(0x90, 0x0B, 127);
+    CHECK(controller_runtime_handle_midi(&message));
+    s_fail_deliveries = 1u;
+    CHECK(controller_runtime_dispatch_pending(1u) == 0u); /* PLAY retry */
+    message = midi(0x96, 0x46, 127);
+    CHECK(controller_runtime_handle_midi(&message)); /* queued LOAD */
+    message = midi(0xB1, 0x23, 65);
+    CHECK(controller_runtime_handle_midi(&message)); /* queued jog */
+    message = midi(0x90, 0x36, 127);
+    CHECK(controller_runtime_handle_midi(&message)); /* durable touch */
+    controller_runtime_set_connected(false);
+    controller_runtime_set_connected(true);
+    (void)controller_runtime_dispatch_pending(256u);
+    CHECK(s_event_count == 3u);
+    CHECK(s_events[0].id == CTRL_ID_FLX4_CONNECTION);
+    CHECK(s_events[0].value == CTRL_FLX4_DISCONNECTED);
+    CHECK(s_events[1].value == CTRL_FLX4_CONNECTED);
+    CHECK(s_events[2].id == CTRL_ID_DECK1_JOG_TOUCH);
+    CHECK(s_events[2].value == 0);
+    CHECK(controller_runtime_pending_count() == 0u);
+
+    /* Fresh commands still work after the retired connection. */
+    message = midi(0x90, 0x0B, 127);
+    CHECK(controller_runtime_handle_midi(&message));
+    dispatch_one_and_check(4u);
+    CHECK(s_events[3].id == CTRL_ID_DECK1_PLAY);
+
+    /* The callback can report failure after an entire disconnect/reconnect.
+     * Its old in-flight PLAY must not be reinserted as the new retry. */
+    CHECK(controller_runtime_handle_midi(&message));
+    s_fail_deliveries = 1u;
+    s_disconnect_on_failure = true;
+    s_reconnect_in_callback = true;
+    CHECK(controller_runtime_dispatch_pending(1u) == 0u);
+    s_event_count = 0u;
+    (void)controller_runtime_dispatch_pending(256u);
+    CHECK(s_event_count == 3u); /* disconnect, connect, touch release */
+    CHECK(controller_runtime_pending_count() == 0u);
+}
+
+static void test_disconnect_retires_partial_snapshot(void)
+{
+    const controller_runtime_config_t config = {
+        .event_cb = event_cb,
+        .publish_connection_events = true,
+    };
+    CHECK(controller_runtime_init(&config) == ESP_OK);
+    controller_runtime_set_builtin_flx4_enabled(true);
+    controller_runtime_set_connected(true);
+    (void)controller_runtime_dispatch_pending(256u);
+    usb_midi_message_t message = midi(0xB0, 0x13, 0x22);
+    CHECK(!controller_runtime_handle_midi(&message));
+    message = midi(0xB0, 0x33, 0x11);
+    CHECK(controller_runtime_handle_midi(&message));
+    message = midi(0xB1, 0x13, 0x22);
+    CHECK(!controller_runtime_handle_midi(&message));
+    message = midi(0xB1, 0x33, 0x12);
+    CHECK(controller_runtime_handle_midi(&message));
+    (void)controller_runtime_dispatch_pending(256u);
+    s_event_count = 0u;
+    controller_runtime_request_snapshot();
+    s_disconnect_in_callback = true;
+    dispatch_one_and_check(1u); /* first replay accepted, then disconnect */
+    CHECK(controller_runtime_dispatch_pending(256u) == 1u);
+    CHECK(s_events[1].id == CTRL_ID_FLX4_CONNECTION);
+    CHECK(s_events[1].value == CTRL_FLX4_DISCONNECTED);
+    CHECK(controller_runtime_pending_count() == 0u);
 }
 
 int main(void)
@@ -161,7 +252,7 @@ int main(void)
     CHECK(!diagnostics.connected);
     CHECK(diagnostics.held_reconciliations == 2u);
     CHECK(diagnostics.semantic_events == 2u);
-    CHECK(diagnostics.queued_events == 64u);
+    CHECK(diagnostics.queued_events == 0u);
 
     /* Connection state must survive both queue saturation and downstream
      * backpressure. A callback may race a newer physical connection edge. */
@@ -192,6 +283,9 @@ int main(void)
     dispatch_one_and_check(4);
     CHECK(s_events[3].id == CTRL_ID_FLX4_CONNECTION);
     CHECK(s_events[3].value == CTRL_FLX4_DISCONNECTED);
+
+    test_disconnect_retires_unaccepted_actions();
+    test_disconnect_retires_partial_snapshot();
 
     printf("PASS bounded P4 local FLX4 controller runtime\n");
     printf("CHECKS=%u EVENTS=%zu\n", s_checks, s_event_count);

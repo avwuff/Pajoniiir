@@ -1,6 +1,17 @@
 # Documentation status
 
-Status: **current documentation authority, reconciled 2026-10-11**.
+Status: **current documentation authority, reconciled 2026-10-12**.
+
+The [2026-10-12 controller lifecycle software follow-up](reviews/2026-10-12-controller-lifecycle-review.md)
+reproduces and repairs stale unaccepted PLAY/LOAD/jog work after disconnect and
+LED packets crossing an output connection generation. It adds partial snapshot,
+callback-race, bounded LED headroom/retry and symmetric D1/D2 LOAD/PLAY regressions.
+Full required-fixture host qualification (no SKIP), a fresh ordinary M3 build
+under ESP-IDF v6.0.2 and its board/isolation/budget verifier pass. The build is a
+working-tree development artifact, not an installed clean release.
+The joint Hercules Pad FX/global FX/LED/VU block remains deferred. These software
+repairs are not installed; existing beta assets and physical acceptance remain
+unchanged.
 
 Manual revision 2026-10-12: [GitHub Pages user manual](index.html) now covers
 JC4880/JC1060/M3 port/audio/network policies, FLX4/Hercules/S2/DDJ-400 support

@@ -26,6 +26,7 @@ gcc -std=c11 -Wall -Wextra -Wpedantic -Werror `
     (Join-Path $ProfileRuntime "controller_profile_runtime.c") `
     (Join-Path $Led "flx4_led_midi.c") `
     (Join-Path $Led "controller_led_runtime.c") `
+    (Join-Path $RepoRoot "firmware/p4-core/components/control_link/flx4_led_snapshot.c") `
     $Test `
     -o $Exe
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
