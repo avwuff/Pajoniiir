@@ -6,9 +6,12 @@ The [JC4880 controller lifecycle candidate](validation/JC4880_CONTROLLER_LIFECYC
 is now installed as clean `M2.5-221-gc7d2e9cd`, VALID `ota_0`, with Hercules
 MIDI/44.1-kHz UAC and the 260-track library available. Its 150.359-s short
 mixed-rate playback passes all 22 strict deltas and output-late delta zero;
-the operator confirms both audio paths and display. Pad/global FX/LED/VU
-controls were explicitly not exercised in that window and remain NOT RUN,
-with a 90-s joint supplement awaiting readiness. Public beta assets/channels
+the operator confirms both audio paths and display. A 90.438-s supplement
+receives 48 MIDI packets with all 22 strict deltas/output-late zero; the operator
+confirms both-deck Pad FX 1/2 pads 1-4 press/release, observed colours/VU and
+audio/display. Global FX commands were not exercised and remain NOT RUN,
+with a 30-s supplement deferred because the operator is not yet ready. Both
+decks remain stopped. Public beta assets/channels
 remain unchanged; this is not a new-image soak or reconnect qualification.
 
 The [2026-10-12 controller lifecycle software follow-up](reviews/2026-10-12-controller-lifecycle-review.md)

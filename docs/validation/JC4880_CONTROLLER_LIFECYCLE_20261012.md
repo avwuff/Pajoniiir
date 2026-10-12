@@ -62,8 +62,21 @@ Only **2 MIDI packets** arrived during playback and the sampled global FX state
 did not change. The operator explicitly confirmed that the requested controls
 had **not yet been exercised**. Therefore this window is short audio/display
 PASS, with **Pad FX/global FX/LED/VU control coverage NOT RUN**. It is not a
-successful active-control sweep. A shorter 90-s supplement is prepared and
-awaits explicit operator readiness; no result is assumed for it.
+successful active-control sweep.
+
+The subsequent **90.438-s / 206-sample** supplement receives **48 MIDI packets**
+and passes all 22 strict deltas and output-late delta zero. The operator confirms
+SLICER and Shift+LOOP pads 1-4 on **both decks**, momentary release with effect
+tail, the observed pad colours/VU response, clean MAIN/headphones and fluid
+waveforms. This closes that selected Pad FX 1/2 and observed LED/VU block on
+the exact installed JC4880 image. It does not measure exact echo delay/filter
+response, test unsupported pads 5-8 or qualify every LED output/address.
+
+The operator did not perform the six global FX commands. No sampled global FX
+change is recorded, so global FX remains **NOT RUN**. A separate 30-s supplement
+is prepared, with 2-s pauses between commands. The operator subsequently stated
+that they were **not yet ready**, so that window was not started. Both decks
+remain stopped; global FX stays NOT RUN until the operator resumes.
 
 ## Evidence and retained boundaries
 
@@ -72,7 +85,9 @@ and package logs, signed artifacts/matching debug ELF, admission/installed
 snapshots, upload/installation audits and the full operator-test evidence.
 First window: `pads-fx-led-20261012T143910Z/`, with all samples, baseline/final
 snapshots, raw post-stop diagnostic log, runner, audit, operator confirmation
-and SHA-256 inventory. Missing counters are not treated as zero.
+and SHA-256 inventory. The selected Pad FX supplement is
+`pads-fx-led-20261012T173238Z/`, with its own original runner, samples, audit,
+operator confirmation and hashes. Missing counters are not treated as zero.
 
 This does not physically reproduce or qualify the reconnect repairs, establish
 arbitrary LED-burst throughput, reopen operator-closed S2 work or transfer old
