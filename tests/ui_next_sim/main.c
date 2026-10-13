@@ -1,6 +1,6 @@
 /* Renders the ui_next pages at the six board sizes, night and day, into PPM
  * files. No window, no hardware.
- * usage: ui_next_sim <out dir> [tick] [perform|boot|browse|search] (default: all pages) */
+ * usage: ui_next_sim <out dir> [tick] [perform|boot|browse|search|alerts] (default: all pages) */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -30,8 +30,8 @@ static int write_ppm(const char *path)
     return fclose(f);
 }
 
-typedef enum { SCREEN_PERFORM, SCREEN_BOOT, SCREEN_BROWSE, SCREEN_SEARCH, SCREEN_COUNT } screen_t;
-static const char *const SCREEN_NAME[] = {"perform", "boot", "browse", "search"};
+typedef enum { SCREEN_PERFORM, SCREEN_BOOT, SCREEN_BROWSE, SCREEN_SEARCH, SCREEN_ALERTS, SCREEN_COUNT } screen_t;
+static const char *const SCREEN_NAME[] = {"perform", "boot", "browse", "search", "alerts"};
 
 static int render(const char *dir, screen_t screen, uint16_t w, uint16_t h, bool day, uint32_t tick,
                   const ui_next_env_t *ea, const ui_next_env_t *eb)
@@ -47,7 +47,7 @@ static int render(const char *dir, screen_t screen, uint16_t w, uint16_t h, bool
 
     lv_obj_t *scr = lv_display_get_screen_active(disp);
     lv_obj_t *root = screen == SCREEN_BOOT     ? ui_next_boot_create(scr, w, h, day)
-                     : screen == SCREEN_BROWSE ? ui_next_browse_create(scr, w, h, day)
+                     : screen == SCREEN_BROWSE || screen == SCREEN_ALERTS ? ui_next_browse_create(scr, w, h, day)
                      : screen == SCREEN_SEARCH ? ui_next_search_create(scr, w, h, day)
                                                : ui_next_perform_create(scr, w, h, day);
     int rc = 0;
@@ -60,13 +60,21 @@ static int render(const char *dir, screen_t screen, uint16_t w, uint16_t h, bool
             memset(&bm, 0, sizeof bm);
             ui_next_demo_boot(&bm);
             ui_next_boot_update(&bm);
-        } else if (screen == SCREEN_BROWSE) {
+        } else if (screen == SCREEN_BROWSE || screen == SCREEN_ALERTS) {
             static ui_next_browse_model_t bm;
             static ui_next_env_t env4[4];
             for (uint32_t i = 0; i < 4; i++) ui_next_env_demo(&env4[i], 11u + 12u * i);
             memset(&bm, 0, sizeof bm);
             ui_next_demo_browse(&bm, env4);
+            if (screen == SCREEN_ALERTS) bm.open_row = -1; /* the page behind the dim layer is at rest */
             ui_next_browse_update(&bm);
+            if (screen == SCREEN_ALERTS) {
+                static ui_next_alerts_model_t am;
+                memset(&am, 0, sizeof am);
+                ui_next_alerts_create(scr, w, h, day);
+                ui_next_demo_alerts(&am);
+                ui_next_alerts_update(&am);
+            }
         } else if (screen == SCREEN_SEARCH) {
             static ui_next_search_model_t sm;
             static ui_next_env_t env2[2];

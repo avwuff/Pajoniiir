@@ -20,6 +20,6 @@ gen() { # name ttf size
 }
 
 for s in 12 14 16 18 24; do gen ui_next_roboto_reg "$roboto/Roboto-Regular.ttf" "$s"; done
-for s in 12 14 16 18 24 28 30 34; do gen ui_next_roboto_med "$roboto/Roboto-Medium.ttf" "$s"; done
+for s in 12 14 16 18 20 22 24 28 30 34; do gen ui_next_roboto_med "$roboto/Roboto-Medium.ttf" "$s"; done
 for s in 10 12 14 16 20; do gen ui_next_cousine_reg "$cousine/Cousine-Regular.ttf" "$s"; done
 for s in 10 12 14; do gen ui_next_cousine_bold "$cousine/Cousine-Bold.ttf" "$s"; done

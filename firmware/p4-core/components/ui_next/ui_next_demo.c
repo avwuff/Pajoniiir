@@ -151,3 +151,25 @@ void ui_next_demo_search(ui_next_search_model_t *m, const ui_next_env_t *env2)
         m->deck[d].pos01 = d ? 0.61f : 0.28f;
     }
 }
+
+void ui_next_demo_alerts(ui_next_alerts_model_t *m)
+{
+    static const struct { ui_next_toast_kind_t k; const char *t, *x; } T[UI_NEXT_TOASTS] = {
+        {UI_NEXT_TOAST_DONE, "Recording saved", "set_0005.wav, 842 MB"},
+        {UI_NEXT_TOAST_CARE, "Disk space low", "Less than 1 GB left on USB 2"},
+        {UI_NEXT_TOAST_FAULT, "Controller lost", "Check the USB cable"},
+    };
+    m->n_toasts = UI_NEXT_TOASTS;
+    for (int i = 0; i < UI_NEXT_TOASTS; i++) {
+        m->toast[i].kind = T[i].k;
+        snprintf(m->toast[i].title, sizeof m->toast[i].title, "%s", T[i].t);
+        snprintf(m->toast[i].text, sizeof m->toast[i].text, "%s", T[i].x);
+    }
+    m->modal = true;
+    snprintf(m->title, sizeof m->title, "USB 1 was removed");
+    snprintf(m->body, sizeof m->body,
+             "Deck A uses a track from this drive. The track stays in memory until it ends. "
+             "Put the drive back to load more tracks.");
+    snprintf(m->primary, sizeof m->primary, "KEEP PLAYING");
+    snprintf(m->secondary, sizeof m->secondary, "OPEN SOURCE");
+}

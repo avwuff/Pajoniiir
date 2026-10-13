@@ -19,6 +19,8 @@ extern const lv_font_t ui_next_roboto_med_12;
 extern const lv_font_t ui_next_roboto_med_14;
 extern const lv_font_t ui_next_roboto_med_16;
 extern const lv_font_t ui_next_roboto_med_18;
+extern const lv_font_t ui_next_roboto_med_20;
+extern const lv_font_t ui_next_roboto_med_22;
 extern const lv_font_t ui_next_roboto_med_24;
 extern const lv_font_t ui_next_roboto_med_28;
 extern const lv_font_t ui_next_roboto_med_30;

@@ -114,6 +114,29 @@ lv_obj_t *ui_next_search_create(lv_obj_t *parent, uint16_t w, uint16_t h, bool d
 void ui_next_search_update(const ui_next_search_model_t *m);
 void ui_next_demo_search(ui_next_search_model_t *m, const ui_next_env_t *env2);
 
+/* Alerts overlay (screen 13): dimmed page, toasts at the top right, one modal
+ * dialog. Audio never stops because of an alert (SY-1). CORE-GAP: SY-1 to SY-3. */
+#define UI_NEXT_TOASTS 3
+
+typedef enum { UI_NEXT_TOAST_DONE, UI_NEXT_TOAST_CARE, UI_NEXT_TOAST_FAULT } ui_next_toast_kind_t;
+
+typedef struct {
+    ui_next_toast_kind_t kind;   /* teal done, amber care, red fault */
+    char title[32], text[40];
+} ui_next_toast_t;
+
+typedef struct {
+    ui_next_toast_t toast[UI_NEXT_TOASTS];
+    uint8_t n_toasts;
+    bool modal;
+    char title[32], body[160], primary[16], secondary[16];
+} ui_next_alerts_model_t;
+
+/* Adds the overlay on top of the current page of `parent`. One instance. */
+lv_obj_t *ui_next_alerts_create(lv_obj_t *parent, uint16_t w, uint16_t h, bool day);
+void ui_next_alerts_update(const ui_next_alerts_model_t *m);
+void ui_next_demo_alerts(ui_next_alerts_model_t *m);
+
 /* Boot page (screen 14): ring mark, name, library load bar, licence footer. */
 typedef struct {
     float progress01;        /* library load, SY-4 */
