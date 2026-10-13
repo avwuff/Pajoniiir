@@ -1,6 +1,6 @@
 /* Renders the ui_next pages at the six board sizes, night and day, into PPM
  * files. No window, no hardware.
- * usage: ui_next_sim <out dir> [tick] [perform|boot|browse|search|alerts|trackinfo] (default: all pages) */
+ * usage: ui_next_sim <out dir> [tick] [perform|boot|browse|search|alerts|trackinfo|source] (default: all pages) */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -30,8 +30,8 @@ static int write_ppm(const char *path)
     return fclose(f);
 }
 
-typedef enum { SCREEN_PERFORM, SCREEN_BOOT, SCREEN_BROWSE, SCREEN_SEARCH, SCREEN_ALERTS, SCREEN_TRACKINFO, SCREEN_COUNT } screen_t;
-static const char *const SCREEN_NAME[] = {"perform", "boot", "browse", "search", "alerts", "trackinfo"};
+typedef enum { SCREEN_PERFORM, SCREEN_BOOT, SCREEN_BROWSE, SCREEN_SEARCH, SCREEN_ALERTS, SCREEN_TRACKINFO, SCREEN_SOURCE, SCREEN_COUNT } screen_t;
+static const char *const SCREEN_NAME[] = {"perform", "boot", "browse", "search", "alerts", "trackinfo", "source"};
 
 static int render(const char *dir, screen_t screen, uint16_t w, uint16_t h, bool day, uint32_t tick,
                   const ui_next_env_t *ea, const ui_next_env_t *eb)
@@ -50,6 +50,7 @@ static int render(const char *dir, screen_t screen, uint16_t w, uint16_t h, bool
                      : screen == SCREEN_BROWSE || screen == SCREEN_ALERTS ? ui_next_browse_create(scr, w, h, day)
                      : screen == SCREEN_SEARCH ? ui_next_search_create(scr, w, h, day)
                      : screen == SCREEN_TRACKINFO ? ui_next_trackinfo_create(scr, w, h, day)
+                     : screen == SCREEN_SOURCE ? ui_next_source_create(scr, w, h, day)
                                                : ui_next_perform_create(scr, w, h, day);
     int rc = 0;
     if (!root) {
@@ -76,6 +77,14 @@ static int render(const char *dir, screen_t screen, uint16_t w, uint16_t h, bool
                 ui_next_demo_alerts(&am);
                 ui_next_alerts_update(&am);
             }
+        } else if (screen == SCREEN_SOURCE) {
+            static ui_next_source_model_t sm2;
+            static ui_next_env_t env2b[2];
+            ui_next_env_demo(&env2b[0], 11);
+            ui_next_env_demo(&env2b[1], 23);
+            memset(&sm2, 0, sizeof sm2);
+            ui_next_demo_source(&sm2, env2b);
+            ui_next_source_update(&sm2);
         } else if (screen == SCREEN_TRACKINFO) {
             static ui_next_trackinfo_model_t tm;
             static ui_next_env_t env3[3];

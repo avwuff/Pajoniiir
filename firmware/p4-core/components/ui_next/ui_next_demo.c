@@ -210,3 +210,36 @@ void ui_next_demo_trackinfo(ui_next_trackinfo_model_t *m, const ui_next_env_t *e
         m->deck[d].pos01 = d ? 0.61f : 0.28f;
     }
 }
+
+void ui_next_demo_source(ui_next_source_model_t *m, const ui_next_env_t *env2)
+{
+    static const struct { const char *n, *st; uint32_t c; ui_next_src_icon_t i; bool ok; uint8_t pct; } SRC[UI_NEXT_SOURCES] = {
+        {"USB 1", "CONNECTED", 0xFFC15A, UI_NEXT_SRC_USB, true, 14},
+        {"USB 2", "EMPTY", 0x3FD6C0, UI_NEXT_SRC_USB, false, 0},
+        {"SD CARD", "CONNECTED", 0xB07CFF, UI_NEXT_SRC_SD, true, 52},
+        {"NETWORK", "LINKED", 0x4DABF7, UI_NEXT_SRC_NET, true, 0},
+        {"PHONE", "NOT PAIRED", 0xFF6B6B, UI_NEXT_SRC_PHONE, false, 0},
+    };
+    static const char *const V[6] = {"2 PLAYERS", "ETH", "192.168.1.21", "PAJONIIIR", "ON", "PLAYER 2"};
+    for (int i = 0; i < UI_NEXT_SOURCES; i++) {
+        ui_next_source_t *s = &m->source[i];
+        snprintf(s->name, sizeof s->name, "%s", SRC[i].n);
+        snprintf(s->status, sizeof s->status, "%s", SRC[i].st);
+        s->color = SRC[i].c;
+        s->icon = SRC[i].i;
+        s->ready = SRC[i].ok;
+        s->used_pct = SRC[i].pct;
+    }
+    m->selected = 3;
+    snprintf(m->summary, sizeof m->summary, "2 DRIVES READY");
+    snprintf(m->panel_title, sizeof m->panel_title, "NETWORK");
+    snprintf(m->panel_state, sizeof m->panel_state, "DJ LINK ON");
+    for (int i = 0; i < 6; i++) snprintf(m->value[i], sizeof m->value[i], "%s", V[i]);
+    m->player = 1;
+    for (int d = 0; d < 2; d++) {
+        m->deck[d].env = env2 + d;
+        snprintf(m->deck[d].title, sizeof m->deck[d].title, d ? "Sample Track B" : "Sample Track A");
+        snprintf(m->deck[d].time, sizeof m->deck[d].time, d ? "-01:56" : "-03:44");
+        m->deck[d].pos01 = d ? 0.61f : 0.28f;
+    }
+}

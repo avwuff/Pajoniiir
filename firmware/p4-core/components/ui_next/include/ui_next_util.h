@@ -27,6 +27,8 @@ typedef struct {
     const lv_font_t *tagf;  /* tag pills */
     const lv_font_t *head;  /* dialog heading */
     const lv_font_t *h2;    /* track title on Track info */
+    const lv_font_t *micro; /* small mono labels above values */
+    const lv_font_t *kv;    /* mono values, player number */
 } ui_next_fonts_t;
 
 const ui_next_fonts_t *ui_next_fonts_for(ui_next_class_t cls);

@@ -135,6 +135,35 @@ lv_obj_t *ui_next_trackinfo_create(lv_obj_t *parent, uint16_t w, uint16_t h, boo
 void ui_next_trackinfo_update(const ui_next_trackinfo_model_t *m);
 void ui_next_demo_trackinfo(ui_next_trackinfo_model_t *m, const ui_next_env_t *env3);
 
+/* Source page (screen 04). CORE-GAP: LB-4 (source colours), LB-12 (storage and
+ * analysis status, safe eject), LB-15 / LB-23 (DJ link panel, protocol not chosen),
+ * ST-13 (Ethernet). Only the NETWORK detail panel is on a board. */
+#define UI_NEXT_SOURCES 5
+
+typedef enum { UI_NEXT_SRC_USB, UI_NEXT_SRC_SD, UI_NEXT_SRC_NET, UI_NEXT_SRC_PHONE } ui_next_src_icon_t;
+
+typedef struct {
+    char name[12], status[12];
+    uint32_t color;                  /* shown again in Browse (LB-4) */
+    ui_next_src_icon_t icon;
+    bool ready;                      /* green dot, else grey */
+    uint8_t used_pct;                /* storage bar */
+} ui_next_source_t;
+
+typedef struct {
+    ui_next_source_t source[UI_NEXT_SOURCES];
+    int8_t selected;
+    char summary[20];                /* "2 DRIVES READY" */
+    char panel_title[12], panel_state[14];
+    char value[6][16];               /* link, interface, IP, device name, share, tempo master */
+    uint8_t player;                  /* 1..4 */
+    ui_next_deck_t deck[2];
+} ui_next_source_model_t;
+
+lv_obj_t *ui_next_source_create(lv_obj_t *parent, uint16_t w, uint16_t h, bool day);
+void ui_next_source_update(const ui_next_source_model_t *m);
+void ui_next_demo_source(ui_next_source_model_t *m, const ui_next_env_t *env2);
+
 /* Alerts overlay (screen 13): dimmed page, toasts at the top right, one modal
  * dialog. Audio never stops because of an alert (SY-1). CORE-GAP: SY-1 to SY-3. */
 #define UI_NEXT_TOASTS 3
