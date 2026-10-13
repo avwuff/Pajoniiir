@@ -1,6 +1,6 @@
-/* Renders the Perform page of ui_next at the six board sizes, night and day,
- * into PPM files. No window, no hardware.
- * usage: ui_next_sim <out dir> [tick] */
+/* Renders the ui_next pages at the six board sizes, night and day, into PPM
+ * files. No window, no hardware.
+ * usage: ui_next_sim <out dir> [tick] [perform|boot] (default: all pages) */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -30,7 +30,10 @@ static int write_ppm(const char *path)
     return fclose(f);
 }
 
-static int render(const char *dir, uint16_t w, uint16_t h, bool day, uint32_t tick,
+typedef enum { SCREEN_PERFORM, SCREEN_BOOT } screen_t;
+static const char *const SCREEN_NAME[] = {"perform", "boot"};
+
+static int render(const char *dir, screen_t screen, uint16_t w, uint16_t h, bool day, uint32_t tick,
                   const ui_next_env_t *ea, const ui_next_env_t *eb)
 {
     s_w = w;
@@ -43,21 +46,29 @@ static int render(const char *dir, uint16_t w, uint16_t h, bool day, uint32_t ti
     lv_display_set_flush_cb(disp, flush_cb);
 
     lv_obj_t *scr = lv_display_get_screen_active(disp);
-    lv_obj_t *root = ui_next_perform_create(scr, w, h, day);
+    lv_obj_t *root = screen == SCREEN_BOOT ? ui_next_boot_create(scr, w, h, day)
+                                           : ui_next_perform_create(scr, w, h, day);
     int rc = 0;
     if (!root) {
         fprintf(stderr, "layout rejected %ux%u\n", w, h);
         rc = 1;
     } else {
-        ui_next_perform_model_t m;
-        memset(&m, 0, sizeof m);
-        ui_next_demo_perform(&m, ea, eb, tick, ui_next_class_for(w, h));
-        ui_next_perform_update(&m);
+        if (screen == SCREEN_BOOT) {
+            ui_next_boot_model_t bm;
+            memset(&bm, 0, sizeof bm);
+            ui_next_demo_boot(&bm);
+            ui_next_boot_update(&bm);
+        } else {
+            ui_next_perform_model_t m;
+            memset(&m, 0, sizeof m);
+            ui_next_demo_perform(&m, ea, eb, tick, ui_next_class_for(w, h));
+            ui_next_perform_update(&m);
+        }
         lv_tick_inc(50);
         lv_timer_handler();
         lv_refr_now(disp);
         char path[512];
-        snprintf(path, sizeof path, "%s/perform_%ux%u_%s.ppm", dir, w, h, day ? "day" : "night");
+        snprintf(path, sizeof path, "%s/%s_%ux%u_%s.ppm", dir, SCREEN_NAME[screen], w, h, day ? "day" : "night");
         rc = write_ppm(path);
         if (!rc) printf("%s\n", path);
     }
@@ -80,9 +91,12 @@ int main(int argc, char **argv)
     lv_init();
     static const uint16_t SZ[][2] = {{800, 480}, {1024, 600}, {1280, 800}, {480, 800}, {600, 1024}, {800, 1280}};
     int rc = 0;
-    for (unsigned i = 0; i < sizeof SZ / sizeof SZ[0]; i++) {
-        rc |= render(argv[1], SZ[i][0], SZ[i][1], false, tick, &ea, &eb);
-        if (i == 0 || i == 3) rc |= render(argv[1], SZ[i][0], SZ[i][1], true, tick, &ea, &eb);
+    for (int sc = 0; sc < 2; sc++) {
+        if (argc > 3 && strcmp(argv[3], SCREEN_NAME[sc]) != 0) continue;
+        for (unsigned i = 0; i < sizeof SZ / sizeof SZ[0]; i++) {
+            rc |= render(argv[1], (screen_t)sc, SZ[i][0], SZ[i][1], false, tick, &ea, &eb);
+            if (i == 0 || i == 3) rc |= render(argv[1], (screen_t)sc, SZ[i][0], SZ[i][1], true, tick, &ea, &eb);
+        }
     }
     return rc ? 1 : 0;
 }

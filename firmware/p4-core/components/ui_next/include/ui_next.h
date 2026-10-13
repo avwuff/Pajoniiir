@@ -52,6 +52,19 @@ typedef struct {
 lv_obj_t *ui_next_perform_create(lv_obj_t *parent, uint16_t w, uint16_t h, bool day);
 void ui_next_perform_update(const ui_next_perform_model_t *m);
 
+/* Boot page (screen 14): ring mark, name, library load bar, licence footer. */
+typedef struct {
+    float progress01;        /* library load, SY-4 */
+    char status[40];         /* "Reading library: 96 tracks" */
+    char device_name[32];    /* SY-5, a placeholder until the maker picks one */
+    char footer[64];         /* licence notice, SY-6 / ST-11 */
+} ui_next_boot_model_t;
+
+lv_obj_t *ui_next_boot_create(lv_obj_t *parent, uint16_t w, uint16_t h, bool day);
+void ui_next_boot_update(const ui_next_boot_model_t *m);
+/* CORE-GAP: SY-4 (progress), SY-5 (device name), SY-6 (notice source). */
+void ui_next_demo_boot(ui_next_boot_model_t *m);
+
 /* Demo model at tick `t` (60 ms per tick). CORE-GAP: all of PB-1 to PB-19. */
 void ui_next_demo_perform(ui_next_perform_model_t *m, const ui_next_env_t *ea,
                           const ui_next_env_t *eb, uint32_t t, ui_next_class_t cls);

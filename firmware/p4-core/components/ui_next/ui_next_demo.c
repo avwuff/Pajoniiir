@@ -62,3 +62,11 @@ void ui_next_demo_perform(ui_next_perform_model_t *m, const ui_next_env_t *ea,
     snprintf(m->key_change, sizeof m->key_change, "8A>9A");
     m->layers = cls == UI_NEXT_CLASS_S ? "LAYERS 1-4" : cls == UI_NEXT_CLASS_M ? "LAYERS 1-6" : "LAYERS 1-7";
 }
+
+void ui_next_demo_boot(ui_next_boot_model_t *m)
+{
+    m->progress01 = 0.62f;
+    snprintf(m->status, sizeof m->status, "Reading library: 96 tracks");
+    snprintf(m->device_name, sizeof m->device_name, "PLACEHOLDER NAME");
+    snprintf(m->footer, sizeof m->footer, "v0.1.0  /  CODE APACHE-2.0  /  DESIGN CC BY 4.0");
+}

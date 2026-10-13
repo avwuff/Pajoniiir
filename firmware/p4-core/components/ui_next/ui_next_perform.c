@@ -3,8 +3,8 @@
 #include <string.h>
 
 #include "ui_next.h"
-#include "ui_next_fonts.h"
 #include "ui_next_theme.h"
+#include "ui_next_util.h"
 
 /* Perform page (screen 01 and 15). Geometry comes from ui_next_layout, colours
  * from ui_next_theme, numbers from the model. Drawing follows the demo board:
@@ -36,66 +36,6 @@ static struct {
 static const char *NAV_NAME[UI_NEXT_PAGE_COUNT] = {"PERFORM", "BROWSE", "FX", "RECORD", "SETTINGS"};
 
 /* ---- small helpers ---- */
-
-static lv_color_t col(uint32_t rgb) { return lv_color_hex(rgb); }
-
-static lv_obj_t *box(lv_obj_t *parent, int x, int y, int w, int h, uint32_t rgb)
-{
-    lv_obj_t *o = lv_obj_create(parent);
-    lv_obj_remove_style_all(o);
-    lv_obj_remove_flag(o, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_set_pos(o, x, y);
-    lv_obj_set_size(o, w, h);
-    lv_obj_set_style_bg_color(o, col(rgb), 0);
-    lv_obj_set_style_bg_opa(o, LV_OPA_COVER, 0);
-    return o;
-}
-
-static lv_obj_t *label(lv_obj_t *parent, const char *s, const lv_font_t *f, uint32_t rgb)
-{
-    lv_obj_t *l = lv_label_create(parent);
-    lv_label_set_text(l, s);
-    lv_obj_set_style_text_font(l, f, 0);
-    lv_obj_set_style_text_color(l, col(rgb), 0);
-    return l;
-}
-
-static void fill_rect(lv_layer_t *layer, int x1, int y1, int x2, int y2, uint32_t rgb, lv_opa_t opa)
-{
-    if (x2 < x1 || y2 < y1) return;
-    lv_draw_rect_dsc_t d;
-    lv_draw_rect_dsc_init(&d);
-    d.bg_color = col(rgb);
-    d.bg_opa = opa;
-    lv_area_t a = {x1, y1, x2, y2};
-    lv_draw_rect(layer, &d, &a);
-}
-
-static void seg(lv_layer_t *layer, float x1, float y1, float x2, float y2, int w, uint32_t rgb, lv_opa_t opa)
-{
-    lv_draw_line_dsc_t d;
-    lv_draw_line_dsc_init(&d);
-    d.p1.x = (lv_value_precise_t)x1;
-    d.p1.y = (lv_value_precise_t)y1;
-    d.p2.x = (lv_value_precise_t)x2;
-    d.p2.y = (lv_value_precise_t)y2;
-    d.width = w;
-    d.color = col(rgb);
-    d.opa = opa;
-    d.round_start = d.round_end = 1;
-    lv_draw_line(layer, &d);
-}
-
-static void text_at(lv_layer_t *layer, const char *s, int x, int y, const lv_font_t *f, uint32_t rgb)
-{
-    lv_draw_label_dsc_t d;
-    lv_draw_label_dsc_init(&d);
-    d.text = s;
-    d.font = f;
-    d.color = col(rgb);
-    lv_area_t a = {x, y, x + 60, y + 20};
-    lv_draw_label(layer, &d, &a);
-}
 
 static uint32_t sev_color(ui_next_sev_t s)
 {
@@ -133,8 +73,8 @@ static void wf_draw_cb(lv_event_t *e)
         if (cl % UI_NEXT_BEAT_COLUMNS) continue;
         const int bar = cl % UI_NEXT_BAR_COLUMNS == 0u;
         const int u = ua + o * span / m;
-        if (land) fill_rect(layer, u, a.y1, u + bar, a.y2, P.pal->text, bar ? 128 : 40);
-        else fill_rect(layer, a.x1, u, a.x2, u + bar, P.pal->text, bar ? 128 : 40);
+        if (land) ui_next_fill_rect(layer, u, a.y1, u + bar, a.y2, P.pal->text, bar ? 128 : 40);
+        else ui_next_fill_rect(layer, a.x1, u, a.x2, u + bar, P.pal->text, bar ? 128 : 40);
     }
     /* One pixel row at a time, linear between the two nearest columns, as the
      * filled path of the board does. */
@@ -151,18 +91,18 @@ static void wf_draw_cb(lv_event_t *e)
         for (int b = 0; b < 3; b++) {
             int half = (int)(v[b] * amp[b] * (float)cross + .5f);
             if (half < 1) half = 1;
-            if (land) fill_rect(layer, ua + p, c0 - half, ua + p, c0 + half, colr[b], LV_OPA_COVER);
-            else fill_rect(layer, c0 - half, ua + p, c0 + half, ua + p, colr[b], LV_OPA_COVER);
+            if (land) ui_next_fill_rect(layer, ua + p, c0 - half, ua + p, c0 + half, colr[b], LV_OPA_COVER);
+            else ui_next_fill_rect(layer, c0 - half, ua + p, c0 + half, ua + p, colr[b], LV_OPA_COVER);
         }
     }
 
     /* Played half dimmed, playhead on top. */
     if (land) {
-        fill_rect(layer, a.x1, a.y1, a.x1 + span / 2 - 1, a.y2, P.pal->frame, 140);
-        fill_rect(layer, a.x1 + span / 2, a.y1, a.x1 + span / 2 + 1, a.y2, P.pal->accent, LV_OPA_COVER);
+        ui_next_fill_rect(layer, a.x1, a.y1, a.x1 + span / 2 - 1, a.y2, P.pal->frame, 140);
+        ui_next_fill_rect(layer, a.x1 + span / 2, a.y1, a.x1 + span / 2 + 1, a.y2, P.pal->accent, LV_OPA_COVER);
     } else {
-        fill_rect(layer, a.x1, a.y1, a.x2, a.y1 + span / 2 - 1, P.pal->frame, 140);
-        fill_rect(layer, a.x1, a.y1 + span / 2, a.x2, a.y1 + span / 2 + 1, P.pal->accent, LV_OPA_COVER);
+        ui_next_fill_rect(layer, a.x1, a.y1, a.x2, a.y1 + span / 2 - 1, P.pal->frame, 140);
+        ui_next_fill_rect(layer, a.x1, a.y1 + span / 2, a.x2, a.y1 + span / 2 + 1, P.pal->accent, LV_OPA_COVER);
     }
 
     /* Bar numbers, after the bands above the shade. */
@@ -172,8 +112,8 @@ static void wf_draw_cb(lv_event_t *e)
         char n[16];
         snprintf(n, sizeof n, "%u", (unsigned)(cl / UI_NEXT_BAR_COLUMNS + 1u));
         const int u0 = (land ? a.x1 : a.y1) + o * span / m;
-        if (land) text_at(layer, n, u0 + 3, d == 0 ? a.y1 + 1 : a.y2 - 14, P.f_tiny, P.pal->text);
-        else text_at(layer, n, d == 0 ? a.x1 + 2 : a.x2 - 16, u0 + 2, P.f_tiny, P.pal->text);
+        if (land) ui_next_text_at(layer, n, u0 + 3, d == 0 ? a.y1 + 1 : a.y2 - 14, P.f_tiny, P.pal->text);
+        else ui_next_text_at(layer, n, d == 0 ? a.x1 + 2 : a.x2 - 16, u0 + 2, P.f_tiny, P.pal->text);
     }
 }
 
@@ -211,11 +151,11 @@ static void lane_draw_cb(lv_event_t *e)
             ui_next_env_smooth(ea->lo, UI_NEXT_ENV_COLUMNS, (int32_t)cA, 2) > .30f &&
             ui_next_env_smooth(eb->lo, UI_NEXT_ENV_COLUMNS, (int32_t)((int32_t)sb + oB), 2) > .30f;
 
-        seg(layer, PX(o, 0), PY(o, 0), PX(o, 16), PY(o, 16), 1, P.pal->text, 140);
-        seg(layer, PX(oB, 84), PY(oB, 84), PX(oB, 100), PY(oB, 100), 1, P.pal->text, 140);
+        ui_next_seg(layer, PX(o, 0), PY(o, 0), PX(o, 16), PY(o, 16), 1, P.pal->text, 140);
+        ui_next_seg(layer, PX(oB, 84), PY(oB, 84), PX(oB, 100), PY(oB, 100), 1, P.pal->text, 140);
         const int tgt = bar ? oBar : oB;
         if (bar) {
-            seg(layer, PX(o, 16), PY(o, 16), PX(o, 84), PY(o, 84), 1, P.pal->text, 90);
+            ui_next_seg(layer, PX(o, 16), PY(o, 16), PX(o, 84), PY(o, 84), 1, P.pal->text, 90);
             /* Cubic from (o,16) to (tgt,84): control points (o,55) and (tgt,45). */
             float px = PX(o, 16), py = PY(o, 16);
             for (int s = 1; s <= 12; s++) {
@@ -224,25 +164,25 @@ static void lane_draw_cb(lv_event_t *e)
                 float uu = it * it * it * x0 + 3 * it * it * t * x0 + 3 * it * t * t * x3 + t * t * t * x3;
                 float vv = it * it * it * 16 + 3 * it * it * t * 55 + 3 * it * t * t * 45 + t * t * t * 84;
                 float nx = PX(uu, vv), ny = PY(uu, vv);
-                seg(layer, px, py, nx, ny, lw, P.pal->accent, LV_OPA_COVER);
+                ui_next_seg(layer, px, py, nx, ny, lw, P.pal->accent, LV_OPA_COVER);
                 px = nx;
                 py = ny;
             }
         }
         if (clash) {
             const float cx = PX(((float)o + (float)tgt) / 2, 50), cy = PY(((float)o + (float)tgt) / 2, 50);
-            seg(layer, cx, cy, cx, cy, lw + 3, P.pal->bad, LV_OPA_COVER);
+            ui_next_seg(layer, cx, cy, cx, cy, lw + 3, P.pal->bad, LV_OPA_COVER);
         }
     }
 #undef PX
 #undef PY
 
     if (land) {
-        fill_rect(layer, a.x1, a.y1, a.x1 + span / 2 - 1, a.y2, P.pal->frame, 140);
-        fill_rect(layer, a.x1 + span / 2, a.y1, a.x1 + span / 2 + 1, a.y2, P.pal->accent, LV_OPA_COVER);
+        ui_next_fill_rect(layer, a.x1, a.y1, a.x1 + span / 2 - 1, a.y2, P.pal->frame, 140);
+        ui_next_fill_rect(layer, a.x1 + span / 2, a.y1, a.x1 + span / 2 + 1, a.y2, P.pal->accent, LV_OPA_COVER);
     } else {
-        fill_rect(layer, a.x1, a.y1, a.x2, a.y1 + span / 2 - 1, P.pal->frame, 140);
-        fill_rect(layer, a.x1, a.y1 + span / 2, a.x2, a.y1 + span / 2 + 1, P.pal->accent, LV_OPA_COVER);
+        ui_next_fill_rect(layer, a.x1, a.y1, a.x2, a.y1 + span / 2 - 1, P.pal->frame, 140);
+        ui_next_fill_rect(layer, a.x1, a.y1 + span / 2, a.x2, a.y1 + span / 2 + 1, P.pal->accent, LV_OPA_COVER);
     }
 }
 
@@ -265,10 +205,10 @@ static void vu_draw_cb(lv_event_t *e)
             const float fr = ((float)k + .5f) / (float)n;
             const uint32_t c = fr < .62f ? P.pal->ok : fr < .84f ? P.pal->warn : P.pal->bad;
             const int y2 = a.y2 - k * 5;
-            fill_rect(layer, x, y2 - 3, x + bw - 1, y2, c, fr <= lev[s] ? LV_OPA_COVER : 45);
+            ui_next_fill_rect(layer, x, y2 - 3, x + bw - 1, y2, c, fr <= lev[s] ? LV_OPA_COVER : 45);
         }
         const int py = a.y2 - (int)(pk[s] * (float)h);
-        fill_rect(layer, x, py - 1, x + bw - 1, py, P.pal->text, LV_OPA_COVER);
+        ui_next_fill_rect(layer, x, py - 1, x + bw - 1, py, P.pal->text, LV_OPA_COVER);
     }
 }
 
@@ -296,17 +236,17 @@ static void ov_draw_cb(lv_event_t *e)
         for (int b = 0; b < 3; b++) {
             int half = (int)(v[b] * amp[b] * (float)h + .5f);
             if (half < 1) half = 1;
-            fill_rect(layer, a.x1 + i, c0 - half, a.x1 + i, c0 + half, colr[b], LV_OPA_COVER);
+            ui_next_fill_rect(layer, a.x1 + i, c0 - half, a.x1 + i, c0 + half, colr[b], LV_OPA_COVER);
         }
     }
     static const float CUES[] = {.04f, .13f, .26f, .5f, .62f, .9f};
     for (unsigned i = 0; i < sizeof CUES / sizeof CUES[0]; i++) {
         int x = a.x1 + (int)(CUES[i] * (float)w);
-        fill_rect(layer, x, a.y1, x + 2, a.y2, P.pal->bad, LV_OPA_COVER);
+        ui_next_fill_rect(layer, x, a.y1, x + 2, a.y2, P.pal->bad, LV_OPA_COVER);
     }
     const int px = a.x1 + (int)(P.model.deck[d].pos01 * (float)w);
-    fill_rect(layer, a.x1, a.y1, px - 1, a.y2, P.pal->frame, 140);
-    fill_rect(layer, px, a.y1, px + 1, a.y2, P.pal->accent, LV_OPA_COVER);
+    ui_next_fill_rect(layer, a.x1, a.y1, px - 1, a.y2, P.pal->frame, 140);
+    ui_next_fill_rect(layer, px, a.y1, px + 1, a.y2, P.pal->accent, LV_OPA_COVER);
 }
 
 /* ---- nav icons, drawn from segments in a 24 unit box ---- */
@@ -332,14 +272,14 @@ static void icon_draw_cb(lv_event_t *e)
         d.bg_opa = LV_OPA_TRANSP;
         d.radius = LV_RADIUS_CIRCLE;
         d.border_width = 2;
-        d.border_color = col(c);
+        d.border_color = ui_next_col(c);
         lv_area_t r = {a.x1 + (int)(6 * k), a.y1 + (int)(6 * k), a.x1 + (int)(18 * k), a.y1 + (int)(18 * k)};
         lv_draw_rect(layer, &d, &r);
         return;
     }
     for (int i = 0; i < COUNT[page]; i++) {
         const int8_t *s = S[FIRST[page] + i];
-        seg(layer, (float)a.x1 + (float)s[0] * k, (float)a.y1 + (float)s[1] * k,
+        ui_next_seg(layer, (float)a.x1 + (float)s[0] * k, (float)a.y1 + (float)s[1] * k,
             (float)a.x1 + (float)s[2] * k, (float)a.y1 + (float)s[3] * k, 2, c, LV_OPA_COVER);
     }
 }
@@ -348,20 +288,14 @@ static void icon_draw_cb(lv_event_t *e)
 
 static void pick_fonts(ui_next_class_t cls)
 {
-    static const lv_font_t *const TXT[] = {&ui_next_roboto_reg_14, &ui_next_roboto_reg_16, &ui_next_roboto_reg_18};
-    static const lv_font_t *const MED[] = {&ui_next_roboto_med_16, &ui_next_roboto_med_18, &ui_next_roboto_med_18};
-    static const lv_font_t *const TINY[] = {&ui_next_cousine_bold_10, &ui_next_cousine_bold_10, &ui_next_cousine_bold_12};
-    static const lv_font_t *const MONO[] = {&ui_next_cousine_reg_12, &ui_next_cousine_reg_12, &ui_next_cousine_reg_14};
-    static const lv_font_t *const BIG[] = {&ui_next_cousine_reg_20, &ui_next_cousine_reg_20, &ui_next_cousine_reg_20};
-    static const lv_font_t *const BPM[] = {&ui_next_cousine_reg_16, &ui_next_cousine_reg_16, &ui_next_cousine_reg_20};
-    static const lv_font_t *const VAL[] = {&ui_next_roboto_reg_12, &ui_next_roboto_med_14, &ui_next_roboto_med_16};
-    P.f_txt = TXT[cls];
-    P.f_med = MED[cls];
-    P.f_tiny = TINY[cls];
-    P.f_mono = MONO[cls];
-    P.f_big = BIG[cls];
-    P.f_bpm = BPM[cls];
-    P.f_val = VAL[cls];
+    const ui_next_fonts_t *f = ui_next_fonts_for(cls);
+    P.f_txt = f->txt;
+    P.f_med = f->med;
+    P.f_tiny = f->tiny;
+    P.f_mono = f->mono;
+    P.f_big = f->big;
+    P.f_bpm = f->bpm;
+    P.f_val = f->val;
 }
 
 static lv_obj_t *chip(lv_obj_t *parent, const char *s)
@@ -370,23 +304,23 @@ static lv_obj_t *chip(lv_obj_t *parent, const char *s)
     lv_obj_remove_style_all(c);
     lv_obj_remove_flag(c, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_CLICKABLE);
     lv_obj_set_size(c, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
-    lv_obj_set_style_bg_color(c, col(P.pal->chip), 0);
+    lv_obj_set_style_bg_color(c, ui_next_col(P.pal->chip), 0);
     lv_obj_set_style_bg_opa(c, LV_OPA_COVER, 0);
     lv_obj_set_style_radius(c, LV_RADIUS_CIRCLE, 0);
     lv_obj_set_style_pad_hor(c, P.lay.tok.pad_px - 2, 0);
     lv_obj_set_style_pad_ver(c, 3, 0);
     lv_obj_set_flex_flow(c, LV_FLEX_FLOW_ROW);
     lv_obj_set_flex_align(c, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-    label(c, s, P.f_mono, P.pal->text);
+    ui_next_label(c, s, P.f_mono, P.pal->text);
     return c;
 }
 
 static void build_top_bar(void)
 {
     const ui_next_rect_t r = P.lay.top_bar;
-    lv_obj_t *bar = box(P.root, r.x, r.y, r.w, r.h, P.pal->panel);
-    box(bar, 0, r.h - 1, r.w, 1, P.pal->border);
-    P.title = label(bar, "PERFORM", P.f_med, P.pal->text);
+    lv_obj_t *bar = ui_next_box(P.root, r.x, r.y, r.w, r.h, P.pal->panel);
+    ui_next_box(bar, 0, r.h - 1, r.w, 1, P.pal->border);
+    P.title = ui_next_label(bar, "PERFORM", P.f_med, P.pal->text);
     lv_obj_align(P.title, LV_ALIGN_LEFT_MID, P.lay.tok.pad_px, 0);
 
     lv_obj_t *right = lv_obj_create(bar);
@@ -407,14 +341,14 @@ static void build_top_bar(void)
 static void build_nav(void)
 {
     const ui_next_rect_t r = P.lay.nav;
-    lv_obj_t *nav = box(P.root, r.x, r.y, r.w, r.h, P.pal->nav);
-    if (P.lay.landscape) box(nav, r.w - 1, 0, 1, r.h, P.pal->border);
-    else box(nav, 0, 0, r.w, 1, P.pal->border);
+    lv_obj_t *nav = ui_next_box(P.root, r.x, r.y, r.w, r.h, P.pal->nav);
+    if (P.lay.landscape) ui_next_box(nav, r.w - 1, 0, 1, r.h, P.pal->border);
+    else ui_next_box(nav, 0, 0, r.w, 1, P.pal->border);
     const int isz = P.lay.cls == UI_NEXT_CLASS_S ? 24 : P.lay.cls == UI_NEXT_CLASS_M ? 26 : 29;
     for (int i = 0; i < UI_NEXT_PAGE_COUNT; i++) {
         const int iw = P.lay.landscape ? r.w : r.w / UI_NEXT_PAGE_COUNT;
         const int ih = P.lay.landscape ? r.h / UI_NEXT_PAGE_COUNT : r.h;
-        lv_obj_t *item = box(nav, P.lay.landscape ? 0 : i * iw, P.lay.landscape ? i * ih : 0, iw, ih,
+        lv_obj_t *item = ui_next_box(nav, P.lay.landscape ? 0 : i * iw, P.lay.landscape ? i * ih : 0, iw, ih,
                              i == (int)P.page ? P.pal->sel : P.pal->nav);
         lv_obj_t *ic = lv_obj_create(item);
         lv_obj_remove_style_all(ic);
@@ -423,25 +357,25 @@ static void build_nav(void)
         lv_obj_align(ic, LV_ALIGN_CENTER, 0, -8);
         lv_obj_add_event_cb(ic, icon_draw_cb, LV_EVENT_DRAW_MAIN, (void *)(intptr_t)i);
         P.nav_icon[i] = ic;
-        lv_obj_t *l = label(item, NAV_NAME[i], P.f_tiny, i == (int)P.page ? P.pal->accent_ink : P.pal->muted);
+        lv_obj_t *l = ui_next_label(item, NAV_NAME[i], P.f_tiny, i == (int)P.page ? P.pal->accent_ink : P.pal->muted);
         lv_obj_align(l, LV_ALIGN_CENTER, 0, isz / 2 + 2);
     }
 }
 
 static lv_obj_t *wf_obj(int x, int y, int w, int h, int d)
 {
-    lv_obj_t *o = box(P.root, x, y, w, h, P.pal->well);
+    lv_obj_t *o = ui_next_box(P.root, x, y, w, h, P.pal->well);
     lv_obj_set_style_radius(o, 4, 0);
     lv_obj_set_style_clip_corner(o, true, 0);
     lv_obj_add_event_cb(o, wf_draw_cb, LV_EVENT_DRAW_MAIN, (void *)(intptr_t)d);
     char t[24];
     snprintf(t, sizeof t, d ? "B  119.0 BPM  9A" : "A  124.0 BPM  8A");
-    lv_obj_t *tag = box(o, 6, 4, LV_SIZE_CONTENT, LV_SIZE_CONTENT, P.pal->frame);
+    lv_obj_t *tag = ui_next_box(o, 6, 4, LV_SIZE_CONTENT, LV_SIZE_CONTENT, P.pal->frame);
     lv_obj_set_style_bg_opa(tag, 166, 0);
     lv_obj_set_style_radius(tag, 3, 0);
     lv_obj_set_style_pad_hor(tag, 5, 0);
     lv_obj_set_style_pad_ver(tag, 1, 0);
-    label(tag, t, P.f_tiny, P.pal->text);
+    ui_next_label(tag, t, P.f_tiny, P.pal->text);
     if (!P.landscape && d == 1) lv_obj_align(tag, LV_ALIGN_TOP_RIGHT, -6, 4);
     else if (P.landscape && d == 1) lv_obj_align(tag, LV_ALIGN_BOTTOM_LEFT, 6, -4);
     return o;
@@ -459,22 +393,22 @@ static void build_waveforms(void)
         const int dh = (h - lane - 2 * gap) / 2;
         for (int d = 0; d < 2; d++) {
             const int y = y0 + d * (dh + lane + 2 * gap);
-            P.vu[d] = box(P.root, x0, y, vuw, dh, P.pal->frame);
+            P.vu[d] = ui_next_box(P.root, x0, y, vuw, dh, P.pal->frame);
             lv_obj_add_event_cb(P.vu[d], vu_draw_cb, LV_EVENT_DRAW_MAIN, (void *)(intptr_t)d);
             P.wf[d] = wf_obj(x0 + vuw + 3, y, w - vuw - 3, dh, d);
         }
-        P.lane = box(P.root, x0 + vuw + 3, y0 + dh + gap, w - vuw - 3, lane, P.pal->nav);
+        P.lane = ui_next_box(P.root, x0 + vuw + 3, y0 + dh + gap, w - vuw - 3, lane, P.pal->nav);
     } else {
         const int dw = (w - lane - 2 * gap) / 2;
         for (int d = 0; d < 2; d++) {
             const int x = x0 + d * (dw + lane + 2 * gap);
             const int vx = d == 0 ? x : x + dw - vuw;
             const int wx = d == 0 ? x + vuw + 3 : x;
-            P.vu[d] = box(P.root, vx, y0, vuw, h, P.pal->frame);
+            P.vu[d] = ui_next_box(P.root, vx, y0, vuw, h, P.pal->frame);
             lv_obj_add_event_cb(P.vu[d], vu_draw_cb, LV_EVENT_DRAW_MAIN, (void *)(intptr_t)d);
             P.wf[d] = wf_obj(wx, y0, dw - vuw - 3, h, d);
         }
-        P.lane = box(P.root, x0 + dw + gap, y0, lane, h, P.pal->nav);
+        P.lane = ui_next_box(P.root, x0 + dw + gap, y0, lane, h, P.pal->nav);
     }
     lv_obj_set_style_radius(P.lane, 3, 0);
     lv_obj_set_style_clip_corner(P.lane, true, 0);
@@ -485,10 +419,10 @@ static void build_link_bar(void)
 {
     const ui_next_rect_t r = P.lay.link_bar;
     const int pad = P.lay.tok.pad_px;
-    lv_obj_t *bar = box(P.root, r.x + pad, r.y, r.w - 2 * pad, r.h - 2, 0x0E141B);
-    if (P.day) lv_obj_set_style_bg_color(bar, col(P.pal->nav), 0);
+    lv_obj_t *bar = ui_next_box(P.root, r.x + pad, r.y, r.w - 2 * pad, r.h - 2, 0x0E141B);
+    if (P.day) lv_obj_set_style_bg_color(bar, ui_next_col(P.pal->nav), 0);
     lv_obj_set_style_border_width(bar, 1, 0);
-    lv_obj_set_style_border_color(bar, col(P.pal->border), 0);
+    lv_obj_set_style_border_color(bar, ui_next_col(P.pal->border), 0);
     lv_obj_set_style_radius(bar, 6, 0);
 
     const bool one_row = P.lay.cls == UI_NEXT_CLASS_L;
@@ -509,11 +443,11 @@ static void build_link_bar(void)
         link_cell_t *c = &P.cells[i];
         c->solid = i == 4 || i == 6;
         c->span = (uint8_t)span;
-        c->cell = box(bar, cx, cy, cw, cell_h, c->solid ? P.pal->ok : P.pal->nav);
+        c->cell = ui_next_box(bar, cx, cy, cw, cell_h, c->solid ? P.pal->ok : P.pal->nav);
         lv_obj_set_style_bg_opa(c->cell, c->solid ? LV_OPA_COVER : LV_OPA_TRANSP, 0);
         lv_obj_set_style_radius(c->cell, 4, 0);
-        c->label = label(c->cell, "", P.f_tiny, c->solid ? 0x0B0F14 : P.pal->muted);
-        c->value = label(c->cell, "", P.f_val, c->solid ? 0x0B0F14 : P.pal->text);
+        c->label = ui_next_label(c->cell, "", P.f_tiny, c->solid ? 0x0B0F14 : P.pal->muted);
+        c->value = ui_next_label(c->cell, "", P.f_val, c->solid ? 0x0B0F14 : P.pal->text);
         if (c->solid) {
             lv_obj_align(c->label, LV_ALIGN_TOP_MID, 0, -1);
             lv_obj_align(c->value, LV_ALIGN_BOTTOM_MID, 0, 2);
@@ -521,10 +455,10 @@ static void build_link_bar(void)
             lv_obj_align(c->label, LV_ALIGN_TOP_LEFT, 2, 0);
             lv_obj_align(c->value, LV_ALIGN_TOP_RIGHT, -2, 0);
             const int th = P.lay.tok.text_px / 2;
-            c->track = box(c->cell, 2, cell_h - th - 1, cw - 4, th, P.day ? 0xD5DCE5 : 0x222C38);
+            c->track = ui_next_box(c->cell, 2, cell_h - th - 1, cw - 4, th, P.day ? 0xD5DCE5 : 0x222C38);
             lv_obj_set_style_radius(c->track, 3, 0);
-            c->fill = box(c->track, 0, 0, 0, th, P.pal->warn);
-            c->zero = box(c->track, (cw - 4) / 2 - 1, -1, 2, th + 2, P.pal->text);
+            c->fill = ui_next_box(c->track, 0, 0, 0, th, P.pal->warn);
+            c->zero = ui_next_box(c->track, (cw - 4) / 2 - 1, -1, 2, th + 2, P.pal->text);
             lv_obj_set_style_bg_opa(c->zero, 200, 0);
         }
         col_i += span;
@@ -535,9 +469,9 @@ static lv_obj_t *dock_card(int d)
 {
     const ui_next_rect_t r = P.lay.deck_card[d];
     const int pad = P.lay.tok.pad_px, gap = P.lay.tok.gap_px;
-    lv_obj_t *card = box(P.root, r.x, r.y, r.w, r.h, P.pal->nav);
-    if (P.landscape && d == 1) box(card, 0, 0, 1, r.h, P.pal->border);
-    if (!(P.landscape == false && d == 1)) box(card, 0, 0, r.w, 1, P.pal->border);
+    lv_obj_t *card = ui_next_box(P.root, r.x, r.y, r.w, r.h, P.pal->nav);
+    if (P.landscape && d == 1) ui_next_box(card, 0, 0, 1, r.h, P.pal->border);
+    if (!(P.landscape == false && d == 1)) ui_next_box(card, 0, 0, r.w, 1, P.pal->border);
 
     lv_obj_t *head = lv_obj_create(card);
     lv_obj_remove_style_all(head);
@@ -548,14 +482,14 @@ static lv_obj_t *dock_card(int d)
     lv_obj_set_flex_align(head, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_set_style_pad_column(head, gap, 0);
 
-    label(head, d ? "B" : "A", P.f_big, P.pal->accent_ink);
-    P.dk_title[d] = label(head, "", P.f_med, P.pal->text);
+    ui_next_label(head, d ? "B" : "A", P.f_big, P.pal->accent_ink);
+    P.dk_title[d] = ui_next_label(head, "", P.f_med, P.pal->text);
     lv_obj_set_flex_grow(P.dk_title[d], 1);
     lv_label_set_long_mode(P.dk_title[d], LV_LABEL_LONG_MODE_DOTS);
-    P.dk_bpm[d] = label(head, "", P.f_bpm, P.pal->text);
-    P.dk_key[d] = label(head, "", P.f_mono, P.pal->text);
-    P.dk_badge[d] = label(head, "", P.f_tiny, P.pal->on_accent);
-    P.dk_time[d] = label(head, "", P.f_mono, P.pal->text);
+    P.dk_bpm[d] = ui_next_label(head, "", P.f_bpm, P.pal->text);
+    P.dk_key[d] = ui_next_label(head, "", P.f_mono, P.pal->text);
+    P.dk_badge[d] = ui_next_label(head, "", P.f_tiny, P.pal->on_accent);
+    P.dk_time[d] = ui_next_label(head, "", P.f_mono, P.pal->text);
     lv_obj_t *chips[2] = {P.dk_key[d], P.dk_badge[d]};
     for (int i = 0; i < 2; i++) {
         lv_obj_set_style_bg_opa(chips[i], LV_OPA_COVER, 0);
@@ -566,7 +500,7 @@ static lv_obj_t *dock_card(int d)
 
     lv_obj_update_layout(head);
     const int oy = gap - 2 + lv_obj_get_height(head) + 6;
-    P.ov[d] = box(card, pad, oy, r.w - 2 * pad, r.h - oy - gap, P.pal->well);
+    P.ov[d] = ui_next_box(card, pad, oy, r.w - 2 * pad, r.h - oy - gap, P.pal->well);
     lv_obj_set_style_radius(P.ov[d], 4, 0);
     lv_obj_set_style_clip_corner(P.ov[d], true, 0);
     lv_obj_add_event_cb(P.ov[d], ov_draw_cb, LV_EVENT_DRAW_MAIN, (void *)(intptr_t)d);
@@ -585,7 +519,7 @@ lv_obj_t *ui_next_perform_create(lv_obj_t *parent, uint16_t w, uint16_t h, bool 
     P.mcols = WIN[P.lay.cls];
     pick_fonts(P.lay.cls);
 
-    P.root = box(parent, 0, 0, w, h, P.pal->frame);
+    P.root = ui_next_box(parent, 0, 0, w, h, P.pal->frame);
     build_waveforms();
     build_link_bar();
     dock_card(0);
@@ -613,14 +547,14 @@ static void set_meter(link_cell_t *c, const char *name, const char *val, float n
     }
     lv_obj_set_pos(c->fill, x, 0);
     lv_obj_set_size(c->fill, w, th);
-    lv_obj_set_style_bg_color(c->fill, col(colr), 0);
+    lv_obj_set_style_bg_color(c->fill, ui_next_col(colr), 0);
 }
 
 static void set_solid(link_cell_t *c, const char *name, const char *val, uint32_t colr)
 {
     lv_label_set_text(c->label, name);
     lv_label_set_text(c->value, val);
-    lv_obj_set_style_bg_color(c->cell, col(colr), 0);
+    lv_obj_set_style_bg_color(c->cell, ui_next_col(colr), 0);
     lv_obj_align(c->label, LV_ALIGN_TOP_MID, 0, -1);
     lv_obj_align(c->value, LV_ALIGN_BOTTOM_MID, 0, 2);
 }
@@ -642,10 +576,10 @@ void ui_next_perform_update(const ui_next_perform_model_t *m)
         lv_label_set_text(P.dk_key[d], k->key);
         lv_label_set_text(P.dk_badge[d], k->badge);
         lv_label_set_text(P.dk_time[d], k->time);
-        lv_obj_set_style_bg_color(P.dk_key[d], col(k->key_fit ? P.pal->ok : P.pal->chip), 0);
-        lv_obj_set_style_text_color(P.dk_key[d], col(k->key_fit ? P.pal->on_accent : P.pal->text), 0);
-        lv_obj_set_style_bg_color(P.dk_badge[d], col(k->badge_on ? P.pal->accent : (P.day ? 0xCBD3DD : 0x2A313C)), 0);
-        lv_obj_set_style_text_color(P.dk_badge[d], col(k->badge_on ? P.pal->on_accent : P.pal->muted), 0);
+        lv_obj_set_style_bg_color(P.dk_key[d], ui_next_col(k->key_fit ? P.pal->ok : P.pal->chip), 0);
+        lv_obj_set_style_text_color(P.dk_key[d], ui_next_col(k->key_fit ? P.pal->on_accent : P.pal->text), 0);
+        lv_obj_set_style_bg_color(P.dk_badge[d], ui_next_col(k->badge_on ? P.pal->accent : (P.day ? 0xCBD3DD : 0x2A313C)), 0);
+        lv_obj_set_style_text_color(P.dk_badge[d], ui_next_col(k->badge_on ? P.pal->on_accent : P.pal->muted), 0);
         lv_obj_invalidate(P.wf[d]);
         lv_obj_invalidate(P.vu[d]);
         lv_obj_invalidate(P.ov[d]);
