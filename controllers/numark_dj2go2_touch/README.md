@@ -1,6 +1,6 @@
 # Numark DJ2GO2 Touch: software profile
 
-Status: software profile. Hardware run: the operator ran it on a real DJ2GO2 Touch on 2026-10-13: buttons, faders, jog, levels, browse, crossfader and USB disconnect OK; LEDs, Note Off velocity and the audio paths were not reported (see "Bench checks"), so this is a partial acceptance. The profile comes from a public mapping.
+Status: software profile. Hardware run: the operator ran it on a real DJ2GO2 Touch on 2026-10-13: buttons, faders, jog, levels, browse, crossfader, audio (Main and Cue) and USB disconnect OK; LEDs, Note Off velocity and the level double change were not reported (see "Bench checks"), so this is a partial acceptance. The profile comes from a public mapping.
 
 Build: S3CP v4, 1999 bytes, 100 inputs, 30 outputs, VID/PID `15E4:003C`.
 
@@ -99,6 +99,6 @@ Operator run on a real DJ2GO2 Touch, 2026-10-13 (reported in one line, no values
 | Note Off velocity of each button | not reported |
 | LEDs in the four pad modes | not reported |
 | Master Level and Cue Level double change | not reported |
-| Audio to Main and to the headphones | not reported |
+| Audio to Main and to the headphones (Cue) | OK |
 
-The four "not reported" rows are still to be run or recorded. The USB ID and the audio descriptor already come from a real unit.
+The three "not reported" rows are still to be run or recorded. The USB ID and the audio descriptor already come from a real unit.
