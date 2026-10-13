@@ -23,6 +23,7 @@ static struct {
     lv_obj_t *cue_chip[UI_NEXT_TI_CUES], *cue_badge[UI_NEXT_TI_CUES], *cue_time[UI_NEXT_TI_CUES];
     lv_obj_t *stat_val[6];
     ui_next_trackinfo_model_t m;
+    lv_grad_dsc_t cover;
 } T;
 
 static void wave_cb(lv_event_t *e)
@@ -50,7 +51,6 @@ static int build_header(int x, int y)
     const int art = T.row_h * 17 / 10;
     T.art = ui_next_box(T.root, x, y, art, art, T.pal->chip);
     lv_obj_set_style_radius(T.art, 6, 0);
-    lv_obj_set_style_bg_grad_dir(T.art, LV_GRAD_DIR_VER, 0);
     const int tx = x + art + T.pad;
     T.title = ui_next_label(T.root, "", T.f->h2, T.pal->text);
     lv_obj_set_pos(T.title, tx, y);
@@ -248,8 +248,7 @@ void ui_next_trackinfo_update(const ui_next_trackinfo_model_t *m)
     lv_label_set_text(T.title, m->title);
     lv_label_set_text(T.artist, m->artist);
     lv_label_set_text(T.album, m->album);
-    lv_obj_set_style_bg_color(T.art, ui_next_col(m->art0), 0);
-    lv_obj_set_style_bg_grad_color(T.art, ui_next_col(m->art1), 0);
+    ui_next_cover(T.art, &T.cover, m->art0, m->art1);
     lv_label_set_text(T.tag_genre_txt, m->genre);
     if (T.tag_label) {
         lv_label_set_text(T.tag_label_txt, m->label);

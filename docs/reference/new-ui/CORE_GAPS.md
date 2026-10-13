@@ -67,3 +67,21 @@ mark it `exists`, `partial` or `missing`.
 - No call into the core that does not exist today. Use a stub with a demo value.
 - Each stub carries a `// CORE-GAP: <id>` comment that matches a line above.
 - The UI never blocks the audio task. Alerts run on the UI task only.
+
+## UI gaps left
+
+What the boards do not settle. These need a design decision, not core work.
+
+| Where | Gap | State |
+| --- | --- | --- |
+| Alerts | No Day board. The dim layer is a dark scrim at 45 % (rgba 20,24,31) on Day, 74 % of the frame colour on Night. | Assumption, to confirm |
+| Source | The panel of a drive (storage, analysis status, safe eject, LB-12) has no board. Only NETWORK has one. | No design |
+| Perform | Layers 5 to 7 (structure, DJ aid, link) are only named in the chips; the boards draw nothing more for them. | Nothing to draw |
+| Device | Cost on the P4 is not measured: 23 font files in flash, the shadow and scale of the lifted row (Browse edit), the 135 degree cover gradients, 30 fps on the three-band waveforms. | To measure |
+| Fonts | The licence text of each font is not confirmed (open question of the backlog). | Open |
+
+Closed in the last pass: the dashed outline of "+ TAG" and of the EXT tag, the
+diagonal cover gradient, the "+N BEATS" chip of the weave lane, smooth wide
+overviews, vertical bar numbers in portrait, section tints and names, and the
+Day palette of Perform. The Source storage bars end at the status chip on the
+board as well, so that was never a gap.

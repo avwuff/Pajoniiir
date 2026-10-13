@@ -45,6 +45,12 @@ void ui_next_fill_rect(lv_layer_t *layer, int x1, int y1, int x2, int y2, uint32
 void ui_next_seg(lv_layer_t *layer, float x1, float y1, float x2, float y2, int w, uint32_t rgb, lv_opa_t opa);
 void ui_next_text_at(lv_layer_t *layer, const char *s, int x, int y, const lv_font_t *f, uint32_t rgb);
 
+/* Dashed outline of a rounded rectangle, 1 px, `dash` on and `gap` off. LVGL borders are solid. */
+void ui_next_dashed_round(lv_layer_t *layer, const lv_area_t *a, int radius, uint32_t rgb, int dash, int gap);
+
+/* Cover placeholder: a 135 degree gradient from `c0` (top left) to `c1`. `g` must outlive the object. */
+void ui_next_cover(lv_obj_t *obj, lv_grad_dsc_t *g, uint32_t c0, uint32_t c1);
+
 /* Text running downwards, as writing-mode vertical-rl: its top edge is at x, its start at y. */
 void ui_next_text_down(lv_layer_t *layer, const char *s, int x, int y, const lv_font_t *f, uint32_t rgb, lv_opa_t opa);
 

@@ -35,13 +35,21 @@ void ui_next_chrome_draw_overview_ex(lv_layer_t *layer, const lv_area_t *a, cons
     const int w = lv_area_get_width(a), h = lv_area_get_height(a), c0 = a->y1 + h / 2;
     const float amp[3] = {.49f, .38f, .26f};
     const uint32_t colr[3] = {pal->wave_low, pal->wave_mid, pal->wave_high};
+    /* The board draws 400 points (the peak of 3 columns each) joined by straight lines;
+     * between two points the value is interpolated, so wide strips stay smooth. */
     for (int i = 0; i < w; i++) {
-        const uint32_t c = (uint32_t)i * 400u / (uint32_t)w * 3u;
-        float v[3] = {0, 0, 0};
-        for (uint32_t j = 0; j < 3u && c + j < UI_NEXT_ENV_COLUMNS; j++) {
-            if (env->lo[c + j] > v[0]) v[0] = env->lo[c + j];
-            if (env->mi[c + j] > v[1]) v[1] = env->mi[c + j];
-            if (env->hi[c + j] > v[2]) v[2] = env->hi[c + j];
+        const float pos = (float)i * 400.0f / (float)w;
+        const uint32_t k0 = (uint32_t)pos, k1 = k0 + 1u < 400u ? k0 + 1u : k0;
+        const float fr = pos - (float)k0;
+        float v[3];
+        for (int b = 0; b < 3; b++) {
+            const float *arr = b == 0 ? env->lo : b == 1 ? env->mi : env->hi;
+            float p0 = 0, p1 = 0;
+            for (uint32_t j = 0; j < 3u; j++) {
+                if (arr[k0 * 3u + j] > p0) p0 = arr[k0 * 3u + j];
+                if (arr[k1 * 3u + j] > p1) p1 = arr[k1 * 3u + j];
+            }
+            v[b] = p0 + (p1 - p0) * fr;
         }
         for (int b = 0; b < 3; b++) {
             int half = (int)(v[b] * amp[b] * (float)h + .5f);

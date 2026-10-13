@@ -1,5 +1,7 @@
 #include "ui_next_util.h"
 
+#include <math.h>
+
 #include "ui_next_fonts.h"
 
 const ui_next_fonts_t *ui_next_fonts_for(ui_next_class_t cls)
@@ -101,4 +103,45 @@ void ui_next_text_down(lv_layer_t *layer, const char *s, int x, int y, const lv_
         lv_draw_letter(layer, &d, &p);
         pen += lv_font_get_glyph_width(f, d.unicode, (uint32_t)(unsigned char)c[1]);
     }
+}
+
+typedef struct {
+    lv_layer_t *layer;
+    uint32_t rgb;
+    float len, dash, period;
+} dash_t;
+
+static void dash_pt(dash_t *d, float x, float y)
+{
+    if (fmodf(d->len, d->period) < d->dash) ui_next_fill_rect(d->layer, (int)(x + .5f), (int)(y + .5f), (int)(x + .5f), (int)(y + .5f), d->rgb, LV_OPA_COVER);
+    d->len += 1.0f;
+}
+
+void ui_next_dashed_round(lv_layer_t *layer, const lv_area_t *a, int radius, uint32_t rgb, int dash, int gap)
+{
+    dash_t d = {layer, rgb, 0.0f, (float)dash, (float)(dash + gap)};
+    const float x1 = (float)a->x1 + .5f, y1 = (float)a->y1 + .5f, x2 = (float)a->x2 + .5f, y2 = (float)a->y2 + .5f;
+    float r = (float)radius;
+    const float half = fminf(x2 - x1, y2 - y1) / 2.0f;
+    if (r > half) r = half;
+    const float pi = 3.14159265f;
+    /* Clockwise from the top left corner: top edge, corner arc, right edge, ... */
+    for (float x = x1 + r; x < x2 - r; x += 1.0f) dash_pt(&d, x, y1);
+    for (float t = 0; t < r * pi / 2; t += 1.0f) dash_pt(&d, x2 - r + r * sinf(t / r), y1 + r - r * cosf(t / r));
+    for (float y = y1 + r; y < y2 - r; y += 1.0f) dash_pt(&d, x2, y);
+    for (float t = 0; t < r * pi / 2; t += 1.0f) dash_pt(&d, x2 - r + r * cosf(t / r), y2 - r + r * sinf(t / r));
+    for (float x = x2 - r; x > x1 + r; x -= 1.0f) dash_pt(&d, x, y2);
+    for (float t = 0; t < r * pi / 2; t += 1.0f) dash_pt(&d, x1 + r - r * sinf(t / r), y2 - r + r * cosf(t / r));
+    for (float y = y2 - r; y > y1 + r; y -= 1.0f) dash_pt(&d, x1, y);
+    for (float t = 0; t < r * pi / 2; t += 1.0f) dash_pt(&d, x1 + r - r * cosf(t / r), y1 + r - r * sinf(t / r));
+}
+
+void ui_next_cover(lv_obj_t *obj, lv_grad_dsc_t *g, uint32_t c0, uint32_t c1)
+{
+    const lv_color_t cols[2] = {lv_color_hex(c0), lv_color_hex(c1)};
+    const lv_opa_t opas[2] = {LV_OPA_COVER, LV_OPA_COVER};
+    const uint8_t fracs[2] = {0, 255};
+    lv_grad_init_stops(g, cols, opas, fracs, 2);
+    lv_grad_linear_init(g, 0, 0, lv_pct(100), lv_pct(100), LV_GRAD_EXTEND_PAD);
+    lv_obj_set_style_bg_grad(obj, g, 0);
 }

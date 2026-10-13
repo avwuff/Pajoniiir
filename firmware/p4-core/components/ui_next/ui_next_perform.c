@@ -4,6 +4,7 @@
 
 #include "ui_next.h"
 #include "ui_next_chrome.h"
+#include "ui_next_fonts.h"
 #include "ui_next_theme.h"
 #include "ui_next_util.h"
 
@@ -26,11 +27,11 @@ static struct {
     ui_next_perform_model_t model;
     uint16_t mcols;
     bool landscape;
-    lv_obj_t *root, *title, *chip_layers;
+    lv_obj_t *root, *title, *chip_layers, *lane_chip;
     lv_obj_t *wf[2], *lane, *vu[2];
     link_cell_t cells[LINK_CELLS];
     ui_next_page_t page;
-    const lv_font_t *f_txt, *f_med, *f_tiny, *f_mono, *f_big, *f_bpm, *f_val;
+    const lv_font_t *f_txt, *f_med, *f_tiny, *f_mono, *f_big, *f_bpm, *f_val, *f_micro;
 } P;
 
 /* ---- small helpers ---- */
@@ -249,6 +250,14 @@ static void pick_fonts(ui_next_class_t cls)
     P.f_big = f->big;
     P.f_bpm = f->bpm;
     P.f_val = f->val;
+    P.f_micro = f->micro;
+}
+
+static void ext_tag_cb(lv_event_t *e)
+{
+    lv_area_t a;
+    lv_obj_get_coords(lv_event_get_target_obj(e), &a);
+    ui_next_dashed_round(lv_event_get_layer(e), &a, 4, P.pal->accent_ink, 3, 2);
 }
 
 static void build_top_bar(void)
@@ -269,8 +278,17 @@ static void build_top_bar(void)
     lv_obj_align(right, LV_ALIGN_RIGHT_MID, -P.lay.tok.pad_px, 0);
     P.chip_layers = ui_next_chrome_chip(right, "LAYERS 1-4");
     if (P.lay.landscape && P.lay.cls != UI_NEXT_CLASS_S) {
-        lv_obj_t *ext = ui_next_chrome_chip(right, "EXT ON");
-        (void)ext;
+        /* EXT chip: the word, then a small dashed tag (ON on M and L, LOW on S). */
+        lv_obj_t *ext = ui_next_chrome_chip(right, "EXT");
+        lv_obj_set_style_pad_column(ext, 6, 0);
+        lv_obj_t *xt = lv_obj_create(ext);
+        lv_obj_remove_style_all(xt);
+        lv_obj_remove_flag(xt, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_CLICKABLE);
+        lv_obj_set_size(xt, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
+        lv_obj_set_style_pad_hor(xt, 4, 0);
+        lv_obj_set_style_pad_ver(xt, 1, 0);
+        ui_next_label(xt, "ON", P.f_micro, P.pal->accent_ink);
+        lv_obj_add_event_cb(xt, ext_tag_cb, LV_EVENT_DRAW_POST, NULL);
     }
 }
 
@@ -325,6 +343,20 @@ static void build_waveforms(void)
     lv_obj_set_style_radius(P.lane, 3, 0);
     lv_obj_set_style_clip_corner(P.lane, true, 0);
     lv_obj_add_event_cb(P.lane, lane_draw_cb, LV_EVENT_DRAW_MAIN, NULL);
+    if (P.landscape && P.lay.cls != UI_NEXT_CLASS_S) {
+        /* Phrase offset chip at the left of the lane (PB-17), from the M class up. */
+        P.lane_chip = ui_next_box(P.lane, 8, 0, 10, 10, P.pal->well);
+        lv_obj_set_width(P.lane_chip, LV_SIZE_CONTENT);
+        lv_obj_set_height(P.lane_chip, LV_SIZE_CONTENT);
+        lv_obj_set_style_radius(P.lane_chip, 3, 0);
+        lv_obj_set_style_border_width(P.lane_chip, 1, 0);
+        lv_obj_set_style_border_color(P.lane_chip, ui_next_col(P.pal->accent_ink), 0);
+        lv_obj_set_style_pad_hor(P.lane_chip, 6, 0);
+        lv_obj_set_style_pad_ver(P.lane_chip, 1, 0);
+        const lv_font_t *bf = P.lay.cls == UI_NEXT_CLASS_L ? &ui_next_cousine_bold_14 : &ui_next_cousine_bold_12;
+        ui_next_label(P.lane_chip, "", bf, P.pal->text);
+        lv_obj_align(P.lane_chip, LV_ALIGN_LEFT_MID, 8, 0);
+    }
 }
 
 static void build_link_bar(void)
@@ -437,6 +469,11 @@ void ui_next_perform_update(const ui_next_perform_model_t *m)
     const ui_next_link_t *lk = &m->link;
     char s[24];
 
+    if (P.lane_chip) {
+        char b[16];
+        snprintf(b, sizeof b, "+%u BEATS", (unsigned)lk->phrase_off);
+        lv_label_set_text(lv_obj_get_child(P.lane_chip, 0), b);
+    }
     lv_obj_t *lbl = lv_obj_get_child(P.chip_layers, 0);
     lv_label_set_text(lbl, m->layers);
 

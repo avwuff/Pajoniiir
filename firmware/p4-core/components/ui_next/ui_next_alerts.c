@@ -146,8 +146,9 @@ lv_obj_t *ui_next_alerts_create(lv_obj_t *parent, uint16_t w, uint16_t h, bool d
     lv_obj_remove_style_all(A.root);
     lv_obj_remove_flag(A.root, LV_OBJ_FLAG_SCROLLABLE);
     lv_obj_set_size(A.root, w, h);
-    A.dim = ui_next_box(A.root, 0, 0, w, h, A.pal->frame);
-    lv_obj_set_style_bg_opa(A.dim, DIM_OPA, 0);
+    /* Night: rgba(5,7,10,.74). Day has no board; a dim still darkens: rgba(20,24,31,.45). */
+    A.dim = ui_next_box(A.root, 0, 0, w, h, day ? 0x14181F : A.pal->frame);
+    lv_obj_set_style_bg_opa(A.dim, day ? 115 : DIM_OPA, 0);
     build_toasts();
     build_modal();
     return A.root;

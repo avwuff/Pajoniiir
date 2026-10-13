@@ -15,6 +15,7 @@
 typedef struct {
     lv_obj_t *rw, *rwi, *th, *art, *title, *artist, *dots[3], *names[3], *genre, *bpm, *key, *time;
     lv_obj_t *acts, *back, *grip, *num, *ins;
+    lv_grad_dsc_t cover;
     bool lifted;
 } row_t;
 
@@ -149,6 +150,14 @@ static int build_edit_strip(int x, int y, int w)
     return h;
 }
 
+/* "+ TAG" has a dashed outline on the board. */
+static void add_tag_cb(lv_event_t *e)
+{
+    lv_area_t a;
+    lv_obj_get_coords(lv_event_get_target_obj(e), &a);
+    ui_next_dashed_round(lv_event_get_layer(e), &a, lv_area_get_height(&a) / 2, B.pal->border_hi, 4, 3);
+}
+
 static int build_tag_strip(int x, int y, int w)
 {
     const int h = B.fs * 25 / 10;
@@ -171,8 +180,7 @@ static int build_tag_strip(int x, int y, int w)
         B.tag_pill[i] = p;
     }
     lv_obj_t *add = pill(row, "+ TAG", B.f->tagf, B.pal->well, B.pal->muted);
-    lv_obj_set_style_border_width(add, 1, 0);
-    lv_obj_set_style_border_color(add, ui_next_col(B.pal->border_hi), 0);
+    lv_obj_add_event_cb(add, add_tag_cb, LV_EVENT_DRAW_POST, NULL);
     return h;
 }
 
@@ -340,7 +348,6 @@ static void build_row(lv_obj_t *list, int i, int y, int w)
     const int as = B.row_h * 78 / 100;
     r->art = ui_next_box(r->rwi, 0, 0, as, as, B.pal->panel);
     lv_obj_set_style_radius(r->art, 6, 0);
-    lv_obj_set_style_bg_grad_dir(r->art, LV_GRAD_DIR_VER, 0);
 
     lv_obj_t *tx = lv_obj_create(r->rwi);
     lv_obj_remove_style_all(tx);
@@ -523,8 +530,7 @@ void ui_next_browse_update(const ui_next_browse_model_t *m)
                 lv_obj_add_flag(grp, LV_OBJ_FLAG_HIDDEN);
             }
         }
-        lv_obj_set_style_bg_color(r->art, ui_next_col(t->art0), 0);
-        lv_obj_set_style_bg_grad_color(r->art, ui_next_col(t->art1), 0);
+        ui_next_cover(r->art, &r->cover, t->art0, t->art1);
         if (r->genre) lv_label_set_text(r->genre, t->genre);
         lv_label_set_text(r->bpm, t->bpm);
         lv_label_set_text(r->key, t->key);

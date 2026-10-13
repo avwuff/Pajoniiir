@@ -14,6 +14,7 @@
 
 typedef struct {
     lv_obj_t *rs, *bar, *art, *pre, *hit, *post, *artist, *bpm, *key;
+    lv_grad_dsc_t cover;
 } row_t;
 
 static struct {
@@ -99,7 +100,6 @@ static void build_row(lv_obj_t *list, int i, int y, int w)
     const int as = S.row_h * 78 / 100;
     r->art = ui_next_box(flow, 0, 0, as, as, S.pal->chip);
     lv_obj_set_style_radius(r->art, 6, 0);
-    lv_obj_set_style_bg_grad_dir(r->art, LV_GRAD_DIR_VER, 0);
 
     lv_obj_t *tx = lv_obj_create(flow);
     lv_obj_remove_style_all(tx);
@@ -227,8 +227,7 @@ void ui_next_search_update(const ui_next_search_model_t *m)
         lv_label_set_text(r->artist, s->artist);
         lv_label_set_text(r->bpm, s->bpm);
         if (r->key) lv_label_set_text(r->key, s->key);
-        lv_obj_set_style_bg_color(r->art, ui_next_col(s->art0), 0);
-        lv_obj_set_style_bg_grad_color(r->art, ui_next_col(s->art1), 0);
+        ui_next_cover(r->art, &r->cover, s->art0, s->art1);
         if (on) lv_obj_remove_flag(r->bar, LV_OBJ_FLAG_HIDDEN);
         else lv_obj_add_flag(r->bar, LV_OBJ_FLAG_HIDDEN);
     }
