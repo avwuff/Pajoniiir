@@ -1,6 +1,6 @@
 # Numark DJ2GO2 Touch: software profile
 
-Status: software profile. Hardware run: the operator ran it on a real DJ2GO2 Touch on 2026-10-13 and reported it OK. The per-check results (MIDI, LEDs, audio, the list under "Bench checks" below) were not recorded, so this is not yet a bench acceptance record. The profile comes from a public mapping.
+Status: software profile. Hardware run: the operator ran it on a real DJ2GO2 Touch on 2026-10-13: buttons, faders, jog, levels, browse, crossfader and USB disconnect OK; LEDs, Note Off velocity and the audio paths were not reported (see "Bench checks"), so this is a partial acceptance. The profile comes from a public mapping.
 
 Build: S3CP v4, 1999 bytes, 100 inputs, 30 outputs, VID/PID `15E4:003C`.
 
@@ -86,14 +86,19 @@ Run `tests/controller_usb_audio/run_tests.ps1` for the descriptor and stream tes
 
 ## Bench checks
 
-The operator's run on 2026-10-13 was reported OK without per-check notes; the list is kept as the checklist for a recorded acceptance.
+Operator run on a real DJ2GO2 Touch, 2026-10-13 (reported in one line, no values recorded):
 
-The USB ID and the audio descriptor already come from a real unit. These checks need the P4 and the controller together.
+| Check | Result |
+| --- | --- |
+| Buttons | OK |
+| Faders (tempo, channel, crossfader) | OK |
+| Jog wheels | OK |
+| Levels and browse | OK |
+| Crossfader | OK |
+| USB cable disconnect and reconnect | OK |
+| Note Off velocity of each button | not reported |
+| LEDs in the four pad modes | not reported |
+| Master Level and Cue Level double change | not reported |
+| Audio to Main and to the headphones | not reported |
 
-1. Connect the controller directly to a P4 root port.
-2. Press each button. Record the Note Off velocity.
-3. Move each tempo fader. Check the direction and the end points.
-4. Turn each jog wheel. Check the direction and the touch state.
-5. Check the LEDs in all four pad modes.
-6. Set Master Level and Cue Level. Listen for a double level change.
-7. Play audio to Main and to the headphones. Disconnect and connect the USB cable.
+The four "not reported" rows are still to be run or recorded. The USB ID and the audio descriptor already come from a real unit.
