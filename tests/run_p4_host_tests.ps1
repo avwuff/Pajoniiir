@@ -3182,6 +3182,20 @@ $tests = @(
         )
     },
     @{
+        Name = "ui_next_wave"
+        Dir = "tests/ui_next_wave"
+        Target = "test_ui_next_wave.exe"
+        Args = @(
+            "-Wall", "-Wextra", "-Wpedantic", "-Werror=implicit-function-declaration", "-std=c99",
+            "-I../../firmware/p4-core/components/ui_next/include",
+            "-o", "test_ui_next_wave.exe",
+            "test_ui_next_wave.c",
+            "../../firmware/p4-core/components/ui_next/ui_next_wave.c",
+            "../../firmware/p4-core/components/ui_next/ui_next_theme.c",
+            "-lm"
+        )
+    },
+    @{
         Name = "ui_overview_window"
         Dir = "tests/ui_overview_window"
         Target = "test_ui_overview_window.exe"
