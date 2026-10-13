@@ -1,6 +1,6 @@
 /* Renders the ui_next pages at the six board sizes, night and day, into PPM
  * files. No window, no hardware.
- * usage: ui_next_sim <out dir> [tick] [perform|boot|browse|search|alerts|trackinfo|source|browseedit] (default: all pages) */
+ * usage: ui_next_sim <out dir> [tick] [perform|boot|browse|search|alerts|trackinfo|source|browseedit|fx] (default: all pages) */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -30,8 +30,8 @@ static int write_ppm(const char *path)
     return fclose(f);
 }
 
-typedef enum { SCREEN_PERFORM, SCREEN_BOOT, SCREEN_BROWSE, SCREEN_SEARCH, SCREEN_ALERTS, SCREEN_TRACKINFO, SCREEN_SOURCE, SCREEN_BROWSEEDIT, SCREEN_COUNT } screen_t;
-static const char *const SCREEN_NAME[] = {"perform", "boot", "browse", "search", "alerts", "trackinfo", "source", "browseedit"};
+typedef enum { SCREEN_PERFORM, SCREEN_BOOT, SCREEN_BROWSE, SCREEN_SEARCH, SCREEN_ALERTS, SCREEN_TRACKINFO, SCREEN_SOURCE, SCREEN_BROWSEEDIT, SCREEN_FX, SCREEN_COUNT } screen_t;
+static const char *const SCREEN_NAME[] = {"perform", "boot", "browse", "search", "alerts", "trackinfo", "source", "browseedit", "fx"};
 
 static int render(const char *dir, screen_t screen, uint16_t w, uint16_t h, bool day, uint32_t tick,
                   const ui_next_env_t *ea, const ui_next_env_t *eb)
@@ -52,6 +52,7 @@ static int render(const char *dir, screen_t screen, uint16_t w, uint16_t h, bool
                      : screen == SCREEN_TRACKINFO ? ui_next_trackinfo_create(scr, w, h, day)
                      : screen == SCREEN_SOURCE ? ui_next_source_create(scr, w, h, day)
                      : screen == SCREEN_BROWSEEDIT ? ui_next_browse_edit_create(scr, w, h, day)
+                     : screen == SCREEN_FX ? ui_next_fx_create(scr, w, h, day)
                                                : ui_next_perform_create(scr, w, h, day);
     int rc = 0;
     if (!root) {
@@ -78,6 +79,14 @@ static int render(const char *dir, screen_t screen, uint16_t w, uint16_t h, bool
                 ui_next_demo_alerts(&am);
                 ui_next_alerts_update(&am);
             }
+        } else if (screen == SCREEN_FX) {
+            static ui_next_fx_model_t fm;
+            static ui_next_env_t envfx[2];
+            ui_next_env_demo(&envfx[0], 11);
+            ui_next_env_demo(&envfx[1], 23);
+            memset(&fm, 0, sizeof fm);
+            ui_next_demo_fx(&fm, envfx);
+            ui_next_fx_update(&fm);
         } else if (screen == SCREEN_BROWSEEDIT) {
             static ui_next_browse_model_t em;
             static ui_next_env_t env4e[4];

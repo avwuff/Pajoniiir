@@ -171,6 +171,32 @@ lv_obj_t *ui_next_source_create(lv_obj_t *parent, uint16_t w, uint16_t h, bool d
 void ui_next_source_update(const ui_next_source_model_t *m);
 void ui_next_demo_source(ui_next_source_model_t *m, const ui_next_env_t *env2);
 
+/* FX page (screen 07). CORE-GAP: FX-1 to FX-5 (slots, XY pad, echo settings, HOLD,
+ * deck selector). No stem faders: they do not fit the P4. */
+#define UI_NEXT_FX_SLOTS 3
+
+typedef struct {
+    char name[10], text[12];         /* "ECHO", "40 %" */
+    bool on;
+    uint8_t amount;                  /* bar, 0..100 */
+} ui_next_fx_slot_t;
+
+typedef struct {
+    ui_next_fx_slot_t slot[UI_NEXT_FX_SLOTS];
+    float xy_x, xy_y;                /* puck position, 0..1 from the top left */
+    char label_x[12], label_y[12];   /* "ECHO WET", "FILTER" */
+    uint8_t fx_deck;                 /* 0 = deck A, 1 = deck B */
+    char panel_title[20];            /* "ECHO  /  DECK A" */
+    uint8_t time_beats;              /* 0..3 = 1/4, 1/2, 1, 2 */
+    uint8_t wet, feedback;           /* percent */
+    bool hold;
+    ui_next_deck_t deck[2];
+} ui_next_fx_model_t;
+
+lv_obj_t *ui_next_fx_create(lv_obj_t *parent, uint16_t w, uint16_t h, bool day);
+void ui_next_fx_update(const ui_next_fx_model_t *m);
+void ui_next_demo_fx(ui_next_fx_model_t *m, const ui_next_env_t *env2);
+
 /* Alerts overlay (screen 13): dimmed page, toasts at the top right, one modal
  * dialog. Audio never stops because of an alert (SY-1). CORE-GAP: SY-1 to SY-3. */
 #define UI_NEXT_TOASTS 3

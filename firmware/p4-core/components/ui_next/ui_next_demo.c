@@ -255,3 +255,30 @@ void ui_next_demo_browse_edit(ui_next_browse_model_t *m, const ui_next_env_t *en
     m->lift_row = 5; /* track 6 is under the finger */
     m->ins_row = 2;  /* and would land above track 3 */
 }
+
+void ui_next_demo_fx(ui_next_fx_model_t *m, const ui_next_env_t *env2)
+{
+    static const struct { const char *n, *t; bool on; uint8_t a; } SL[UI_NEXT_FX_SLOTS] = {
+        {"ECHO", "40 %", true, 40}, {"REVERB", "25 %", false, 25}, {"FILTER", "HP 65 %", true, 65},
+    };
+    for (int i = 0; i < UI_NEXT_FX_SLOTS; i++) {
+        snprintf(m->slot[i].name, sizeof m->slot[i].name, "%s", SL[i].n);
+        snprintf(m->slot[i].text, sizeof m->slot[i].text, "%s", SL[i].t);
+        m->slot[i].on = SL[i].on;
+        m->slot[i].amount = SL[i].a;
+    }
+    m->xy_x = 0.64f;
+    m->xy_y = 0.36f;
+    snprintf(m->label_x, sizeof m->label_x, "ECHO WET");
+    snprintf(m->label_y, sizeof m->label_y, "FILTER");
+    snprintf(m->panel_title, sizeof m->panel_title, "ECHO  /  DECK A");
+    m->time_beats = 1;
+    m->wet = 40;
+    m->feedback = 55;
+    for (int d = 0; d < 2; d++) {
+        m->deck[d].env = env2 + d;
+        snprintf(m->deck[d].title, sizeof m->deck[d].title, d ? "Sample Track B" : "Sample Track A");
+        snprintf(m->deck[d].time, sizeof m->deck[d].time, d ? "-01:56" : "-03:44");
+        m->deck[d].pos01 = d ? 0.61f : 0.28f;
+    }
+}
