@@ -197,6 +197,28 @@ lv_obj_t *ui_next_fx_create(lv_obj_t *parent, uint16_t w, uint16_t h, bool day);
 void ui_next_fx_update(const ui_next_fx_model_t *m);
 void ui_next_demo_fx(ui_next_fx_model_t *m, const ui_next_env_t *env2);
 
+/* Record page (screen 09). CORE-GAP: RC-1 to RC-3 (WAV record, timer, running
+ * waveform, meters, free space, recent files), RC-4 (markers). */
+#define UI_NEXT_REC_COLS 240
+#define UI_NEXT_REC_FILES 3
+
+typedef struct {
+    char timer[10];                  /* "00:12:34" */
+    const uint8_t *wave[3];          /* low, mid, high half heights, 0..100 = 0..50 view units */
+    float head01;                    /* write position in the window */
+    float level[2], peak[2];         /* left, right meters */
+    char db[2][8];                   /* "-8 dB" */
+    char status[12], free_space[14]; /* "RECORDING", "FREE 38 GB" */
+    bool recording;
+    char value[4][12];               /* source, format, rate, size */
+    struct { char name[16], size[8]; } file[UI_NEXT_REC_FILES];
+    ui_next_deck_t deck[2];
+} ui_next_record_model_t;
+
+lv_obj_t *ui_next_record_create(lv_obj_t *parent, uint16_t w, uint16_t h, bool day);
+void ui_next_record_update(const ui_next_record_model_t *m);
+void ui_next_demo_record(ui_next_record_model_t *m, const ui_next_env_t *env2);
+
 /* Alerts overlay (screen 13): dimmed page, toasts at the top right, one modal
  * dialog. Audio never stops because of an alert (SY-1). CORE-GAP: SY-1 to SY-3. */
 #define UI_NEXT_TOASTS 3

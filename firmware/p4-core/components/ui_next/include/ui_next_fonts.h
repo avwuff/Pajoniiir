@@ -32,6 +32,10 @@ extern const lv_font_t ui_next_cousine_reg_14;
 extern const lv_font_t ui_next_cousine_reg_16;
 extern const lv_font_t ui_next_cousine_reg_20;
 
+extern const lv_font_t ui_next_cousine_timer_48;
+extern const lv_font_t ui_next_cousine_timer_52;
+extern const lv_font_t ui_next_cousine_timer_58;
+
 extern const lv_font_t ui_next_cousine_bold_10;
 extern const lv_font_t ui_next_cousine_bold_12;
 extern const lv_font_t ui_next_cousine_bold_14;

@@ -23,3 +23,11 @@ for s in 12 14 16 18 24; do gen ui_next_roboto_reg "$roboto/Roboto-Regular.ttf" 
 for s in 12 14 16 18 20 22 24 28 30 34; do gen ui_next_roboto_med "$roboto/Roboto-Medium.ttf" "$s"; done
 for s in 10 12 14 16 20; do gen ui_next_cousine_reg "$cousine/Cousine-Regular.ttf" "$s"; done
 for s in 10 12 14; do gen ui_next_cousine_bold "$cousine/Cousine-Bold.ttf" "$s"; done
+
+# Record timer: digits and the colon only, so the large sizes stay small.
+for s in 48 52 58; do
+    "$conv" --font "$cousine/Cousine-Regular.ttf" --size "$s" --format lvgl --bpp 4 --range 0x20,0x30-0x3A \
+        --no-compress --no-prefilter --force-fast-kern-format --lv-include lvgl.h \
+        -o "$out/ui_next_cousine_timer_$s.c"
+    sed -i -E '/^ \* Opts:/ s# (--font|-o) [^ ]*/([^ /]+)# \1 \2#g' "$out/ui_next_cousine_timer_$s.c"
+done
