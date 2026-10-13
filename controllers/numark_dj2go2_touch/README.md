@@ -1,6 +1,6 @@
 # Numark DJ2GO2 Touch: software profile
 
-Status: software profile. Hardware acceptance: **NOT RUN**. No test with a real DJ2GO2 Touch has run. The profile comes from a public mapping and passes the host tests only. Do not call it supported until a bench check records the real MIDI, LED and audio behavior.
+Status: software profile. Hardware run: the operator ran it on a real DJ2GO2 Touch on 2026-10-13 and reported it OK. The per-check results (MIDI, LEDs, audio, the list under "Bench checks" below) were not recorded, so this is not yet a bench acceptance record. The profile comes from a public mapping.
 
 Build: S3CP v4, 1999 bytes, 100 inputs, 30 outputs, VID/PID `15E4:003C`.
 
@@ -84,7 +84,9 @@ Run `tests/controller_profile/run_tests.ps1`. It builds `test_numark_dj2go2_touc
 
 Run `tests/controller_usb_audio/run_tests.ps1` for the descriptor and stream test.
 
-## Bench checks not run
+## Bench checks
+
+The operator's run on 2026-10-13 was reported OK without per-check notes; the list is kept as the checklist for a recorded acceptance.
 
 The USB ID and the audio descriptor already come from a real unit. These checks need the P4 and the controller together.
 
