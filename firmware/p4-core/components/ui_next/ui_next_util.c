@@ -81,3 +81,24 @@ void ui_next_text_at(lv_layer_t *layer, const char *s, int x, int y, const lv_fo
     lv_area_t a = {x, y, x + 60, y + 20};
     lv_draw_label(layer, &d, &a);
 }
+
+void ui_next_text_down(lv_layer_t *layer, const char *s, int x, int y, const lv_font_t *f, uint32_t rgb, lv_opa_t opa)
+{
+    /* Each letter is turned 90 degrees clockwise about its own top left and set below the
+     * previous one; the glyph height then extends to the left of the pen position. */
+    lv_draw_letter_dsc_t d;
+    lv_draw_letter_dsc_init(&d);
+    d.font = f;
+    d.color = lv_color_hex(rgb);
+    d.opa = opa;
+    d.rotation = 900;
+    d.pivot.x = 0;
+    d.pivot.y = 0;
+    int pen = y;
+    for (const char *c = s; *c; c++) {
+        d.unicode = (uint32_t)(unsigned char)*c;
+        lv_point_t p = {x + f->line_height, pen};
+        lv_draw_letter(layer, &d, &p);
+        pen += lv_font_get_glyph_width(f, d.unicode, (uint32_t)(unsigned char)c[1]);
+    }
+}

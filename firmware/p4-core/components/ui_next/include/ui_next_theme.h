@@ -27,6 +27,11 @@ typedef struct {
     uint32_t accent_ink;/* amber as text or thin line on the panel */
     uint32_t ok, warn, bad;
     uint32_t wave_low, wave_mid, wave_high;
+    uint32_t head;      /* playhead */
+    uint32_t curve;     /* weave curves */
+    uint32_t dot;       /* bass clash dot on the weave lane */
+    uint32_t cue;       /* cue marks on overviews */
+    uint8_t shade_opa;  /* played shade over a waveform */
 } ui_next_palette_t;
 
 const ui_next_palette_t *ui_next_palette(bool day);

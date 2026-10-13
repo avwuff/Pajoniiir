@@ -7,6 +7,7 @@ static const ui_next_palette_t NIGHT = {
     .accent = 0xFFC15A, .accent_ink = 0xFFC15A,
     .ok = 0x5FD38D, .warn = 0xFFC15A, .bad = 0xFF6B6B,
     .wave_low = 0xB07CFF, .wave_mid = 0x3FD6C0, .wave_high = 0xF4F1E8,
+    .head = 0xFFC15A, .curve = 0xFFC15A, .dot = 0xFF5A5A, .cue = 0xFF6B6B, .shade_opa = 140, /* rgba(5,7,10,.55) */
 };
 
 static const ui_next_palette_t DAY = {
@@ -16,6 +17,7 @@ static const ui_next_palette_t DAY = {
     .accent = 0xFFC15A, .accent_ink = 0xB26B00,
     .ok = 0x5FD38D, .warn = 0xFFC15A, .bad = 0xFF6B6B,
     .wave_low = 0x7B3FE4, .wave_mid = 0x0FA392, .wave_high = 0x2B3340,
+    .head = 0xE08A00, .curve = 0xE08A00, .dot = 0xE5484D, .cue = 0xE5484D, .shade_opa = 158, /* rgba(255,255,255,.62) */
 };
 
 const ui_next_palette_t *ui_next_palette(bool day)

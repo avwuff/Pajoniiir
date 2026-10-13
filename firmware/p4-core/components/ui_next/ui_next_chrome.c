@@ -53,12 +53,12 @@ void ui_next_chrome_draw_overview_ex(lv_layer_t *layer, const lv_area_t *a, cons
         static const float CUES[] = {.04f, .13f, .26f, .5f, .62f, .9f};
         for (unsigned i = 0; i < sizeof CUES / sizeof CUES[0]; i++) {
             int x = a->x1 + (int)(CUES[i] * (float)w);
-            ui_next_fill_rect(layer, x, a->y1, x + 2, a->y2, pal->bad, LV_OPA_COVER);
+            ui_next_fill_rect(layer, x, a->y1, x + 2, a->y2, pal->cue, LV_OPA_COVER);
         }
     }
     if (pos01 < 0.0f) return;
     const int px = a->x1 + (int)(pos01 * (float)w);
-    if (shade) ui_next_fill_rect(layer, a->x1, a->y1, px - 1, a->y2, pal->frame, 140);
+    if (shade) ui_next_fill_rect(layer, a->x1, a->y1, px - 1, a->y2, pal->frame, pal->shade_opa);
     ui_next_fill_rect(layer, px, a->y1, px + 1, a->y2, head_rgb, LV_OPA_COVER);
 }
 
@@ -66,7 +66,7 @@ void ui_next_chrome_draw_overview(lv_layer_t *layer, const lv_area_t *a, const u
                                   float pos01, const ui_next_palette_t *pal)
 {
     /* The dock and the list preview: marks only when a playhead is given. */
-    ui_next_chrome_draw_overview_ex(layer, a, env, pos01, pos01 >= 0.0f, true, pal->accent, pal);
+    ui_next_chrome_draw_overview_ex(layer, a, env, pos01, pos01 >= 0.0f, true, pal->head, pal);
 }
 
 static void ov_draw_cb(lv_event_t *e)

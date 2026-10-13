@@ -49,6 +49,14 @@ static uint32_t win_start(int d)
 
 /* ---- waveform ---- */
 
+/* Section map of the demo track (intro, build, drop, break, outro). CORE-GAP: LB-13. */
+static const struct { float a, b; const char *name; uint32_t color; } SEC[] = {
+    {0.00f, 0.08f, "INTRO", 0x6C7A96}, {0.08f, 0.26f, "BUILD", 0xFF8A6B}, {0.26f, 0.50f, "DROP", 0xF06BA8},
+    {0.50f, 0.60f, "BREAK", 0x5FB3E8}, {0.60f, 0.90f, "DROP", 0xF06BA8},  {0.90f, 1.00f, "OUTRO", 0x6C7A96},
+};
+#define SEC_N (sizeof SEC / sizeof SEC[0])
+
+
 static void wf_draw_cb(lv_event_t *e)
 {
     const int d = (int)(intptr_t)lv_event_get_user_data(e);
@@ -66,6 +74,16 @@ static void wf_draw_cb(lv_event_t *e)
     const int m = P.mcols;
 
     const int ua = land ? a.x1 : a.y1;
+    /* Section tints, behind everything: the section colour at 19 %. */
+    for (unsigned q = 0; q < SEC_N; q++) {
+        const float lo = fmaxf(SEC[q].a * (float)UI_NEXT_ENV_COLUMNS, (float)start);
+        const float hi = fminf(SEC[q].b * (float)UI_NEXT_ENV_COLUMNS, (float)(start + (uint32_t)m));
+        if (hi <= lo) continue;
+        const int u0 = ua + (int)((lo - (float)start) * (float)span / (float)m);
+        const int u1 = ua + (int)((hi - (float)start) * (float)span / (float)m) - 1;
+        if (land) ui_next_fill_rect(layer, u0, a.y1, u1, a.y2, SEC[q].color, 48);
+        else ui_next_fill_rect(layer, a.x1, u0, a.x2, u1, SEC[q].color, 48);
+    }
     for (int o = 0; o < m; o++) {
         const uint32_t cl = start + (uint32_t)o;
         if (cl % UI_NEXT_BEAT_COLUMNS) continue;
@@ -96,22 +114,31 @@ static void wf_draw_cb(lv_event_t *e)
 
     /* Played half dimmed, playhead on top. */
     if (land) {
-        ui_next_fill_rect(layer, a.x1, a.y1, a.x1 + span / 2 - 1, a.y2, P.pal->frame, 140);
-        ui_next_fill_rect(layer, a.x1 + span / 2, a.y1, a.x1 + span / 2 + 1, a.y2, P.pal->accent, LV_OPA_COVER);
+        ui_next_fill_rect(layer, a.x1, a.y1, a.x1 + span / 2 - 1, a.y2, P.pal->frame, P.pal->shade_opa);
+        ui_next_fill_rect(layer, a.x1 + span / 2, a.y1, a.x1 + span / 2 + 1, a.y2, P.pal->head, LV_OPA_COVER);
     } else {
-        ui_next_fill_rect(layer, a.x1, a.y1, a.x2, a.y1 + span / 2 - 1, P.pal->frame, 140);
-        ui_next_fill_rect(layer, a.x1, a.y1 + span / 2, a.x2, a.y1 + span / 2 + 1, P.pal->accent, LV_OPA_COVER);
+        ui_next_fill_rect(layer, a.x1, a.y1, a.x2, a.y1 + span / 2 - 1, P.pal->frame, P.pal->shade_opa);
+        ui_next_fill_rect(layer, a.x1, a.y1 + span / 2, a.x2, a.y1 + span / 2 + 1, P.pal->head, LV_OPA_COVER);
     }
 
-    /* Bar numbers, after the bands above the shade. */
+    /* Bar numbers and section names, over the shade. Vertical in portrait. */
     for (int o = 0; o < m; o++) {
         const uint32_t cl = start + (uint32_t)o;
         if (cl % UI_NEXT_BAR_COLUMNS) continue;
         char n[16];
         snprintf(n, sizeof n, "%u", (unsigned)(cl / UI_NEXT_BAR_COLUMNS + 1u));
-        const int u0 = (land ? a.x1 : a.y1) + o * span / m;
+        const int u0 = ua + o * span / m;
         if (land) ui_next_text_at(layer, n, u0 + 3, d == 0 ? a.y1 + 1 : a.y2 - 14, P.f_tiny, P.pal->text);
-        else ui_next_text_at(layer, n, d == 0 ? a.x1 + 2 : a.x2 - 16, u0 + 2, P.f_tiny, P.pal->text);
+        else ui_next_text_down(layer, n, d == 0 ? a.x1 + 2 : a.x2 - 2 - P.f_tiny->line_height, u0 + 2, P.f_tiny, P.pal->text,
+                               LV_OPA_COVER);
+    }
+    for (unsigned q = 0; q < SEC_N; q++) {
+        const float lo = fmaxf(SEC[q].a * (float)UI_NEXT_ENV_COLUMNS, (float)start);
+        const float hi = fminf(SEC[q].b * (float)UI_NEXT_ENV_COLUMNS, (float)(start + (uint32_t)m));
+        if (hi <= lo || (hi - lo) / (float)m <= (land ? .14f : .2f)) continue;
+        const int u = ua + (int)((lo - (float)start) * (float)span / (float)m);
+        if (land) ui_next_text_at(layer, SEC[q].name, u + 4, a.y1 + 16, P.f_tiny, P.pal->text);
+        else ui_next_text_down(layer, SEC[q].name, a.x1 + 16, u + 4, P.f_tiny, P.pal->text, 204);
     }
 }
 
@@ -162,25 +189,25 @@ static void lane_draw_cb(lv_event_t *e)
                 float uu = it * it * it * x0 + 3 * it * it * t * x0 + 3 * it * t * t * x3 + t * t * t * x3;
                 float vv = it * it * it * 16 + 3 * it * it * t * 55 + 3 * it * t * t * 45 + t * t * t * 84;
                 float nx = PX(uu, vv), ny = PY(uu, vv);
-                ui_next_seg(layer, px, py, nx, ny, lw, P.pal->accent, LV_OPA_COVER);
+                ui_next_seg(layer, px, py, nx, ny, lw, P.pal->curve, LV_OPA_COVER);
                 px = nx;
                 py = ny;
             }
         }
         if (clash) {
             const float cx = PX(((float)o + (float)tgt) / 2, 50), cy = PY(((float)o + (float)tgt) / 2, 50);
-            ui_next_seg(layer, cx, cy, cx, cy, lw + 3, P.pal->bad, LV_OPA_COVER);
+            ui_next_seg(layer, cx, cy, cx, cy, lw + 3, P.pal->dot, LV_OPA_COVER);
         }
     }
 #undef PX
 #undef PY
 
     if (land) {
-        ui_next_fill_rect(layer, a.x1, a.y1, a.x1 + span / 2 - 1, a.y2, P.pal->frame, 140);
-        ui_next_fill_rect(layer, a.x1 + span / 2, a.y1, a.x1 + span / 2 + 1, a.y2, P.pal->accent, LV_OPA_COVER);
+        ui_next_fill_rect(layer, a.x1, a.y1, a.x1 + span / 2 - 1, a.y2, P.pal->frame, P.pal->shade_opa);
+        ui_next_fill_rect(layer, a.x1 + span / 2, a.y1, a.x1 + span / 2 + 1, a.y2, P.pal->head, LV_OPA_COVER);
     } else {
-        ui_next_fill_rect(layer, a.x1, a.y1, a.x2, a.y1 + span / 2 - 1, P.pal->frame, 140);
-        ui_next_fill_rect(layer, a.x1, a.y1 + span / 2, a.x2, a.y1 + span / 2 + 1, P.pal->accent, LV_OPA_COVER);
+        ui_next_fill_rect(layer, a.x1, a.y1, a.x2, a.y1 + span / 2 - 1, P.pal->frame, P.pal->shade_opa);
+        ui_next_fill_rect(layer, a.x1, a.y1 + span / 2, a.x2, a.y1 + span / 2 + 1, P.pal->head, LV_OPA_COVER);
     }
 }
 
