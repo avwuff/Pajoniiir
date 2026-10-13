@@ -206,3 +206,81 @@ void ui_next_chrome_dock_set(int d, const ui_next_deck_t *k)
     C.pos01[d] = k->pos01;
     lv_obj_invalidate(C.ov[d]);
 }
+
+/* ---- top bar parts ---- */
+
+static void icon_cb(lv_event_t *e)
+{
+    const ui_next_icon_t kind = (ui_next_icon_t)(intptr_t)lv_event_get_user_data(e);
+    lv_layer_t *layer = lv_event_get_layer(e);
+    lv_area_t a;
+    lv_obj_get_coords(lv_event_get_target_obj(e), &a);
+    const float k = (float)lv_area_get_width(&a) / 24.0f;
+    const uint32_t c = C.pal->text;
+    const float x = (float)a.x1, y = (float)a.y1;
+    if (kind == UI_NEXT_ICON_CHEVRON) {
+        ui_next_seg(layer, x + 15 * k, y + 6 * k, x + 9 * k, y + 12 * k, 2, c, LV_OPA_COVER);
+        ui_next_seg(layer, x + 9 * k, y + 12 * k, x + 15 * k, y + 18 * k, 2, c, LV_OPA_COVER);
+    } else if (kind == UI_NEXT_ICON_ARROW) {
+        ui_next_seg(layer, x + 19 * k, y + 12 * k, x + 5 * k, y + 12 * k, 2, c, LV_OPA_COVER);
+        ui_next_seg(layer, x + 11 * k, y + 6 * k, x + 5 * k, y + 12 * k, 2, c, LV_OPA_COVER);
+        ui_next_seg(layer, x + 5 * k, y + 12 * k, x + 11 * k, y + 18 * k, 2, c, LV_OPA_COVER);
+    } else {
+        lv_draw_rect_dsc_t d;
+        lv_draw_rect_dsc_init(&d);
+        d.bg_opa = LV_OPA_TRANSP;
+        d.radius = LV_RADIUS_CIRCLE;
+        d.border_width = 2;
+        d.border_color = ui_next_col(c);
+        lv_area_t r = {a.x1 + (int)(4 * k), a.y1 + (int)(4 * k), a.x1 + (int)(18 * k), a.y1 + (int)(18 * k)};
+        lv_draw_rect(layer, &d, &r);
+        ui_next_seg(layer, x + 20 * k, y + 20 * k, x + 16 * k, y + 16 * k, 2, c, LV_OPA_COVER);
+    }
+}
+
+lv_obj_t *ui_next_chrome_icon(lv_obj_t *parent, int size, ui_next_icon_t kind)
+{
+    lv_obj_t *o = lv_obj_create(parent);
+    lv_obj_remove_style_all(o);
+    lv_obj_remove_flag(o, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_set_size(o, size, size);
+    lv_obj_add_event_cb(o, icon_cb, LV_EVENT_DRAW_MAIN, (void *)(intptr_t)kind);
+    return o;
+}
+
+lv_obj_t *ui_next_chrome_button(lv_obj_t *parent, const char *text, int icon, bool on)
+{
+    lv_obj_t *b = lv_obj_create(parent);
+    lv_obj_remove_style_all(b);
+    lv_obj_remove_flag(b, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_set_size(b, LV_SIZE_CONTENT, C.lay.tok.top_bar_px - 8);
+    lv_obj_set_style_min_width(b, 44, 0);
+    lv_obj_set_style_bg_opa(b, LV_OPA_COVER, 0);
+    lv_obj_set_style_bg_color(b, ui_next_col(on ? C.pal->accent : C.pal->chip), 0);
+    lv_obj_set_style_border_width(b, 1, 0);
+    lv_obj_set_style_border_color(b, ui_next_col(on ? C.pal->accent : C.pal->border_hi), 0);
+    lv_obj_set_style_radius(b, 10, 0);
+    lv_obj_set_style_pad_hor(b, C.lay.tok.pad_px * 11 / 10, 0);
+    lv_obj_set_style_pad_column(b, 6, 0);
+    lv_obj_set_flex_flow(b, LV_FLEX_FLOW_ROW);
+    lv_obj_set_flex_align(b, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+    if (icon >= 0) ui_next_chrome_icon(b, 18, (ui_next_icon_t)icon);
+    if (text) ui_next_label(b, text, C.f->row, on ? C.pal->on_accent : C.pal->text);
+    return b;
+}
+
+lv_obj_t *ui_next_chrome_topbar(lv_obj_t *root)
+{
+    const ui_next_rect_t r = C.lay.top_bar;
+    lv_obj_t *bar = ui_next_box(root, r.x, r.y, r.w, r.h, C.pal->panel);
+    ui_next_box(bar, 0, r.h - 1, r.w, 1, C.pal->border);
+    lv_obj_t *row = lv_obj_create(bar);
+    lv_obj_remove_style_all(row);
+    lv_obj_remove_flag(row, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_CLICKABLE);
+    lv_obj_set_size(row, r.w, r.h);
+    lv_obj_set_flex_flow(row, LV_FLEX_FLOW_ROW);
+    lv_obj_set_flex_align(row, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
+    lv_obj_set_style_pad_hor(row, C.lay.tok.pad_px, 0);
+    lv_obj_set_style_pad_column(row, C.lay.tok.gap_px, 0);
+    return row;
+}

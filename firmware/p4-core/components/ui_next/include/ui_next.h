@@ -91,6 +91,29 @@ lv_obj_t *ui_next_browse_create(lv_obj_t *parent, uint16_t w, uint16_t h, bool d
 void ui_next_browse_update(const ui_next_browse_model_t *m);
 void ui_next_demo_browse(ui_next_browse_model_t *m, const ui_next_env_t *env4);
 
+/* Search page (screen 06). CORE-GAP: LB-10 (live search), LB-19 (accent folding:
+ * the core returns the matched span of each title, the UI only paints it). */
+#define UI_NEXT_SEARCH_RESULTS 8
+
+typedef struct {
+    char pre[24], hit[16], post[24];  /* title split around the matched letters */
+    char artist[24], bpm[6], key[5];
+    uint32_t art0, art1;
+} ui_next_search_result_t;
+
+typedef struct {
+    char query[24];
+    char status[32];                  /* "ACCENTS IGNORED / 8 RESULTS" */
+    ui_next_search_result_t result[UI_NEXT_SEARCH_RESULTS];
+    uint8_t n;
+    int8_t selected;
+    ui_next_deck_t deck[2];
+} ui_next_search_model_t;
+
+lv_obj_t *ui_next_search_create(lv_obj_t *parent, uint16_t w, uint16_t h, bool day);
+void ui_next_search_update(const ui_next_search_model_t *m);
+void ui_next_demo_search(ui_next_search_model_t *m, const ui_next_env_t *env2);
+
 /* Boot page (screen 14): ring mark, name, library load bar, licence footer. */
 typedef struct {
     float progress01;        /* library load, SY-4 */

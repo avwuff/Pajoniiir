@@ -116,3 +116,38 @@ void ui_next_demo_browse(ui_next_browse_model_t *m, const ui_next_env_t *env4)
         m->deck[d].pos01 = d ? 0.61f : 0.28f;
     }
 }
+
+void ui_next_demo_search(ui_next_search_model_t *m, const ui_next_env_t *env2)
+{
+    static const struct { const char *pre, *hit, *post, *artist, *bpm, *key; uint32_t a0, a1; } R[UI_NEXT_SEARCH_RESULTS] = {
+        {"", "\xC3\x89t\xC3\xA9", " Indien", "Sample Artist 01", "124", "8A", 0xB07CFF, 0x3FD6C0},
+        {"Nuit d'", "\xC3\xA9t\xC3\xA9", "", "Sample Artist 04", "122", "5A", 0xFFC15A, 0xFF6B6B},
+        {"F", "\xC3\xAAte", " Foraine", "Sample Artist 02", "126", "8A", 0x4DABF7, 0xB07CFF},
+        {"Po", "\xC3\xA8te", " Urbain", "Sample Artist 07", "128", "9A", 0x3FD6C0, 0xF4F1E8},
+        {"Beaut\xC3\xA9 Secr", "\xC3\xA8te", "", "Sample Artist 03", "120", "4A", 0xB07CFF, 0x3FD6C0},
+        {"Temp", "\xC3\xAAte", " d'Hiver", "Sample Artist 09", "118", "3B", 0xFFC15A, 0xFF6B6B},
+        {"Compl", "ete", " Control", "Sample Artist 05", "130", "10A", 0x4DABF7, 0xB07CFF},
+        {"Ar", "\xC3\xAAte", " Blanche", "Sample Artist 06", "123", "9B", 0x3FD6C0, 0xF4F1E8},
+    };
+    snprintf(m->query, sizeof m->query, "ete");
+    snprintf(m->status, sizeof m->status, "ACCENTS IGNORED / 8 RESULTS");
+    m->n = UI_NEXT_SEARCH_RESULTS;
+    m->selected = 1;
+    for (int i = 0; i < UI_NEXT_SEARCH_RESULTS; i++) {
+        ui_next_search_result_t *r = &m->result[i];
+        snprintf(r->pre, sizeof r->pre, "%s", R[i].pre);
+        snprintf(r->hit, sizeof r->hit, "%s", R[i].hit);
+        snprintf(r->post, sizeof r->post, "%s", R[i].post);
+        snprintf(r->artist, sizeof r->artist, "%s", R[i].artist);
+        snprintf(r->bpm, sizeof r->bpm, "%s", R[i].bpm);
+        snprintf(r->key, sizeof r->key, "%s", R[i].key);
+        r->art0 = R[i].a0;
+        r->art1 = R[i].a1;
+    }
+    for (int d = 0; d < 2; d++) {
+        m->deck[d].env = env2 + d;
+        snprintf(m->deck[d].title, sizeof m->deck[d].title, d ? "Sample Track B" : "Sample Track A");
+        snprintf(m->deck[d].time, sizeof m->deck[d].time, d ? "-01:56" : "-03:44");
+        m->deck[d].pos01 = d ? 0.61f : 0.28f;
+    }
+}

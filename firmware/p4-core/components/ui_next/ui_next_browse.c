@@ -70,100 +70,22 @@ static lv_obj_t *flex_row(lv_obj_t *parent, int w, int h, int pad_h, int gap)
     return o;
 }
 
-/* ---- icons (24 unit box) ---- */
-
-static void icon_cb(lv_event_t *e)
-{
-    const int kind = (int)(intptr_t)lv_event_get_user_data(e); /* 0 back, 1 search */
-    lv_layer_t *layer = lv_event_get_layer(e);
-    lv_area_t a;
-    lv_obj_get_coords(lv_event_get_target_obj(e), &a);
-    const float k = (float)lv_area_get_width(&a) / 24.0f;
-    const uint32_t c = B.pal->text;
-    const float x = (float)a.x1, y = (float)a.y1;
-    if (kind == 0) {
-        ui_next_seg(layer, x + 15 * k, y + 6 * k, x + 9 * k, y + 12 * k, 2, c, LV_OPA_COVER);
-        ui_next_seg(layer, x + 9 * k, y + 12 * k, x + 15 * k, y + 18 * k, 2, c, LV_OPA_COVER);
-    } else {
-        lv_draw_rect_dsc_t d;
-        lv_draw_rect_dsc_init(&d);
-        d.bg_opa = LV_OPA_TRANSP;
-        d.radius = LV_RADIUS_CIRCLE;
-        d.border_width = 2;
-        d.border_color = ui_next_col(c);
-        lv_area_t r = {a.x1 + (int)(4 * k), a.y1 + (int)(4 * k), a.x1 + (int)(18 * k), a.y1 + (int)(18 * k)};
-        lv_draw_rect(layer, &d, &r);
-        ui_next_seg(layer, x + 20 * k, y + 20 * k, x + 16 * k, y + 16 * k, 2, c, LV_OPA_COVER);
-    }
-}
-
-static void arrow_back_cb(lv_event_t *e)
-{
-    lv_layer_t *layer = lv_event_get_layer(e);
-    lv_area_t a;
-    lv_obj_get_coords(lv_event_get_target_obj(e), &a);
-    const float k = (float)lv_area_get_width(&a) / 24.0f;
-    const float x = (float)a.x1, y = (float)a.y1;
-    ui_next_seg(layer, x + 19 * k, y + 12 * k, x + 5 * k, y + 12 * k, 2, B.pal->text, LV_OPA_COVER);
-    ui_next_seg(layer, x + 11 * k, y + 6 * k, x + 5 * k, y + 12 * k, 2, B.pal->text, LV_OPA_COVER);
-    ui_next_seg(layer, x + 5 * k, y + 12 * k, x + 11 * k, y + 18 * k, 2, B.pal->text, LV_OPA_COVER);
-}
-
-static lv_obj_t *icon_obj(lv_obj_t *parent, int size, lv_event_cb_t cb, int kind)
-{
-    lv_obj_t *o = lv_obj_create(parent);
-    lv_obj_remove_style_all(o);
-    lv_obj_remove_flag(o, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_set_size(o, size, size);
-    lv_obj_add_event_cb(o, cb, LV_EVENT_DRAW_MAIN, (void *)(intptr_t)kind);
-    return o;
-}
-
 /* ---- top bar ---- */
-
-static lv_obj_t *button(lv_obj_t *parent, const char *text, int icon_kind, bool on)
-{
-    const int h = B.lay.tok.top_bar_px - 8;
-    lv_obj_t *b = lv_obj_create(parent);
-    lv_obj_remove_style_all(b);
-    lv_obj_remove_flag(b, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_set_size(b, LV_SIZE_CONTENT, h);
-    lv_obj_set_style_min_width(b, 44, 0);
-    lv_obj_set_style_bg_opa(b, LV_OPA_COVER, 0);
-    lv_obj_set_style_bg_color(b, ui_next_col(on ? B.pal->accent : B.pal->chip), 0);
-    lv_obj_set_style_border_width(b, 1, 0);
-    lv_obj_set_style_border_color(b, ui_next_col(on ? B.pal->accent : B.pal->border_hi), 0);
-    lv_obj_set_style_radius(b, 10, 0);
-    lv_obj_set_style_pad_hor(b, B.pad * 11 / 10, 0);
-    lv_obj_set_style_pad_column(b, 6, 0);
-    lv_obj_set_flex_flow(b, LV_FLEX_FLOW_ROW);
-    lv_obj_set_flex_align(b, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-    if (icon_kind >= 0) icon_obj(b, 18, icon_cb, icon_kind);
-    if (text) ui_next_label(b, text, B.f->row, on ? B.pal->on_accent : B.pal->text);
-    return b;
-}
 
 static void build_top_bar(void)
 {
-    const ui_next_rect_t r = B.lay.top_bar;
-    lv_obj_t *bar = ui_next_box(B.root, r.x, r.y, r.w, r.h, B.pal->panel);
-    ui_next_box(bar, 0, r.h - 1, r.w, 1, B.pal->border);
-    lv_obj_t *row = flex_row(bar, r.w, r.h, B.pad, B.gap);
-    lv_obj_set_style_bg_opa(row, LV_OPA_TRANSP, 0);
-
-    lv_obj_t *back = button(row, B.wide ? "BACK" : NULL, -1, false);
-    icon_obj(back, 18, arrow_back_cb, 0);
-    lv_obj_move_to_index(lv_obj_get_child(back, lv_obj_get_child_count(back) - 1), 0);
+    lv_obj_t *row = ui_next_chrome_topbar(B.root);
+    ui_next_chrome_button(row, B.wide ? "BACK" : NULL, UI_NEXT_ICON_CHEVRON, false);
     B.crumb = ui_next_label(row, "", B.f->med, B.pal->text);
     if (B.wide) B.count = ui_next_label(row, "", B.f->mono, B.pal->muted);
     lv_obj_t *sp = lv_obj_create(row);
     lv_obj_remove_style_all(sp);
     lv_obj_set_size(sp, 1, 1);
     lv_obj_set_flex_grow(sp, 1);
-    button(row, B.wide ? "SEARCH" : NULL, 1, false);
+    ui_next_chrome_button(row, B.wide ? "SEARCH" : NULL, UI_NEXT_ICON_SEARCH, false);
     if (B.wide) {
-        button(row, "EDIT", -1, false);
-        button(row, "PREVIEW ON", -1, true);
+        ui_next_chrome_button(row, "EDIT", -1, false);
+        ui_next_chrome_button(row, "PREVIEW ON", -1, true);
     }
 }
 
@@ -412,7 +334,7 @@ static void build_row(lv_obj_t *list, int i, int y, int w)
     lv_obj_set_style_radius(r->back, LV_RADIUS_CIRCLE, 0);
     lv_obj_set_style_border_width(r->back, 2, 0);
     lv_obj_set_style_border_color(r->back, ui_next_col(B.pal->muted), 0);
-    lv_obj_t *ic = icon_obj(r->back, cs * 6 / 10, arrow_back_cb, 0);
+    lv_obj_t *ic = ui_next_chrome_icon(r->back, cs * 6 / 10, UI_NEXT_ICON_ARROW);
     lv_obj_center(ic);
 }
 
