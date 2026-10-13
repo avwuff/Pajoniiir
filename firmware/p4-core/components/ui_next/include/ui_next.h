@@ -265,6 +265,26 @@ lv_obj_t *ui_next_settings_create(lv_obj_t *parent, uint16_t w, uint16_t h, bool
 void ui_next_settings_update(const ui_next_settings_model_t *m);
 void ui_next_demo_settings(ui_next_settings_model_t *m, ui_next_settings_tab_t tab, const ui_next_env_t *env2);
 
+/* Grid edit page (screen 08). CORE-GAP: LB-14 (shift, tempo, tap, set beat 1, lock,
+ * reset, save), LB-21 (spacing in 1 ms steps, drift chip). */
+#define UI_NEXT_GRID_COLS 144
+
+typedef struct {
+    char tempo[28];                  /* "124.00 BPM / 483.9 MS" */
+    char drift[16];                  /* "DRIFT +6 MS" */
+    char hint[56];                   /* "BEAT 1 FITS. BEAT 33 IS 6 MS LATE. USE SPACING." */
+    const uint8_t *wave[3];          /* zoomed window, UI_NEXT_GRID_COLS columns */
+    uint8_t first_beat;              /* column of beat 1 in the window */
+    float window_x01, window_w01;    /* the zoomed part inside the overview */
+    int8_t pressed_row, pressed_col; /* amber button, -1 = none */
+    const ui_next_env_t *env;        /* whole-track overview */
+    ui_next_deck_t deck[2];
+} ui_next_gridedit_model_t;
+
+lv_obj_t *ui_next_gridedit_create(lv_obj_t *parent, uint16_t w, uint16_t h, bool day);
+void ui_next_gridedit_update(const ui_next_gridedit_model_t *m);
+void ui_next_demo_gridedit(ui_next_gridedit_model_t *m, const ui_next_env_t *env3);
+
 /* Alerts overlay (screen 13): dimmed page, toasts at the top right, one modal
  * dialog. Audio never stops because of an alert (SY-1). CORE-GAP: SY-1 to SY-3. */
 #define UI_NEXT_TOASTS 3

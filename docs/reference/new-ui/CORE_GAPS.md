@@ -2,6 +2,10 @@
 
 Status: draft, 2026-10-13. Branch `kay/new-ui`.
 
+All 15 screens are drawn in LVGL on demo data (`components/ui_next`, rendered by
+`tests/ui_next_sim`). Every `CORE-GAP` comment in that component points to a line
+below. Nothing is wired to the core and nothing reacts to touch yet.
+
 The new UI (`firmware/p4-core/components/ui_next`) adds **no feature to the core**.
 Each screen draws demo data. When a screen needs something the core does not give
 yet, the need is listed here and the screen shows a placeholder.

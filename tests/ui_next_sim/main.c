@@ -1,6 +1,6 @@
 /* Renders the ui_next pages at the six board sizes, night and day, into PPM
  * files. No window, no hardware.
- * usage: ui_next_sim <out dir> [tick] [perform|boot|browse|search|alerts|trackinfo|source|browseedit|fx|record|settings-audio|settings-display|settings-system] (default: all pages) */
+ * usage: ui_next_sim <out dir> [tick] [perform|boot|browse|search|alerts|trackinfo|source|browseedit|fx|record|settings-audio|settings-display|settings-system|gridedit] (default: all pages) */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -30,8 +30,8 @@ static int write_ppm(const char *path)
     return fclose(f);
 }
 
-typedef enum { SCREEN_PERFORM, SCREEN_BOOT, SCREEN_BROWSE, SCREEN_SEARCH, SCREEN_ALERTS, SCREEN_TRACKINFO, SCREEN_SOURCE, SCREEN_BROWSEEDIT, SCREEN_FX, SCREEN_RECORD, SCREEN_SET_AUDIO, SCREEN_SET_DISPLAY, SCREEN_SET_SYSTEM, SCREEN_COUNT } screen_t;
-static const char *const SCREEN_NAME[] = {"perform", "boot", "browse", "search", "alerts", "trackinfo", "source", "browseedit", "fx", "record", "settings-audio", "settings-display", "settings-system"};
+typedef enum { SCREEN_PERFORM, SCREEN_BOOT, SCREEN_BROWSE, SCREEN_SEARCH, SCREEN_ALERTS, SCREEN_TRACKINFO, SCREEN_SOURCE, SCREEN_BROWSEEDIT, SCREEN_FX, SCREEN_RECORD, SCREEN_SET_AUDIO, SCREEN_SET_DISPLAY, SCREEN_SET_SYSTEM, SCREEN_GRIDEDIT, SCREEN_COUNT } screen_t;
+static const char *const SCREEN_NAME[] = {"perform", "boot", "browse", "search", "alerts", "trackinfo", "source", "browseedit", "fx", "record", "settings-audio", "settings-display", "settings-system", "gridedit"};
 
 static int render(const char *dir, screen_t screen, uint16_t w, uint16_t h, bool day, uint32_t tick,
                   const ui_next_env_t *ea, const ui_next_env_t *eb)
@@ -56,6 +56,7 @@ static int render(const char *dir, screen_t screen, uint16_t w, uint16_t h, bool
         ui_next_demo_settings(&setm, (ui_next_settings_tab_t)(screen - SCREEN_SET_AUDIO), envset);
     }
     lv_obj_t *root = is_settings ? ui_next_settings_create(scr, w, h, day, &setm)
+                     : screen == SCREEN_GRIDEDIT ? ui_next_gridedit_create(scr, w, h, day)
                      : screen == SCREEN_BOOT     ? ui_next_boot_create(scr, w, h, day)
                      : screen == SCREEN_BROWSE || screen == SCREEN_ALERTS ? ui_next_browse_create(scr, w, h, day)
                      : screen == SCREEN_SEARCH ? ui_next_search_create(scr, w, h, day)
@@ -90,6 +91,13 @@ static int render(const char *dir, screen_t screen, uint16_t w, uint16_t h, bool
                 ui_next_demo_alerts(&am);
                 ui_next_alerts_update(&am);
             }
+        } else if (screen == SCREEN_GRIDEDIT) {
+            static ui_next_gridedit_model_t gm;
+            static ui_next_env_t envg[3];
+            for (uint32_t i = 0; i < 3; i++) ui_next_env_demo(&envg[i], 11u + 12u * i);
+            memset(&gm, 0, sizeof gm);
+            ui_next_demo_gridedit(&gm, envg);
+            ui_next_gridedit_update(&gm);
         } else if (is_settings) {
             ui_next_settings_update(&setm);
         } else if (screen == SCREEN_RECORD) {
