@@ -114,6 +114,27 @@ lv_obj_t *ui_next_search_create(lv_obj_t *parent, uint16_t w, uint16_t h, bool d
 void ui_next_search_update(const ui_next_search_model_t *m);
 void ui_next_demo_search(ui_next_search_model_t *m, const ui_next_env_t *env2);
 
+/* Track info page (screen 03). CORE-GAP: LB-11 (phrase map, hot cues, file data),
+ * LB-13 (key and phrase analysis), PB-8 (8 hot cues). */
+#define UI_NEXT_TI_CUES 8
+#define UI_NEXT_TI_PHRASES 6
+
+typedef struct {
+    char title[32], artist[24], album[24], genre[12], label[16];
+    uint32_t art0, art1;
+    char stat[6][10];                 /* BPM, KEY, TIME, BITRATE, PLAYS, GRID */
+    struct { char time[8]; uint32_t color; } cue[UI_NEXT_TI_CUES];   /* letters A..H */
+    struct { char name[8]; uint8_t weight; uint32_t color; } phrase[UI_NEXT_TI_PHRASES];
+    char preview[28];                 /* "PREVIEW 02:44 OF 06:40" */
+    float play01;
+    const ui_next_env_t *env;
+    ui_next_deck_t deck[2];
+} ui_next_trackinfo_model_t;
+
+lv_obj_t *ui_next_trackinfo_create(lv_obj_t *parent, uint16_t w, uint16_t h, bool day);
+void ui_next_trackinfo_update(const ui_next_trackinfo_model_t *m);
+void ui_next_demo_trackinfo(ui_next_trackinfo_model_t *m, const ui_next_env_t *env3);
+
 /* Alerts overlay (screen 13): dimmed page, toasts at the top right, one modal
  * dialog. Audio never stops because of an alert (SY-1). CORE-GAP: SY-1 to SY-3. */
 #define UI_NEXT_TOASTS 3

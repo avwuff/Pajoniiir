@@ -173,3 +173,40 @@ void ui_next_demo_alerts(ui_next_alerts_model_t *m)
     snprintf(m->primary, sizeof m->primary, "KEEP PLAYING");
     snprintf(m->secondary, sizeof m->secondary, "OPEN SOURCE");
 }
+
+void ui_next_demo_trackinfo(ui_next_trackinfo_model_t *m, const ui_next_env_t *env3)
+{
+    static const char *const ST[6] = {"124.0", "A min", "06:40", "320 k", "12", "OK"};
+    static const char *const CT[UI_NEXT_TI_CUES] = {"00:00", "00:32", "01:04", "01:36", "02:40", "03:12", "04:16", "05:20"};
+    static const uint32_t CC[UI_NEXT_TI_CUES] = {0xFF6B6B, 0xFFA94D, 0xFFD43B, 0x69DB7C, 0x38D9A9, 0x4DABF7, 0x9775FA, 0xF783AC};
+    static const struct { const char *n; uint8_t w; uint32_t c; } PH[UI_NEXT_TI_PHRASES] = {
+        {"INTRO", 8, 0x4A5568}, {"BUILD", 18, 0x1F7A6F}, {"DROP", 24, 0x6B4AB8},
+        {"BREAK", 10, 0x4A5568}, {"DROP", 30, 0x6B4AB8}, {"OUT", 10, 0x4A5568},
+    };
+    snprintf(m->title, sizeof m->title, "Sample Track 02");
+    snprintf(m->artist, sizeof m->artist, "Sample Artist");
+    snprintf(m->album, sizeof m->album, "Sample Album, 2026");
+    snprintf(m->genre, sizeof m->genre, "House");
+    snprintf(m->label, sizeof m->label, "Sample Label");
+    m->art0 = 0x527B32;
+    m->art1 = 0x183A25;
+    for (int i = 0; i < 6; i++) snprintf(m->stat[i], sizeof m->stat[i], "%s", ST[i]);
+    for (int i = 0; i < UI_NEXT_TI_CUES; i++) {
+        snprintf(m->cue[i].time, sizeof m->cue[i].time, "%s", CT[i]);
+        m->cue[i].color = CC[i];
+    }
+    for (int i = 0; i < UI_NEXT_TI_PHRASES; i++) {
+        snprintf(m->phrase[i].name, sizeof m->phrase[i].name, "%s", PH[i].n);
+        m->phrase[i].weight = PH[i].w;
+        m->phrase[i].color = PH[i].c;
+    }
+    snprintf(m->preview, sizeof m->preview, "PREVIEW 02:44 OF 06:40");
+    m->play01 = 0.41f;
+    m->env = env3;
+    for (int d = 0; d < 2; d++) {
+        m->deck[d].env = env3 + 1 + d;
+        snprintf(m->deck[d].title, sizeof m->deck[d].title, d ? "Sample Track B" : "Sample Track A");
+        snprintf(m->deck[d].time, sizeof m->deck[d].time, d ? "-01:56" : "-03:44");
+        m->deck[d].pos01 = d ? 0.61f : 0.28f;
+    }
+}

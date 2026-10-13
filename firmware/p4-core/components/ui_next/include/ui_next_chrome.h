@@ -40,6 +40,15 @@ lv_obj_t *ui_next_chrome_topbar(lv_obj_t *root);
 void ui_next_chrome_draw_overview(lv_layer_t *layer, const lv_area_t *a, const ui_next_env_t *env,
                                   float pos01, const ui_next_palette_t *pal);
 
+/* Same overview with the options the pages differ on: cue marks, played shade
+ * and the playhead colour (the dock uses amber, Track info a teal line). */
+void ui_next_chrome_draw_overview_ex(lv_layer_t *layer, const lv_area_t *a, const ui_next_env_t *env,
+                                     float pos01, bool cues, bool shade, uint32_t head_rgb,
+                                     const ui_next_palette_t *pal);
+
+/* Action button of a page body: amber when `on`, else a chip. Returns the box. */
+lv_obj_t *ui_next_chrome_action(lv_obj_t *parent, int x, int y, int w, int h, const char *text, bool on);
+
 #ifdef __cplusplus
 }
 #endif
