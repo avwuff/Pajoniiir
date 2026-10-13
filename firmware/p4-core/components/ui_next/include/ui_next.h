@@ -77,18 +77,25 @@ typedef struct {
 typedef struct {
     char crumb[32];                /* "Playlists / Warm-up" */
     char count[12];                /* "38 OF 96" */
-    char match[24];                /* "MATCH TO DECK B 9A" */
+    char match[40];                /* "MATCH TO DECK B 9A", or the edit instruction */
     uint8_t category;              /* active entry of the category rail */
     uint8_t tag_badge;             /* tags in the filter, 0 = none */
     ui_next_tag_t tags[UI_NEXT_BROWSE_TAGS];
     ui_next_track_t track[UI_NEXT_BROWSE_TRACKS];
     int8_t open_row;               /* row showing its swipe actions, -1 = none (LB-8) */
+    int8_t lift_row;               /* edit mode: row lifted by the finger, -1 = none (LB-20) */
+    int8_t ins_row;                /* edit mode: row with the amber landing line above it */
     const ui_next_env_t *preview_env[4];
     ui_next_deck_t deck[2];        /* dock: title, time, overview */
 } ui_next_browse_model_t;
 
 lv_obj_t *ui_next_browse_create(lv_obj_t *parent, uint16_t w, uint16_t h, bool day);
 void ui_next_browse_update(const ui_next_browse_model_t *m);
+
+/* Playlist edit (screen 05): same model, grips and numbers, a lifted row. The EDIT
+ * button appears only in a playlist. CORE-GAP: LB-20. */
+lv_obj_t *ui_next_browse_edit_create(lv_obj_t *parent, uint16_t w, uint16_t h, bool day);
+void ui_next_demo_browse_edit(ui_next_browse_model_t *m, const ui_next_env_t *env4);
 void ui_next_demo_browse(ui_next_browse_model_t *m, const ui_next_env_t *env4);
 
 /* Search page (screen 06). CORE-GAP: LB-10 (live search), LB-19 (accent folding:

@@ -1,6 +1,6 @@
 /* Renders the ui_next pages at the six board sizes, night and day, into PPM
  * files. No window, no hardware.
- * usage: ui_next_sim <out dir> [tick] [perform|boot|browse|search|alerts|trackinfo|source] (default: all pages) */
+ * usage: ui_next_sim <out dir> [tick] [perform|boot|browse|search|alerts|trackinfo|source|browseedit] (default: all pages) */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -30,8 +30,8 @@ static int write_ppm(const char *path)
     return fclose(f);
 }
 
-typedef enum { SCREEN_PERFORM, SCREEN_BOOT, SCREEN_BROWSE, SCREEN_SEARCH, SCREEN_ALERTS, SCREEN_TRACKINFO, SCREEN_SOURCE, SCREEN_COUNT } screen_t;
-static const char *const SCREEN_NAME[] = {"perform", "boot", "browse", "search", "alerts", "trackinfo", "source"};
+typedef enum { SCREEN_PERFORM, SCREEN_BOOT, SCREEN_BROWSE, SCREEN_SEARCH, SCREEN_ALERTS, SCREEN_TRACKINFO, SCREEN_SOURCE, SCREEN_BROWSEEDIT, SCREEN_COUNT } screen_t;
+static const char *const SCREEN_NAME[] = {"perform", "boot", "browse", "search", "alerts", "trackinfo", "source", "browseedit"};
 
 static int render(const char *dir, screen_t screen, uint16_t w, uint16_t h, bool day, uint32_t tick,
                   const ui_next_env_t *ea, const ui_next_env_t *eb)
@@ -51,6 +51,7 @@ static int render(const char *dir, screen_t screen, uint16_t w, uint16_t h, bool
                      : screen == SCREEN_SEARCH ? ui_next_search_create(scr, w, h, day)
                      : screen == SCREEN_TRACKINFO ? ui_next_trackinfo_create(scr, w, h, day)
                      : screen == SCREEN_SOURCE ? ui_next_source_create(scr, w, h, day)
+                     : screen == SCREEN_BROWSEEDIT ? ui_next_browse_edit_create(scr, w, h, day)
                                                : ui_next_perform_create(scr, w, h, day);
     int rc = 0;
     if (!root) {
@@ -77,6 +78,13 @@ static int render(const char *dir, screen_t screen, uint16_t w, uint16_t h, bool
                 ui_next_demo_alerts(&am);
                 ui_next_alerts_update(&am);
             }
+        } else if (screen == SCREEN_BROWSEEDIT) {
+            static ui_next_browse_model_t em;
+            static ui_next_env_t env4e[4];
+            for (uint32_t i = 0; i < 4; i++) ui_next_env_demo(&env4e[i], 11u + 12u * i);
+            memset(&em, 0, sizeof em);
+            ui_next_demo_browse_edit(&em, env4e);
+            ui_next_browse_update(&em);
         } else if (screen == SCREEN_SOURCE) {
             static ui_next_source_model_t sm2;
             static ui_next_env_t env2b[2];

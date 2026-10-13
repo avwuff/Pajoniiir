@@ -108,6 +108,8 @@ void ui_next_demo_browse(ui_next_browse_model_t *m, const ui_next_env_t *env4)
     }
     for (int i = 0; i < UI_NEXT_BROWSE_TRACKS; i++) m->track[i] = DEMO_TRACKS[i];
     m->open_row = 2;
+    m->lift_row = -1;
+    m->ins_row = -1;
     for (int i = 0; i < 4; i++) m->preview_env[i] = env4 + i;
     for (int d = 0; d < 2; d++) {
         m->deck[d].env = env4 + d;
@@ -242,4 +244,14 @@ void ui_next_demo_source(ui_next_source_model_t *m, const ui_next_env_t *env2)
         snprintf(m->deck[d].time, sizeof m->deck[d].time, d ? "-01:56" : "-03:44");
         m->deck[d].pos01 = d ? 0.61f : 0.28f;
     }
+}
+
+void ui_next_demo_browse_edit(ui_next_browse_model_t *m, const ui_next_env_t *env4)
+{
+    ui_next_demo_browse(m, env4);
+    snprintf(m->count, sizeof m->count, "96 TRACKS");
+    snprintf(m->match, sizeof m->match, "EDIT: DRAG A TRACK TO A NEW POSITION");
+    m->open_row = -1;
+    m->lift_row = 5; /* track 6 is under the finger */
+    m->ins_row = 2;  /* and would land above track 3 */
 }

@@ -14,7 +14,8 @@
 
 typedef struct {
     lv_obj_t *rw, *rwi, *th, *art, *title, *artist, *dots[3], *names[3], *genre, *bpm, *key, *time;
-    lv_obj_t *acts, *back;
+    lv_obj_t *acts, *back, *grip, *num, *ins;
+    bool lifted;
 } row_t;
 
 static struct {
@@ -22,6 +23,7 @@ static struct {
     const ui_next_palette_t *pal;
     const ui_next_fonts_t *f;
     bool day, landscape, wide; /* wide: x1 columns (preview, genre, time) */
+    bool edit;                 /* playlist edit: grips, numbers, lifted row */
     int fs, row_h, pad, gap;
     lv_obj_t *root, *crumb, *count, *match, *rail_item[UI_NEXT_BROWSE_CATS], *rail_bar[UI_NEXT_BROWSE_CATS], *rail_badge;
     lv_obj_t *tag_pill[UI_NEXT_BROWSE_TAGS], *tag_dot[UI_NEXT_BROWSE_TAGS], *tag_txt[UI_NEXT_BROWSE_TAGS];
@@ -83,7 +85,9 @@ static void build_top_bar(void)
     lv_obj_set_size(sp, 1, 1);
     lv_obj_set_flex_grow(sp, 1);
     ui_next_chrome_button(row, B.wide ? "SEARCH" : NULL, UI_NEXT_ICON_SEARCH, false);
-    if (B.wide) {
+    if (B.edit) {
+        ui_next_chrome_button(row, "EDIT", -1, true);
+    } else if (B.wide) {
         ui_next_chrome_button(row, "EDIT", -1, false);
         ui_next_chrome_button(row, "PREVIEW ON", -1, true);
     }
@@ -126,6 +130,22 @@ static int build_match_strip(int x, int y, int w)
             ui_next_label(g, LEG[i].t, B.f->small, B.pal->muted);
         }
     }
+    return h;
+}
+
+/* Edit mode: one amber instruction line, and a reminder chip when wide. */
+static int build_edit_strip(int x, int y, int w)
+{
+    const int h = B.fs * 24 / 10;
+    lv_obj_t *bar = ui_next_box(B.root, x, y, w, h, B.pal->nav);
+    ui_next_box(bar, 0, h - 1, w, 1, B.pal->border);
+    lv_obj_t *row = flex_row(bar, w, h, B.pad, B.gap);
+    B.match = ui_next_label(row, "", B.f->mono, B.pal->accent_ink);
+    lv_obj_t *sp = lv_obj_create(row);
+    lv_obj_remove_style_all(sp);
+    lv_obj_set_size(sp, 1, 1);
+    lv_obj_set_flex_grow(sp, 1);
+    if (B.wide) pill(row, "THE NEW ORDER IS SAVED ON THE DRIVE", B.f->small, B.pal->chip, B.pal->text);
     return h;
 }
 
@@ -227,6 +247,18 @@ static void preview_cb(lv_event_t *e)
     ui_next_chrome_draw_overview(lv_event_get_layer(e), &a, B.m.preview_env[B.m.track[i].env], -1.0f, B.pal);
 }
 
+static void grip_cb(lv_event_t *e)
+{
+    lv_layer_t *layer = lv_event_get_layer(e);
+    lv_area_t a;
+    lv_obj_get_coords(lv_event_get_target_obj(e), &a);
+    const int cx = (a.x1 + a.x2) / 2, cy = (a.y1 + a.y2) / 2;
+    for (int c = 0; c < 2; c++)
+        for (int r = 0; r < 3; r++)
+            ui_next_fill_rect(layer, cx - 4 + c * 6 - 1, cy - 4 + r * 4 - 1, cx - 4 + c * 6 + 1, cy - 4 + r * 4 + 1,
+                              B.pal->muted, LV_OPA_COVER);
+}
+
 static void build_header(lv_obj_t *list, int w)
 {
     const int h = B.fs * 22 / 10;
@@ -234,8 +266,14 @@ static void build_header(lv_obj_t *list, int w)
     ui_next_box(lh, 0, h - 1, w, 1, B.pal->border);
     lv_obj_t *row = flex_row(lh, w, h, B.pad, B.gap);
     const lv_font_t *f = B.f->mono;
+    if (B.edit) {
+        lv_obj_t *hd = lv_obj_create(row);
+        lv_obj_remove_style_all(hd);
+        lv_obj_set_size(hd, B.row_h / 2, 1);
+        lv_label_set_text(cell_label(row, B.fs * 2, f, B.pal->muted, LV_TEXT_ALIGN_RIGHT), "#");
+    }
     if (B.wide) cell_label(row, B.row_h * 2, f, B.pal->muted, LV_TEXT_ALIGN_LEFT);
-    if (B.wide) lv_label_set_text(lv_obj_get_child(lv_obj_get_child(row, 0), 0), "PREVIEW");
+    if (B.wide) lv_label_set_text(lv_obj_get_child(lv_obj_get_child(row, B.edit ? 2 : 0), 0), "PREVIEW");
     lv_obj_t *sp = lv_obj_create(row);
     lv_obj_remove_style_all(sp);
     lv_obj_set_size(sp, B.row_h * 78 / 100, 1);
@@ -243,17 +281,18 @@ static void build_header(lv_obj_t *list, int w)
     lv_obj_set_flex_grow(track, 1);
     if (B.wide) {
         lv_obj_t *g = cell_label(row, B.fs * 65 / 10, f, B.pal->muted, LV_TEXT_ALIGN_LEFT);
-        lv_label_set_text(g, "GENRE v");
-        lv_obj_t *du = lv_obj_get_parent(g);
-        lv_obj_add_event_cb(du, dash_cb, LV_EVENT_DRAW_POST, NULL);
+        lv_label_set_text(g, B.edit ? "GENRE" : "GENRE v");
+        if (!B.edit) lv_obj_add_event_cb(lv_obj_get_parent(g), dash_cb, LV_EVENT_DRAW_POST, NULL);
     }
     lv_obj_t *bp = flex_row(row, B.fs * 46 / 10, LV_SIZE_CONTENT, 0, 4);
     lv_obj_set_flex_align(bp, LV_FLEX_ALIGN_END, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-    ui_next_label(bp, "BPM", f, B.pal->accent_ink);
-    lv_obj_t *ar = lv_obj_create(bp);
-    lv_obj_remove_style_all(ar);
-    lv_obj_set_size(ar, 9, 9);
-    lv_obj_add_event_cb(ar, sort_arrow_cb, LV_EVENT_DRAW_MAIN, NULL);
+    ui_next_label(bp, "BPM", f, B.edit ? B.pal->muted : B.pal->accent_ink);
+    if (!B.edit) {
+        lv_obj_t *ar = lv_obj_create(bp);
+        lv_obj_remove_style_all(ar);
+        lv_obj_set_size(ar, 9, 9);
+        lv_obj_add_event_cb(ar, sort_arrow_cb, LV_EVENT_DRAW_MAIN, NULL);
+    }
     lv_obj_t *k = cell_label(row, B.fs * 42 / 10, f, B.pal->muted, LV_TEXT_ALIGN_CENTER);
     lv_label_set_text(k, "KEY");
     if (B.wide) {
@@ -273,7 +312,7 @@ static void build_row(lv_obj_t *list, int i, int y, int w)
     r->acts = flex_row(r->rw, aw, B.row_h, 0, 2);
     lv_obj_set_pos(r->acts, w - aw, 0);
     static const char *const ACT[4] = {"LOAD A", "LOAD B", "QUEUE", "TAG"};
-    for (int a = 0; a < 4; a++) {
+    for (int a = 0; a < 4 && !B.edit; a++) {
         lv_obj_t *b = ui_next_box(r->acts, 0, 0, 0, B.row_h, a < 2 ? B.pal->accent : B.pal->border_hi);
         lv_obj_set_flex_grow(b, 1);
         lv_obj_t *l = ui_next_label(b, ACT[a], B.f->row, a < 2 ? B.pal->on_accent : (B.day ? 0xFFFFFF : B.pal->text));
@@ -284,6 +323,14 @@ static void build_row(lv_obj_t *list, int i, int y, int w)
     lv_obj_set_style_bg_opa(r->rwi, LV_OPA_COVER, 0);
     lv_obj_set_style_bg_color(r->rwi, ui_next_col(B.pal->frame), 0);
 
+    if (B.edit) {
+        r->grip = lv_obj_create(r->rwi);
+        lv_obj_remove_style_all(r->grip);
+        lv_obj_remove_flag(r->grip, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_CLICKABLE);
+        lv_obj_set_size(r->grip, B.row_h / 2, B.row_h / 2);
+        lv_obj_add_event_cb(r->grip, grip_cb, LV_EVENT_DRAW_MAIN, NULL);
+        r->num = cell_label(r->rwi, B.fs * 2, B.f->mono, B.pal->muted, LV_TEXT_ALIGN_RIGHT);
+    }
     if (B.wide) {
         r->th = ui_next_box(r->rwi, 0, 0, B.row_h * 2, B.row_h * 62 / 100, B.pal->well);
         lv_obj_set_style_radius(r->th, 4, 0);
@@ -316,6 +363,10 @@ static void build_row(lv_obj_t *list, int i, int y, int w)
 
     if (B.wide) r->genre = cell_label(r->rwi, B.fs * 65 / 10, B.f->small, B.pal->muted, LV_TEXT_ALIGN_LEFT);
     r->bpm = cell_label(r->rwi, B.fs * 46 / 10, B.f->rmono, B.pal->text, LV_TEXT_ALIGN_RIGHT);
+    if (B.edit) {
+        r->ins = ui_next_box(r->rw, 0, 0, w, 3, B.pal->accent);
+        lv_obj_add_flag(r->ins, LV_OBJ_FLAG_HIDDEN);
+    }
     lv_obj_t *kc = lv_obj_create(r->rwi);
     lv_obj_remove_style_all(kc);
     lv_obj_remove_flag(kc, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_CLICKABLE);
@@ -329,6 +380,7 @@ static void build_row(lv_obj_t *list, int i, int y, int w)
     if (B.wide) r->time = cell_label(r->rwi, B.fs * 34 / 10, B.f->mono, B.pal->muted, LV_TEXT_ALIGN_RIGHT);
 
     /* Close arrow of an open row. */
+    if (B.edit) return;
     const int cs = B.row_h * 6 / 10;
     r->back = ui_next_box(r->rw, B.pad, (B.row_h - cs) / 2, cs, cs, B.day ? 0xDDE6F2 : 0x2A3444);
     lv_obj_set_style_radius(r->back, LV_RADIUS_CIRCLE, 0);
@@ -340,9 +392,10 @@ static void build_row(lv_obj_t *list, int i, int y, int w)
 
 /* ---- build ---- */
 
-lv_obj_t *ui_next_browse_create(lv_obj_t *parent, uint16_t w, uint16_t h, bool day)
+static lv_obj_t *create(lv_obj_t *parent, uint16_t w, uint16_t h, bool day, bool edit)
 {
     memset(&B, 0, sizeof B);
+    B.edit = edit;
     if (!ui_next_layout_compute(w, h, &B.lay)) return NULL;
     B.day = day;
     B.pal = ui_next_palette(day);
@@ -358,8 +411,12 @@ lv_obj_t *ui_next_browse_create(lv_obj_t *parent, uint16_t w, uint16_t h, bool d
     B.root = ui_next_box(parent, 0, 0, w, h, B.pal->frame);
     const int x0 = B.lay.dock.x, zw = B.lay.dock.w;
     int y = B.lay.top_bar.h;
-    y += build_match_strip(x0, y, zw);
-    y += build_tag_strip(x0, y, zw);
+    if (edit) {
+        y += build_edit_strip(x0, y, zw);
+    } else {
+        y += build_match_strip(x0, y, zw);
+        y += build_tag_strip(x0, y, zw);
+    }
     const int bh = B.lay.dock.y - y;
 
     static const int RAILW[] = {104, 112, 128}, RAILH[] = {42, 45, 51};
@@ -385,6 +442,16 @@ lv_obj_t *ui_next_browse_create(lv_obj_t *parent, uint16_t w, uint16_t h, bool d
     build_top_bar();
     ui_next_chrome_nav(B.root);
     return B.root;
+}
+
+lv_obj_t *ui_next_browse_create(lv_obj_t *parent, uint16_t w, uint16_t h, bool day)
+{
+    return create(parent, w, h, day, false);
+}
+
+lv_obj_t *ui_next_browse_edit_create(lv_obj_t *parent, uint16_t w, uint16_t h, bool day)
+{
+    return create(parent, w, h, day, true);
 }
 
 /* ---- update ---- */
@@ -426,7 +493,7 @@ void ui_next_browse_update(const ui_next_browse_model_t *m)
         lv_obj_add_flag(B.rail_badge, LV_OBJ_FLAG_HIDDEN);
     }
 
-    for (int i = 0; i < UI_NEXT_BROWSE_TAGS; i++) {
+    for (int i = 0; i < UI_NEXT_BROWSE_TAGS && !B.edit; i++) {
         const ui_next_tag_t *t = &m->tags[i];
         lv_label_set_text(B.tag_txt[i], t->name);
         lv_obj_set_style_bg_color(B.tag_pill[i], ui_next_col(t->on ? t->color : B.pal->panel), 0);
@@ -443,6 +510,10 @@ void ui_next_browse_update(const ui_next_browse_model_t *m)
         lv_label_set_text(r->title, t->title);
         lv_label_set_text(r->artist, t->artist);
         for (int g = 0; g < 3; g++) {
+            if (B.edit) {
+                lv_obj_add_flag(lv_obj_get_user_data(r->dots[g]), LV_OBJ_FLAG_HIDDEN);
+                continue;
+            }
             lv_obj_t *grp = lv_obj_get_user_data(r->dots[g]);
             if (g < t->n_tags) {
                 lv_obj_remove_flag(grp, LV_OBJ_FLAG_HIDDEN);
@@ -461,6 +532,37 @@ void ui_next_browse_update(const ui_next_browse_model_t *m)
         if (r->time) lv_label_set_text(r->time, t->time);
         if (r->th) lv_obj_invalidate(r->th);
 
+        if (B.edit) {
+            char n[6];
+            snprintf(n, sizeof n, "%d", i + 1);
+            lv_label_set_text(r->num, n);
+            const bool lifted = i == m->lift_row;
+            /* The lifted row leaves its slot: it becomes a child of the list so it can
+             * float over the rows above, 2.9 rows up, scaled and shadowed. */
+            if (lifted != r->lifted) {
+                lv_obj_t *list = lv_obj_get_parent(r->rw);
+                if (lifted) {
+                    lv_obj_set_parent(r->rwi, list);
+                    lv_obj_set_pos(r->rwi, 0, lv_obj_get_y(r->rw) - B.row_h * 29 / 10);
+                    lv_obj_move_foreground(r->rwi);
+                } else {
+                    lv_obj_set_parent(r->rwi, r->rw);
+                    lv_obj_set_pos(r->rwi, 0, 0);
+                }
+                r->lifted = lifted;
+            }
+            lv_obj_set_style_bg_color(r->rwi, ui_next_col(lifted ? B.pal->sel : B.pal->frame), 0);
+            lv_obj_set_style_outline_width(r->rwi, lifted ? 1 : 0, 0);
+            lv_obj_set_style_outline_color(r->rwi, ui_next_col(B.pal->accent), 0);
+            lv_obj_set_style_shadow_width(r->rwi, lifted ? 28 : 0, 0);
+            lv_obj_set_style_shadow_offset_y(r->rwi, 10, 0);
+            lv_obj_set_style_shadow_color(r->rwi, lv_color_black(), 0);
+            lv_obj_set_style_shadow_opa(r->rwi, 166, 0);
+            lv_obj_set_style_transform_scale(r->rwi, lifted ? 259 : 256, 0);
+            if (i == m->ins_row) lv_obj_remove_flag(r->ins, LV_OBJ_FLAG_HIDDEN);
+            else lv_obj_add_flag(r->ins, LV_OBJ_FLAG_HIDDEN);
+            continue;
+        }
         lv_obj_set_x(r->rwi, open ? -(B.row_h * 46 / 10) : 0);
         lv_obj_set_style_bg_color(r->rwi, ui_next_col(open ? B.pal->sel : B.pal->frame), 0);
         if (open) {

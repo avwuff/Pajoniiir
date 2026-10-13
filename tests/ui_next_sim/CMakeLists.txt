@@ -25,5 +25,5 @@ add_executable(ui_next_sim main.c
     "${NEXT}/ui_next_demo.c" "${NEXT}/ui_next_util.c" "${NEXT}/ui_next_chrome.c" "${NEXT}/ui_next_perform.c"
     "${NEXT}/ui_next_boot.c" "${NEXT}/ui_next_browse.c" "${NEXT}/ui_next_search.c" "${NEXT}/ui_next_alerts.c" "${NEXT}/ui_next_trackinfo.c" "${NEXT}/ui_next_source.c" ${NEXT_FONTS})
 target_include_directories(ui_next_sim PRIVATE "${NEXT}/include")
-target_compile_options(ui_next_sim PRIVATE -Wall -Wextra)
+target_compile_options(ui_next_sim PRIVATE -Wall -Wextra -g)
 target_link_libraries(ui_next_sim PRIVATE lvgl m)
