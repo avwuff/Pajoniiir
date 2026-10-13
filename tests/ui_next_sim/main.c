@@ -30,8 +30,8 @@ static int write_ppm(const char *path)
     return fclose(f);
 }
 
-typedef enum { SCREEN_PERFORM, SCREEN_BOOT } screen_t;
-static const char *const SCREEN_NAME[] = {"perform", "boot"};
+typedef enum { SCREEN_PERFORM, SCREEN_BOOT, SCREEN_BROWSE, SCREEN_COUNT } screen_t;
+static const char *const SCREEN_NAME[] = {"perform", "boot", "browse"};
 
 static int render(const char *dir, screen_t screen, uint16_t w, uint16_t h, bool day, uint32_t tick,
                   const ui_next_env_t *ea, const ui_next_env_t *eb)
@@ -46,8 +46,9 @@ static int render(const char *dir, screen_t screen, uint16_t w, uint16_t h, bool
     lv_display_set_flush_cb(disp, flush_cb);
 
     lv_obj_t *scr = lv_display_get_screen_active(disp);
-    lv_obj_t *root = screen == SCREEN_BOOT ? ui_next_boot_create(scr, w, h, day)
-                                           : ui_next_perform_create(scr, w, h, day);
+    lv_obj_t *root = screen == SCREEN_BOOT     ? ui_next_boot_create(scr, w, h, day)
+                     : screen == SCREEN_BROWSE ? ui_next_browse_create(scr, w, h, day)
+                                               : ui_next_perform_create(scr, w, h, day);
     int rc = 0;
     if (!root) {
         fprintf(stderr, "layout rejected %ux%u\n", w, h);
@@ -58,6 +59,13 @@ static int render(const char *dir, screen_t screen, uint16_t w, uint16_t h, bool
             memset(&bm, 0, sizeof bm);
             ui_next_demo_boot(&bm);
             ui_next_boot_update(&bm);
+        } else if (screen == SCREEN_BROWSE) {
+            static ui_next_browse_model_t bm;
+            static ui_next_env_t env4[4];
+            for (uint32_t i = 0; i < 4; i++) ui_next_env_demo(&env4[i], 11u + 12u * i);
+            memset(&bm, 0, sizeof bm);
+            ui_next_demo_browse(&bm, env4);
+            ui_next_browse_update(&bm);
         } else {
             ui_next_perform_model_t m;
             memset(&m, 0, sizeof m);
@@ -91,7 +99,7 @@ int main(int argc, char **argv)
     lv_init();
     static const uint16_t SZ[][2] = {{800, 480}, {1024, 600}, {1280, 800}, {480, 800}, {600, 1024}, {800, 1280}};
     int rc = 0;
-    for (int sc = 0; sc < 2; sc++) {
+    for (int sc = 0; sc < SCREEN_COUNT; sc++) {
         if (argc > 3 && strcmp(argv[3], SCREEN_NAME[sc]) != 0) continue;
         for (unsigned i = 0; i < sizeof SZ / sizeof SZ[0]; i++) {
             rc |= render(argv[1], (screen_t)sc, SZ[i][0], SZ[i][1], false, tick, &ea, &eb);

@@ -70,3 +70,49 @@ void ui_next_demo_boot(ui_next_boot_model_t *m)
     snprintf(m->device_name, sizeof m->device_name, "PLACEHOLDER NAME");
     snprintf(m->footer, sizeof m->footer, "v0.1.0  /  CODE APACHE-2.0  /  DESIGN CC BY 4.0");
 }
+
+/* The 15 rows and the tag set of the Browse board. */
+static const ui_next_track_t DEMO_TRACKS[UI_NEXT_BROWSE_TRACKS] = {
+    {"Sample Track 01", "Sample Artist 01", "Deep House", "122.0", "9A", "05:12", UI_NEXT_KEY_FIT, {0, 0, 0}, 1, 0x7B3232, 0x3A3418, 0},
+    {"Sample Track 02", "Sample Artist 02", "Tech House", "122.0", "8A", "06:40", UI_NEXT_KEY_FIT, {0, 2, 0}, 2, 0x7B6B32, 0x253A18, 1},
+    {"Sample Track 03", "Sample Artist 03", "Techno", "123.0", "10A", "04:58", UI_NEXT_KEY_FIT, {0, 3, 0}, 2, 0x527B32, 0x183A25, 2},
+    {"Sample Track 04", "Sample Artist 04", "Deep House", "123.0", "11A", "07:05", UI_NEXT_KEY_NEAR, {2, 0, 0}, 1, 0x327B4C, 0x18343A, 3},
+    {"Sample Track 05", "Sample Artist 05", "Melodic", "124.0", "4A", "05:31", UI_NEXT_KEY_FAR, {0, 3, 0}, 2, 0x32717B, 0x18193A, 0},
+    {"Sample Track 06", "Sample Artist 06", "Tech House", "124.0", "9B", "06:02", UI_NEXT_KEY_FIT, {2, 1, 0}, 2, 0x32387B, 0x31183A, 1},
+    {"Sample Track 07", "Sample Artist 07", "Techno", "124.0", "3B", "05:47", UI_NEXT_KEY_NONE, {0, 0, 0}, 1, 0x65327B, 0x3A1828, 2},
+    {"Sample Track 08", "Sample Artist 08", "House", "124.0", "10A", "04:21", UI_NEXT_KEY_FIT, {0, 2, 0}, 2, 0x7B3258, 0x3A2318, 3},
+    {"Sample Track 09", "Sample Artist 09", "Deep House", "125.0", "5A", "06:18", UI_NEXT_KEY_NONE, {2, 3, 0}, 2, 0x7B4632, 0x373A18, 0},
+    {"Sample Track 10", "Sample Artist 01", "Melodic", "125.0", "11A", "05:03", UI_NEXT_KEY_NEAR, {0, 0, 0}, 1, 0x777B32, 0x1C3A18, 1},
+    {"Sample Track 11", "Sample Artist 02", "House", "126.0", "8A", "06:55", UI_NEXT_KEY_FIT, {2, 4, 0}, 2, 0x3E7B32, 0x183A2F, 2},
+    {"Sample Track 12", "Sample Artist 03", "Techno", "126.0", "4A", "05:40", UI_NEXT_KEY_FAR, {0, 3, 0}, 2, 0x327B5F, 0x182B3A, 3},
+    {"Sample Track 13", "Sample Artist 04", "Tech House", "127.0", "2B", "06:11", UI_NEXT_KEY_NONE, {0, 2, 0}, 2, 0x325E7B, 0x20183A, 0},
+    {"Sample Track 14", "Sample Artist 05", "House", "127.0", "9A", "05:26", UI_NEXT_KEY_FIT, {2, 0, 0}, 1, 0x40327B, 0x3A1839, 1},
+    {"Sample Track 15", "Sample Artist 06", "Deep House", "128.0", "7A", "07:32", UI_NEXT_KEY_NONE, {0, 0, 0}, 1, 0x79327B, 0x3A181F, 2},
+};
+
+void ui_next_demo_browse(ui_next_browse_model_t *m, const ui_next_env_t *env4)
+{
+    static const struct { const char *name; uint32_t color; bool on; } TAGS[UI_NEXT_BROWSE_TAGS] = {
+        {"WARM-UP", 0xB07CFF, true}, {"PEAK", 0xFF6B6B, false}, {"VOCAL", 0xFF8AD0, true},
+        {"DARK", 0x6FB1FF, false},   {"CLOSING", 0x5FD38D, false},
+    };
+    snprintf(m->crumb, sizeof m->crumb, "Playlists / Warm-up");
+    snprintf(m->count, sizeof m->count, "38 OF 96");
+    snprintf(m->match, sizeof m->match, "MATCH TO DECK B 9A");
+    m->category = 5; /* PLAYLIST */
+    m->tag_badge = 2;
+    for (int i = 0; i < UI_NEXT_BROWSE_TAGS; i++) {
+        snprintf(m->tags[i].name, sizeof m->tags[i].name, "%s", TAGS[i].name);
+        m->tags[i].color = TAGS[i].color;
+        m->tags[i].on = TAGS[i].on;
+    }
+    for (int i = 0; i < UI_NEXT_BROWSE_TRACKS; i++) m->track[i] = DEMO_TRACKS[i];
+    m->open_row = 2;
+    for (int i = 0; i < 4; i++) m->preview_env[i] = env4 + i;
+    for (int d = 0; d < 2; d++) {
+        m->deck[d].env = env4 + d;
+        snprintf(m->deck[d].title, sizeof m->deck[d].title, d ? "Sample Track B" : "Sample Track A");
+        snprintf(m->deck[d].time, sizeof m->deck[d].time, d ? "-01:56" : "-03:44");
+        m->deck[d].pos01 = d ? 0.61f : 0.28f;
+    }
+}

@@ -7,13 +7,16 @@ const ui_next_fonts_t *ui_next_fonts_for(ui_next_class_t cls)
     static const ui_next_fonts_t F[] = {
         [UI_NEXT_CLASS_S] = {&ui_next_roboto_reg_14, &ui_next_roboto_med_16, &ui_next_cousine_bold_10,
                              &ui_next_cousine_reg_12, &ui_next_cousine_reg_20, &ui_next_cousine_reg_16,
-                             &ui_next_roboto_reg_12, &ui_next_roboto_med_28},
+                             &ui_next_roboto_reg_12, &ui_next_roboto_med_28,
+                             &ui_next_roboto_med_14, &ui_next_roboto_reg_12, &ui_next_cousine_reg_14, &ui_next_roboto_med_12},
         [UI_NEXT_CLASS_M] = {&ui_next_roboto_reg_16, &ui_next_roboto_med_18, &ui_next_cousine_bold_10,
                              &ui_next_cousine_reg_12, &ui_next_cousine_reg_20, &ui_next_cousine_reg_16,
-                             &ui_next_roboto_med_14, &ui_next_roboto_med_30},
+                             &ui_next_roboto_med_14, &ui_next_roboto_med_30,
+                             &ui_next_roboto_med_16, &ui_next_roboto_reg_12, &ui_next_cousine_reg_14, &ui_next_roboto_med_12},
         [UI_NEXT_CLASS_L] = {&ui_next_roboto_reg_18, &ui_next_roboto_med_18, &ui_next_cousine_bold_12,
                              &ui_next_cousine_reg_14, &ui_next_cousine_reg_20, &ui_next_cousine_reg_20,
-                             &ui_next_roboto_med_16, &ui_next_roboto_med_34},
+                             &ui_next_roboto_med_16, &ui_next_roboto_med_34,
+                             &ui_next_roboto_med_18, &ui_next_roboto_reg_14, &ui_next_cousine_reg_16, &ui_next_roboto_med_14},
     };
     return &F[cls];
 }

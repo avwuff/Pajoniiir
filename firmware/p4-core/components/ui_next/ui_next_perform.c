@@ -3,6 +3,7 @@
 #include <string.h>
 
 #include "ui_next.h"
+#include "ui_next_chrome.h"
 #include "ui_next_theme.h"
 #include "ui_next_util.h"
 
@@ -26,14 +27,11 @@ static struct {
     uint16_t mcols;
     bool landscape;
     lv_obj_t *root, *title, *chip_layers;
-    lv_obj_t *wf[2], *lane, *vu[2], *ov[2], *nav_icon[UI_NEXT_PAGE_COUNT];
-    lv_obj_t *dk_title[2], *dk_bpm[2], *dk_key[2], *dk_badge[2], *dk_time[2];
+    lv_obj_t *wf[2], *lane, *vu[2];
     link_cell_t cells[LINK_CELLS];
     ui_next_page_t page;
     const lv_font_t *f_txt, *f_med, *f_tiny, *f_mono, *f_big, *f_bpm, *f_val;
 } P;
-
-static const char *NAV_NAME[UI_NEXT_PAGE_COUNT] = {"PERFORM", "BROWSE", "FX", "RECORD", "SETTINGS"};
 
 /* ---- small helpers ---- */
 
@@ -212,78 +210,6 @@ static void vu_draw_cb(lv_event_t *e)
     }
 }
 
-/* ---- overview strip in the dock (PB-3) ---- */
-
-static void ov_draw_cb(lv_event_t *e)
-{
-    const int d = (int)(intptr_t)lv_event_get_user_data(e);
-    lv_layer_t *layer = lv_event_get_layer(e);
-    lv_area_t a;
-    lv_obj_get_coords(lv_event_get_target_obj(e), &a);
-    const ui_next_env_t *env = P.model.deck[d].env;
-    if (!env) return;
-    const int w = lv_area_get_width(&a), h = lv_area_get_height(&a), c0 = a.y1 + h / 2;
-    const float amp[3] = {.49f, .38f, .26f};
-    const uint32_t colr[3] = {P.pal->wave_low, P.pal->wave_mid, P.pal->wave_high};
-    for (int i = 0; i < w; i++) {
-        const uint32_t c = (uint32_t)i * 400u / (uint32_t)w * 3u;
-        float v[3] = {0, 0, 0};
-        for (uint32_t j = 0; j < 3u && c + j < UI_NEXT_ENV_COLUMNS; j++) {
-            if (env->lo[c + j] > v[0]) v[0] = env->lo[c + j];
-            if (env->mi[c + j] > v[1]) v[1] = env->mi[c + j];
-            if (env->hi[c + j] > v[2]) v[2] = env->hi[c + j];
-        }
-        for (int b = 0; b < 3; b++) {
-            int half = (int)(v[b] * amp[b] * (float)h + .5f);
-            if (half < 1) half = 1;
-            ui_next_fill_rect(layer, a.x1 + i, c0 - half, a.x1 + i, c0 + half, colr[b], LV_OPA_COVER);
-        }
-    }
-    static const float CUES[] = {.04f, .13f, .26f, .5f, .62f, .9f};
-    for (unsigned i = 0; i < sizeof CUES / sizeof CUES[0]; i++) {
-        int x = a.x1 + (int)(CUES[i] * (float)w);
-        ui_next_fill_rect(layer, x, a.y1, x + 2, a.y2, P.pal->bad, LV_OPA_COVER);
-    }
-    const int px = a.x1 + (int)(P.model.deck[d].pos01 * (float)w);
-    ui_next_fill_rect(layer, a.x1, a.y1, px - 1, a.y2, P.pal->frame, 140);
-    ui_next_fill_rect(layer, px, a.y1, px + 1, a.y2, P.pal->accent, LV_OPA_COVER);
-}
-
-/* ---- nav icons, drawn from segments in a 24 unit box ---- */
-
-static void icon_draw_cb(lv_event_t *e)
-{
-    const int page = (int)(intptr_t)lv_event_get_user_data(e);
-    lv_layer_t *layer = lv_event_get_layer(e);
-    lv_area_t a;
-    lv_obj_get_coords(lv_event_get_target_obj(e), &a);
-    const float k = (float)lv_area_get_width(&a) / 24.0f;
-    const uint32_t c = (int)P.page == page ? P.pal->accent_ink : P.pal->muted;
-    static const int8_t S[][4] = {
-        /* perform */ {3, 12, 7, 12}, {7, 12, 10, 4}, {10, 4, 14, 20}, {14, 20, 17, 12}, {17, 12, 21, 12},
-        /* browse */ {4, 6, 20, 6}, {4, 12, 20, 12}, {4, 18, 14, 18},
-        /* fx */ {12, 3, 12, 21}, {5, 8, 5, 16}, {19, 6, 19, 18}, {8, 11, 8, 13}, {15, 9, 15, 15},
-        /* settings */ {4, 7, 13, 7}, {17, 7, 20, 7}, {4, 17, 7, 17}, {11, 17, 20, 17}, {15, 5, 15, 9}, {9, 15, 9, 19},
-    };
-    static const uint8_t FIRST[] = {0, 5, 8, 0, 13}, COUNT[] = {5, 3, 5, 0, 6};
-    if (page == UI_NEXT_PAGE_RECORD) {
-        lv_draw_rect_dsc_t d;
-        lv_draw_rect_dsc_init(&d);
-        d.bg_opa = LV_OPA_TRANSP;
-        d.radius = LV_RADIUS_CIRCLE;
-        d.border_width = 2;
-        d.border_color = ui_next_col(c);
-        lv_area_t r = {a.x1 + (int)(6 * k), a.y1 + (int)(6 * k), a.x1 + (int)(18 * k), a.y1 + (int)(18 * k)};
-        lv_draw_rect(layer, &d, &r);
-        return;
-    }
-    for (int i = 0; i < COUNT[page]; i++) {
-        const int8_t *s = S[FIRST[page] + i];
-        ui_next_seg(layer, (float)a.x1 + (float)s[0] * k, (float)a.y1 + (float)s[1] * k,
-            (float)a.x1 + (float)s[2] * k, (float)a.y1 + (float)s[3] * k, 2, c, LV_OPA_COVER);
-    }
-}
-
 /* ---- build ---- */
 
 static void pick_fonts(ui_next_class_t cls)
@@ -296,23 +222,6 @@ static void pick_fonts(ui_next_class_t cls)
     P.f_big = f->big;
     P.f_bpm = f->bpm;
     P.f_val = f->val;
-}
-
-static lv_obj_t *chip(lv_obj_t *parent, const char *s)
-{
-    lv_obj_t *c = lv_obj_create(parent);
-    lv_obj_remove_style_all(c);
-    lv_obj_remove_flag(c, LV_OBJ_FLAG_SCROLLABLE | LV_OBJ_FLAG_CLICKABLE);
-    lv_obj_set_size(c, LV_SIZE_CONTENT, LV_SIZE_CONTENT);
-    lv_obj_set_style_bg_color(c, ui_next_col(P.pal->chip), 0);
-    lv_obj_set_style_bg_opa(c, LV_OPA_COVER, 0);
-    lv_obj_set_style_radius(c, LV_RADIUS_CIRCLE, 0);
-    lv_obj_set_style_pad_hor(c, P.lay.tok.pad_px - 2, 0);
-    lv_obj_set_style_pad_ver(c, 3, 0);
-    lv_obj_set_flex_flow(c, LV_FLEX_FLOW_ROW);
-    lv_obj_set_flex_align(c, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-    ui_next_label(c, s, P.f_mono, P.pal->text);
-    return c;
 }
 
 static void build_top_bar(void)
@@ -331,34 +240,10 @@ static void build_top_bar(void)
     lv_obj_set_flex_align(right, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
     lv_obj_set_style_pad_column(right, P.lay.tok.gap_px, 0);
     lv_obj_align(right, LV_ALIGN_RIGHT_MID, -P.lay.tok.pad_px, 0);
-    P.chip_layers = chip(right, "LAYERS 1-4");
+    P.chip_layers = ui_next_chrome_chip(right, "LAYERS 1-4");
     if (P.lay.landscape && P.lay.cls != UI_NEXT_CLASS_S) {
-        lv_obj_t *ext = chip(right, "EXT ON");
+        lv_obj_t *ext = ui_next_chrome_chip(right, "EXT ON");
         (void)ext;
-    }
-}
-
-static void build_nav(void)
-{
-    const ui_next_rect_t r = P.lay.nav;
-    lv_obj_t *nav = ui_next_box(P.root, r.x, r.y, r.w, r.h, P.pal->nav);
-    if (P.lay.landscape) ui_next_box(nav, r.w - 1, 0, 1, r.h, P.pal->border);
-    else ui_next_box(nav, 0, 0, r.w, 1, P.pal->border);
-    const int isz = P.lay.cls == UI_NEXT_CLASS_S ? 24 : P.lay.cls == UI_NEXT_CLASS_M ? 26 : 29;
-    for (int i = 0; i < UI_NEXT_PAGE_COUNT; i++) {
-        const int iw = P.lay.landscape ? r.w : r.w / UI_NEXT_PAGE_COUNT;
-        const int ih = P.lay.landscape ? r.h / UI_NEXT_PAGE_COUNT : r.h;
-        lv_obj_t *item = ui_next_box(nav, P.lay.landscape ? 0 : i * iw, P.lay.landscape ? i * ih : 0, iw, ih,
-                             i == (int)P.page ? P.pal->sel : P.pal->nav);
-        lv_obj_t *ic = lv_obj_create(item);
-        lv_obj_remove_style_all(ic);
-        lv_obj_remove_flag(ic, LV_OBJ_FLAG_SCROLLABLE);
-        lv_obj_set_size(ic, isz, isz);
-        lv_obj_align(ic, LV_ALIGN_CENTER, 0, -8);
-        lv_obj_add_event_cb(ic, icon_draw_cb, LV_EVENT_DRAW_MAIN, (void *)(intptr_t)i);
-        P.nav_icon[i] = ic;
-        lv_obj_t *l = ui_next_label(item, NAV_NAME[i], P.f_tiny, i == (int)P.page ? P.pal->accent_ink : P.pal->muted);
-        lv_obj_align(l, LV_ALIGN_CENTER, 0, isz / 2 + 2);
     }
 }
 
@@ -465,48 +350,6 @@ static void build_link_bar(void)
     }
 }
 
-static lv_obj_t *dock_card(int d)
-{
-    const ui_next_rect_t r = P.lay.deck_card[d];
-    const int pad = P.lay.tok.pad_px, gap = P.lay.tok.gap_px;
-    lv_obj_t *card = ui_next_box(P.root, r.x, r.y, r.w, r.h, P.pal->nav);
-    if (P.landscape && d == 1) ui_next_box(card, 0, 0, 1, r.h, P.pal->border);
-    if (!(P.landscape == false && d == 1)) ui_next_box(card, 0, 0, r.w, 1, P.pal->border);
-
-    lv_obj_t *head = lv_obj_create(card);
-    lv_obj_remove_style_all(head);
-    lv_obj_remove_flag(head, LV_OBJ_FLAG_SCROLLABLE);
-    lv_obj_set_pos(head, pad, gap - 2);
-    lv_obj_set_size(head, r.w - 2 * pad, LV_SIZE_CONTENT);
-    lv_obj_set_flex_flow(head, LV_FLEX_FLOW_ROW);
-    lv_obj_set_flex_align(head, LV_FLEX_ALIGN_START, LV_FLEX_ALIGN_CENTER, LV_FLEX_ALIGN_CENTER);
-    lv_obj_set_style_pad_column(head, gap, 0);
-
-    ui_next_label(head, d ? "B" : "A", P.f_big, P.pal->accent_ink);
-    P.dk_title[d] = ui_next_label(head, "", P.f_med, P.pal->text);
-    lv_obj_set_flex_grow(P.dk_title[d], 1);
-    lv_label_set_long_mode(P.dk_title[d], LV_LABEL_LONG_MODE_DOTS);
-    P.dk_bpm[d] = ui_next_label(head, "", P.f_bpm, P.pal->text);
-    P.dk_key[d] = ui_next_label(head, "", P.f_mono, P.pal->text);
-    P.dk_badge[d] = ui_next_label(head, "", P.f_tiny, P.pal->on_accent);
-    P.dk_time[d] = ui_next_label(head, "", P.f_mono, P.pal->text);
-    lv_obj_t *chips[2] = {P.dk_key[d], P.dk_badge[d]};
-    for (int i = 0; i < 2; i++) {
-        lv_obj_set_style_bg_opa(chips[i], LV_OPA_COVER, 0);
-        lv_obj_set_style_radius(chips[i], 5, 0);
-        lv_obj_set_style_pad_hor(chips[i], 7, 0);
-        lv_obj_set_style_pad_ver(chips[i], 1, 0);
-    }
-
-    lv_obj_update_layout(head);
-    const int oy = gap - 2 + lv_obj_get_height(head) + 6;
-    P.ov[d] = ui_next_box(card, pad, oy, r.w - 2 * pad, r.h - oy - gap, P.pal->well);
-    lv_obj_set_style_radius(P.ov[d], 4, 0);
-    lv_obj_set_style_clip_corner(P.ov[d], true, 0);
-    lv_obj_add_event_cb(P.ov[d], ov_draw_cb, LV_EVENT_DRAW_MAIN, (void *)(intptr_t)d);
-    return card;
-}
-
 lv_obj_t *ui_next_perform_create(lv_obj_t *parent, uint16_t w, uint16_t h, bool day)
 {
     memset(&P, 0, sizeof P);
@@ -515,6 +358,7 @@ lv_obj_t *ui_next_perform_create(lv_obj_t *parent, uint16_t w, uint16_t h, bool 
     P.pal = ui_next_palette(day);
     P.landscape = P.lay.landscape;
     P.page = UI_NEXT_PAGE_PERFORM;
+    ui_next_chrome_begin(&P.lay, day, UI_NEXT_PAGE_PERFORM);
     static const uint16_t WIN[] = {144, 180, 216};
     P.mcols = WIN[P.lay.cls];
     pick_fonts(P.lay.cls);
@@ -522,10 +366,10 @@ lv_obj_t *ui_next_perform_create(lv_obj_t *parent, uint16_t w, uint16_t h, bool 
     P.root = ui_next_box(parent, 0, 0, w, h, P.pal->frame);
     build_waveforms();
     build_link_bar();
-    dock_card(0);
-    dock_card(1);
+    ui_next_chrome_dock(P.root, 0, true);
+    ui_next_chrome_dock(P.root, 1, true);
     build_top_bar();
-    build_nav();
+    ui_next_chrome_nav(P.root);
     return P.root;
 }
 
@@ -570,19 +414,9 @@ void ui_next_perform_update(const ui_next_perform_model_t *m)
     lv_label_set_text(lbl, m->layers);
 
     for (int d = 0; d < 2; d++) {
-        const ui_next_deck_t *k = &m->deck[d];
-        lv_label_set_text(P.dk_title[d], k->title);
-        lv_label_set_text(P.dk_bpm[d], k->bpm);
-        lv_label_set_text(P.dk_key[d], k->key);
-        lv_label_set_text(P.dk_badge[d], k->badge);
-        lv_label_set_text(P.dk_time[d], k->time);
-        lv_obj_set_style_bg_color(P.dk_key[d], ui_next_col(k->key_fit ? P.pal->ok : P.pal->chip), 0);
-        lv_obj_set_style_text_color(P.dk_key[d], ui_next_col(k->key_fit ? P.pal->on_accent : P.pal->text), 0);
-        lv_obj_set_style_bg_color(P.dk_badge[d], ui_next_col(k->badge_on ? P.pal->accent : (P.day ? 0xCBD3DD : 0x2A313C)), 0);
-        lv_obj_set_style_text_color(P.dk_badge[d], ui_next_col(k->badge_on ? P.pal->on_accent : P.pal->muted), 0);
+        ui_next_chrome_dock_set(d, &m->deck[d]);
         lv_obj_invalidate(P.wf[d]);
         lv_obj_invalidate(P.vu[d]);
-        lv_obj_invalidate(P.ov[d]);
     }
     lv_obj_invalidate(P.lane);
 

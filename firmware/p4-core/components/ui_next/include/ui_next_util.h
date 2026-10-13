@@ -21,6 +21,10 @@ typedef struct {
     const lv_font_t *bpm;
     const lv_font_t *val;   /* link bar values */
     const lv_font_t *title; /* boot name */
+    const lv_font_t *row;   /* list row title, buttons (weight 500/600) */
+    const lv_font_t *small; /* artist, genre, tag names */
+    const lv_font_t *rmono; /* list numbers */
+    const lv_font_t *tagf;  /* tag pills */
 } ui_next_fonts_t;
 
 const ui_next_fonts_t *ui_next_fonts_for(ui_next_class_t cls);

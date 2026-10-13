@@ -17,7 +17,7 @@ The licence files are in `licenses/`. Keep them with the fonts (FW-8, ST-11).
 bullet, ellipsis, minus sign (U+2212). Icons are not in the fonts: they are drawn
 by the UI.
 
-Sizes: Roboto Regular 12 14 16 18 24, Roboto Medium 14 16 18 24 28 30 34, Cousine Regular
+Sizes: Roboto Regular 12 14 16 18 24, Roboto Medium 12 14 16 18 24 28 30 34, Cousine Regular
 10 12 14 16 20, Cousine Bold 10 12 14. Roboto Medium stands in for the weight
 500 and 600 of the demo boards.
 
@@ -31,4 +31,4 @@ tools/gen_ui_next_fonts.sh <Roboto 2.138 dir> <Cousine 1.21 dir> <path to lv_fon
 ## Open items
 
 - Confirm the licence text of each font before the first release (backlog open question).
-- Check the flash size of the 20 fonts on the P4 image before the fonts join a build.
+- Check the flash size of the 21 fonts on the P4 image before the fonts join a build.
