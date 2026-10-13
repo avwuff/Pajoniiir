@@ -350,3 +350,147 @@ void ui_next_demo_record(ui_next_record_model_t *m, const ui_next_env_t *env2)
         m->deck[d].pos01 = d ? 0.61f : 0.28f;
     }
 }
+
+/* Colour preview of the Display board, 240 columns of half heights. */
+static const uint8_t PREV_LOW[UI_NEXT_REC_COLS] = {
+    52, 37, 31, 28, 24, 23, 22, 91, 70, 52, 40, 32, 30, 26, 25, 24, 95, 69, 53, 38, 31, 29, 27, 23,
+    23, 94, 65, 50, 40, 31, 28, 25, 23, 25, 91, 72, 46, 39, 34, 29, 7, 7, 7, 26, 18, 13, 10, 9,
+    7, 7, 7, 6, 29, 19, 14, 10, 9, 8, 7, 7, 6, 27, 19, 14, 11, 9, 8, 7, 7, 6, 27, 19,
+    13, 11, 9, 7, 7, 6, 7, 28, 19, 14, 10, 9, 8, 7, 7, 7, 25, 18, 14, 11, 9, 7, 8, 7,
+    6, 28, 18, 14, 10, 8, 8, 7, 7, 6, 27, 19, 14, 11, 9, 7, 7, 7, 7, 26, 20, 14, 12, 9,
+    8, 7, 6, 6, 29, 18, 13, 11, 9, 8, 8, 6, 6, 27, 18, 15, 10, 8, 8, 8, 7, 6, 26, 20,
+    13, 10, 9, 8, 7, 7, 6, 26, 19, 13, 10, 9, 8, 7, 7, 6, 91, 67, 52, 39, 32, 27, 27, 26,
+    21, 94, 64, 53, 41, 30, 29, 26, 25, 24, 92, 68, 48, 38, 31, 29, 26, 25, 24, 95, 67, 51, 41, 32,
+    29, 26, 23, 22, 92, 63, 49, 39, 34, 28, 26, 23, 23, 98, 73, 50, 41, 34, 29, 27, 25, 22, 98, 67,
+    50, 40, 33, 26, 26, 25, 22, 98, 63, 46, 40, 31, 27, 25, 24, 22, 94, 70, 46, 39, 34, 28, 25, 24,
+};
+static const uint8_t PREV_MID[UI_NEXT_REC_COLS] = {
+    13, 16, 15, 33, 19, 12, 16, 46, 22, 17, 18, 12, 22, 18, 16, 16, 34, 21, 20, 17, 12, 25, 15, 15,
+    15, 31, 17, 13, 12, 12, 24, 18, 12, 13, 38, 19, 14, 17, 12, 23, 4, 27, 23, 27, 28, 29, 23, 22,
+    24, 26, 28, 20, 33, 23, 24, 24, 28, 29, 27, 22, 22, 37, 26, 29, 28, 26, 28, 22, 24, 26, 27, 28,
+    23, 19, 21, 23, 23, 28, 19, 27, 22, 28, 22, 26, 27, 22, 26, 26, 32, 27, 23, 24, 29, 23, 21, 26,
+    26, 35, 24, 24, 19, 26, 23, 28, 28, 28, 28, 25, 28, 21, 21, 27, 22, 27, 23, 32, 27, 22, 20, 24,
+    29, 20, 23, 24, 33, 23, 25, 21, 22, 27, 29, 24, 26, 32, 23, 26, 25, 21, 33, 24, 24, 26, 25, 28,
+    26, 22, 20, 25, 21, 28, 21, 37, 24, 22, 27, 19, 22, 24, 23, 23, 37, 19, 18, 12, 12, 31, 17, 13,
+    12, 29, 24, 20, 14, 16, 29, 15, 19, 13, 33, 26, 18, 13, 17, 24, 21, 16, 17, 42, 24, 19, 17, 17,
+    29, 18, 16, 12, 33, 21, 16, 11, 12, 27, 17, 16, 17, 42, 23, 15, 17, 11, 32, 15, 18, 15, 46, 23,
+    14, 12, 12, 31, 20, 16, 13, 34, 26, 14, 14, 15, 32, 18, 13, 15, 33, 17, 19, 18, 16, 24, 14, 16,
+};
+static const uint8_t PREV_HIGH[UI_NEXT_REC_COLS] = {
+    7, 7, 6, 17, 9, 6, 7, 8, 5, 4, 4, 5, 17, 14, 9, 8, 6, 4, 7, 7, 4, 24, 16, 8,
+    7, 6, 6, 6, 7, 6, 18, 12, 12, 7, 8, 6, 5, 5, 6, 30, 3, 3, 1, 2, 1, 1, 2, 1,
+    6, 4, 3, 2, 2, 1, 2, 1, 2, 5, 5, 3, 2, 2, 1, 2, 1, 1, 8, 4, 3, 2, 2, 2,
+    2, 1, 1, 7, 3, 3, 2, 2, 1, 1, 1, 1, 9, 4, 2, 2, 1, 2, 2, 1, 1, 9, 4, 2,
+    3, 1, 1, 1, 1, 2, 8, 4, 2, 2, 2, 2, 2, 2, 2, 9, 3, 3, 2, 2, 2, 1, 2, 1,
+    8, 3, 3, 2, 2, 1, 2, 1, 1, 6, 5, 3, 2, 2, 1, 2, 2, 2, 6, 3, 2, 2, 1, 2,
+    2, 1, 1, 6, 4, 2, 3, 2, 1, 2, 2, 1, 7, 3, 2, 2, 6, 5, 6, 4, 4, 31, 13, 7,
+    9, 6, 5, 5, 5, 4, 27, 18, 11, 5, 7, 6, 6, 6, 6, 23, 9, 12, 7, 7, 5, 4, 7, 7,
+    22, 13, 12, 6, 5, 5, 4, 5, 6, 23, 11, 6, 5, 4, 6, 5, 7, 3, 20, 10, 8, 5, 7, 5,
+    5, 4, 5, 24, 17, 10, 9, 7, 5, 4, 6, 7, 30, 12, 11, 8, 6, 5, 7, 6, 5, 28, 19, 8,
+};
+
+static void set_seg(ui_next_setting_t *r, const char *label, const char *const *opt, int n, int sel)
+{
+    r->kind = UI_NEXT_SET_SEG;
+    snprintf(r->label, sizeof r->label, "%s", label);
+    for (int i = 0; i < n; i++) snprintf(r->opt[i], sizeof r->opt[i], "%s", opt[i]);
+    r->n_opt = (uint8_t)n;
+    r->sel = (uint8_t)sel;
+}
+
+static void set_slider(ui_next_setting_t *r, const char *label, int pct, const char *value)
+{
+    r->kind = UI_NEXT_SET_SLIDER;
+    snprintf(r->label, sizeof r->label, "%s", label);
+    r->pct = (uint8_t)pct;
+    snprintf(r->value, sizeof r->value, "%s", value);
+}
+
+static void set_toggle(ui_next_setting_t *r, const char *label, bool on)
+{
+    r->kind = UI_NEXT_SET_TOGGLE;
+    snprintf(r->label, sizeof r->label, "%s", label);
+    r->on = on;
+}
+
+static void set_status(ui_next_setting_t *r, const char *label, const char *text)
+{
+    r->kind = UI_NEXT_SET_STATUS;
+    snprintf(r->label, sizeof r->label, "%s", label);
+    r->on = true;
+    snprintf(r->value, sizeof r->value, "%s", text);
+}
+
+static void set_button(ui_next_setting_t *r, const char *label, const char *caption, bool danger)
+{
+    r->kind = UI_NEXT_SET_BUTTON;
+    snprintf(r->label, sizeof r->label, "%s", label);
+    snprintf(r->value, sizeof r->value, "%s", caption);
+    r->danger = danger;
+}
+
+void ui_next_demo_settings(ui_next_settings_model_t *m, ui_next_settings_tab_t tab, const ui_next_env_t *env2)
+{
+    static const char *const DACUSB[] = {"DAC", "USB"}, *const RATE[] = {"44.1", "48", "96"},
+                             *const BUF[] = {"3", "6", "11"}, *const THEME[] = {"DARK", "DAY", "AUTO"},
+                             *const WAVE[] = {"3 BAND", "RGB", "BLUE"}, *const HEAD[] = {"LEFT", "30 %", "CENTER"},
+                             *const TIME[] = {"REMAIN", "ELAPSED"}, *const IPM[] = {"DHCP", "STATIC"},
+                             *const LANG[] = {"EN", "FR", "ES"};
+    m->tab = tab;
+    snprintf(m->saved, sizeof m->saved, "SAVED");
+    ui_next_setting_t *r = m->row;
+    if (tab == UI_NEXT_TAB_AUDIO) {
+        set_seg(r++, "MASTER OUTPUT", DACUSB, 2, 0);
+        set_seg(r++, "HEADPHONE OUTPUT", DACUSB, 2, 0);
+        set_slider(r++, "MASTER LEVEL", 78, "-3 dB");
+        set_slider(r++, "HEADPHONE LEVEL", 60, "-9 dB");
+        set_slider(r++, "CUE / MASTER MIX", 50, "50 %");
+        set_seg(r++, "SAMPLE RATE (kHz)", RATE, 3, 1);
+        set_seg(r++, "BUFFER (ms)", BUF, 3, 1);
+        set_toggle(r++, "MASTER LIMITER", true);
+        set_toggle(r++, "MONO MASTER", false);
+        set_toggle(r++, "SPLIT CUE", false);
+    } else if (tab == UI_NEXT_TAB_DISPLAY) {
+        set_seg(r++, "THEME", THEME, 3, 0);
+        set_slider(r++, "BRIGHTNESS", 80, "4 / 5");
+        set_seg(r++, "WAVEFORM", WAVE, 3, 0);
+        set_seg(r++, "PLAYHEAD", HEAD, 3, 1);
+        set_seg(r++, "TIME MODE", TIME, 2, 0);
+        set_toggle(r++, "PHASE METER", true);
+        set_toggle(r++, "BEAT GRID LINES", true);
+    } else {
+        set_status(r++, "CONTROLLER", "DDJ-400");
+        set_slider(r++, "JOG WHEEL WEIGHT", 40, "MEDIUM");
+        set_status(r++, "WI-FI", "Sample-Net");
+        set_status(r++, "ETHERNET", "192.168.1.21");
+        set_seg(r++, "IP MODE", IPM, 2, 0);
+        set_toggle(r++, "AUTO ANALYZE", true);
+        set_seg(r++, "LANGUAGE", LANG, 3, 0);
+        set_status(r++, "FIRMWARE", "v0.1.0");
+        set_button(r++, "OPEN LICENSES", "OPEN", false);
+        set_button(r++, "FACTORY RESET", "RESET", true);
+    }
+    m->n = (uint8_t)(r - m->row);
+
+    static const struct { const char *n, *h; uint32_t c; } WC[3] = {
+        {"KICK (LOW)", "#B07CFF", 0xB07CFF}, {"BODY (MID)", "#3FD6C0", 0x3FD6C0}, {"AIR (HIGH)", "#F4F1E8", 0xF4F1E8},
+    };
+    for (int i = 0; i < 3; i++) {
+        snprintf(m->wave_color[i].name, sizeof m->wave_color[i].name, "%s", WC[i].n);
+        snprintf(m->wave_color[i].hex, sizeof m->wave_color[i].hex, "%s", WC[i].h);
+        m->wave_color[i].color = WC[i].c;
+    }
+    m->color_sel = 0;
+    static const char *const PR[4] = {"3 BAND", "WARM", "ICE", "MONO"};
+    for (int i = 0; i < 4; i++) snprintf(m->preset[i], sizeof m->preset[i], "%s", PR[i]);
+    m->preset_sel = 0;
+    m->preview[0] = PREV_LOW;
+    m->preview[1] = PREV_MID;
+    m->preview[2] = PREV_HIGH;
+    for (int d = 0; d < 2; d++) {
+        m->deck[d].env = env2 + d;
+        snprintf(m->deck[d].title, sizeof m->deck[d].title, d ? "Sample Track B" : "Sample Track A");
+        snprintf(m->deck[d].time, sizeof m->deck[d].time, d ? "-01:56" : "-03:44");
+        m->deck[d].pos01 = d ? 0.61f : 0.28f;
+    }
+}

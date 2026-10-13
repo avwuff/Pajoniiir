@@ -46,6 +46,11 @@ void ui_next_chrome_draw_overview_ex(lv_layer_t *layer, const lv_area_t *a, cons
                                      float pos01, bool cues, bool shade, uint32_t head_rgb,
                                      const ui_next_palette_t *pal);
 
+/* Three-band profile of half heights (0..100 = 0..50 view units), `cols` columns
+ * stretched over `a`. Used by the Record waveform and the colour preview. */
+void ui_next_chrome_draw_profile(lv_layer_t *layer, const lv_area_t *a, const uint8_t *const prof[3], int cols,
+                                 const ui_next_palette_t *pal);
+
 /* Action button of a page body: amber when `on`, else a chip. Returns the box. */
 lv_obj_t *ui_next_chrome_action(lv_obj_t *parent, int x, int y, int w, int h, const char *text, bool on);
 

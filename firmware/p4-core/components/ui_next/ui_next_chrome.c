@@ -305,3 +305,18 @@ lv_obj_t *ui_next_chrome_action(lv_obj_t *parent, int x, int y, int w, int h, co
     lv_obj_center(l);
     return b;
 }
+
+void ui_next_chrome_draw_profile(lv_layer_t *l, const lv_area_t *a, const uint8_t *const prof[3], int cols,
+                                 const ui_next_palette_t *pal)
+{
+    const int w = lv_area_get_width(a), h = lv_area_get_height(a), c0 = a->y1 + h / 2;
+    const uint32_t colr[3] = {pal->wave_low, pal->wave_mid, pal->wave_high};
+    for (int px = 0; px < w; px++) {
+        const int col = px * cols / w;
+        for (int b = 0; b < 3; b++) {
+            const int half = (int)((float)prof[b][col] * 0.5f * (float)h / 100.0f + .5f);
+            const int hh = half < 1 ? 1 : half;
+            ui_next_fill_rect(l, a->x1 + px, c0 - hh, a->x1 + px, c0 + hh, colr[b], LV_OPA_COVER);
+        }
+    }
+}

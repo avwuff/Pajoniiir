@@ -219,6 +219,52 @@ lv_obj_t *ui_next_record_create(lv_obj_t *parent, uint16_t w, uint16_t h, bool d
 void ui_next_record_update(const ui_next_record_model_t *m);
 void ui_next_demo_record(ui_next_record_model_t *m, const ui_next_env_t *env2);
 
+/* Settings pages (screens 10, 11, 12): tabs AUDIO, DISPLAY, SYSTEM over a list of
+ * rows. The model describes the rows, so the core can drive any of them.
+ * CORE-GAP: ST-1 to ST-13, FW-6, FW-9, SY-8. */
+#define UI_NEXT_SET_MAX 12
+
+typedef enum {
+    UI_NEXT_SET_SEG,     /* segmented choice */
+    UI_NEXT_SET_SLIDER,  /* level with a value text */
+    UI_NEXT_SET_TOGGLE,
+    UI_NEXT_SET_STATUS,  /* dot and text */
+    UI_NEXT_SET_BUTTON,
+} ui_next_setting_kind_t;
+
+typedef enum { UI_NEXT_TAB_AUDIO, UI_NEXT_TAB_DISPLAY, UI_NEXT_TAB_SYSTEM } ui_next_settings_tab_t;
+
+typedef struct {
+    ui_next_setting_kind_t kind;
+    char label[20];
+    char opt[4][8];                  /* SEG options */
+    uint8_t n_opt, sel;
+    uint8_t pct;                     /* SLIDER */
+    bool on;                         /* TOGGLE, or the dot of a STATUS */
+    char value[16];                  /* SLIDER value, STATUS text, BUTTON caption */
+    bool danger;                     /* BUTTON in red */
+} ui_next_setting_t;
+
+typedef struct {
+    ui_next_settings_tab_t tab;
+    ui_next_setting_t row[UI_NEXT_SET_MAX];
+    uint8_t n;
+    char saved[10];                  /* "SAVED" */
+    /* DISPLAY side panel (ST-7). */
+    struct { char name[12], hex[8]; uint32_t color; } wave_color[3];
+    uint8_t color_sel;
+    char preset[4][8];
+    uint8_t preset_sel;
+    const uint8_t *preview[3];       /* low, mid, high profiles of the preview */
+    ui_next_deck_t deck[2];
+} ui_next_settings_model_t;
+
+/* The rows are built from the model at creation; update only moves the values. */
+lv_obj_t *ui_next_settings_create(lv_obj_t *parent, uint16_t w, uint16_t h, bool day,
+                                  const ui_next_settings_model_t *m);
+void ui_next_settings_update(const ui_next_settings_model_t *m);
+void ui_next_demo_settings(ui_next_settings_model_t *m, ui_next_settings_tab_t tab, const ui_next_env_t *env2);
+
 /* Alerts overlay (screen 13): dimmed page, toasts at the top right, one modal
  * dialog. Audio never stops because of an alert (SY-1). CORE-GAP: SY-1 to SY-3. */
 #define UI_NEXT_TOASTS 3

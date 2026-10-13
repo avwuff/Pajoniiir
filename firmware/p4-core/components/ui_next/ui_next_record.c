@@ -31,18 +31,10 @@ static void wave_cb(lv_event_t *e)
     lv_layer_t *l = lv_event_get_layer(e);
     lv_area_t a;
     lv_obj_get_coords(lv_event_get_target_obj(e), &a);
-    const int w = lv_area_get_width(&a), h = lv_area_get_height(&a), c0 = a.y1 + h / 2;
+    const int w = lv_area_get_width(&a);
     if (!R.m.wave[0]) return;
-    const uint32_t colr[3] = {R.pal->wave_low, R.pal->wave_mid, R.pal->wave_high};
     const int head = (int)(R.m.head01 * (float)w);
-    for (int px = 0; px < w; px++) {
-        const int col = px * UI_NEXT_REC_COLS / w;
-        for (int b = 0; b < 3; b++) {
-            const int half = (int)((float)R.m.wave[b][col] * 0.5f * (float)h / 100.0f + .5f);
-            const int hh = half < 1 ? 1 : half;
-            ui_next_fill_rect(l, a.x1 + px, c0 - hh, a.x1 + px, c0 + hh, colr[b], LV_OPA_COVER);
-        }
-    }
+    ui_next_chrome_draw_profile(l, &a, R.m.wave, UI_NEXT_REC_COLS, R.pal);
     /* Unwritten part of the window, then the red write head. */
     ui_next_fill_rect(l, a.x1 + head, a.y1, a.x2, a.y2, R.pal->well, LV_OPA_COVER);
     ui_next_fill_rect(l, a.x1 + head, a.y1, a.x1 + head + 1, a.y2, R.pal->bad, LV_OPA_COVER);

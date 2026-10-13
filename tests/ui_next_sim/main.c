@@ -1,6 +1,6 @@
 /* Renders the ui_next pages at the six board sizes, night and day, into PPM
  * files. No window, no hardware.
- * usage: ui_next_sim <out dir> [tick] [perform|boot|browse|search|alerts|trackinfo|source|browseedit|fx|record] (default: all pages) */
+ * usage: ui_next_sim <out dir> [tick] [perform|boot|browse|search|alerts|trackinfo|source|browseedit|fx|record|settings-audio|settings-display|settings-system] (default: all pages) */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -30,8 +30,8 @@ static int write_ppm(const char *path)
     return fclose(f);
 }
 
-typedef enum { SCREEN_PERFORM, SCREEN_BOOT, SCREEN_BROWSE, SCREEN_SEARCH, SCREEN_ALERTS, SCREEN_TRACKINFO, SCREEN_SOURCE, SCREEN_BROWSEEDIT, SCREEN_FX, SCREEN_RECORD, SCREEN_COUNT } screen_t;
-static const char *const SCREEN_NAME[] = {"perform", "boot", "browse", "search", "alerts", "trackinfo", "source", "browseedit", "fx", "record"};
+typedef enum { SCREEN_PERFORM, SCREEN_BOOT, SCREEN_BROWSE, SCREEN_SEARCH, SCREEN_ALERTS, SCREEN_TRACKINFO, SCREEN_SOURCE, SCREEN_BROWSEEDIT, SCREEN_FX, SCREEN_RECORD, SCREEN_SET_AUDIO, SCREEN_SET_DISPLAY, SCREEN_SET_SYSTEM, SCREEN_COUNT } screen_t;
+static const char *const SCREEN_NAME[] = {"perform", "boot", "browse", "search", "alerts", "trackinfo", "source", "browseedit", "fx", "record", "settings-audio", "settings-display", "settings-system"};
 
 static int render(const char *dir, screen_t screen, uint16_t w, uint16_t h, bool day, uint32_t tick,
                   const ui_next_env_t *ea, const ui_next_env_t *eb)
@@ -46,7 +46,17 @@ static int render(const char *dir, screen_t screen, uint16_t w, uint16_t h, bool
     lv_display_set_flush_cb(disp, flush_cb);
 
     lv_obj_t *scr = lv_display_get_screen_active(disp);
-    lv_obj_t *root = screen == SCREEN_BOOT     ? ui_next_boot_create(scr, w, h, day)
+    static ui_next_settings_model_t setm;
+    const bool is_settings = screen >= SCREEN_SET_AUDIO && screen <= SCREEN_SET_SYSTEM;
+    static ui_next_env_t envset[2];
+    if (is_settings) {
+        ui_next_env_demo(&envset[0], 11);
+        ui_next_env_demo(&envset[1], 23);
+        memset(&setm, 0, sizeof setm);
+        ui_next_demo_settings(&setm, (ui_next_settings_tab_t)(screen - SCREEN_SET_AUDIO), envset);
+    }
+    lv_obj_t *root = is_settings ? ui_next_settings_create(scr, w, h, day, &setm)
+                     : screen == SCREEN_BOOT     ? ui_next_boot_create(scr, w, h, day)
                      : screen == SCREEN_BROWSE || screen == SCREEN_ALERTS ? ui_next_browse_create(scr, w, h, day)
                      : screen == SCREEN_SEARCH ? ui_next_search_create(scr, w, h, day)
                      : screen == SCREEN_TRACKINFO ? ui_next_trackinfo_create(scr, w, h, day)
@@ -80,6 +90,8 @@ static int render(const char *dir, screen_t screen, uint16_t w, uint16_t h, bool
                 ui_next_demo_alerts(&am);
                 ui_next_alerts_update(&am);
             }
+        } else if (is_settings) {
+            ui_next_settings_update(&setm);
         } else if (screen == SCREEN_RECORD) {
             static ui_next_record_model_t rm;
             static ui_next_env_t envr[2];
