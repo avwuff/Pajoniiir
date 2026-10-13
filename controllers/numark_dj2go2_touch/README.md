@@ -96,9 +96,15 @@ Operator run on a real DJ2GO2 Touch, 2026-10-13 (reported in one line, no values
 | Levels and browse | OK |
 | Crossfader | OK |
 | USB cable disconnect and reconnect | OK |
-| Note Off velocity of each button | not reported |
+| Note Off velocity of each button | OK, all releases are Note Off velocity 0 (see captures below); PFL is a latching button, see the finding |
 | LEDs in the four pad modes | not reported |
 | Master Level and Cue Level double change | not reported |
 | Audio to Main and to the headphones (Cue) | OK |
 
-The three "not reported" rows are still to be run or recorded. The USB ID and the audio descriptor already come from a real unit.
+The two "not reported" rows are still to be run or recorded. The USB ID and the audio descriptor already come from a real unit.
+
+### Captures on a PC (2026-10-13, `aseqdump`, controller on the PC, not on the P4)
+
+- PLAY, CUE, SYNC, LOAD (notes 2 and 3 on channel 16), browse push (note 6 on channel 16) and the pads: Note On velocity 127, release is **Note Off velocity 0**, on both decks. Matches the profile's release rule.
+- **There is one PAD MODE button and no SHIFT button.** Pressing PAD MODE cycles CUES, AUTO, MANUAL, SAMPLER, CUES. Each press sends, on both pad channels at once (`0x94` and `0x95`), note 0: Note On velocity 5 (to AUTO), 11 (to MANUAL), 7 (to SAMPLER) and a Note Off velocity 0 (back to CUES). The pads then send the notes in the table above: CUES notes 1-4, AUTO 0x11-0x14, MANUAL 0x21-0x24, SAMPLER 0x31-0x34, all with Note Off velocity 0. The profile does not need note 0 on the pad channels: the mode is implied by the pad notes. The "PAD MODE held" row in the controls table (notes 0x09 to 0x0C) was not seen in these captures and is not confirmed.
+- **Finding, PFL (headphone cue, note 0x1B on `0x90` and `0x91`):** the button latches. Press one sends Note On 127, press two sends **Note Off velocity 0**, press three Note On 127 again. The firmware toggles PFL only when the value is non-zero (`deck_core.c` `on_mixer_control`, `CTRL_ID_DECK1_PFL` / `DECK2_PFL`: `if (raw != 0)`), so the Note Off of the second press would be ignored and the P4 PFL would run opposite to the button from the second press on. Read from the code and the captures, **not yet checked on the P4**: press PFL three times with the controller on the P4 and watch `pfl1` / `pfl2` in `/api/status`. If it is confirmed, a fix is to map only the Note On of PFL (drop the `0x80` / `0x81` entries), so each press toggles once; the Note Off entries are in the profile today.
