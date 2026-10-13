@@ -3170,6 +3170,18 @@ $tests = @(
         )
     },
     @{
+        Name = "ui_next_layout"
+        Dir = "tests/ui_next_layout"
+        Target = "test_ui_next_layout.exe"
+        Args = @(
+            "-Wall", "-Wextra", "-Wpedantic", "-Werror=implicit-function-declaration", "-std=c99",
+            "-I../../firmware/p4-core/components/ui_next/include",
+            "-o", "test_ui_next_layout.exe",
+            "test_ui_next_layout.c",
+            "../../firmware/p4-core/components/ui_next/ui_next_layout.c"
+        )
+    },
+    @{
         Name = "ui_overview_window"
         Dir = "tests/ui_overview_window"
         Target = "test_ui_overview_window.exe"
