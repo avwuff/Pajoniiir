@@ -4,6 +4,7 @@ Date: 2026-10-12. The operator requested continuing the short joint Hercules
 Pad FX/global FX/LED/VU block after the controller lifecycle software review.
 The available board was explicitly confirmed as JC4880. This record separates
 the installed candidate, short playback evidence and remaining control coverage.
+Global FX follow-up completed on 2026-10-14 without another firmware installation.
 
 ## Exact candidate and installation
 
@@ -73,10 +74,38 @@ the exact installed JC4880 image. It does not measure exact echo delay/filter
 response, test unsupported pads 5-8 or qualify every LED output/address.
 
 The operator did not perform the six global FX commands. No sampled global FX
-change is recorded, so global FX remains **NOT RUN**. A separate 30-s supplement
-is prepared, with 2-s pauses between commands. The operator subsequently stated
-that they were **not yet ready**, so that window was not started. Both decks
-remain stopped; global FX stays NOT RUN until the operator resumes.
+change was recorded in those first windows. A separate 30-s supplement was
+prepared, then deferred because the operator was not yet ready. Those windows
+remain NOT RUN for global FX; their results are not relabelled.
+
+## Global FX command supplement — 2026-10-14
+
+The same clean `c7d2e9cd` image was independently reverified as VALID `ota_0`
+with the matching project/ELF, Hercules profile/UAC and mounted storage. The
+tracks were reloaded at 15 s, pitch zero, without MT/loops; both PFLs were enabled.
+No new build, OTA, profile upload, USB reconnect or soak was performed.
+
+The **30.203-s / 74-sample** window receives **16 MIDI packets** and passes all
+22 present strict deltas and output-late delta zero. All six ordered state
+changes are captured, with these elapsed times:
+
+| Physical command | Sampled result | Elapsed |
+| --- | --- | ---: |
+| FX1 | previous effect: filter → delay | 2.625 s |
+| FX2 | next effect: delay → filter | 4.266 s |
+| FX3 | beat index 2 → 1 | 5.484 s |
+| FX4 | beat index 1 → 2 | 7.125 s |
+| Shift+FX1 | enabled false → true | 11.609 s |
+| Shift+FX2 | enabled true → false | 16.062 s |
+
+The operator explicitly confirms all six commands responded as expected, MAIN
+and Hercules headphones remained clean, and waveforms/display were fluid.
+Every sample passes the independent identity/playback/health/counter audit.
+Final snapshots retain the exact VALID image and confirm both decks stopped,
+global FX disabled and no new strict losses. This closes the six-command global
+FX adaptation and the requested joint Pad FX/observed LED/VU block on JC4880.
+The enabled effect in this supplement was **filter**: selecting delay while
+disabled does not qualify its audible global DSP behavior or every effect type.
 
 ## Evidence and retained boundaries
 
@@ -88,6 +117,10 @@ snapshots, raw post-stop diagnostic log, runner, audit, operator confirmation
 and SHA-256 inventory. The selected Pad FX supplement is
 `pads-fx-led-20261012T173238Z/`, with its own original runner, samples, audit,
 operator confirmation and hashes. Missing counters are not treated as zero.
+The global command supplement is retained under
+`.cache/jc4880-global-fx-20261014/global-fx-20261014T173236Z/`, including original
+runner, all samples, baseline/final firmware/UI/USB snapshots, post-stop raw
+diagnostic log, independent six-state audit, operator confirmation and hashes.
 
 This does not physically reproduce or qualify the reconnect repairs, establish
 arbitrary LED-burst throughput, reopen operator-closed S2 work or transfer old

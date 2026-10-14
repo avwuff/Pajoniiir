@@ -72,7 +72,7 @@ writes unless a disposable track or explicit cue-edit scope has been selected.
 | Pad FX 1 | SLICER adaptation: pads 1/2 low/high-pass, pads 3/4 250/500-ms echo | JC4880 `c7d2e9cd` pads 1-4 press/release operator PASS; exact parameters and other-image scope remain separate |
 | Pad FX 2 | Shift+LOOP adaptation: pads 1/2 low/high-pass, pads 3/4 125/1000-ms echo | JC4880 `c7d2e9cd` pads 1-4 press/release operator PASS; exact parameters and other-image scope remain separate |
 | Pad FX pads 5–8 | No DSP preset in either bank | Unsupported; mapped input/LED addresses do not make these effects active |
-| Global FX | Four FX buttons adapt to effect/beat selection and Shift on/clear | Software mapping; combined record did not observe a global FX change |
+| Global FX | Four FX buttons adapt to effect/beat selection and Shift on/clear | JC4880 `c7d2e9cd` six-command selection/beat/filter ON/OFF PASS; other audible global DSP effects remain separate |
 | Native headphones | Hardware level/blend, software PFL, UAC1 FS 44100-Hz packed-24 | Earlier physical routing/knob checks retained plus exact-image final playback PASS |
 | LEDs/VU | Profile outputs for transport, modes, pads and VU | Observed Pad FX colours/VU PASS on JC4880 `c7d2e9cd`; full individual colour/output sweep partial |
 | Key/Pitch Play, Vinyl/Slip, Shift+Play, guide controls, modes 7/8 | Deliberately deferred or unmapped | Unsupported; no physical PASS claimed |
@@ -88,8 +88,11 @@ SLICER / Shift+LOOP pads 1-4 on both decks, momentary release/tail, observed
 pad colours/VU and clean audio/fluid display. This is a selected Pad FX 1/2
 physical PASS on JC4880; it does not measure exact echo/filter parameters,
 cover unsupported pads 5-8 or transfer acceptance to another image/board.
-Global FX commands were not exercised. Their 30-s supplement is deferred
-until the operator is ready; both decks remain stopped. See the
+On 2026-10-14 the same image passes a 30.203-s / 16-MIDI-packet global FX
+supplement: all six ordered effect/beat/ON/OFF changes are sampled, all 22
+strict deltas/output-late zero, and the operator confirms controls/audio/display.
+The enabled effect was filter; other audible global DSP types remain outside
+this scope. Both decks finish stopped with global FX OFF. See the
 [JC4880 lifecycle record](../../docs/validation/JC4880_CONTROLLER_LIFECYCLE_20261012.md).
 
 S2 work is closed by the operator. With both decks stopped:

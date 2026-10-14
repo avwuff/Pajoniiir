@@ -1,6 +1,6 @@
 # Documentation status
 
-Status: **current documentation authority, reconciled 2026-10-12**.
+Status: **current documentation authority, reconciled 2026-10-14**.
 
 The [JC4880 controller lifecycle candidate](validation/JC4880_CONTROLLER_LIFECYCLE_20261012.md)
 is now installed as clean `M2.5-221-gc7d2e9cd`, VALID `ota_0`, with Hercules
@@ -9,9 +9,13 @@ mixed-rate playback passes all 22 strict deltas and output-late delta zero;
 the operator confirms both audio paths and display. A 90.438-s supplement
 receives 48 MIDI packets with all 22 strict deltas/output-late zero; the operator
 confirms both-deck Pad FX 1/2 pads 1-4 press/release, observed colours/VU and
-audio/display. Global FX commands were not exercised and remain NOT RUN,
-with a 30-s supplement deferred because the operator is not yet ready. Both
-decks remain stopped. Public beta assets/channels
+audio/display. On 2026-10-14 the same image passes the 30.203-s / 74-sample
+global FX supplement: 16 MIDI packets, all six ordered effect/beat/ON/OFF
+state changes, all 22 strict deltas and output-late zero. The operator confirms
+each command and both audio/display paths. The requested selected Pad FX,
+observed LED/VU and six-command global FX block is closed for JC4880 `c7d2e9cd`;
+other effect DSP types and broader profile qualification remain separate.
+Both decks are stopped and global FX is OFF. Public beta assets/channels
 remain unchanged; this is not a new-image soak or reconnect qualification.
 
 The [2026-10-12 controller lifecycle software follow-up](reviews/2026-10-12-controller-lifecycle-review.md)
@@ -21,7 +25,8 @@ callback-race, bounded LED headroom/retry and symmetric D1/D2 LOAD/PLAY regressi
 Full required-fixture host qualification (no SKIP), a fresh ordinary M3 build
 under ESP-IDF v6.0.2 and its board/isolation/budget verifier pass. The build is a
 working-tree development artifact, not an installed clean release.
-The joint Hercules Pad FX/global FX/LED/VU control block remains open. The
+The selected joint Hercules Pad FX/global FX/LED/VU control block is now closed
+on the exact JC4880 image recorded above. The
 subsequent JC4880 installation is separately scoped above; existing beta assets
 and historical physical acceptance retain their exact image boundaries.
 
