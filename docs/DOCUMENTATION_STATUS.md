@@ -2,6 +2,18 @@
 
 Status: **current documentation authority, reconciled 2026-10-14**.
 
+The [completed JC1060/DDJ-400 contributor review](reviews/2026-10-14-jc1060-contributor-review.md)
+audits frozen branch `00041a0d` against local `78dc3b7d`, preserves all 71 changed
+file hashes and reproduces root-admission, HS UAC1 cadence, partial web CUE,
+loop-EOF and terminal output-sink issues at documented production boundaries.
+The DDJ-400 v4 binary compiles identically and passes parser/storage/map checks.
+Dependency hash differences are exactly LF/CRLF, with no version change.
+Kayrosen's exact `4e3aa2b4` JC1060/DDJ-400 results provide scoped physical and
+long Observe evidence; seven long-window counters are not the current all-22
+TimingSoak gate. Warm-reset SD and USB MAIN recovery remain failed/open;
+signed OTA is NOT RUN. Review step is complete, selective integration still
+requires repairs. Canonical production code and published beta remain unchanged.
+
 The [JC4880 controller lifecycle candidate](validation/JC4880_CONTROLLER_LIFECYCLE_20261012.md)
 is now installed as clean `M2.5-221-gc7d2e9cd`, VALID `ota_0`, with Hercules
 MIDI/44.1-kHz UAC and the 260-track library available. Its 150.359-s short
@@ -91,6 +103,8 @@ SKIPPED BY OPERATOR / NOT RUN, without changing its accepted short-test scope.
 JC1060 hardware is unavailable to the operator; contributor Kayrosen will test
 it later. Its physical acceptance remains NOT RUN pending exact-image evidence.
 These are recorded dispositions, not additional physical PASS results.
+The later contributor evidence is reconciled in the 2026-10-14 review above;
+it does not qualify the published beta or a future integrated candidate.
 
 [Final development handoff](reviews/2026-10-11-shared-core-final-handoff.md)
 consolidates implementation, software results, installed identity and outstanding

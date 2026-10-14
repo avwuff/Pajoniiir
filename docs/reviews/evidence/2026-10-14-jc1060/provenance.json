@@ -1,0 +1,292 @@
+{
+  "contributor_tip": "00041a0dd1c704781af4d991b663c05cdb6bd4c3",
+  "local_review_head": "78dc3b7d07966579b189f73700f9bff89c888d6b",
+  "merge_base": "8d56f303d13c06daa3d194ae1211785a8cdc33e3",
+  "changed_files": 71,
+  "files": {
+    "controllers/pioneer_ddj_400/README.md": {
+      "bytes": 1673,
+      "sha256": "445455c4abb4d75c9ede7bc8751a8dde435b00e21911b4edbf638b1935555d98"
+    },
+    "controllers/pioneer_ddj_400/profile.json": {
+      "bytes": 23439,
+      "sha256": "e4fc28af59a3d6111355e8db10a94e2591bc6dc991dc75e31038224b54ca0063"
+    },
+    "controllers/pioneer_ddj_400/profile.s3bin": {
+      "bytes": 6112,
+      "sha256": "2fc922ec2986249f4af7c7a077367e4bb5b9e9f22ced5b3d137e853d21f74408"
+    },
+    "docs/validation/jc1060/HARDWARE_TEST_PLAN.md": {
+      "bytes": 17370,
+      "sha256": "df0afc6694c0c14c237fda319da31cc553a6b7cde951421621b7a1ccbfe3a831"
+    },
+    "docs/validation/jc1060/README.md": {
+      "bytes": 1141,
+      "sha256": "e565f389787fdd2f19940482c582e8f2a40db28a51007bd7939c838b67b0eebd"
+    },
+    "docs/validation/jc1060/RESULT_TEMPLATE.md": {
+      "bytes": 738,
+      "sha256": "eeb4f7e99d62b34dff665a39da14d11720cad3ec7c844ac74296d2d5295ef3c4"
+    },
+    "docs/validation/jc1060/evidence/00-baseline/.gitkeep": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/validation/jc1060/evidence/00-baseline/RECOVERY_IMAGE.md": {
+      "bytes": 833,
+      "sha256": "bc37bd6db4e25b55909ea686d9a98a96a134b66e28803129a5e020a80ae217f3"
+    },
+    "docs/validation/jc1060/evidence/00-baseline/RESULT_0.1_fork-ref_v343.md": {
+      "bytes": 2335,
+      "sha256": "a46f905ec9e00235ee197069513996234ca4883814e42755418bd2e04fc8eda6"
+    },
+    "docs/validation/jc1060/evidence/00-baseline/RESULT_shared_M2.5-221-ge8cea37e-dirty.md": {
+      "bytes": 55676,
+      "sha256": "2dd2c66c9c1cc4789b1b9e5ebcea7f8486001b6afee7b1eb6ae6e9e35bb7b7dc"
+    },
+    "docs/validation/jc1060/evidence/00-baseline/api_status_fork-ref_v343.json": {
+      "bytes": 5718,
+      "sha256": "87f4d427c01e085258abf48037078a7e56f207a0254f0539bec65145750c1cf2"
+    },
+    "docs/validation/jc1060/evidence/00-baseline/boot_fork-ref_v343_poweron.log": {
+      "bytes": 24335,
+      "sha256": "f74bb8f816dcd12bac62ead4f7a1165f085308b75408724497534a3bc2b247d0"
+    },
+    "docs/validation/jc1060/evidence/00-baseline/boot_shared_M2.5-221-ge8cea37e-dirty_reset2.log": {
+      "bytes": 4575,
+      "sha256": "c0af084c96c348098a1f704f34b56c4f3dda627291e41f39e2e92d19d0f0645e"
+    },
+    "docs/validation/jc1060/evidence/A-boot-display-touch/.gitkeep": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/validation/jc1060/evidence/B-usb-roles/.gitkeep": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/validation/jc1060/evidence/B-usb-roles/boot3_stick_direct_ddj_unplugged.log": {
+      "bytes": 2810,
+      "sha256": "ab81409105d54a1aa517d76212469bb8e1dded0d7472dc2e1972fd68485d2299"
+    },
+    "docs/validation/jc1060/evidence/B-usb-roles/boot4_stick_behind_hub_ddj_direct.log": {
+      "bytes": 3239,
+      "sha256": "9218cb1b4d86b29d4cc3387f96ce21ab5ee54833242269bc6b101401a6c0148d"
+    },
+    "docs/validation/jc1060/evidence/C-ddj400/.gitkeep": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/validation/jc1060/evidence/C-ddj400/boot5_profile_v4_sd.log": {
+      "bytes": 3283,
+      "sha256": "52b1ae0a1d4b07bfafa2e7a65bed3aaee07de68d9699ebbf83958c64a17f38f4"
+    },
+    "docs/validation/jc1060/evidence/C-ddj400/c2c3_session1_uart.log": {
+      "bytes": 515,
+      "sha256": "6d23848b0a816b1471d859fe2118b34308a599181e0ce6b8b7873efbfa1721bb"
+    },
+    "docs/validation/jc1060/evidence/C-ddj400/c2c3_session2_uart.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/validation/jc1060/evidence/C-ddj400/c7_replug_uart.log": {
+      "bytes": 445,
+      "sha256": "13c2e0c17feba5e306c43f5be57d2489e11c4d30d8726924047f689b1694310f"
+    },
+    "docs/validation/jc1060/evidence/C-ddj400/ddj400_lsusb_v.txt": {
+      "bytes": 11393,
+      "sha256": "049b2292c4dcf8867131fa647c06d230643deff9ef7454afe8d20e44332e8340"
+    },
+    "docs/validation/jc1060/evidence/D-audio/.gitkeep": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/validation/jc1060/evidence/D-audio/boot6_uac1_hs_fallback.log": {
+      "bytes": 3159,
+      "sha256": "7034636f0c97eb1318a6a849e9bb1ab8e076867cc3ab747ee01a6e82df392436"
+    },
+    "docs/validation/jc1060/evidence/D-audio/boot7_uac1_interval_fix.log": {
+      "bytes": 3074,
+      "sha256": "0414dd2e0c7fb9f9870443a635dc90785abbbdfa2cb709c3e55e5c56ceff52d5"
+    },
+    "docs/validation/jc1060/evidence/D-audio/d1_first_play_uart.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/validation/jc1060/evidence/D-audio/d1_two_decks_10min_uart.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/validation/jc1060/evidence/D-audio/d2_cue_uart.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/validation/jc1060/evidence/D-audio/d4_master_tempo_uart.log": {
+      "bytes": 677,
+      "sha256": "fcfb026d51ec86bde6310e76545d1312a3e199bca989d089d6dfba630df9e6b8"
+    },
+    "docs/validation/jc1060/evidence/D-audio/d5_jog_paused_poll.jsonl": {
+      "bytes": 47434,
+      "sha256": "266222050738471094e201c53920343a6f16a80741efb17fe719e00f58899998"
+    },
+    "docs/validation/jc1060/evidence/D-audio/d5_jog_paused_uart.log": {
+      "bytes": 528,
+      "sha256": "ee0f0900277234fba2f405d6553a83aa05a6a23383cec81e6d02c82d34f58fe2"
+    },
+    "docs/validation/jc1060/evidence/D-audio/d5_seek_loop_uart.log": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/validation/jc1060/evidence/D-audio/d7_run4_uart.log": {
+      "bytes": 3074,
+      "sha256": "0b605a9a43d2ea01d5477aec025705223f8bc01d41a1b91f891effa57114ceec"
+    },
+    "docs/validation/jc1060/evidence/D-audio/d7_uac_transition_run1.json": {
+      "bytes": 40616,
+      "sha256": "ded08f15bf034476ec170bbe3b75c2ba7b3b9249bff437c396f4aa20310c9d1d"
+    },
+    "docs/validation/jc1060/evidence/D-audio/d7_uac_transition_run2.json": {
+      "bytes": 40652,
+      "sha256": "e4a1c03ca7597bed07d6a474464d5f20be6b2a0e6b99241b103614a16fc6faa5"
+    },
+    "docs/validation/jc1060/evidence/D-audio/d7_uac_transition_run3_hold1000.json": {
+      "bytes": 40664,
+      "sha256": "603a05053f63be7e93dfa1b64f6f596bf95e227f7dbcb561c2418b2b8bff66fb"
+    },
+    "docs/validation/jc1060/evidence/D-audio/d7_uac_transition_run4_cue_fix_pass.json": {
+      "bytes": 371590,
+      "sha256": "8b731c68febea4fd49f5148a79b4b26ca2ec502eef656ca777c4a56c7173c2ba"
+    },
+    "docs/validation/jc1060/evidence/D-audio/d8_observe_600s_metadata.json": {
+      "bytes": 830,
+      "sha256": "a5a0a0a5a1dd2d597c1b1124cf07da63f356edfa55fd46d30c1bcb6e5b4ae1d9"
+    },
+    "docs/validation/jc1060/evidence/D-audio/d8_observe_600s_result.json": {
+      "bytes": 2169,
+      "sha256": "90c52fa501a5a35dfc8d5a6b82bafdfd9dab1ae62e6103ed1622a1369a51a8d0"
+    },
+    "docs/validation/jc1060/evidence/E-storage/.gitkeep": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/validation/jc1060/evidence/E-storage/e9_observe_1800s_result.json": {
+      "bytes": 2181,
+      "sha256": "738cf1c175c89045fc1804ee8ce52874a96e1cc8020d3f77d41c22f6fee0812e"
+    },
+    "docs/validation/jc1060/evidence/F-ethernet-link/.gitkeep": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/validation/jc1060/evidence/F-link/f8_peer_loss_1hz.jsonl": {
+      "bytes": 51880,
+      "sha256": "4a41ed623342a5db1a9d8e65dbb71293f2cb3011a870677bfe4b108072195b2c"
+    },
+    "docs/validation/jc1060/evidence/G-ota/.gitkeep": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/validation/jc1060/evidence/H-soak/.gitkeep": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/validation/jc1060/evidence/H-soak/h2_observe_3600s_result.json": {
+      "bytes": 2183,
+      "sha256": "634b7074139856c67541fed3058a512cb6555f291ee33922da83b03bd0662c0d"
+    },
+    "docs/validation/jc1060/evidence/H-soak/h3_observe_14400s_result.json": {
+      "bytes": 2195,
+      "sha256": "ba17b625e3dc61846c5e7176cf314b0b55826e069bba8e83ce14b7fbdae3eb3f"
+    },
+    "docs/validation/jc1060/evidence/O-observability/.gitkeep": {
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    "docs/validation/jc1060/evidence/O-observability/api_firmware_shared_img5.jsonl": {
+      "bytes": 533,
+      "sha256": "8a8c68a971dee7f7f3cefe891a1753b746aba32e64580b3fdc3332ff75a0f76a"
+    },
+    "docs/validation/jc1060/evidence/O-observability/api_resources_shared_img5.json": {
+      "bytes": 282,
+      "sha256": "b43efe2f3e3293f432d226cf33eb005592d48735fcfb4660e44b5c1481fe03c4"
+    },
+    "docs/validation/jc1060/evidence/O-observability/api_status_shared_img5.json": {
+      "bytes": 7684,
+      "sha256": "0c4cd771029951ed281dd5e6b5828f868331224de4df11767e915470fdc05e24"
+    },
+    "docs/validation/jc1060/evidence/O-observability/api_ui-timing_shared_img5.json": {
+      "bytes": 2084,
+      "sha256": "da3d6fa35cca192a0620024526fb8981a8d4ca0ddf6a0a1b1d09304159a33dca"
+    },
+    "docs/validation/jc1060/evidence/O-observability/boot8_http_ethernet.log": {
+      "bytes": 3074,
+      "sha256": "9b543aba213529eb2f02aec22d0d593b021d92be049f9d56c5b856e2179f375e"
+    },
+    "docs/validation/jc1060/evidence/O-observability/o5_observe_120s_metadata.json": {
+      "bytes": 830,
+      "sha256": "52b5b4dfdd75464270f3972875ad1b8fcf5e072f6fb31663c93ecded6bc0764d"
+    },
+    "docs/validation/jc1060/evidence/O-observability/o5_observe_120s_result.json": {
+      "bytes": 2130,
+      "sha256": "961684c30b645ca447b9c511d5663a935426e918fe30bb589aee5cfce2f305fe"
+    },
+    "firmware/main-deck-jc1060/dependencies.lock": {
+      "bytes": 5890,
+      "sha256": "632bfe635d5b3454149bf2f5a689d5577d2130742537d38861737182dc2da3f9"
+    },
+    "firmware/main-deck-jc1060/main/CMakeLists.txt": {
+      "bytes": 150,
+      "sha256": "f36bdf3782ab36a1c349fee1767425fc864326fb38de8fa565b6d7ae68bf8ce7"
+    },
+    "firmware/main-deck-jc1060/main/app_main.c": {
+      "bytes": 1045,
+      "sha256": "07fdcd43145b3c1c418834ab839dc044ee7943f532792c910b1801e948b7d0e3"
+    },
+    "firmware/main-deck-m3/dependencies.lock": {
+      "bytes": 5577,
+      "sha256": "e1542f0a10ac27780a532cb19eb2dd0142160e2c486d5e3b7d3bae8ca36737e6"
+    },
+    "firmware/main-deck-p4/dependencies.lock": {
+      "bytes": 5904,
+      "sha256": "c0b73068fbb9eb104bea5dc3aae9f12424b8622cad7fb2555514ca6bceeced40"
+    },
+    "firmware/p4-core/components/board_capabilities/board_capabilities.c": {
+      "bytes": 1697,
+      "sha256": "e40ed1367741687aa451b0623c57a709a440fc1877680ba7cb4749ddcee07201"
+    },
+    "firmware/p4-core/components/board_capabilities/include/board_capabilities.h": {
+      "bytes": 1170,
+      "sha256": "80afb8687c06828133eb1a3ac6efafdcea425644eb451b29df67e54790f8f415"
+    },
+    "firmware/p4-core/components/controller_usb_audio/controller_usb_audio_stream.c": {
+      "bytes": 44902,
+      "sha256": "e68ba607fe9daf69276fca674e1e97485ba4afb0e419e8210e582df3044972ac"
+    },
+    "firmware/p4-core/components/usb_storage/usb_storage_shared.c": {
+      "bytes": 5188,
+      "sha256": "c20f8850ee55abb65bdadba286958d13269369ef6a5a25873bdaf10eebd31414"
+    },
+    "firmware/p4-core/components/web_server/web_server.c": {
+      "bytes": 136731,
+      "sha256": "91c8288242e014324d10756f6d3b2a4463368275cb8e7050e338790da00216b3"
+    },
+    "tools/build_storage_experiment.ps1": {
+      "bytes": 1770,
+      "sha256": "6a0965233b4e5a1e607e958f845f5ec962bec746b2b4fb620d956e4652d3c43c"
+    },
+    "tools/docker/Dockerfile.tools": {
+      "bytes": 921,
+      "sha256": "e15aa8388d9ac71cbc2ad7ab3b7eaedcaa9afd1ae15721e678a2d1701060ff72"
+    },
+    "tools/docker/run-in-tools.sh": {
+      "bytes": 1262,
+      "sha256": "19cb2d512db55d33f72ab188c52c125cdbaf9fa238593ad763a0004ebba0c37a"
+    },
+    "tools/hil/hil.sh": {
+      "bytes": 2828,
+      "sha256": "2da9bd104b8db559c4f0f53cd4707f4dfd9a1c00bd66e8ed81a49e3d01e9b234"
+    },
+    "tools/hil/hil_capture.py": {
+      "bytes": 1142,
+      "sha256": "d202587c717e8aad79c32b1b6113feb69318228a12f056e6c18d35991c2bb85d"
+    }
+  }
+}

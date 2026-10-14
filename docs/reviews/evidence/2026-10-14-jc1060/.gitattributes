@@ -1,0 +1,3 @@
+# Preserve the bytes covered by SHA256.json across Windows/Linux checkouts.
+* -text
+.gitattributes text eol=lf

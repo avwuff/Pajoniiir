@@ -2,8 +2,16 @@
 
 Date: 2026-10-11. Future physical testing owner: contributor Kayrosen
 ([kayrozen](https://github.com/kayrozen)). The operator has no JC1060 available.
-Physical acceptance is **NOT RUN**; preparing this handoff does not contact the
-contributor or imply that testing has begun.
+Physical acceptance of the published beta is **NOT RUN**; preparing this handoff
+did not contact the contributor or imply that testing had begun.
+
+Update 2026-10-14: Kayrosen supplied scoped JC1060/DDJ-400 testing on a separate
+branch, finally source `4e3aa2b4`. The
+[completed contributor review](reviews/2026-10-14-jc1060-contributor-review.md)
+reconciles identities, listening and Observe counters, reproduces integration
+defects and records failed warm-reset SD/USB MAIN recovery gates. Those results
+do not transfer to the published beta or a new canonical candidate. Selective
+integration is the next step; the branch is not merged by this review.
 
 ## Package and identity
 

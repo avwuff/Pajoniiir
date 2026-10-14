@@ -73,6 +73,11 @@ JC1060, DDJ-400 and Ethernet Pro DJ Link are implemented as development
 configurations. Their physical qualification is still pending. Recording and
 SD storage experiments remain disabled in regular builds.
 
+The [JC1060/DDJ-400 contributor review](docs/reviews/2026-10-14-jc1060-contributor-review.md)
+records Kayrosen's scoped tests on a separate branch, including long Observe
+and listening evidence. Integration repairs and failed storage/reconnect gates
+remain open; these results do not qualify the published beta or a new image.
+
 The [release record](docs/validation/M2_5_RELEASE_20261006.md) documents
 the tested configuration, explicit final-image soak waiver and remaining
 qualification limits.

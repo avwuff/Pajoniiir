@@ -8,6 +8,12 @@ not installed or physically accepted merely by publication. Stable M2.5 and
 public OTA channels remain unchanged; JC4880 soak is waived and JC1060 physical
 testing is deferred to Kayrosen, both explicitly NOT RUN for those scopes.
 
+The [2026-10-14 contributor review](reviews/2026-10-14-jc1060-contributor-review.md)
+now records Kayrosen's separate `4e3aa2b4` bench. Warm-reset SD and USB MAIN
+reconnect recovery remain open, and pending-image Ethernet/HTTP readiness needs
+repair before signed JC1060 OTA qualification. Do not transfer that branch's
+Observe/listening results to the published beta or a future integrated image.
+
 Current Hercules bench: clean `6166d936`, VALID `ota_1`, Hercules USB3/root0,
 storage USB2/root1, Wi-Fi ON. Local OTA/startup and short audio/display plus
 active jog/Browse smokes pass; both decks are stopped. The
