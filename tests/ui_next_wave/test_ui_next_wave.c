@@ -22,29 +22,6 @@ static void test_envelope_is_deterministic_and_bounded(void)
     assert(differs);
 }
 
-static void test_camelot_fit(void)
-{
-    assert(ui_next_key_fit(8, 'A', 8, 'A'));
-    assert(ui_next_key_fit(8, 'A', 9, 'A'));
-    assert(ui_next_key_fit(8, 'A', 8, 'B'));
-    assert(ui_next_key_fit(12, 'A', 1, 'A')); /* the wheel wraps */
-    assert(!ui_next_key_fit(8, 'A', 9, 'B'));
-    assert(!ui_next_key_fit(8, 'A', 10, 'A'));
-}
-
-static void test_link_values(void)
-{
-    ui_next_env_demo(&A, 11);
-    ui_next_env_demo(&B, 23);
-    ui_next_link_t l;
-    ui_next_link_compute(&A, 900, &B, 900, 180, &l);
-    assert(l.phase_beat == 0.0f && l.beat_ms == 0.0f && l.phrase_off == 0);
-    ui_next_link_compute(&A, 900, &B, 900 + 9 + 2, 180, &l);
-    assert(l.phrase_off == 1);
-    assert(l.phase_beat > 0.2f && l.phase_beat < 0.25f);
-    assert(l.bass_pct >= 4 && l.bass_pct <= 100 && l.overlap_pct >= 8 && l.overlap_pct <= 100);
-}
-
 static void test_palette_and_severity(void)
 {
     assert(ui_next_palette(false)->accent == 0xFFC15A);
@@ -57,8 +34,6 @@ static void test_palette_and_severity(void)
 int main(void)
 {
     test_envelope_is_deterministic_and_bounded();
-    test_camelot_fit();
-    test_link_values();
     test_palette_and_severity();
     puts("ui_next_wave: ok");
     return 0;

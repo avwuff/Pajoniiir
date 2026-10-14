@@ -56,34 +56,3 @@ float ui_next_env_smooth(const float *arr, uint32_t len, int32_t i, int32_t w)
     }
     return cnt ? sum / (float)cnt : 0.0f;
 }
-
-bool ui_next_key_fit(uint8_t na, char la, uint8_t nb, char lb)
-{
-    int d = na > nb ? na - nb : nb - na;
-    int ring = d < 12 - d ? d : 12 - d;
-    return ring + (la == lb ? 0 : 1) <= 1;
-}
-
-void ui_next_link_compute(const ui_next_env_t *ea, uint32_t a, const ui_next_env_t *eb,
-                          uint32_t b, uint32_t m, ui_next_link_t *out)
-{
-    uint32_t clash = 0, mid = 0;
-    for (uint32_t o = 0; o < m; o++) {
-        float la = ui_next_env_smooth(ea->lo, UI_NEXT_ENV_COLUMNS, (int32_t)(a + o), 2);
-        float lb = ui_next_env_smooth(eb->lo, UI_NEXT_ENV_COLUMNS, (int32_t)(b + o), 2);
-        float ma = ui_next_env_smooth(ea->mi, UI_NEXT_ENV_COLUMNS, (int32_t)(a + o), 2);
-        float mb = ui_next_env_smooth(eb->mi, UI_NEXT_ENV_COLUMNS, (int32_t)(b + o), 2);
-        if (minf(la, lb) > .30f) clash++;
-        if (minf(ma, mb) > .16f) mid++;
-    }
-    out->bass_pct = (uint8_t)maxf(4.0f, floorf(100.0f * (float)clash / (float)m + .5f));
-    out->overlap_pct = (uint8_t)maxf(8.0f, floorf(100.0f * (float)mid / (float)m + .5f));
-
-    /* Beat error: columns of deck B off the nearest beat of deck A's grid. */
-    int d = (int)((b - a) % UI_NEXT_BEAT_COLUMNS);
-    if (d > (int)UI_NEXT_BEAT_COLUMNS / 2) d -= (int)UI_NEXT_BEAT_COLUMNS;
-    out->phase_beat = (float)d / (float)UI_NEXT_BEAT_COLUMNS;
-    out->beat_ms = out->phase_beat * 483.9f; /* 124 BPM: one beat is 483.9 ms */
-    out->phrase_off = (uint8_t)(((b - a) % UI_NEXT_BAR_COLUMNS) / UI_NEXT_BEAT_COLUMNS);
-    out->key_fit = false; /* set by the caller from the loaded keys */
-}

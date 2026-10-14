@@ -1,66 +1,69 @@
 #include <stdio.h>
 
+#include <string.h>
+
 #include "ui_next.h"
+#include "ui_next_bind.h"
 
-/* Demo data for the boards. Everything here is a CORE-GAP stub: the real
- * values will come from the audio engine and the analysis. */
-void ui_next_demo_perform(ui_next_perform_model_t *m, const ui_next_env_t *ea,
-                          const ui_next_env_t *eb, uint32_t t, ui_next_class_t cls)
+/* Demo data for the boards. The Perform demo builds synthetic beat grids, an envelope and
+ * positions and runs them through ui_next_bind_perform, as the firmware will with data from
+ * the core. Both tracks are 124 BPM; B is pitched down 4 %, so it plays at 119.0 BPM. */
+#define DEMO_BEATS 150
+#define DEMO_DURATION_MS 64516u
+
+static ui_next_beat_t DEMO_GRID_A[DEMO_BEATS], DEMO_GRID_B[DEMO_BEATS];
+
+static void demo_grid(ui_next_beat_t *g, uint32_t first_ms, float interval_ms)
 {
-    static const uint16_t WIN[] = {144, 180, 216};
-    const uint32_t shift = t % 180u;
-    const uint32_t sb = (uint32_t)(shift * 0.96f);
-    const uint32_t mcols = WIN[cls];
-    const uint32_t sa = 800u;
-    uint32_t sbase = (uint32_t)(312 - (int)mcols / 2);
-    while ((sbase - sa) % UI_NEXT_BEAT_COLUMNS != 0u) sbase++;
-    const uint32_t a = sa + shift, b = sbase + sb;
+    for (int k = 0; k < DEMO_BEATS; k++) {
+        g[k].time_ms = first_ms + (uint32_t)((float)k * interval_ms + .5f);
+        g[k].phase = (uint8_t)(k % 4 + 1);
+    }
+}
 
-    m->deck[0].env = ea;
-    m->deck[1].env = eb;
-    m->deck[0].col = a + mcols / 2u;
-    m->deck[1].col = b + mcols / 2u;
-    snprintf(m->deck[0].title, sizeof m->deck[0].title, "Sample Track A");
-    snprintf(m->deck[1].title, sizeof m->deck[1].title, "Sample Track B");
-    snprintf(m->deck[0].bpm, sizeof m->deck[0].bpm, "124.0");
-    snprintf(m->deck[1].bpm, sizeof m->deck[1].bpm, "119.0");
-    snprintf(m->deck[0].key, sizeof m->deck[0].key, "8A");
-    snprintf(m->deck[1].key, sizeof m->deck[1].key, "9A");
-    snprintf(m->deck[0].badge, sizeof m->deck[0].badge, "MASTER");
-    snprintf(m->deck[1].badge, sizeof m->deck[1].badge, "SYNC OFF");
+void ui_next_demo_perform(ui_next_perform_model_t *m, const ui_next_env_t *ea, const ui_next_env_t *eb, uint32_t t,
+                          ui_next_class_t cls)
+{
+    static const uint32_t WINDOW[] = {7742u, 9677u, 11613u};
+    demo_grid(DEMO_GRID_A, 300u, 60000.0f / 124.0f);
+    demo_grid(DEMO_GRID_B, 150u, 60000.0f / 124.0f); /* also a 124 BPM track, pitched down */
+    const uint32_t u = t % 183u; /* the board loops after 11 seconds */
+
+    ui_next_perform_in_t in;
+    memset(&in, 0, sizeof in);
+    in.cls = cls;
+    in.window_ms = WINDOW[cls];
+    in.time_remain = true;
+    for (int d = 0; d < 2; d++) {
+        ui_next_deck_in_t *k = &in.deck[d];
+        k->env = d ? eb : ea;
+        k->duration_ms = d ? 116000u + 100000u : 224000u; /* real lengths: 3:44 and 3:56 */
+        k->grid.beat = d ? DEMO_GRID_B : DEMO_GRID_A;
+        k->grid.count = DEMO_BEATS;
+        snprintf(k->title, sizeof k->title, d ? "Sample Track B" : "Sample Track A");
+        snprintf(k->key, sizeof k->key, d ? "9A" : "8A");
+        k->bpm_x100 = 12400u;
+        k->speed_permille = d ? 960u : 1000u; /* B plays 4 % slower: 119.0 BPM */
+        k->master = d == 0;
+        k->sync = false;
+    }
+    /* The envelopes of the demo cover 64.5 s; positions stay inside them. */
+    in.deck[0].duration_ms = in.deck[1].duration_ms = DEMO_DURATION_MS;
+    in.deck[0].pos_ms = 21000u + u * 60u;
+    in.deck[1].pos_ms = 21310u + (uint32_t)((float)u * 60.0f * 0.96f);
+    for (int d = 0; d < 2; d++) {
+        const ui_next_env_t *e = in.deck[d].env;
+        const float lev = .55f * ui_next_env_sample(e, 0, DEMO_DURATION_MS, in.deck[d].pos_ms) +
+                          .45f * ui_next_env_sample(e, 1, DEMO_DURATION_MS, in.deck[d].pos_ms) +
+                          .25f * ui_next_env_sample(e, 2, DEMO_DURATION_MS, in.deck[d].pos_ms);
+        in.deck[d].peak = (uint16_t)((lev > 1.0f ? 1.0f : lev) * 32768.0f);
+    }
+    ui_next_bind_perform(&in, m);
+    /* The boards show the clock of a longer track than the demo envelope covers. */
     snprintf(m->deck[0].time, sizeof m->deck[0].time, "-03:44");
     snprintf(m->deck[1].time, sizeof m->deck[1].time, "-01:56");
-    m->deck[0].badge_on = true;
-    m->deck[1].badge_on = false;
-    m->deck[0].key_fit = false;
-    m->deck[1].key_fit = ui_next_key_fit(8, 'A', 9, 'A');
-    m->deck[0].pos01 = 0.667f + (float)shift / 12.0f / 100.0f;
-    m->deck[1].pos01 = 0.26f + (float)sb / 12.0f / 100.0f;
-
-    for (int d = 0; d < 2; d++) {
-        const ui_next_env_t *e = d ? eb : ea;
-        int32_t ix = (int32_t)m->deck[d].col;
-        float lev = .55f * ui_next_env_smooth(e->lo, UI_NEXT_ENV_COLUMNS, ix, 1) +
-                    .45f * ui_next_env_smooth(e->mi, UI_NEXT_ENV_COLUMNS, ix, 1) +
-                    .25f * ui_next_env_smooth(e->hi, UI_NEXT_ENV_COLUMNS, ix, 1);
-        if (lev > 1.0f) lev = 1.0f;
-        float pk = 0.0f;
-        for (int32_t i = ix - 14; i <= ix; i++) {
-            float l = ui_next_env_smooth(e->lo, UI_NEXT_ENV_COLUMNS, i, 1) * .55f +
-                      ui_next_env_smooth(e->mi, UI_NEXT_ENV_COLUMNS, i, 1) * .45f;
-            if (l > pk) pk = l;
-        }
-        m->deck[d].vu_l = lev;
-        m->deck[d].vu_r = lev * .95f;
-        m->deck[d].peak_l = pk > .99f ? .99f : pk;
-        m->deck[d].peak_r = m->deck[d].peak_l * .95f;
-    }
-
-    ui_next_link_compute(ea, a, eb, b, mcols, &m->link);
-    m->link.key_fit = m->deck[1].key_fit;
-    m->tempo_pct = -5.0f;
-    snprintf(m->key_change, sizeof m->key_change, "8A>9A");
-    m->layers = cls == UI_NEXT_CLASS_S ? "LAYERS 1-4" : cls == UI_NEXT_CLASS_M ? "LAYERS 1-6" : "LAYERS 1-7";
+    m->deck[0].pos01 = 0.667f + (float)u / 12.0f / 100.0f;
+    m->deck[1].pos01 = 0.26f + (float)u * 0.96f / 12.0f / 100.0f;
 }
 
 void ui_next_demo_boot(ui_next_boot_model_t *m)
@@ -106,7 +109,11 @@ void ui_next_demo_browse(ui_next_browse_model_t *m, const ui_next_env_t *env4)
         m->tags[i].color = TAGS[i].color;
         m->tags[i].on = TAGS[i].on;
     }
-    for (int i = 0; i < UI_NEXT_BROWSE_TRACKS; i++) m->track[i] = DEMO_TRACKS[i];
+    for (int i = 0; i < UI_NEXT_BROWSE_TRACKS; i++) {
+        m->track[i] = DEMO_TRACKS[i];
+        /* The chip colour comes from the key against deck B (9A), not from a stored value. */
+        m->track[i].key_class = ui_next_bind_key_class("9A", m->track[i].key);
+    }
     m->open_row = 2;
     m->lift_row = -1;
     m->ins_row = -1;

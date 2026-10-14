@@ -9,6 +9,8 @@
 
 #include "lvgl.h"
 #include "ui_next_layout.h"
+#include "ui_next_key.h"
+#include "ui_next_sync.h"
 #include "ui_next_wave.h"
 
 #ifdef __cplusplus
@@ -27,7 +29,8 @@ typedef enum {
 /* One deck as the Perform page shows it. Strings are copied. */
 typedef struct {
     const ui_next_env_t *env;  /* stored 3-band envelope (PB-1) */
-    uint32_t col;              /* envelope column under the playhead */
+    uint32_t duration_ms, pos_ms;
+    ui_next_grid_t grid;       /* beat grid of the track (PB-5) */
     char title[48];
     char bpm[12];
     char key[6];
@@ -42,6 +45,7 @@ typedef struct {
 
 typedef struct {
     ui_next_deck_t deck[2];
+    uint32_t window_ms;        /* time shown by the zoomed waveforms */
     ui_next_link_t link;       /* PB-17 */
     float tempo_pct;           /* deck B against deck A */
     char key_change[10];       /* "8A>9A" */
@@ -321,7 +325,8 @@ void ui_next_boot_update(const ui_next_boot_model_t *m);
 /* CORE-GAP: SY-4 (progress), SY-5 (device name), SY-6 (notice source). */
 void ui_next_demo_boot(ui_next_boot_model_t *m);
 
-/* Demo model at tick `t` (60 ms per tick). CORE-GAP: all of PB-1 to PB-19. */
+/* Demo model at tick `t` (60 ms per tick). It feeds ui_next_bind_perform with synthetic
+ * grids and envelopes, so the numbers are computed as they will be on the device. */
 void ui_next_demo_perform(ui_next_perform_model_t *m, const ui_next_env_t *ea,
                           const ui_next_env_t *eb, uint32_t t, ui_next_class_t cls);
 

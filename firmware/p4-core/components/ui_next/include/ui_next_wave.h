@@ -24,7 +24,7 @@ typedef struct {
 /* Demo track with kick, snare and hat shapes. CORE-GAP: PB-1 (real envelopes). */
 void ui_next_env_demo(ui_next_env_t *out, uint32_t seed);
 
-/* Link bar values for two decks (PB-17). Layers 1 to 4 and 7 of the board. */
+/* Link bar values for two decks (PB-17), filled by ui_next_bind_perform. */
 typedef struct {
     float beat_ms;       /* signed, deck B late is positive */
     float phase_beat;    /* signed, in beats */
@@ -33,14 +33,6 @@ typedef struct {
     uint8_t overlap_pct; /* same for the mid band */
     bool key_fit;        /* Camelot distance <= 1 */
 } ui_next_link_t;
-
-/* Window: `m` columns starting at column `a` of deck A and `b` of deck B. */
-void ui_next_link_compute(const ui_next_env_t *ea, uint32_t a, const ui_next_env_t *eb,
-                          uint32_t b, uint32_t m, ui_next_link_t *out);
-
-/* Camelot fit: same number with the other letter, or the next number with the
- * same letter, or identical. `num` 1..12, `letter` 'A' or 'B' (PB-10, LB-18). */
-bool ui_next_key_fit(uint8_t num_a, char letter_a, uint8_t num_b, char letter_b);
 
 /* Mean of the neighbouring columns (the demo smooths by +-w). */
 float ui_next_env_smooth(const float *arr, uint32_t len, int32_t i, int32_t w);

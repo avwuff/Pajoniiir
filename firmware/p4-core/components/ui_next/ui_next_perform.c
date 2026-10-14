@@ -25,7 +25,6 @@ static struct {
     const ui_next_palette_t *pal;
     bool day;
     ui_next_perform_model_t model;
-    uint16_t mcols;
     bool landscape;
     lv_obj_t *root, *title, *chip_layers, *lane_chip;
     lv_obj_t *wf[2], *lane, *vu[2];
@@ -42,12 +41,6 @@ static uint32_t sev_color(ui_next_sev_t s)
 }
 
 /* Window of the zoomed waveform: first envelope column. */
-static uint32_t win_start(int d)
-{
-    uint32_t c = P.model.deck[d].col;
-    return c > P.mcols / 2u ? c - P.mcols / 2u : 0u;
-}
-
 /* ---- waveform ---- */
 
 /* Section map of the demo track (intro, build, drop, break, outro). CORE-GAP: LB-13. */
@@ -57,6 +50,24 @@ static const struct { float a, b; const char *name; uint32_t color; } SEC[] = {
 };
 #define SEC_N (sizeof SEC / sizeof SEC[0])
 
+/* Time of the track at a place of a deck's window: x01 = 0.5 is the playhead. */
+static int64_t time_at(int d, float x01)
+{
+    const ui_next_deck_t *k = &P.model.deck[d];
+    return (int64_t)k->pos_ms - (int64_t)P.model.window_ms / 2 + (int64_t)(x01 * (float)P.model.window_ms);
+}
+
+/* Played half dimmed, playhead on top; shared by the waveform and the weave lane. */
+static void shade_and_head(lv_layer_t *layer, const lv_area_t *a, int span)
+{
+    if (P.landscape) {
+        ui_next_fill_rect(layer, a->x1, a->y1, a->x1 + span / 2 - 1, a->y2, P.pal->frame, P.pal->shade_opa);
+        ui_next_fill_rect(layer, a->x1 + span / 2, a->y1, a->x1 + span / 2 + 1, a->y2, P.pal->head, LV_OPA_COVER);
+    } else {
+        ui_next_fill_rect(layer, a->x1, a->y1, a->x2, a->y1 + span / 2 - 1, P.pal->frame, P.pal->shade_opa);
+        ui_next_fill_rect(layer, a->x1, a->y1 + span / 2, a->x2, a->y1 + span / 2 + 1, P.pal->head, LV_OPA_COVER);
+    }
+}
 
 static void wf_draw_cb(lv_event_t *e)
 {
@@ -64,80 +75,71 @@ static void wf_draw_cb(lv_event_t *e)
     lv_layer_t *layer = lv_event_get_layer(e);
     lv_area_t a;
     lv_obj_get_coords(lv_event_get_target_obj(e), &a);
-    const ui_next_env_t *env = P.model.deck[d].env;
-    if (!env) return;
+    const ui_next_deck_t *k = &P.model.deck[d];
+    const uint32_t win = P.model.window_ms;
+    if (!k->env || win == 0 || k->duration_ms == 0) return;
 
     const bool land = P.landscape;
     const int span = land ? lv_area_get_width(&a) : lv_area_get_height(&a);
     const int cross = land ? lv_area_get_height(&a) : lv_area_get_width(&a);
     const int c0 = (land ? a.y1 : a.x1) + cross / 2;
-    const uint32_t start = win_start(d);
-    const int m = P.mcols;
-
     const int ua = land ? a.x1 : a.y1;
+    const int64_t t0 = time_at(d, 0.0f);
+
     /* Section tints, behind everything: the section colour at 19 %. */
     for (unsigned q = 0; q < SEC_N; q++) {
-        const float lo = fmaxf(SEC[q].a * (float)UI_NEXT_ENV_COLUMNS, (float)start);
-        const float hi = fminf(SEC[q].b * (float)UI_NEXT_ENV_COLUMNS, (float)(start + (uint32_t)m));
+        const int64_t lo = SEC[q].a * (float)k->duration_ms > (float)t0 ? (int64_t)(SEC[q].a * (float)k->duration_ms) : t0;
+        const int64_t hi_s = (int64_t)(SEC[q].b * (float)k->duration_ms), hi_w = t0 + (int64_t)win;
+        const int64_t hi = hi_s < hi_w ? hi_s : hi_w;
         if (hi <= lo) continue;
-        const int u0 = ua + (int)((lo - (float)start) * (float)span / (float)m);
-        const int u1 = ua + (int)((hi - (float)start) * (float)span / (float)m) - 1;
+        const int u0 = ua + (int)((lo - t0) * span / (int64_t)win), u1 = ua + (int)((hi - t0) * span / (int64_t)win) - 1;
         if (land) ui_next_fill_rect(layer, u0, a.y1, u1, a.y2, SEC[q].color, 48);
         else ui_next_fill_rect(layer, a.x1, u0, a.x2, u1, SEC[q].color, 48);
     }
-    for (int o = 0; o < m; o++) {
-        const uint32_t cl = start + (uint32_t)o;
-        if (cl % UI_NEXT_BEAT_COLUMNS) continue;
-        const int bar = cl % UI_NEXT_BAR_COLUMNS == 0u;
-        const int u = ua + o * span / m;
-        if (land) ui_next_fill_rect(layer, u, a.y1, u + bar, a.y2, P.pal->text, bar ? 128 : 40);
-        else ui_next_fill_rect(layer, a.x1, u, a.x2, u + bar, P.pal->text, bar ? 128 : 40);
+
+    /* Beat grid of the track: thin on a beat, thicker on beat 1. */
+    ui_next_screen_beat_t sb[96];
+    const int nb = ui_next_sync_screen_beats(&k->grid, (int64_t)k->pos_ms, win, sb, 96);
+    for (int i = 0; i < nb; i++) {
+        const int u = ua + (int)(sb[i].x01 * (float)span);
+        if (land) ui_next_fill_rect(layer, u, a.y1, u + sb[i].bar, a.y2, P.pal->text, sb[i].bar ? 128 : 40);
+        else ui_next_fill_rect(layer, a.x1, u, a.x2, u + sb[i].bar, P.pal->text, sb[i].bar ? 128 : 40);
     }
-    /* One pixel row at a time, linear between the two nearest columns, as the
-     * filled path of the board does. */
+
+    /* One pixel row at a time, linear between the envelope columns, as the filled path of
+     * the board does. Nothing before the start or after the end of the track. */
     const float amp[3] = {.49f, .38f, .26f};
     const uint32_t colr[3] = {P.pal->wave_low, P.pal->wave_mid, P.pal->wave_high};
     for (int p = 0; p < span; p++) {
-        const float pos = (float)p * (float)m / (float)span;
-        const uint32_t i0 = start + (uint32_t)pos;
-        const uint32_t i1 = i0 + 1u < UI_NEXT_ENV_COLUMNS ? i0 + 1u : i0;
-        const float fr = pos - floorf(pos);
-        const float v[3] = {env->lo[i0] + (env->lo[i1] - env->lo[i0]) * fr,
-                            env->mi[i0] + (env->mi[i1] - env->mi[i0]) * fr,
-                            env->hi[i0] + (env->hi[i1] - env->hi[i0]) * fr};
+        const int64_t t = t0 + (int64_t)p * (int64_t)win / span;
+        if (t < 0 || t > (int64_t)k->duration_ms) continue;
         for (int b = 0; b < 3; b++) {
-            int half = (int)(v[b] * amp[b] * (float)cross + .5f);
+            int half = (int)(ui_next_env_sample(k->env, b, k->duration_ms, t) * amp[b] * (float)cross + .5f);
             if (half < 1) half = 1;
             if (land) ui_next_fill_rect(layer, ua + p, c0 - half, ua + p, c0 + half, colr[b], LV_OPA_COVER);
             else ui_next_fill_rect(layer, c0 - half, ua + p, c0 + half, ua + p, colr[b], LV_OPA_COVER);
         }
     }
 
-    /* Played half dimmed, playhead on top. */
-    if (land) {
-        ui_next_fill_rect(layer, a.x1, a.y1, a.x1 + span / 2 - 1, a.y2, P.pal->frame, P.pal->shade_opa);
-        ui_next_fill_rect(layer, a.x1 + span / 2, a.y1, a.x1 + span / 2 + 1, a.y2, P.pal->head, LV_OPA_COVER);
-    } else {
-        ui_next_fill_rect(layer, a.x1, a.y1, a.x2, a.y1 + span / 2 - 1, P.pal->frame, P.pal->shade_opa);
-        ui_next_fill_rect(layer, a.x1, a.y1 + span / 2, a.x2, a.y1 + span / 2 + 1, P.pal->head, LV_OPA_COVER);
-    }
+    shade_and_head(layer, &a, span);
 
-    /* Bar numbers and section names, over the shade. Vertical in portrait. */
-    for (int o = 0; o < m; o++) {
-        const uint32_t cl = start + (uint32_t)o;
-        if (cl % UI_NEXT_BAR_COLUMNS) continue;
+    /* Bar numbers and section names, over the shade. Vertical in portrait. The bar number
+     * counts four beats from the first one of the grid. */
+    for (int i = 0; i < nb; i++) {
+        if (!sb[i].bar) continue;
         char n[16];
-        snprintf(n, sizeof n, "%u", (unsigned)(cl / UI_NEXT_BAR_COLUMNS + 1u));
-        const int u0 = ua + o * span / m;
+        snprintf(n, sizeof n, "%u", (unsigned)(sb[i].index / 4 + 1));
+        const int u0 = ua + (int)(sb[i].x01 * (float)span);
         if (land) ui_next_text_at(layer, n, u0 + 3, d == 0 ? a.y1 + 1 : a.y2 - 14, P.f_tiny, P.pal->text);
-        else ui_next_text_down(layer, n, d == 0 ? a.x1 + 2 : a.x2 - 2 - P.f_tiny->line_height, u0 + 2, P.f_tiny, P.pal->text,
-                               LV_OPA_COVER);
+        else ui_next_text_down(layer, n, d == 0 ? a.x1 + 2 : a.x2 - 2 - P.f_tiny->line_height, u0 + 2, P.f_tiny,
+                               P.pal->text, LV_OPA_COVER);
     }
     for (unsigned q = 0; q < SEC_N; q++) {
-        const float lo = fmaxf(SEC[q].a * (float)UI_NEXT_ENV_COLUMNS, (float)start);
-        const float hi = fminf(SEC[q].b * (float)UI_NEXT_ENV_COLUMNS, (float)(start + (uint32_t)m));
-        if (hi <= lo || (hi - lo) / (float)m <= (land ? .14f : .2f)) continue;
-        const int u = ua + (int)((lo - (float)start) * (float)span / (float)m);
+        const int64_t lo = SEC[q].a * (float)k->duration_ms > (float)t0 ? (int64_t)(SEC[q].a * (float)k->duration_ms) : t0;
+        const int64_t hi_s = (int64_t)(SEC[q].b * (float)k->duration_ms), hi_w = t0 + (int64_t)win;
+        const int64_t hi = hi_s < hi_w ? hi_s : hi_w;
+        if (hi <= lo || (float)(hi - lo) / (float)win <= (land ? .14f : .2f)) continue;
+        const int u = ua + (int)((lo - t0) * span / (int64_t)win);
         if (land) ui_next_text_at(layer, SEC[q].name, u + 4, a.y1 + 16, P.f_tiny, P.pal->text);
         else ui_next_text_down(layer, SEC[q].name, a.x1 + 16, u + 4, P.f_tiny, P.pal->text, 204);
     }
@@ -150,66 +152,57 @@ static void lane_draw_cb(lv_event_t *e)
     lv_layer_t *layer = lv_event_get_layer(e);
     lv_area_t a;
     lv_obj_get_coords(lv_event_get_target_obj(e), &a);
-    const ui_next_env_t *ea = P.model.deck[0].env, *eb = P.model.deck[1].env;
-    if (!ea || !eb) return;
+    const ui_next_deck_t *ka = &P.model.deck[0], *kb = &P.model.deck[1];
+    const uint32_t win = P.model.window_ms;
+    if (!ka->env || !kb->env || win == 0) return;
 
     const bool land = P.landscape;
     const int span = land ? lv_area_get_width(&a) : lv_area_get_height(&a);
     const int cross = land ? lv_area_get_height(&a) : lv_area_get_width(&a);
-    const int m = P.mcols;
-    const uint32_t sa = win_start(0), sb = win_start(1);
     const int lw = P.lay.cls == UI_NEXT_CLASS_S ? 3 : P.lay.cls == UI_NEXT_CLASS_M ? 4 : 5;
 
-#define PX(u, v) (land ? (float)a.x1 + (float)(u) * (float)span / (float)m : (float)a.x1 + (float)(v) * (float)cross / 100.0f)
-#define PY(u, v) (land ? (float)a.y1 + (float)(v) * (float)cross / 100.0f : (float)a.y1 + (float)(u) * (float)span / (float)m)
+    ui_next_screen_beat_t sa[96], sb[96];
+    const int na = ui_next_sync_screen_beats(&ka->grid, (int64_t)ka->pos_ms, win, sa, 96);
+    const int nb = ui_next_sync_screen_beats(&kb->grid, (int64_t)kb->pos_ms, win, sb, 96);
+    /* A beat pairs with the beat of B nearest on the screen, within half a beat of B. */
+    const float half = nb >= 2 ? (sb[1].x01 - sb[0].x01) * 0.5f : 0.5f;
+    ui_next_weave_t w[96];
+    const int nw = ui_next_sync_weave(sa, na, sb, nb, half, w, 96);
 
-    for (int o = 0; o < m; o++) {
-        const uint32_t cA = sa + (uint32_t)o;
-        if (cA % UI_NEXT_BEAT_COLUMNS) continue;
-        int dB = (int)((UI_NEXT_BEAT_COLUMNS - ((sb + (uint32_t)o) % UI_NEXT_BEAT_COLUMNS)) % UI_NEXT_BEAT_COLUMNS);
-        if (dB > 4) dB -= 9;
-        const int oB = o + dB;
-        int dd = -(int)((sb + (uint32_t)o) % UI_NEXT_BAR_COLUMNS);
-        if (dd < -18) dd += 36;
-        const int oBar = o + dd;
-        const bool bar = cA % UI_NEXT_BAR_COLUMNS == 0u;
-        const bool clash =
-            ui_next_env_smooth(ea->lo, UI_NEXT_ENV_COLUMNS, (int32_t)cA, 2) > .30f &&
-            ui_next_env_smooth(eb->lo, UI_NEXT_ENV_COLUMNS, (int32_t)((int32_t)sb + oB), 2) > .30f;
+#define PX(x, v) (land ? (float)a.x1 + (float)(x) * (float)span : (float)a.x1 + (float)(v) * (float)cross / 100.0f)
+#define PY(x, v) (land ? (float)a.y1 + (float)(v) * (float)cross / 100.0f : (float)a.y1 + (float)(x) * (float)span)
 
-        ui_next_seg(layer, PX(o, 0), PY(o, 0), PX(o, 16), PY(o, 16), 1, P.pal->text, 140);
-        ui_next_seg(layer, PX(oB, 84), PY(oB, 84), PX(oB, 100), PY(oB, 100), 1, P.pal->text, 140);
-        const int tgt = bar ? oBar : oB;
-        if (bar) {
-            ui_next_seg(layer, PX(o, 16), PY(o, 16), PX(o, 84), PY(o, 84), 1, P.pal->text, 90);
-            /* Cubic from (o,16) to (tgt,84): control points (o,55) and (tgt,45). */
-            float px = PX(o, 16), py = PY(o, 16);
+    for (int i = 0; i < nw; i++) {
+        const float xa = w[i].xa, xb = w[i].xb;
+        const float tgt = w[i].bar && w[i].has_bar ? w[i].xbar : xb;
+        const bool clash = ui_next_env_sample(ka->env, 0, ka->duration_ms, time_at(0, xa)) > .30f &&
+                           ui_next_env_sample(kb->env, 0, kb->duration_ms, time_at(1, xb)) > .30f;
+
+        ui_next_seg(layer, PX(xa, 0), PY(xa, 0), PX(xa, 16), PY(xa, 16), 1, P.pal->text, 140);
+        ui_next_seg(layer, PX(xb, 84), PY(xb, 84), PX(xb, 100), PY(xb, 100), 1, P.pal->text, 140);
+        if (w[i].bar) {
+            ui_next_seg(layer, PX(xa, 16), PY(xa, 16), PX(xa, 84), PY(xa, 84), 1, P.pal->text, 90);
+            /* Cubic from (xa,16) to (tgt,84): control points (xa,55) and (tgt,45). */
+            float px = PX(xa, 16), py = PY(xa, 16);
             for (int s = 1; s <= 12; s++) {
-                float t = (float)s / 12.0f, it = 1.0f - t;
-                float x0 = (float)o, x3 = (float)tgt;
-                float uu = it * it * it * x0 + 3 * it * it * t * x0 + 3 * it * t * t * x3 + t * t * t * x3;
-                float vv = it * it * it * 16 + 3 * it * it * t * 55 + 3 * it * t * t * 45 + t * t * t * 84;
-                float nx = PX(uu, vv), ny = PY(uu, vv);
+                const float t = (float)s / 12.0f, it = 1.0f - t;
+                const float uu = it * it * it * xa + 3 * it * it * t * xa + 3 * it * t * t * tgt + t * t * t * tgt;
+                const float vv = it * it * it * 16 + 3 * it * it * t * 55 + 3 * it * t * t * 45 + t * t * t * 84;
+                const float nx = PX(uu, vv), ny = PY(uu, vv);
                 ui_next_seg(layer, px, py, nx, ny, lw, P.pal->curve, LV_OPA_COVER);
                 px = nx;
                 py = ny;
             }
         }
         if (clash) {
-            const float cx = PX(((float)o + (float)tgt) / 2, 50), cy = PY(((float)o + (float)tgt) / 2, 50);
+            const float cx = PX((xa + tgt) / 2, 50), cy = PY((xa + tgt) / 2, 50);
             ui_next_seg(layer, cx, cy, cx, cy, lw + 3, P.pal->dot, LV_OPA_COVER);
         }
     }
 #undef PX
 #undef PY
 
-    if (land) {
-        ui_next_fill_rect(layer, a.x1, a.y1, a.x1 + span / 2 - 1, a.y2, P.pal->frame, P.pal->shade_opa);
-        ui_next_fill_rect(layer, a.x1 + span / 2, a.y1, a.x1 + span / 2 + 1, a.y2, P.pal->head, LV_OPA_COVER);
-    } else {
-        ui_next_fill_rect(layer, a.x1, a.y1, a.x2, a.y1 + span / 2 - 1, P.pal->frame, P.pal->shade_opa);
-        ui_next_fill_rect(layer, a.x1, a.y1 + span / 2, a.x2, a.y1 + span / 2 + 1, P.pal->head, LV_OPA_COVER);
-    }
+    shade_and_head(layer, &a, span);
 }
 
 /* ---- VU column (PB-19) ---- */
@@ -418,8 +411,6 @@ lv_obj_t *ui_next_perform_create(lv_obj_t *parent, uint16_t w, uint16_t h, bool 
     P.landscape = P.lay.landscape;
     P.page = UI_NEXT_PAGE_PERFORM;
     ui_next_chrome_begin(&P.lay, day, UI_NEXT_PAGE_PERFORM);
-    static const uint16_t WIN[] = {144, 180, 216};
-    P.mcols = WIN[P.lay.cls];
     pick_fonts(P.lay.cls);
 
     P.root = ui_next_box(parent, 0, 0, w, h, P.pal->frame);

@@ -44,12 +44,12 @@ valid after edits.
 
 | Need | Backlog | Status | Evidence in the core |
 | --- | --- | --- | --- |
-| 3-band envelope per track, 3 values per column | PB-1 | partial | `anlz_metadata_t` holds `waveform_low` (PWAV, 400 single values), `waveform_high` (PWV3) and `color_preview` (PWV4, six bytes per column, up to 1200 columns). `anlz_color_preview_column` returns a height and an RGB, not three separate band values. Whether the colour carries the bass, mid and treble split cleanly is not verified on a real file. |
+| 3-band envelope per track, 3 values per column | PB-1 | partial | `anlz_metadata_t` holds `waveform_low` (PWAV, 400 single values), `waveform_high` (PWV3) and `color_preview` (PWV4, six bytes per column, up to 1200 columns). `anlz_color_preview_column` returns a height and an RGB, not three separate band values. Whether the colour carries the bass, mid and treble split cleanly is not verified on a real file. **UI side done:** `ui_next_env_from_pwv4` builds the three bands from the PWV4 bytes (tested on synthetic data, not on a real export). |
 | Beat grid with beat 1 of each bar | PB-5 | exists | `anlz_beat_t` has `beat_phase` 1 to 4, `time_ms` and `bpm_x100`; `anlz_beat_is_downbeat`. |
-| Per-deck level, left and right, with peak, 30 fps | PB-19 | partial | `audio_engine` publishes `deck_peak_display[2]` (instant attack, gentle decay, made for a screen) and `main_meter_peak`. One value per deck, not left and right. |
-| Link bar: tempo, beat, phase, phrase, bass clash, overlap, key fit | PB-17 | partial | Inputs exist: pitch (`deck_core_pitch_percent`), both beat grids, deck positions, and `beat_phase_align_target_ms` in `beat_jump`. Nobody computes the beat error, phase, phrase offset, bass clash or overlap. The UI can compute them from the two grids and envelopes. |
-| Weave lane: beat pairs of A and B, clash flags | PB-18 | partial | Same inputs as the link bar. The pairing and the clash flags are UI-side work. |
-| Camelot key fit between the two decks | PB-10, LB-18 | exists | `library_track_t.key` carries the Camelot text from the PDB. The parser in `library.c` is private; `ui_next_key_fit` already does the rule in the UI. |
+| Per-deck level, left and right, with peak, 30 fps | PB-19 | partial | `audio_engine` publishes `deck_peak_display[2]` (instant attack, gentle decay, made for a screen) and `main_meter_peak`. One value per deck, not left and right. **UI side:** `ui_next_level01` and `ui_next_fmt_db` turn the peak into a bar and a dB text; both sides get the same value. |
+| Link bar: tempo, beat, phase, phrase, bass clash, overlap, key fit | PB-17 | partial | Inputs exist: pitch (`deck_core_pitch_percent`), both beat grids, deck positions, and `beat_phase_align_target_ms` in `beat_jump`. Nobody computes the beat error, phase, phrase offset, bass clash or overlap. The UI can compute them from the two grids and envelopes. **UI side done:** `ui_next_sync_compute` and `ui_next_sync_overlap`, tested; `ui_next_bind_perform` fills the bar. |
+| Weave lane: beat pairs of A and B, clash flags | PB-18 | partial | Same inputs as the link bar. The pairing and the clash flags are UI-side work. **UI side done:** `ui_next_sync_screen_beats` and `ui_next_sync_weave`; the lane draws from real beat times. |
+| Camelot key fit between the two decks | PB-10, LB-18 | exists | `library_track_t.key` carries the Camelot text from the PDB. The parser in `library.c` is private; `ui_next_key_fit` already does the rule in the UI. **UI side done:** `ui_next_key_*` reads Camelot and classical names and gives the Browse chip colour. |
 | Time mode, elapsed or remaining | PB-11 | exists | `app_settings_t.time_remain`. |
 | Section map: intro, build, drop, break, outro | LB-13 | missing | The ANLZ parser reads PPTH, PVBR, PQTZ, PWAV, PWV2, PWV3, PWV4 and PCOB. No phrase tag (PSSI). |
 | 4-deck mode | PB-7 | missing | `DECK_CORE_DECK_COUNT` and `AUDIO_ENGINE_DECK_COUNT` are 2. Open question on CPU stays. |
@@ -136,6 +136,21 @@ valid after edits.
 | Device name from the settings file | SY-5 | missing | No device name setting. |
 | Licence notice on the boot footer | SY-6 | missing | Same as the licence page. |
 
+## Done on the UI side
+
+These needed no core change. Each is pure C with a host test in `tests/ui_next_*`.
+
+| Module | What it gives |
+| --- | --- |
+| `ui_next_key` | Camelot and classical key parsing, the key relation (fit, +2, +7) |
+| `ui_next_sync` | Beat error, phase, phrase offset and tempo of B against A, overlap of the envelopes, beats on screen, weave pairs |
+| `ui_next_color` | Three-band envelope from the PWV4 colour preview |
+| `ui_next_format` | Clock, time left, BPM at the playback speed, sizes, free space, dB, meter position |
+| `ui_next_bind` | Turns plain inputs (position, speed, grid, key, peak) into the Perform model |
+
+The firmware glue still has to copy `anlz_beat_t`, `audio_engine` and library fields into
+`ui_next_perform_in_t`. That glue is the only place that will touch core headers.
+
 ## What the boards show that the core cannot do
 
 These change what the UI can honestly display:
@@ -146,7 +161,8 @@ These change what the UI can honestly display:
 4. **No genre, tags, history or queue.** Browse filters and columns on those have no data. Only playlists and folders do.
 5. **Analysis runs on a computer.** Rekordbox does it; the device parses and caches. This answers the backlog question about where analysis runs, for now. "Analysis status" on Source has nothing to show.
 6. **One USB drive.** The Source board shows two.
-7. **Echo beats.** The core offers 1/4, 1/2, 1, 2 and 4 beats; the board shows the first four.
+7. **The zoomed waveform needs more than PWV4.** PWV4 spans the whole track in at most 1200 columns: on a 4-minute track a column is 200 ms and a beat is 2.5 columns, so the kick spikes of the boards cannot come from it. PWV3 is finer but single band. A zoom with three bands would combine PWV3 heights with PWV4 band ratios. Not built.
+8. **Echo beats.** The core offers 1/4, 1/2, 1, 2 and 4 beats; the board shows the first four.
 
 ## Rules for the UI side
 
