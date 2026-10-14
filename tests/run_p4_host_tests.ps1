@@ -3209,6 +3209,34 @@ $tests = @(
         )
     },
     @{
+        Name = "ui_next_text"
+        Dir = "tests/ui_next_text"
+        Target = "test_ui_next_text.exe"
+        Args = @(
+            "-Wall", "-Wextra", "-Wpedantic", "-Werror=implicit-function-declaration", "-std=c99",
+            "-I../../firmware/p4-core/components/ui_next/include",
+            "-o", "test_ui_next_text.exe",
+            "test_ui_next_text.c",
+            "../../firmware/p4-core/components/ui_next/ui_next_text.c",
+            "-lm"
+        )
+    },
+    @{
+        Name = "ui_next_view"
+        Dir = "tests/ui_next_view"
+        Target = "test_ui_next_view.exe"
+        Args = @(
+            "-Wall", "-Wextra", "-Wpedantic", "-Werror=implicit-function-declaration", "-std=c99",
+            "-I../../firmware/p4-core/components/ui_next/include",
+            "-o", "test_ui_next_view.exe",
+            "test_ui_next_view.c",
+            "../../firmware/p4-core/components/ui_next/ui_next_view.c",
+            "../../firmware/p4-core/components/ui_next/ui_next_key.c",
+            "../../firmware/p4-core/components/ui_next/ui_next_text.c",
+            "-lm"
+        )
+    },
+    @{
         Name = "ui_next_format"
         Dir = "tests/ui_next_format"
         Target = "test_ui_next_format.exe"

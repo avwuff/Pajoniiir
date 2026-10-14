@@ -68,3 +68,88 @@ void ui_next_bind_perform(const ui_next_perform_in_t *in, ui_next_perform_model_
     snprintf(m->key_change, sizeof m->key_change, "%.4s>%.4s", a->key, b->key);
     m->layers = in->cls == UI_NEXT_CLASS_S ? "LAYERS 1-4" : in->cls == UI_NEXT_CLASS_M ? "LAYERS 1-6" : "LAYERS 1-7";
 }
+
+/* Copies `s` into `d` and cuts on a character boundary, so a long title never ends on half an accent. */
+static void copy_utf8(char *d, size_t cap, const char *s)
+{
+    size_t n = strlen(s);
+    if (n >= cap) {
+        n = cap - 1;
+        while (n && ((unsigned char)s[n] & 0xC0) == 0x80) n--;
+    }
+    memcpy(d, s, n);
+    d[n] = 0;
+}
+
+size_t ui_next_bind_browse(const ui_next_browse_in_t *in, ui_next_browse_model_t *out)
+{
+    const size_t total = ui_next_view_build(in->entry, in->n, &in->filter, in->sort, in->strip_accents, in->view,
+                                            in->scratch, in->cap);
+    const size_t shown = total < in->cap ? total : in->cap;
+
+    copy_utf8(out->crumb, sizeof out->crumb, in->crumb);
+    snprintf(out->count, sizeof out->count, "%u OF %u", (unsigned)total, (unsigned)in->n);
+    if (in->match_deck && in->match_key && in->match_key[0])
+        snprintf(out->match, sizeof out->match, "MATCH TO DECK %c %s", in->match_deck, in->match_key);
+    else
+        out->match[0] = 0;
+    out->category = in->category;
+
+    out->tag_badge = 0;
+    for (int i = 0; i < UI_NEXT_BROWSE_TAGS; i++) {
+        out->tags[i] = in->tag[i];
+        out->tags[i].on = (in->filter.tag_mask >> i) & 1u;
+        out->tag_badge += out->tags[i].on;
+    }
+
+    for (int r = 0; r < UI_NEXT_BROWSE_TRACKS; r++) {
+        ui_next_track_t *t = &out->track[r];
+        memset(t, 0, sizeof *t);
+        const size_t pos = in->first + (size_t)r;
+        if (pos >= shown) continue;
+        const ui_next_entry_t *e = &in->entry[in->view[pos]];
+        copy_utf8(t->title, sizeof t->title, e->title);
+        copy_utf8(t->artist, sizeof t->artist, e->artist);
+        copy_utf8(t->genre, sizeof t->genre, e->genre);
+        if (e->bpm_x100) snprintf(t->bpm, sizeof t->bpm, "%u", (unsigned)((e->bpm_x100 + 50u) / 100u));
+        snprintf(t->key, sizeof t->key, "%s", e->key);
+        ui_next_fmt_clock(t->time, sizeof t->time, e->duration_s * 1000u);
+        t->key_class = in->match_key ? ui_next_bind_key_class(in->match_key, e->key) : UI_NEXT_KEY_NONE;
+        for (int g = 0; g < UI_NEXT_BROWSE_TAGS && t->n_tags < 3; g++)
+            if ((e->tags >> g) & 1u) t->tags[t->n_tags++] = (uint8_t)g;
+        t->env = (uint8_t)(e->id % 4u);
+    }
+    out->open_row = -1;
+    out->lift_row = -1;
+    out->ins_row = -1;
+    return total;
+}
+
+size_t ui_next_bind_search(const ui_next_entry_t *entry, size_t n, const char *query, bool strip_accents,
+                           const char *ref_key, ui_next_search_model_t *out)
+{
+    ui_next_hit_t hit[UI_NEXT_SEARCH_RESULTS];
+    const size_t found = ui_next_search(entry, n, query, strip_accents, hit, UI_NEXT_SEARCH_RESULTS);
+    const size_t shown = found < UI_NEXT_SEARCH_RESULTS ? found : UI_NEXT_SEARCH_RESULTS;
+    (void)ref_key;
+
+    copy_utf8(out->query, sizeof out->query, query);
+    if (found) snprintf(out->status, sizeof out->status, "%s%u RESULTS", strip_accents ? "ACCENTS IGNORED / " : "", (unsigned)found);
+    else snprintf(out->status, sizeof out->status, "%s", query[0] ? "NO RESULT" : "");
+    for (size_t i = 0; i < UI_NEXT_SEARCH_RESULTS; i++) {
+        ui_next_search_result_t *r = &out->result[i];
+        memset(r, 0, sizeof *r);
+        if (i >= shown) continue;
+        const ui_next_entry_t *e = &entry[hit[i].index];
+        char tmp[48];
+        copy_utf8(r->pre, sizeof r->pre, (snprintf(tmp, sizeof tmp, "%.*s", hit[i].start, e->title), tmp));
+        copy_utf8(r->hit, sizeof r->hit, (snprintf(tmp, sizeof tmp, "%.*s", hit[i].end - hit[i].start, e->title + hit[i].start), tmp));
+        copy_utf8(r->post, sizeof r->post, e->title + hit[i].end);
+        copy_utf8(r->artist, sizeof r->artist, e->artist);
+        if (e->bpm_x100) snprintf(r->bpm, sizeof r->bpm, "%u", (unsigned)((e->bpm_x100 + 50u) / 100u));
+        snprintf(r->key, sizeof r->key, "%s", e->key);
+    }
+    out->n = (uint8_t)shown;
+    out->selected = shown ? 0 : -1;
+    return found;
+}

@@ -61,13 +61,13 @@ valid after edits.
 | --- | --- | --- | --- |
 | Library index: title, artist, BPM, key, genre, source, folded title | LB-2, LB-19 | partial | `library_track_t` has title, artist, album, key, BPM, duration and artwork. No genre (the PDB parser does not read it), no folded title. Source is `media_source_t`: USB or DJ link. |
 | Category rail: artist, album, genre, tag, key, playlist, history, match, folder | LB-1 | partial | Playlists and folders exist (`library_playlist_count`, `library_get_playlist`, `is_folder`). No genre, tag or history data. |
-| Sortable heads, sort key kept in settings, free fourth column | LB-16, LB-17 | partial | `library_sort` and `media_catalog_sort` take artist, title, BPM and key. The key is not saved. No free column. |
+| Sortable heads, sort key kept in settings, free fourth column | LB-16, LB-17 | partial | `library_sort` and `media_catalog_sort` take artist, title, BPM and key. The key is not saved. No free column. **UI side done:** `ui_next_sort_tap` and a stable sort on title, artist, genre, BPM, time and key (`ui_next_view`). |
 | Row waveform preview | LB-6 | partial | Metadata is loaded per track on demand (`library_load_anlz`, `track_meta_cache_load`). The index holds no envelope per row. |
-| Match strip: filter by BPM, key and genre | LB-7 | partial | BPM and key are in the index. Genre is not. The filter itself is UI-side. |
-| Queue of next tracks | LB-9 | missing | No queue in the core. |
-| Tags, ANY or ALL filter | LB-22 | missing | No tag data anywhere. |
+| Match strip: filter by BPM, key and genre | LB-7 | partial | BPM and key are in the index. Genre is not. **UI side done:** `ui_next_filter_pass` filters on BPM range, key fit and genre. |
+| Queue of next tracks | LB-9 | missing | No queue in the core. **UI side done:** `ui_next_queue_*` holds 32 ids in RAM; nothing plays from it yet. |
+| Tags, ANY or ALL filter | LB-22 | missing | No tag data anywhere. **UI side done:** the ANY or ALL filter on a tag bit mask; the tags themselves still need a source. |
 | Playlist write-back after EDIT | LB-20 | missing | The library is read-only, built from `export.pdb`. No write path. |
-| Live search, accents ignored, 100 ms debounce | LB-10, LB-19 | missing | No search function. |
+| Live search, accents ignored, 100 ms debounce | LB-10, LB-19 | partial | No search function in the core. **UI side done:** `ui_next_search` folds query and titles and gives the matched byte range; `ui_next_bind_search` fills the page. The 100 ms debounce and the Display option are not wired. |
 | Phrase map and key analysis | LB-11, LB-13 | missing | No phrase data. The key comes from Rekordbox; the device does not analyse it. |
 | 8 hot cues per track | PB-8 | exists | `ANLZ_MAX_CUES` 8 and 16 memory cues in ANLZ; `hot_cue_store` keeps 8 slots (`HOT_CUE_STORE_SLOT_COUNT`). |
 | File data: bitrate, plays, label, grid OK | LB-11 | missing | Album and duration exist. No bitrate, play count, label or grid check. |

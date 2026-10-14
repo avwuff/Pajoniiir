@@ -21,7 +21,7 @@ add_subdirectory("${LVGL_DIR}" "${CMAKE_BINARY_DIR}/lvgl" EXCLUDE_FROM_ALL)
 set(NEXT "${REPO_ROOT}/firmware/p4-core/components/ui_next")
 file(GLOB NEXT_FONTS "${NEXT}/fonts/*.c")
 add_executable(ui_next_sim main.c
-    "${NEXT}/ui_next_layout.c" "${NEXT}/ui_next_theme.c" "${NEXT}/ui_next_wave.c" "${NEXT}/ui_next_sync.c" "${NEXT}/ui_next_key.c" "${NEXT}/ui_next_format.c" "${NEXT}/ui_next_color.c" "${NEXT}/ui_next_bind.c"
+    "${NEXT}/ui_next_layout.c" "${NEXT}/ui_next_theme.c" "${NEXT}/ui_next_wave.c" "${NEXT}/ui_next_sync.c" "${NEXT}/ui_next_key.c" "${NEXT}/ui_next_format.c" "${NEXT}/ui_next_color.c" "${NEXT}/ui_next_bind.c" "${NEXT}/ui_next_view.c" "${NEXT}/ui_next_text.c"
     "${NEXT}/ui_next_demo.c" "${NEXT}/ui_next_util.c" "${NEXT}/ui_next_chrome.c" "${NEXT}/ui_next_perform.c"
     "${NEXT}/ui_next_boot.c" "${NEXT}/ui_next_browse.c" "${NEXT}/ui_next_search.c" "${NEXT}/ui_next_alerts.c" "${NEXT}/ui_next_trackinfo.c" "${NEXT}/ui_next_source.c" "${NEXT}/ui_next_fx.c" "${NEXT}/ui_next_record.c" "${NEXT}/ui_next_settings.c" "${NEXT}/ui_next_gridedit.c" ${NEXT_FONTS})
 target_include_directories(ui_next_sim PRIVATE "${NEXT}/include")
