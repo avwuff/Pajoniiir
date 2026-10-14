@@ -46,7 +46,7 @@ The table distinguishes tested functions from profiles awaiting hardware checks.
 | [Pioneer DDJ-FLX4](docs/DDJ_FLX4_MIDI_MAP.md) | Reference controller; stable JC4880 support and accepted historical M3 configurations | USB MIDI/LED feedback and UAC1 headphone cue; ordinary port policy | Transport, mixer, jogs, pads, loops and effects. Exact board/image qualification is recorded separately. |
 | [Hercules DJControl Inpulse 500](controllers/hercules_djcontrol_inpulse_500/README.md) | Beta support; tested on M3 and JC4880 | USB MIDI/LED feedback, UAC1 headphones and native headphone Mix/Volume; M3 requires the experimental USB port swap | M3 exact-image hour and JC4880 short functional blocks accepted. Individual pad/FX/LED coverage remains partial; controller RCA MAIN is unqualified. |
 | [Native Instruments Traktor Kontrol S2 MK3](controllers/ni_traktor_s2_mk3_full/README.md) | Experimental M3 support; operator-closed with explicit waivers | MIDI mode, shared MIDI/LED profile and HS UAC2 headphones; controller USB3 / storage USB2 | Historical exact-image 48/44.1-kHz hours accepted. Remaining checks were waived, not passed; other boards are unqualified. |
-| [Pioneer DDJ-400](controllers/pioneer_ddj_400/README.md) | Software profile available; hardware acceptance NOT RUN | Shared MIDI/LED and USB audio implementation | Source-backed mapping; local MIDI/LED/audio/reconnect qualification is pending. Eight memory-call/store/delete inputs remain omitted. |
+| [Pioneer DDJ-400](controllers/pioneer_ddj_400/README.md) | Software profile available; canonical-image hardware acceptance NOT RUN | Shared MIDI/LED and USB audio implementation | Loop halve/double included; four memory-store/delete inputs remain omitted. Scoped contributor testing is recorded separately; new-image qualification is pending. |
 
 FLX4 remains the ordinary reference controller. M3 Hercules/S2 testing uses an
 **explicit experimental port swap: controller USB3, storage USB2**; the ordinary
@@ -402,6 +402,11 @@ status and acceptance limits are maintained in the
 [final handoff](docs/reviews/2026-10-11-shared-core-final-handoff.md),
 [documentation status](docs/DOCUMENTATION_STATUS.md) and
 [development plan](docs/DEVELOPMENT_PLAN.md).
+
+The [JC1060 selective integration](docs/reviews/2026-10-14-jc1060-selective-integration.md)
+adds DDJ-400 loop controls and regression-backed shared USB/audio/startup repairs.
+It is a local software candidate; JC1060 hardware and SD warm-reset gates remain
+open, and published beta assets retain their original identity.
 
 - [Online user manual](https://docs.pajoniiir.eu/)
 - [Project overview](docs/PROJECT_OVERVIEW.md)

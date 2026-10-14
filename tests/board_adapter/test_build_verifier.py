@@ -45,6 +45,10 @@ class BuildVerifierTests(unittest.TestCase):
         (self.build/'main-deck-m3.bin').write_bytes(image)
         self.identity = {'source_sha': 'a'*40, 'source_dirty': 0}
         (self.build/'board_build_identity.json').write_text(json.dumps(self.identity))
+        (self.build/'pajoniiir_usb_parent').mkdir()
+        (self.build/'pajoniiir_usb_parent/hub.c').write_text('.parent_dev_hdl = parent_dev_hdl,')
+        (self.build/'compile_commands.json').write_text(json.dumps([
+            {'file': '/container/relocated/pajoniiir_usb_parent/hub.c'}]))
 
     def tearDown(self):
         self.temp.cleanup()
@@ -78,6 +82,17 @@ class BuildVerifierTests(unittest.TestCase):
         self.identity['source_dirty'] = 1
         (self.build/'board_build_identity.json').write_text(json.dumps(self.identity))
         with self.assertRaisesRegex(AssertionError, 'stale build identity'):
+            self.check()
+
+    def test_missing_ancestry_patch_is_rejected(self):
+        (self.build/'pajoniiir_usb_parent/hub.c').unlink()
+        with self.assertRaisesRegex(AssertionError, 'ancestry patch missing'):
+            self.check()
+
+    def test_unpatched_selected_hub_is_rejected(self):
+        (self.build/'compile_commands.json').write_text(json.dumps([
+            {'file': '/dependency/src/hub.c'}]))
+        with self.assertRaisesRegex(AssertionError, 'unpatched hub source'):
             self.check()
 
 

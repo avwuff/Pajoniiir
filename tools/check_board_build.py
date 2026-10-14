@@ -64,6 +64,10 @@ def verify(build: Path, project: str, experimental_recorder: bool = False,
     if not experimental_recorder:
         assert "#define CONFIG_PAJONIIIR_SD_IDLE_WAIT 1" not in config, "unqualified SD experiment in ordinary build"
     verify_usb_dma_policy(config, project, experimental_recorder, experimental_s2)
+    ancestry = build / "pajoniiir_usb_parent/hub.c"
+    assert ancestry.is_file() and ".parent_dev_hdl = parent_dev_hdl," in ancestry.read_text(), "USB root ancestry patch missing"
+    compilation = json.loads((build / "compile_commands.json").read_text())
+    assert any(item["file"].replace("\\", "/").endswith("/pajoniiir_usb_parent/hub.c") for item in compilation), "unpatched hub source selected"
     assert ("#define CONFIG_PAJONIIIR_BOARD_JC1060 1" in config) == jc1060
     assert ("#define CONFIG_PAJONIIIR_BOARD_M3 1" in config) == m3
     assert ("#define CONFIG_AUDIO_ANTIALIAS_CACHE 1" in config) == m3, "wrong persistent FIR memory policy"

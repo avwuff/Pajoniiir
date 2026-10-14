@@ -61,9 +61,10 @@ static uint32_t packet_bytes_for_rate(const flx4_uac_playback_format_t *fmt,
     return frames_per_ms * (uint32_t)fmt->channels * (uint32_t)fmt->bytes_per_sample;
 }
 
-bool flx4_uac_format_supports_rate(const flx4_uac_playback_format_t *fmt, uint32_t rate)
+static bool format_supports_rate_at_interval(const flx4_uac_playback_format_t *fmt,
+                                             uint32_t rate, uint8_t interval)
 {
-    if (!fmt || !fmt->pcm || fmt->interval != 1u ||
+    if (!fmt || !fmt->pcm || fmt->interval != interval ||
         !((fmt->bits_per_sample == 16u && fmt->bytes_per_sample == 2u) ||
           (fmt->bits_per_sample == 24u && fmt->bytes_per_sample == 3u)) ||
         (fmt->channels != 2u && fmt->channels != 4u) ||
@@ -78,6 +79,22 @@ bool flx4_uac_format_supports_rate(const flx4_uac_playback_format_t *fmt, uint32
          fmt->feedback_interval != 1u || fmt->feedback_refresh < 1u ||
          fmt->feedback_refresh > 9u)) return false;
     return format_has_rate(fmt, rate) && packet_bytes_for_rate(fmt, rate) <= fmt->max_packet_size;
+}
+
+bool flx4_uac_format_supports_rate(const flx4_uac_playback_format_t *fmt, uint32_t rate)
+{
+    return format_supports_rate_at_interval(fmt, rate, 1u);
+}
+
+bool flx4_uac_format_supports_bus_rate(const flx4_uac_playback_format_t *fmt,
+                                      uint32_t rate, bool high_speed)
+{
+    if (!high_speed) return flx4_uac_format_supports_rate(fmt, rate);
+    /* Qualified HS UAC1 family: synchronous PCM, one packet/ms, no feedback.
+     * Native HS interval 1 is 125 us and must not enter the FS packetizer. */
+    return fmt && fmt->pcm_explicit && fmt->sync_type == 3u &&
+           !fmt->requires_feedback && !fmt->feedback_endpoint && !fmt->sync_address &&
+           format_supports_rate_at_interval(fmt, rate, 4u);
 }
 
 bool flx4_uac_feedback_q16(const flx4_uac_playback_format_t *fmt,

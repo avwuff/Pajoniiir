@@ -22,6 +22,7 @@ typedef struct {
     bool wifi_apsta;
     bool overview_artwork_in_title;
     uint8_t display_framebuffers;
+    bool storage_via_hub;
 } board_capabilities_t;
 
 /* Pure immutable descriptions; root roles never depend on enumeration order. */

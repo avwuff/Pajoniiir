@@ -1,0 +1,16 @@
+# Existing locks/CI use CRLF Git-source component bytes. Scope the same policy
+# to CMake's resolver children on every host; do not edit global Git settings.
+if(NOT _p4_dependency_git_policy_installed)
+    set(_p4_git_count "$ENV{GIT_CONFIG_COUNT}")
+    if(_p4_git_count STREQUAL "")
+        set(_p4_git_count 0)
+    endif()
+    if(NOT _p4_git_count MATCHES "^[0-9]+$" OR _p4_git_count GREATER 64)
+        message(FATAL_ERROR "Invalid inherited Git config count")
+    endif()
+    set(ENV{GIT_CONFIG_KEY_${_p4_git_count}} "core.autocrlf")
+    set(ENV{GIT_CONFIG_VALUE_${_p4_git_count}} "true")
+    math(EXPR _p4_git_next "${_p4_git_count} + 1")
+    set(ENV{GIT_CONFIG_COUNT} "${_p4_git_next}")
+    set(_p4_dependency_git_policy_installed TRUE)
+endif()

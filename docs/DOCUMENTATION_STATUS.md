@@ -2,6 +2,13 @@
 
 Status: **current documentation authority, reconciled 2026-10-14**.
 
+The [JC1060 selective integration follow-up](reviews/2026-10-14-jc1060-selective-integration.md)
+implements the confirmed software repairs and four DDJ-400 loop bindings in
+the canonical shared core. Its verification ledger distinguishes ordinary
+software builds/regressions from NOT RUN exact-image JC1060, SD warm reset,
+signed OTA and live Link acceptance. Unsafe donor HIL/Docker tools are excluded.
+Published beta assets remain unchanged; S2 closeout and JC4880 soak waiver stand.
+
 The [completed JC1060/DDJ-400 contributor review](reviews/2026-10-14-jc1060-contributor-review.md)
 audits frozen branch `00041a0d` against local `78dc3b7d`, preserves all 71 changed
 file hashes and reproduces root-admission, HS UAC1 cadence, partial web CUE,
@@ -11,8 +18,9 @@ Dependency hash differences are exactly LF/CRLF, with no version change.
 Kayrosen's exact `4e3aa2b4` JC1060/DDJ-400 results provide scoped physical and
 long Observe evidence; seven long-window counters are not the current all-22
 TimingSoak gate. Warm-reset SD and USB MAIN recovery remain failed/open;
-signed OTA is NOT RUN. Review step is complete, selective integration still
-requires repairs. Canonical production code and published beta remain unchanged.
+signed OTA is NOT RUN. At review completion, selective integration still
+required repairs and canonical production code was unchanged. The subsequent
+software repairs are scoped above; published beta assets remain unchanged.
 
 The [JC4880 controller lifecycle candidate](validation/JC4880_CONTROLLER_LIFECYCLE_20261012.md)
 is now installed as clean `M2.5-221-gc7d2e9cd`, VALID `ota_0`, with Hercules

@@ -22,6 +22,7 @@
 #endif
 #include "audio_decoder.h"
 #include "audio_eof_policy.h"
+#include "audio_loop_range.h"
 #include "audio_start_gate.h"
 #include "audio_output_bookkeeping.h"
 #include "audio_format.h"
@@ -367,6 +368,8 @@ typedef struct {
     uint8_t  load_progress;
     esp_err_t last_error;
     char     last_error_text[64];
+    bool usb_resume_pending;
+    uint32_t usb_resume_position_ms;
 
     /* Asynchronous seek */
     volatile uint32_t seek_target_ms;
@@ -3853,6 +3856,26 @@ static esp_err_t audio_output_write_main(const int16_t *frames, size_t bytes)
 #endif
 }
 
+static void audio_output_pause_usb_main(void)
+{
+    if (!s_usb_main_sink) return;
+    uint32_t positions[AUDIO_ENGINE_DECK_COUNT];
+    for (uint8_t deck = 0; deck < AUDIO_ENGINE_DECK_COUNT; ++deck)
+        positions[deck] = audio_engine_deck_position_ms(deck);
+    AE_LOCK();
+    for (uint8_t deck = 0; deck < AUDIO_ENGINE_DECK_COUNT; ++deck) {
+        audio_engine_state_t *eng = &s_engines[deck];
+        if (!eng->loaded || !atomic_load_bool(&eng->playing)) continue;
+        eng->usb_resume_position_ms = positions[deck];
+        atomic_store_bool(&eng->usb_resume_pending, true);
+        atomic_store_bool(&eng->playing, false);
+        atomic_store_bool(&eng->paused, true);
+        /* Keep decoder ownership and EOF/drain state. Explicit PLAY after a
+         * healthy reconnect re-seeks the last audible head, never reloads. */
+    }
+    AE_UNLOCK();
+}
+
 static void audio_output_mark_sink_fault(esp_err_t main_rc, esp_err_t hp_rc)
 {
     __atomic_add_fetch(&s_output_sink_faults, 1u, __ATOMIC_RELAXED);
@@ -3894,6 +3917,14 @@ static void ae_output_task(void *arg)
             if ((s_audio_wdt_block & 1023u) == 0u)
                 firmware_resources_sample_task(FW_RESOURCE_OUTPUT);
             ae_wdt_trace(AUDIO_WDT_PHASE_WAIT_CODEC, 0u);
+            vTaskDelay(pdMS_TO_TICKS(5));
+#if !defined(AUDIO_ENGINE_PC_TEST)
+            s_audio_wdt_last_idle_us = (uint64_t)esp_timer_get_time();
+#endif
+            continue;
+        }
+        if (s_usb_main_sink && !controller_usb_audio_stream_available()) {
+            audio_output_pause_usb_main();
             vTaskDelay(pdMS_TO_TICKS(5));
 #if !defined(AUDIO_ENGINE_PC_TEST)
             s_audio_wdt_last_idle_us = (uint64_t)esp_timer_get_time();
@@ -4304,6 +4335,10 @@ static void ae_output_task(void *arg)
             record_deck_ui_peak(deck1_index, block_peak[deck1_index]);
             record_main_ui_peak(master_out, AE_OUT_FRAMES * 2u);
             limiter_stats_record(&block_limiter_stats);
+        } else if (s_usb_main_sink && main_rc == ESP_ERR_INVALID_STATE) {
+            /* Disconnect/configuration may race the pre-render ready check.
+             * Discard this uncommitted block; PLAY re-seeks its audible head. */
+            audio_output_pause_usb_main();
         } else {
             /* Stateful resamplers/DSP have already rendered this block, so it
              * cannot be replayed safely. Do not publish an inaudible position;
@@ -4967,6 +5002,18 @@ static esp_err_t audio_engine_play_for_deck(uint8_t deck)
 {
     audio_engine_state_t *eng = &s_engines[deck];
     if (!eng->loaded) return ESP_ERR_INVALID_STATE;
+#if AE_FW
+    if (s_usb_main_sink && !controller_usb_audio_stream_available())
+        return ESP_ERR_INVALID_STATE;
+    if (atomic_load_bool(&eng->usb_resume_pending)) {
+        const uint32_t position = eng->usb_resume_position_ms;
+        esp_err_t rc = audio_engine_seek_for_deck_reason(deck, position, AE_SEEK_REASON_USER);
+        if (rc != ESP_OK) return rc;
+        if (s_usb_main_sink && !controller_usb_audio_stream_available())
+            return ESP_ERR_INVALID_STATE;
+        atomic_store_bool(&eng->usb_resume_pending, false);
+    }
+#endif
 
     /* A decoder can reach EOF before first PLAY because it fills the future PCM
      * window while the deck is paused. Rewind only after the consumer has
@@ -5169,6 +5216,8 @@ static esp_err_t audio_engine_seek_for_deck_reason(uint8_t deck,
     atomic_store_bool(&eng->playback_finished, false);
     eng->output_base_ms = position_ms;
     eng->output_frames_since_seek = 0u;
+    if (atomic_load_bool(&eng->usb_resume_pending) && reason != AE_SEEK_REASON_LOOP)
+        eng->usb_resume_position_ms = position_ms;
 #if AE_FW
     output_position_epoch_bump(deck);
 #endif
@@ -5419,6 +5468,10 @@ esp_err_t audio_engine_deck_set_loop(uint8_t deck, uint32_t start_ms, uint32_t e
 #endif
     audio_engine_state_t *eng = &s_engines[deck];
     AE_LOCK();
+    if (!audio_loop_range_valid(start_ms, end_ms, eng->duration_ms)) {
+        AE_UNLOCK();
+        return ESP_ERR_INVALID_ARG;
+    }
 #if AE_FW
     const bool resize = eng->loop_active &&
         (eng->loop_start_ms != start_ms || eng->loop_end_ms != end_ms);

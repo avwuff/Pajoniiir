@@ -10,9 +10,17 @@ testing is deferred to Kayrosen, both explicitly NOT RUN for those scopes.
 
 The [2026-10-14 contributor review](reviews/2026-10-14-jc1060-contributor-review.md)
 now records Kayrosen's separate `4e3aa2b4` bench. Warm-reset SD and USB MAIN
-reconnect recovery remain open, and pending-image Ethernet/HTTP readiness needs
-repair before signed JC1060 OTA qualification. Do not transfer that branch's
+reconnect recovery remain physically open, and identified the required
+pending-image Ethernet/HTTP repair before signed JC1060 OTA qualification.
+Do not transfer that branch's
 Observe/listening results to the published beta or a future integrated image.
+
+The [selective integration follow-up](reviews/2026-10-14-jc1060-selective-integration.md)
+implements USB MAIN recovery and the pending Ethernet/HTTP software gate. Before
+installing its future JC1060 candidate, verify exact source/config/image identity
+and test DHCP/HTTP readiness, rollback, hub root admission, loaded-track USB MAIN
+reconnect and SD warm reset on that board. Software regressions alone do not
+close these physical gates.
 
 Current Hercules bench: clean `6166d936`, VALID `ota_1`, Hercules USB3/root0,
 storage USB2/root1, Wi-Fi ON. Local OTA/startup and short audio/display plus

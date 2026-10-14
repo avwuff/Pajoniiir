@@ -13,6 +13,7 @@ int review_claim_result = 0;
 #include "controller_usb_audio_stream.c"
 #include "fixtures/s2_mk3_hs_config.h"
 #include "fixtures/hercules_inpulse_500_fs_config.h"
+#include "fixtures/ddj400_hs_as_config.h"
 
 static unsigned packet_detail_count;
 static uint32_t packet_details[4][4];
@@ -858,6 +859,48 @@ static void test_hercules_fs_feedback(void)
     puts("PASS captured Hercules UAC1: endpoint association, 10.14 feedback, capacity, fractional pacing, stale stop and FLX4 isolation");
 }
 
+static void test_ddj400_hs_uac1_cadence(void)
+{
+    uint8_t config[sizeof(ddj400_hs_as_config)];
+    flx4_uac_playback_format_t fmt;
+    memcpy(config, ddj400_hs_as_config, sizeof(config));
+    assert(controller_usb_audio_stream_set_policy(false, true, true) == ESP_OK);
+    assert(select_stream_format(config, sizeof(config), &fmt));
+    assert(fmt.interval == 4u && fmt.service_interval_us == 1000u && !fmt.uac2);
+    /* Both captured alternates have the same clock, even though widths differ. */
+    for (uint8_t interval = 1u; interval <= 5u; ++interval) {
+        config[42] = config[85] = interval;
+        assert(select_stream_format(config, sizeof(config), &fmt) == (interval == 4u));
+    }
+    memcpy(config, ddj400_hs_as_config, sizeof(config));
+    config[39] = config[82] = 9u; /* adaptive, not the qualified synchronous family */
+    assert(!select_stream_format(config, sizeof(config), &fmt));
+    memcpy(config, ddj400_hs_as_config, sizeof(config));
+    assert(controller_usb_audio_stream_set_policy(true, false, true) == ESP_OK);
+    assert(!select_stream_format(config, sizeof(config), &fmt));
+    assert(controller_usb_audio_stream_set_policy(false, true, true) == ESP_OK);
+    assert(controller_usb_audio_stream_start((void*)1, (void*)2, config,
+        sizeof(config), (void*)3, 10, 5) == ESP_OK);
+    assert(s_control_step == 1u); /* UAC1 SET_CUR then SET_INTERFACE */
+    s_control->status = USB_TRANSFER_STATUS_COMPLETED;
+    control_callback(s_control); control_callback(s_control);
+    assert(s_streaming && !s_faulted && s_target_rate == 44100u);
+    assert(s_format.interval == 4u && s_isoc[0]->num_isoc_packets == STREAM_PACKETS_PER_TRANSFER);
+    unsigned bytes = 0;
+    for (int p = 0; p < s_isoc[0]->num_isoc_packets; ++p) {
+        int n = s_isoc[0]->isoc_packet_desc[p].num_bytes;
+        assert(n == 352 || n == 360); /* 44/45 frames * four PCM16 channels */
+        bytes += (unsigned)n;
+    }
+    assert(bytes == (unsigned)s_isoc[0]->num_bytes);
+    assert(controller_usb_audio_stream_write(pcm, pcm, 256, 48000) == ESP_OK);
+    controller_usb_audio_stream_request_stop(false);
+    retire_transfers(); finish_cleanup();
+    assert(controller_usb_audio_stream_is_quiesced());
+    assert(controller_usb_audio_stream_set_policy(true, false, false) == ESP_OK);
+    puts("PASS DDJ-400 HS UAC1: raw interval 4, 1-ms cadence, wrong cadence/family/FLX4 rejected, control/stream/stop");
+}
+
 int main(void)
 {
     uint8_t d[sizeof(descriptor)];
@@ -924,6 +967,7 @@ int main(void)
     test_uac2_44100_fallback();
     test_prime_fault_evidence();
     test_hs_reconnect_under_heap_pressure();
+    test_ddj400_hs_uac1_cadence();
     assert(review_live_transfers == 0 && review_live_payload_bytes == 0);
     puts("PASS UAC 16/24-bit, consumer pacing, bounded timeout, ownership, reconnect and channel routing");
     return 0;

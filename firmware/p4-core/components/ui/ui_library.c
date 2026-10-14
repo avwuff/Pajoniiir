@@ -797,6 +797,32 @@ static void ui_library_set_load_busy(bool busy, const char *hint)
     (void)hint;
 }
 
+static void ui_library_retire_stale_load(uint32_t load_id)
+{
+    ui_library_finish_track_load_id(load_id);
+    /* Cancellation retains the single-flight slot until its worker retires.
+     * An old completion must not enable buttons belonging to a newer job. */
+    if (!ui_library_track_load_busy()) ui_library_set_load_busy(false, NULL);
+}
+
+static void ui_library_update_remote_progress(void)
+{
+#ifdef CONFIG_PAJONIIIR_DJ_LINK_SERVICE
+    if (!s_remote_load_active || !ui_library_track_load_busy()) return;
+    uint32_t total = __atomic_load_n(&s_download_total, __ATOMIC_RELAXED);
+    uint32_t done = __atomic_load_n(&s_download_done, __ATOMIC_RELAXED);
+    char text[32];
+    if (total) snprintf(text, sizeof(text), "DOWNLOAD %u%%",
+        (unsigned)((uint64_t)(done < total ? done : total) * 100 / total));
+    else snprintf(text, sizeof(text), "RESOLVING SOURCE");
+    if (s_label_indicator_status) lv_label_set_text(s_label_indicator_status, text);
+#if CONFIG_PAJONIIIR_DJ_OVERVIEW
+    if (s_dj_ready && s_active_tab == 1)
+        dj_ui_library_set_deck_status(s_library_load_request_deck, text);
+#endif
+#endif
+}
+
 static void ui_library_set_page_button_enabled(lv_obj_t *button, bool enabled)
 {
     if (!button) {
@@ -1458,7 +1484,7 @@ static void ui_poll_track_load_result(void)
                      (unsigned)ui_library_active_track_load_id());
             ui_library_release_deck_audio_session(
                 result.deck, result.audio_session_generation);
-            ui_library_finish_track_load_id(result.load_id);
+            ui_library_retire_stale_load(result.load_id);
             ui_track_load_meta_free(&result);
             continue;
         }
@@ -2516,17 +2542,6 @@ esp_err_t ui_library_load_selected_for_deck(uint8_t deck)
 
 void ui_library_update(const ui_frame_context_t *ctx)
 {
-#ifdef CONFIG_PAJONIIIR_DJ_LINK_SERVICE
-    if(s_remote_load_active && ui_library_track_load_busy()) {
-        uint32_t total=__atomic_load_n(&s_download_total,__ATOMIC_RELAXED);
-        uint32_t done=__atomic_load_n(&s_download_done,__ATOMIC_RELAXED);
-        char text[40];
-        if(total)snprintf(text,sizeof(text),"DOWNLOAD %u%% (%u/%u KiB)",
-            (unsigned)((uint64_t)done*100/total),(unsigned)(done/1024),(unsigned)(total/1024));
-        else snprintf(text,sizeof(text),"RESOLVING SOURCE");
-        ui_library_set_load_busy(true,text);
-    }
-#endif
     int active_tab = ctx ? ctx->active_tab : 0;
     s_active_tab = active_tab;
 #ifndef UI_LIBRARY_HOST_TEST
@@ -2699,6 +2714,9 @@ void ui_library_update(const ui_frame_context_t *ctx)
         dj_ui_library_set_progress(progress ? status.load_progress : -1);
     }
 #endif
+    /* Render last so ordinary ACTIVE/READY and decoder status cannot overwrite
+     * the network stage. This does not extend any status-hold timer. */
+    ui_library_update_remote_progress();
 }
 
 bool ui_library_deck_observation_matches(uint8_t deck, bool loaded,

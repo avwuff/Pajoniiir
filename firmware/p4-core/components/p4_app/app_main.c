@@ -1,4 +1,5 @@
 #include "control_link.h"
+#include "p4_app.h"
 #include "deck_core.h"
 #include "board_adapter.h"
 #include "library.h"
@@ -353,7 +354,7 @@ static void on_usb_storage_event(bool mounted)
     }
 }
 
-void pajoniiir_common_app_main(void)
+void pajoniiir_common_app_main_with_network(const p4_app_network_provider_t *provider)
 {
     p4_restart_capture_init();
     const uint64_t boot_started_us = (uint64_t)esp_timer_get_time();
@@ -509,6 +510,16 @@ void pajoniiir_common_app_main(void)
     ESP_ERROR_CHECK(usb_storage_init(on_usb_storage_event));
     ESP_ERROR_CHECK(p4_local_controller_start());
 
+    /* Board network management starts after the critical USB/DMA allocation,
+     * and before a pending image can be marked valid. */
+    esp_err_t remote_rc = ESP_OK;
+    if (provider) {
+        remote_rc = provider->start ? provider->start() : ESP_ERR_NOT_SUPPORTED;
+        if (remote_rc != ESP_OK)
+            ESP_LOGE(TAG, "board remote startup: %s", esp_err_to_name(remote_rc));
+    }
+    const bool requested_network = boot_network_required || (provider && provider->required);
+
     /* The AP/HTTP worker is asynchronous. A pending image must not become
      * permanent until the requested service actually runs. This uses the main
      * task; LVGL/audio/USB continue independently and no extra stack is needed.
@@ -522,7 +533,7 @@ void pajoniiir_common_app_main(void)
 #if CONFIG_DDJ_OTA_STARTUP_TIMEOUT_TEST
             .network_required = true,
 #else
-            .network_required = boot_network_required,
+            .network_required = requested_network,
 #endif
         };
         p4_startup_result_t result;
@@ -534,13 +545,15 @@ void pajoniiir_common_app_main(void)
 #if CONFIG_DDJ_OTA_STARTUP_TIMEOUT_TEST
                 false);
 #else
-                boot_network_required && wifi_link_is_active());
+                (!boot_network_required || wifi_link_is_active()) &&
+                (!provider || !provider->required ||
+                 (remote_rc == ESP_OK && provider->ready && provider->ready())));
 #endif
             if (result == P4_STARTUP_WAIT) vTaskDelay(pdMS_TO_TICKS(250));
         } while (result == P4_STARTUP_WAIT);
         if (result != P4_STARTUP_READY) {
-            ESP_LOGE(TAG, "pending startup failed: requested AP/HTTP ready=%d",
-                     boot_network_required && wifi_link_is_active());
+            ESP_LOGE(TAG, "pending startup failed: requested remote=%d provider=%s",
+                     requested_network, esp_err_to_name(remote_rc));
             service_log_event(SERVICE_LOG_P4_OTA_FAILED, SERVICE_LOG_ERROR,
                               2u, (uint32_t)result,
                               (uint32_t)(esp_timer_get_time() / 1000), 0u, 0u,
@@ -555,4 +568,9 @@ void pajoniiir_common_app_main(void)
     ESP_LOGI(TAG, "all subsystems ready — P4-only deck waiting for direct controller events");
     firmware_resources_phase("ready");
     ESP_ERROR_CHECK(firmware_health_mark_ready());
+}
+
+void pajoniiir_common_app_main(void)
+{
+    pajoniiir_common_app_main_with_network(NULL);
 }

@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
+include("${CMAKE_CURRENT_LIST_DIR}/../p4-core/cmake/dependency_checkout.cmake")
 
 include("${CMAKE_CURRENT_LIST_DIR}/../p4-core/cmake/project_version.cmake")
 pajoniiir_resolve_version("M3-*")
@@ -65,6 +66,7 @@ endif()
 include("${CMAKE_CURRENT_LIST_DIR}/../p4-core/cmake/apply_espressif_usb_fifo_patch.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/../p4-core/cmake/apply_espressif_usb_idle_recovery_patch.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/../p4-core/cmake/apply_espressif_usb_control_retirement_patch.cmake")
+include("${CMAKE_CURRENT_LIST_DIR}/../p4-core/cmake/apply_espressif_usb_parent_info_patch.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/../p4-core/cmake/apply_usb_host_msc_teardown_patch.cmake")
 include("${CMAKE_CURRENT_LIST_DIR}/../p4-core/cmake/apply_esp_hosted_shared_sdmmc_patch.cmake")
 

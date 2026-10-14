@@ -4,10 +4,30 @@ import json
 from pathlib import Path
 import re
 import subprocess
-from elftools.elf.elffile import ELFFile
+
+
+def verify_startup_initialization(functions, wrapper_names):
+    """Both entrypoints must reach initialization; restart hooks call it directly."""
+    def calls(caller, target):
+        return re.search(r"\b(?:jal|jalr|j|jr)\b[^\n]*<" + re.escape(target) + r">",
+                         functions.get(caller, "")) is not None
+
+    provider_entry = "pajoniiir_common_app_main_with_network"
+    for caller in wrapper_names + [provider_entry]:
+        if not calls(caller, "p4_restart_capture_init"):
+            raise ValueError(f"{caller} does not initialize the capture region")
+    entry = "pajoniiir_common_app_main"
+    # JC1060 calls the provider entry directly; --gc-sections legitimately
+    # removes the unused no-provider wrapper from that board's ELF.
+    if entry in functions and not (calls(entry, "p4_restart_capture_init") or calls(entry, provider_entry)):
+        raise ValueError(f"{entry} does not reach the initialized common entrypoint")
+    if not (calls("app_main", provider_entry) or
+            (entry in functions and calls("app_main", entry))):
+        raise ValueError("board app_main does not reach an initialized common entrypoint")
 
 
 def verify(build):
+    from elftools.elf.elffile import ELFFile
     description = json.loads((build / "project_description.json").read_text())
     elf_path = build / (description["project_name"] + ".elf")
     with elf_path.open("rb") as stream:
@@ -56,10 +76,7 @@ def verify(build):
     blocks = re.split(r"(?m)^[0-9a-f]+ <([^>]+)>:\n", disassembly)
     functions = dict(zip(blocks[1::2], blocks[2::2]))
     callers = {}
-    init_call = r"\b(?:jal|jalr|j|jr)\b[^\n]*<p4_restart_capture_init>"
-    for caller in wrapper_names + ["pajoniiir_common_app_main"]:
-        if not re.search(init_call, functions.get(caller, "")):
-            raise ValueError(f"{caller} does not initialize the capture region")
+    verify_startup_initialization(functions, wrapper_names)
     init_targets = re.findall(r"\b(?:jal|jalr|j|jr)\b[^\n]*<([^>]+)>",
                               functions.get("p4_restart_capture_init", ""))
     if any(target.split("+")[0] != "p4_restart_capture_init" for target in init_targets):

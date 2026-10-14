@@ -19,6 +19,7 @@ typedef struct {
     uint32_t sample_rates[8];
     uint8_t sample_rate_count;
     uint8_t interval;
+    uint16_t service_interval_us; /* selected cadence; interval retains raw bInterval */
     uint8_t sync_type;
     bool requires_feedback;
     bool pcm;
@@ -48,6 +49,8 @@ bool flx4_uac_select_preferred_format(const flx4_uac_descriptor_result_t *result
 /* Full-speed UAC1 PCM, one packet/ms; explicit 3-byte feedback is validated. */
 bool flx4_uac_format_supports_rate(const flx4_uac_playback_format_t *format,
                                   uint32_t rate);
+bool flx4_uac_format_supports_bus_rate(const flx4_uac_playback_format_t *format,
+                                      uint32_t rate, bool high_speed);
 
 bool flx4_uac_feedback_q16(const flx4_uac_playback_format_t *format,
                            const uint8_t *data, size_t length, uint32_t rate,

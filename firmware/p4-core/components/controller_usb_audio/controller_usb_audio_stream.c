@@ -212,11 +212,13 @@ static bool select_stream_format(const uint8_t *descriptor,
                                  flx4_uac_playback_format_t *out)
 {
     if (s_high_speed) {
-        if (s_qualified_flx4 || !controller_uac2_parse(descriptor, descriptor_length, out))
-            return false;
-        __atomic_store_n(&s_target_rate, 48000u, __ATOMIC_RELEASE);
-        __atomic_store_n(&s_sample_bits, out->bits_per_sample, __ATOMIC_RELEASE);
-        return true;
+        if (s_qualified_flx4) return false;
+        if (controller_uac2_parse(descriptor, descriptor_length, out)) {
+            out->service_interval_us = 125u;
+            __atomic_store_n(&s_target_rate, 48000u, __ATOMIC_RELEASE);
+            __atomic_store_n(&s_sample_bits, out->bits_per_sample, __ATOMIC_RELEASE);
+            return true;
+        }
     }
     flx4_uac_descriptor_result_t parsed;
     if (!flx4_uac_parse_playback_formats(descriptor, descriptor_length,
@@ -234,8 +236,9 @@ static bool select_stream_format(const uint8_t *descriptor,
                         (candidate->pcm_explicit && (candidate->sync_type >= 2u ||
                                                    candidate->requires_feedback))) &&
                     candidate->bits_per_sample == (width ? 24u : 16u) &&
-                    flx4_uac_format_supports_rate(candidate, rates[rate])) {
+                    flx4_uac_format_supports_bus_rate(candidate, rates[rate], s_high_speed)) {
                     *out = *candidate;
+                    out->service_interval_us = 1000u;
                     /* Preserve the qualified FLX4 SET_CUR sequence. Generic
                      * endpoints opt in only via their UAC1 CS endpoint flag. */
                     if (s_qualified_flx4) out->frequency_control = true;
@@ -247,6 +250,11 @@ static bool select_stream_format(const uint8_t *descriptor,
         }
     }
     return false;
+}
+
+bool controller_usb_audio_stream_available(void)
+{
+    return (__atomic_load_n(&s_write_gate, __ATOMIC_ACQUIRE) & WRITE_ACCEPTING) != 0u;
 }
 
 static int transfer_index(const usb_transfer_t *transfer)
@@ -734,7 +742,7 @@ esp_err_t controller_usb_audio_stream_start(
     s_control_step = 0u;
     s_feedback_phase = 0u;
     s_feedback_q16 = (uint32_t)(((uint64_t)s_target_rate << 16u) /
-                              (s_format.uac2 ? 8000u : 1000u));
+                              (1000000u / s_format.service_interval_us));
     s_feedback_active = false;
     s_clock_range_bytes = 0;
     s_clock_44100_supported = false;

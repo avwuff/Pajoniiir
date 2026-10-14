@@ -8,9 +8,15 @@ The following dated checkpoints retain their own source and acceptance scope.
 
 The [2026-10-14 JC1060 contributor review](reviews/2026-10-14-jc1060-contributor-review.md)
 is complete on frozen `00041a0d`, with scoped hardware evidence on `4e3aa2b4`
-and production-boundary defect reproductions. Next is selective integration
-with the report's repairs/regressions; no new candidate or beta is qualified
+and production-boundary defect reproductions. Its recommended next step was
+selective integration with repairs/regressions; no new candidate or beta is qualified
 by that review. Published-beta JC1060 acceptance remains NOT RUN.
+
+The [selective integration follow-up](reviews/2026-10-14-jc1060-selective-integration.md)
+implements R01-R08 software repairs and DDJ-400 loop mappings. R09's unsafe HIL
+helper is excluded. Its verification ledger tracks the ordinary build/host/UI
+gates separately from pending exact-image JC1060, SD warm-reset and live Link
+acceptance. No existing beta, S2 closeout or JC4880 soak waiver is replaced.
 
 The [final development handoff](reviews/2026-10-11-shared-core-final-handoff.md)
 is the current delivery/open-gate authority. Installed clean 6166d936 is VALID

@@ -26,6 +26,11 @@ void web_server_set_probe_hooks(web_server_probe_start_fn start,
                                 web_server_probe_status_fn status);
 
 #include "esp_err.h"
+#include <stdbool.h>
+#include <stddef.h>
+typedef bool (*web_server_address_probe_fn)(char *out, size_t size);
+void web_server_set_address_probe(web_server_address_probe_fn probe);
+bool web_server_is_running(void);
 
 esp_err_t web_server_start(void);
 void web_server_stop(void);

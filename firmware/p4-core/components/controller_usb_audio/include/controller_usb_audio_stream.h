@@ -59,6 +59,7 @@ esp_err_t controller_usb_audio_stream_set_policy(bool qualified_flx4, bool consu
                                                  bool high_speed);
 esp_err_t controller_usb_audio_stream_set_pacing(bool consumer_paced);
 bool controller_usb_audio_stream_consumer_paced(void);
+bool controller_usb_audio_stream_available(void);
 bool controller_usb_audio_stream_needs_recovery(void);
 /* HS configuration rejection may stop audio while preserving MIDI ownership. */
 bool controller_usb_audio_stream_fault_isolatable(void);
