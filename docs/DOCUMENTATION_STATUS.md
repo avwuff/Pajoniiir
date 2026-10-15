@@ -9,6 +9,14 @@ software builds/regressions from NOT RUN exact-image JC1060, SD warm reset,
 signed OTA and live Link acceptance. Unsafe donor HIL/Docker tools are excluded.
 Published beta assets remain unchanged; S2 closeout and JC4880 soak waiver stand.
 
+The [completed integration software verification](reviews/2026-10-14-jc1060-integration-verification.md)
+binds clean `c0ee8152` to all three ordinary ESP-IDF 6.0.2 builds, board/isolation/
+budget and linked restart checks, full required-fixture host qualification with
+no SKIP, four unchanged UI baseline gates, and Windows/Ubuntu dependency-byte
+regressions. Hashes and original host evidence are retained. These images are
+not installed or physically accepted; JC1060 SD, hub, audio reconnect and signed
+OTA gates remain open. Full Linux firmware builds and hosted CI remain NOT RUN.
+
 The [completed JC1060/DDJ-400 contributor review](reviews/2026-10-14-jc1060-contributor-review.md)
 audits frozen branch `00041a0d` against local `78dc3b7d`, preserves all 71 changed
 file hashes and reproduces root-admission, HS UAC1 cadence, partial web CUE,

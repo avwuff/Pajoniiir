@@ -45,8 +45,8 @@ environment; its existing ESP-IDF 6.0.2 requirement remains.
 
 ## Verification ledger
 
-The ordinary software matrix, final source identity and evidence inventory are
-recorded in the companion verification record after the gates complete.
+The ordinary software matrix, clean `c0ee8152` source identity and evidence
+inventory are recorded in the [completed verification record](2026-10-14-jc1060-integration-verification.md).
 Focused production regressions cover the table above, existing FLX4/Hercules/S2
 stream behavior, controller epochs, USB teardown and firmware lifecycle.
 Screenshot gates use the existing baselines; no baseline update is authorized
