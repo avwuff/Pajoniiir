@@ -1,0 +1,41 @@
+{
+  "schema_version": 1,
+  "kind": "unpublished-contributor-candidate",
+  "board_id": "jc1060",
+  "board_model": "JC1060P470C_I_W_Y",
+  "project": "main-deck-jc1060",
+  "source_sha": "c0ee81527b4dbd5d83599140aaa106ebcd27772a",
+  "source_dirty": false,
+  "version": "M2.5-226-gc0ee8152",
+  "image_bytes": 2668576,
+  "image_sha256": "b116e043f7a7c73f80e1f5dcc70a36897cc25fc21df52310d145d6b2b9652d44",
+  "image_elf_sha256": "18e390fdf44224be086616b11cf94b7dc1746bb5c76ead38baca67236281b2c9",
+  "bundle_bytes": 2668764,
+  "bundle_sha256": "7e6241046a937186b5f04b06ba4a73899f150516e87f24762319d5b3f50a788c",
+  "key_id": "rel-001",
+  "public_key_sha256": "125ef6eb776729e3018ecc564317254febec4a9a2bf34892e99d57f10bc02e43",
+  "build_class": "ordinary",
+  "display": [
+    1024,
+    600
+  ],
+  "controller_root": 0,
+  "storage_root": 1,
+  "storage_via_hub": true,
+  "network": "Ethernet; no Wi-Fi provider",
+  "audio": "controller USB MAIN and cue",
+  "firmware_build_date": "2026-10-14",
+  "kit_date": "2026-10-15",
+  "published": false,
+  "installed": false,
+  "physical_acceptance": "NOT RUN",
+  "source_bundle_prerequisite": "8d56f303d13c06daa3d194ae1211785a8cdc33e3",
+  "open_gates": [
+    "SD warm reset",
+    "real hub/root admission",
+    "USB MAIN reconnect without LOAD",
+    "DDJ-400 MIDI/LED/audio",
+    "Ethernet startup/OTA rollback",
+    "live experimental Link cases"
+  ]
+}

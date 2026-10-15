@@ -5,6 +5,13 @@ Date: 2026-10-11. Future physical testing owner: contributor Kayrosen
 Physical acceptance of the published beta is **NOT RUN**; preparing this handoff
 did not contact the contributor or imply that testing had begun.
 
+Update 2026-10-15: the [new signed integration kit](JC1060_CONTRIBUTOR_KIT_20261015.md)
+is prepared locally on clean `c0ee8152` with the shared repairs and updated
+DDJ-400 loop mappings. Its README, short checklist, recovery material, exact
+BIN/ELF, signed inventory and source bundle are verified offline. It has not
+been sent, published or installed. Use its separate identity/acceptance record;
+the published beta below remains immutable.
+
 Update 2026-10-14: Kayrosen supplied scoped JC1060/DDJ-400 testing on a separate
 branch, finally source `4e3aa2b4`. The
 [completed contributor review](reviews/2026-10-14-jc1060-contributor-review.md)

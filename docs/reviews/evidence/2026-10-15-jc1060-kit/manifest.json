@@ -1,0 +1,26 @@
+{
+  "schema_version": 2,
+  "release_version": "M2.5-226-gc0ee8152",
+  "source_sha": "c0ee81527b4dbd5d83599140aaa106ebcd27772a",
+  "development_candidate": false,
+  "signing": {
+    "algorithm": "ecdsa-p256-sha256",
+    "key_id": "rel-001",
+    "signature_file": "manifest.sig"
+  },
+  "targets": [
+    {
+      "target": "p4",
+      "project": "main-deck-jc1060",
+      "chip_id": "0x0012",
+      "file": "main-deck-jc1060.bin",
+      "ota_bundle": "main-deck-jc1060.ddjota",
+      "size": 2668576,
+      "bundle_size": 2668764,
+      "slot_size": 4194304,
+      "sha256": "b116e043f7a7c73f80e1f5dcc70a36897cc25fc21df52310d145d6b2b9652d44",
+      "image_elf_sha256": "18e390fdf44224be086616b11cf94b7dc1746bb5c76ead38baca67236281b2c9",
+      "bundle_sha256": "7e6241046a937186b5f04b06ba4a73899f150516e87f24762319d5b3f50a788c"
+    }
+  ]
+}

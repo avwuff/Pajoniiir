@@ -1,6 +1,17 @@
 # Documentation status
 
-Status: **current documentation authority, reconciled 2026-10-14**.
+Status: **current documentation authority, reconciled 2026-10-15**.
+
+The [JC1060 contributor kit](JC1060_CONTRIBUTOR_KIT_20261015.md) is ready locally
+for Kayrosen on the already verified clean `c0ee8152` BIN/ELF. The signed OTA
+bundle/manifest, signed complete kit inventory and signed ZIP checksum verify.
+ZIP extraction and 11 offline integrity/source-recovery cases pass, along with
+10 existing signing tests and OTA release helper tests. The kit contains the
+short combined checklist, recovery boundaries, matching DDJ-400/FLX4 profiles,
+debug/flash artifacts, source bundle and an unsent handoff draft. No firmware
+was rebuilt, installed or physically qualified; no message, push, public beta
+or OTA-channel update occurred. SD warm reset and the candidate's hardware/
+startup/rollback gates remain open.
 
 The [JC1060 selective integration follow-up](reviews/2026-10-14-jc1060-selective-integration.md)
 implements the confirmed software repairs and four DDJ-400 loop bindings in

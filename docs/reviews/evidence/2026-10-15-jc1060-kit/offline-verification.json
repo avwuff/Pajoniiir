@@ -1,0 +1,55 @@
+{
+  "source_sha": "c0ee81527b4dbd5d83599140aaa106ebcd27772a",
+  "zip_sha256": "82f7e4cc74386b7a50e9dfe70ee78d463b0999fe29439888e59ad9c2e01c7d02",
+  "results": [
+    {
+      "case": "ZIP extraction + signatures/inventory/identity/ELF",
+      "result": "PASS",
+      "output": "PASS signed inventory, 40 file hashes, manifest/bundle, JC1060 source/version and matching ELF\nOffline package verification only; installation and physical acceptance NOT RUN."
+    },
+    {
+      "case": "main-deck-jc1060.ddjota tamper rejected",
+      "result": "PASS"
+    },
+    {
+      "case": "manifest.sig tamper rejected",
+      "result": "PASS"
+    },
+    {
+      "case": "SHA256SUMS.txt tamper rejected",
+      "result": "PASS"
+    },
+    {
+      "case": "unlisted extra file rejected",
+      "result": "PASS"
+    },
+    {
+      "case": "missing controller profile rejected",
+      "result": "PASS"
+    },
+    {
+      "case": "wrong external public key rejected",
+      "result": "PASS"
+    },
+    {
+      "case": "source recovery from exact base + incremental bundle",
+      "result": "PASS"
+    },
+    {
+      "case": "no private-key files, PEM payloads or signing-key DER in unpacked kit",
+      "result": "PASS"
+    },
+    {
+      "case": "production bundle signed header tamper rejected",
+      "result": "PASS"
+    },
+    {
+      "case": "production bundle image payload tamper rejected",
+      "result": "PASS"
+    }
+  ],
+  "physical_tests": "NOT RUN",
+  "network_calls_to_device": 0,
+  "published": false,
+  "sent_to_contributor": false
+}
