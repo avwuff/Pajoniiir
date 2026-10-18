@@ -6985,8 +6985,8 @@ void audio_engine_get_diagnostics_snapshot(audio_engine_diagnostics_snapshot_t *
 #endif
     AE_UNLOCK();
 #if !AE_PC
-    /* Heap walks take their own allocator locks. Keep those outside the audio
-     * state mutex: diagnostics must not extend a mixer/control critical section.
+    /* Per-heap counters take their own allocator locks. Keep those outside the
+     * audio state mutex: diagnostics must not extend a mixer/control section.
      * These are observation-time heap values, not an atomic audio snapshot.
      * Minimum-free is the allocator's lifetime low-water mark since boot. */
     audio_engine_snapshot_memory(out_snapshot);

@@ -1,5 +1,11 @@
 # P4 post-release development plan
 
+The [2026-10-18 status observer repair](validation/M3_STATUS_OBSERVER_REPAIR_20261018.md)
+removes confirmed unbounded TLSF walks from the shared observation path.
+After software qualification and a single ordinary M3 build, perform a bounded
+loop-exit retest with pre-validation sample capture. Do not claim the PCM2
+underrun cause solved from heap-query wall time or host evidence alone.
+
 2026-10-18: prioritize the [FLX4 headphone-level repair](validation/FLX4_HEADPHONE_LEVEL_20261018.md)
 before JC4880 OTA. A production-stream regression reproduces a 12.041-dB
 dedicated cue loss; the candidate restores unity after the mixer while retaining

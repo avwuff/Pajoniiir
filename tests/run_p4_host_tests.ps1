@@ -4091,6 +4091,8 @@ Invoke-Step -Name "run codec publication and media fault backoff regression" -Wo
     -Executable $pythonSource -Arguments @("tests/audio_fw_runtime/test_review_boundaries.py")
 Invoke-Step -Name "run production USB MAIN reconnect and loop EOF regression" -WorkingDirectory $RepoRoot `
     -Executable $pythonSource -Arguments @("tests/audio_fw_runtime/test_usb_sink_recovery.py")
+Invoke-Step -Name "run production status memory JSON regression" -WorkingDirectory $RepoRoot `
+    -Executable $pythonSource -Arguments @("tests/audio_engine_memory/test_memory_status_json.py")
 Invoke-Step -Name "run production board remote startup readiness regression" -WorkingDirectory $RepoRoot `
     -Executable $pythonSource -Arguments @("tests/p4_startup_gate/test_board_remote_startup.py")
 Invoke-Step -Name "run linked startup capture initialization contract" -WorkingDirectory $RepoRoot `

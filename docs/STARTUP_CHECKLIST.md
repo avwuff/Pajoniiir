@@ -1,5 +1,11 @@
 # P4 operation and release checklist
 
+For the [status observer repair](validation/M3_STATUS_OBSERVER_REPAIR_20261018.md),
+largest-block sizes and walk timings are unavailable on all targets. Verify
+explicit JSON nulls and measured free/low-water counters after candidate boot.
+Retain the prior PCM2 failure and require a targeted M3 loop-exit retest; no
+physical PASS follows from the observer fix or software qualification alone.
+
 For the [2026-10-18 FLX4 headphone candidate](validation/FLX4_HEADPHONE_LEVEL_20261018.md),
 start headphone LEVEL fully down before playback and raise gradually. Dedicated
 cue PCM restores 12.041 dB lost in the old transport. Verify the exact image,

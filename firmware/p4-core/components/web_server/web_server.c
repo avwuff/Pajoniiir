@@ -2133,22 +2133,14 @@ static esp_err_t api_status_handler(httpd_req_t *req)
         "\"heap_free\":%u,"
         "\"internal_free\":%u,"
         "\"internal_min_free\":%u,"
-#if CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC
         "\"internal_largest_free\":null,"
-#else
-        "\"internal_largest_free\":%u,"
-#endif
         "\"dma_free\":%u,"
         "\"dma_min_free\":%u,"
-#if CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC
         "\"dma_largest_free\":null,"
-#else
-        "\"dma_largest_free\":%u,"
-#endif
         "\"psram_free\":%u,"
         "\"psram_min_free\":%u,"
         "\"psram_largest_free\":null,"
-        "\"heap_walk_max_us\":[%u,%u,%u]"
+        "\"heap_walk_max_us\":[null,null,null]"
         "}"
         "}",
         board_id_name(board->id), board->project, board_build_source_sha(),
@@ -2275,19 +2267,10 @@ static esp_err_t api_status_handler(httpd_req_t *req)
         (unsigned)diagnostics.heap_free,
         (unsigned)diagnostics.internal_free,
         (unsigned)diagnostics.internal_min_free,
-#if !CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC
-        (unsigned)diagnostics.internal_largest_free,
-#endif
         (unsigned)diagnostics.dma_free,
         (unsigned)diagnostics.dma_min_free,
-#if !CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC
-        (unsigned)diagnostics.dma_largest_free,
-#endif
         (unsigned)diagnostics.psram_free,
-        (unsigned)diagnostics.psram_min_free,
-        (unsigned)diagnostics.heap_walk_max_us[0],
-        (unsigned)diagnostics.heap_walk_max_us[1],
-        (unsigned)diagnostics.heap_walk_max_us[2]);
+        (unsigned)diagnostics.psram_min_free);
     free(p4_usb_json);
     free(crash_dump_json);
     free(trace_json);

@@ -2,6 +2,13 @@
 
 Status: **current documentation authority, reconciled 2026-10-18**.
 
+The [shared status observer repair](validation/M3_STATUS_OBSERVER_REPAIR_20261018.md)
+removes unbounded internal/DMA largest-block walks from ordinary as well as HS
+memory snapshots. Free/low-water counters remain measured; fragmentation and
+walk timings are explicitly unavailable, without weakening resource thresholds.
+Focused regressions pass. Full qualification/build and exact-image loop-exit
+retest are separate gates; the preceding PCM2 smoke failure remains preserved.
+
 The [ordinary M3 headphone-repair package](validation/M3_HEADPHONE_PACKAGE_20261018.md)
 is prepared locally as clean `M3-dev-g71ee534269bf`, project `main-deck-m3`.
 The fresh ESP-IDF 6.0.2 build, ordinary board/component/budget verifier and signed
