@@ -1,0 +1,18 @@
+Assertion failed: calls==16 && maximum==1024 && copied==16384, file C:\Users\Daniel\AppData\Local\Temp\p4-cache-bound-psoth8zt\bound.c, line 79
+E
+======================================================================
+ERROR: test_production_wrapper (__main__.WritebackBound.test_production_wrapper)
+----------------------------------------------------------------------
+Traceback (most recent call last):
+  File "D:\AI\Pajoniiir-shared-p4-core\tests\controller_usb_host\test_cache_writeback_bound.py", line 83, in test_production_wrapper
+    subprocess.run([str(exe)], check=True)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Daniel\scoop\apps\python313\current\Lib\subprocess.py", line 577, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['C:\\Users\\Daniel\\AppData\\Local\\Temp\\p4-cache-bound-psoth8zt\\bound.exe']' returned non-zero exit status 3221226505.
+
+----------------------------------------------------------------------
+Ran 1 test in 3.668s
+
+FAILED (errors=1)

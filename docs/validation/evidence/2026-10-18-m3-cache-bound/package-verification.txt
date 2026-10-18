@@ -1,0 +1,14 @@
+PASS main-deck-m3: 2603312 bytes, isolated BSP, LVGL 9.5.0, app identity
+schema_version=1
+target=p4
+chip_id=18
+image_size=2603312
+project=main-deck-m3
+version=M3-dev-g1556e8d7dfcb
+sha256=af44cefe545d3a7507c452ac6b73d4aed08f8fb78689027882fb06cca8787d52
+key_id=rel-001
+Signed OTA release package: D:\AI\Pajoniiir-shared-p4-core\releases\m3-cache-bound-1556e8d7-20261018\pajoniiir-m3-M3-dev-g1556e8d7dfcb
+  P4 2603312 bytes sha256=af44cefe545d3a7507c452ac6b73d4aed08f8fb78689027882fb06cca8787d52
+  signing key id=rel-001 algorithm=ECDSA-P256-SHA256
+  upload main-deck-m3.ddjota to P4
+  local debug archive: D:\AI\Pajoniiir-shared-p4-core\releases\m3-cache-bound-1556e8d7-20261018\pajoniiir-m3-M3-dev-g1556e8d7dfcb\debug\debug-manifest.json (not an OTA payload)

@@ -1,0 +1,21 @@
+{
+  "source_sha": "1556e8d7dfcb4f016c52ab1a372dd2e076dcaa1f",
+  "source_dirty": false,
+  "version": "M3-dev-g1556e8d7dfcb",
+  "regression": "RED ordinary16KiB request unbounded; GREEN both ordinary/HS modes, entire RGB888 span and preserved error/context handling",
+  "host_qualification_exit": 0,
+  "documentation_exit": 0,
+  "idf_build_exit": 0,
+  "build_mode": "ESP-IDF6.0.2 incremental ordinary M3 reconfigure/build",
+  "board_check": "PASS",
+  "elf_sha256": "4999176a6b7b1fe9c0f48e7c9687a830b45873d8752afc9a8e1a61d8e7992d93",
+  "build_log_sha256": "e0a7c19707e6c347147bc1ba9f8834fd6e6a529dc1400b062818a6e1f1dbe8b2",
+  "package": "releases/m3-cache-bound-1556e8d7-20261018/pajoniiir-m3-M3-dev-g1556e8d7dfcb",
+  "hardware_replay": "pending",
+  "other_board_builds": "NOT RUN; M3-only iteration",
+  "published": false,
+  "application_bytes": 2603312,
+  "application_sha256": "af44cefe545d3a7507c452ac6b73d4aed08f8fb78689027882fb06cca8787d52",
+  "bundle_bytes": 2603500,
+  "bundle_sha256": "e8362bb55d66118e5ccc5b0aa4eaa818d3d371bbc00f6d3f5f0001a5842c9505"
+}

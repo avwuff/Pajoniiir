@@ -20,8 +20,9 @@ at20.192 s on D2 PCM +1,546, UAC drop +13 / overflow +2,318 and output-late142,4
 New DMA context records one completion /141,430-us gap during mix141,841 us,
 supporting interrupt starvation rather than attributing all time to MT work.
 The ordinary path lacks the existing HS1-KiB task-context cache bound; extending
-that shared policy is RED/GREEN host-reproduced and awaits full qualification,
-M3 build/package and exact-image replay. Both decks are stopped; admission and
+that shared policy is RED/GREEN host-reproduced. Clean `1556e8d7` passes host
+qualification, M3 build/package and is VALID `ota_1`, awaiting exact-image replay.
+Both decks are stopped; admission and
 PCM continuation remain open. Operator reports no perceived disturbance.
 
 The [shared status observer repair](validation/M3_STATUS_OBSERVER_REPAIR_20261018.md)

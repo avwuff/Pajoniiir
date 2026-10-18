@@ -136,41 +136,51 @@ Only M3 is built; there is no push, release or public OTA change.
 
 The next bounded 100-s observation plans three loop exits at different scheduled
 phases. It instead stops on the first exit at 20.192 s / 14 samples. D1 begins
-at32,023 ms, D2 at23,446 ms (different source positions from the preceding
-15-second preparation). Clear intents are11.545/13.297 s. All22 paths are present:
+at 32,023 ms, D2 at 23,446 ms (different source positions from the preceding
+15-second preparation). Clear intents are 11.545/13.297 s. All 22 paths are present:
 D2 PCM underrun +1,546, UAC dropped blocks +13 and overflow frames +2,318; the
-other19 strict deltas are zero. MIDI delta0. One output-late is142,477 us.
+other 19 strict deltas are zero. MIDI delta is 0. One output-late is 142,477 us.
 Both decks end stopped, loops OFF. The operator reports no disturbance or
 control/cable movement. Retain FAIL; the earlier short PASS does not close it.
 
-Same boot430, journal241,133 ms records mix141,841 us, group15 at139,102 us.
+Same boot 430, journal 241,133 ms records mix 141,841 us, group 15 at 139,102 us.
 The newly scoped DMA observation has only **one completion**, **141,430-us
-maximum interrupt gap**, zero queue overflows and highest sampled priority6
+maximum interrupt gap**, zero queue overflows and highest sampled priority 6
 `ae_output`. This supplies evidence of a long interrupt-service gap, not simply
 an expensive MT search. It does not identify the masking call or prove its
-causal relationship to the earlier PCM underrun event at240,978 ms. The DMA
+causal relationship to the earlier PCM underrun event at 240,978 ms. The DMA
 gap can straddle the measurement boundary; task identity is context, not an
 interrupted-PC capture or CPU-time measurement.
 
 ## Shared bounded-cache candidate
 
-Pinned IDF6.0.2 `components/esp_mm/esp_cache_msync.c` holds a common interrupt-
+Pinned IDF 6.0.2 `components/esp_mm/esp_cache_msync.c` holds a common interrupt-
 masking spinlock around C2M writeback and M2C invalidation. The project wrapper
-already divides valid task-context data maintenance into1-KiB calls for the
+already divides valid task-context data maintenance into 1-KiB calls for the
 experimental HS-audio configuration. Ordinary M3/FLX4 delegates a complete
-operation instead: the HS controller selection accidentally gates a general
+operation instead: the HS controller selection gates a general
 real-time cache policy. A USB ISR can also contend on that common cache lock.
 This is a concrete unbounded-operation path and a plausible explanation of
 the observed interrupt gap; the exact masking call has not been captured.
 
-The production-wrapper regression is extended to require the same1-KiB bound
-in both ordinary and HS configurations, including a full800x480 RGB888 scanout
-span. It is RED on the ordinary wrapper (a16-KiB request delegates once rather
-than16 times), GREEN after removing the HS-only guard. Both configurations
+The production-wrapper regression is extended to require the same 1-KiB bound
+in both ordinary and HS configurations, including a full 800x480 RGB888 scanout
+span. It is RED on the ordinary wrapper (a 16-KiB request delegates once rather
+than 16 times), GREEN after removing the HS-only guard. Both configurations
 retain partial-tail coverage, aligned M2C, invalid direction/alignment
 delegation, first-error return and unsplit ISR/outer-critical/uncacheable
 delegation. DMA ownership remains with the synchronous caller until completion.
-No controller, audio, display timing, gain, loss criterion or global IDF mutex
-configuration changes. This bounds bytes, not microseconds. Qualification,
-ordinary M3 build/package and exact-image replay of the failed positions/exit
-phase remain required; PCM continuation and controller admission are still open.
+No controller, audio, panel timing, gain, loss criterion or global IDF mutex
+configuration changes. This bounds bytes, not microseconds.
+
+Clean `1556e8d7dfcb4f016c52ab1a372dd2e076dcaa1f`,
+`M3-dev-g1556e8d7dfcb`, passes full host `-Qualification`, documentation integrity,
+ordinary M3 ESP-IDF 6.0.2 incremental reconfigure/build, board/component/budget
+and signed development packaging. Local OTA finishes HTTP200 in 15.197 s;
+the image is VALID `ota_1`, ELF
+`4999176a6b7b1fe9c0f48e7c9687a830b45873d8752afc9a8e1a61d8e7992d93`.
+The failed phase-sweep source positions are restored while stopped. Exact-image
+replay remains required; PCM continuation and controller admission stay open.
+See [the cache-bound evidence](evidence/2026-10-18-m3-cache-bound/sha256.json)
+for raw checks, signed manifest and artifact hashes. Other boards are not built
+or requalified, and no public artifact is changed.
