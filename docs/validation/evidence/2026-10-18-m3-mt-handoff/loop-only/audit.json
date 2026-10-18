@@ -1,0 +1,13 @@
+{
+  "samples": 44,
+  "all_sample_identity_matches": true,
+  "strict_paths_present": 22,
+  "nonzero_strict_deltas": {
+    "diagnostics.usb_headphones.dropped_blocks": 11,
+    "diagnostics.usb_headphones.overflow_frames": 2251
+  },
+  "first_failure_elapsed_s": 43.13617560000057,
+  "first_failure_phase": "wait-loop-False",
+  "classification": "FAIL",
+  "operator_confirmation_separate": true
+}

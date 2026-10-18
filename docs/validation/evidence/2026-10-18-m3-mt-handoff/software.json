@@ -1,0 +1,22 @@
+{
+  "source_sha": "2fa2263142ed46a5a86a0a7cccdef6330134d526",
+  "source_dirty": false,
+  "version": "M3-dev-g2fa2263142ed",
+  "host_qualification_exit_code": 0,
+  "board_check": "PASS",
+  "idf_build_exit_code": 0,
+  "build_mode": "ESP-IDF 6.0.2 incremental ordinary M3 reconfigure/build; previous full-build artifacts preserved in immutable prior package",
+  "focused_production_handoff": "RED old callback; GREEN repaired; 224 cases with FIR and 224 without FIR",
+  "max_handoff_resets_per_1024_frames": 3,
+  "application_bytes": 2602912,
+  "application_sha256": "9df466328bea61ef8b2f659d68ae9e61f6b9773776f283968d87c14889e74dcb",
+  "bundle_bytes": 2603100,
+  "bundle_sha256": "b98b4afcb489a6d289dc313abe3251104b52dbb11472d657dd1e13007406d57b",
+  "image_elf_sha256": "b3b972750e38e6c1f9fa595099f82c224aa9ea7b2891f430574c64aabce378ae",
+  "signing": "rel-001 ECDSA P-256 SHA-256; production bundle/manifest verification passed",
+  "build_log_sha256": "87e1a477a07f20fc99045c26723e43d0b6124a427d2c64a9d55010b75e12bf98",
+  "package_path": "releases/m3-mt-handoff-2fa22631-20261018/pajoniiir-m3-M3-dev-g2fa2263142ed",
+  "other_board_builds": "NOT RUN; M3-only iteration",
+  "hardware_timing_root_cause": "not established by host regression",
+  "published": false
+}

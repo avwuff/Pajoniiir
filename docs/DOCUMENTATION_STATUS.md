@@ -6,8 +6,13 @@ The [MT fallback handoff repair](validation/M3_MT_FALLBACK_HANDOFF_20261018.md)
 reproduces a separate same-generation stale-clock defect: ordinary resampling
 advances the consumer, then MT resumes its old cursor and rewinds it. The real
 engine callback fails the new host regression before repair; all 224 cases
-pass after re-anchoring to the actual playhead. Hardware timing and controller
-admission gates remain open pending exact-image validation.
+pass after re-anchoring to the actual playhead. Host qualification, ordinary M3
+incremental build and signed packaging pass. Clean `2fa22631` is VALID `ota_1`.
+Its 43.137-s loop-exit retest fails on 11 UAC dropped blocks / 2,251 overflow
+frames and a 142,503-us output-late (139,212 us in one mix group); other 20 strict
+deltas are zero. Both decks are stopped, loops OFF; operator reports no symptom
+or control movement. CUE phases were not reached. A bounded mix-window DMA
+observation is the next candidate; hardware timing and admission remain open.
 
 The [shared status observer repair](validation/M3_STATUS_OBSERVER_REPAIR_20261018.md)
 removes unbounded internal/DMA largest-block walks from ordinary as well as HS

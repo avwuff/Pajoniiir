@@ -55,12 +55,52 @@ Preserve their records and retain all strict acceptance criteria.
 ## Validation boundary
 
 Focused production handoff regression is RED on the old callback and GREEN
-after the repair. Full host `-Qualification`, ordinary M3 ESP-IDF 6.0.2 build,
-board/budget isolation and signed development packaging remain required before
-installing a candidate. Only M3 is built for this investigation; other-board
+after the repair. Full host `-Qualification`, ordinary M3 ESP-IDF 6.0.2
+incremental reconfigure/build, board/budget isolation and signed development
+packaging pass. The same 224-case harness also passes without the FIR cache.
+Only M3 is built for this investigation; other-board
 physical gates, the JC4880 soak waiver and operator-closed S2 scope are unchanged.
 
-The next exact-image bounded smoke must exercise loop exit and CUE/PLAY under
-the same mixed-rate MT workload, keep pre-validation failure capture, and
-retain separate operator audio/display/control evidence. No long soak or
-public publication follows from this software correction alone.
+## Installed candidate and failed loop-exit retest
+
+Clean `2fa2263142ed46a5a86a0a7cccdef6330134d526`,
+`M3-dev-g2fa2263142ed`, was installed by signed local OTA (HTTP 200,
+16.150252 s) and confirmed VALID on `ota_1`; the operator confirms normal GUI.
+ELF SHA-256 is `b3b972750e38e6c1f9fa595099f82c224aa9ea7b2891f430574c64aabce378ae`.
+BIN is 2,602,912 bytes, SHA-256
+`9df466328bea61ef8b2f659d68ae9e61f6b9773776f283968d87c14889e74dcb`;
+signed bundle is 2,603,100 bytes, SHA-256
+`b98b4afcb489a6d289dc313abe3251104b52dbb11472d657dd1e13007406d57b`.
+Effective configuration matches the ordinary M3 baseline. FLX4 USB2, storage
+USB3, MAIN 48 kHz, FLX4 FS 44.1 kHz, Wi-Fi and library260 are preserved.
+
+The mixed-rate MT +/-5%, zoom8 loop/CUE test stops at 43.137 s / 44 saved
+samples, during `wait-loop-False`, after clear intents at 35.419/36.060 s.
+All 22 strict paths are present: 11 new UAC dropped blocks and 2,251 overflow
+frames fail the gate; the other 20 deltas, including both PCM and ISO loss,
+are zero. One output-late is 142,503 us. The same-boot journal records mix
+141,867 us, with group15 taking 139,212 us. CUE/PLAY phases are not reached.
+Both decks end stopped, loops OFF. All sample source identities match.
+
+The operator reports no perceived disturbance and explicitly no control
+movement. Readback nevertheless contains +40 MIDI packets, LEVEL 5,629..16,383,
+MIX16,383 and PFL false/false; retain this discrepancy rather than claiming a
+qualified physical PFL/CUE path. The strict telemetry FAIL remains regardless.
+This repair fixes the demonstrated host clock defect but does not resolve the
+repeated hardware mix stall. No new long soak or public publication follows.
+
+Raw software, OTA, runner, failing response, final snapshots, operator context
+and a 38-file SHA-256 inventory are retained in
+[the evidence directory](evidence/2026-10-18-m3-mt-handoff/sha256.json).
+
+## Next bounded observation
+
+The follow-up adds two snapshots of the existing BSP I2S DMA counters around
+the mix window and journals them only on the existing rate-limited late path.
+No new ISR hook, heap walk or per-frame logging is added. Completion/overflow
+counts are differences; maximum interrupt gap and highest sampled interrupted
+task/priority provide context. A gap can straddle the observation boundary,
+and the highest sampled task does not establish duration or causal ownership.
+The measurement has overhead and does not prove a timing fix. Audio algorithms,
+gain, USB cadence and strict criteria remain unchanged. This candidate still
+requires software/build checks and an exact-image hardware observation.

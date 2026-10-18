@@ -1,7 +1,9 @@
 # P4 operation and release checklist
 
 For the [MT fallback handoff candidate](validation/M3_MT_FALLBACK_HANDOFF_20261018.md),
-verify its exact image after software qualification and ordinary M3 packaging.
+`2fa22631` is VALID `ota_1`, but its loop-exit retest fails UAC drop/overflow
+with a repeated 139-ms mix segment. Both decks are stopped, loops OFF. The next
+mix-window DMA observer requires its own build/package and exact-image check.
 Re-enable MT only after any required initial track load; avoid reloading an
 already-ready same track between bounded retests. Keep all loss/admission gates
 strict and the existing failed observer-image records intact.

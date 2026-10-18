@@ -2,9 +2,12 @@
 
 The [2026-10-18 MT fallback handoff](validation/M3_MT_FALLBACK_HANDOFF_20261018.md)
 has a deterministic production-callback reproduction and minimal consumer-clock
-repair. Qualify/build only M3, then repeat the bounded exact-image loop-exit
-test. Do not infer resolution of UAC timing or queue pressure from host clock
-ownership tests; the prior failure records and strict criteria are retained.
+repair. Host qualification and ordinary M3 incremental build/package pass;
+`2fa22631` is VALID `ota_1`. Its loop-exit retest fails on UAC drop/overflow and
+another 139-ms mix segment, despite no operator symptom. Both decks are stopped.
+Next observe existing I2S DMA counters across the mix window to distinguish
+interrupt delay from execution/preemption context. Build only M3. Clock tests
+do not close UAC timing or admission gates; preserve all failures and criteria.
 
 The [2026-10-18 status observer repair](validation/M3_STATUS_OBSERVER_REPAIR_20261018.md)
 removes confirmed unbounded TLSF walks from the shared observation path.

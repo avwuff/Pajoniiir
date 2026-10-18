@@ -1,0 +1,2 @@
+max_handoff_resets_per_1024_frames=3
+PASS production MT handoff: 224 same-generation future-withdrawal/fallback cases, both decks/rates/pitch signs; consumer never rewinds, actual seeks remain authoritative

@@ -1,0 +1,7 @@
+{
+  "audio_visual": "No disturbance reported",
+  "controls": "Operator explicitly reports no control movement during playback",
+  "scope": "Failed 43.137-s loop-exit window; CUE/PLAY phases not reached",
+  "strict_result": "FAIL retained despite no perceived disturbance",
+  "readback_note": "MIDI +40, LEVEL varied 5629..16383, MIX 16383, PFL false/false. Operator intent differs from readback; do not claim isolated PFL/CUE physical acceptance."
+}

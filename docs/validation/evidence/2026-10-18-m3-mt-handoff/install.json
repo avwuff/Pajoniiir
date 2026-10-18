@@ -1,0 +1,13 @@
+{
+  "source_sha": "2fa2263142ed46a5a86a0a7cccdef6330134d526",
+  "version": null,
+  "project": "main-deck-m3",
+  "board_id": "m3",
+  "partition": "ota_1",
+  "image_state": "valid",
+  "elf_sha256": "b3b972750e38e6c1f9fa595099f82c224aa9ea7b2891f430574c64aabce378ae",
+  "ota_http": 200,
+  "ota_upload_seconds": 16.150252,
+  "package": "releases/m3-mt-handoff-2fa22631-20261018/pajoniiir-m3-M3-dev-g2fa2263142ed/",
+  "operator_gui": "Confirmed normal"
+}
