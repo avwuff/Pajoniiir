@@ -1,0 +1,116 @@
+{
+  "telemetry_audit": "complete_with_output_late_investigation",
+  "operator_full_hour": "pending",
+  "source_sha": "1556e8d7dfcb4f016c52ab1a372dd2e076dcaa1f",
+  "image_elf_sha256": "4999176a6b7b1fe9c0f48e7c9687a830b45873d8752afc9a8e1a61d8e7992d93",
+  "duration_s": 3600.2862093000003,
+  "samples": 5301,
+  "last_sample_elapsed_s": 3599.7850390999993,
+  "max_sample_gap_s": 1.1116102999985742,
+  "strict_counters_present": 22,
+  "all_sample_strict_deltas_zero": true,
+  "all_sample_workload_and_identity_verified": true,
+  "final_stopped": true,
+  "output_late_monitoring_replay_matches": true,
+  "resources": {
+    "heap_free": {
+      "min": 22038264,
+      "max": 22046644,
+      "baseline": 22046628,
+      "final": 22046628
+    },
+    "internal_free": {
+      "min": 54583,
+      "max": 56787,
+      "baseline": 56787,
+      "final": 56787
+    },
+    "internal_min_free": {
+      "min": 51199,
+      "max": 51199,
+      "baseline": 51199,
+      "final": 51199
+    },
+    "dma_free": {
+      "min": 15259,
+      "max": 17463,
+      "baseline": 17463,
+      "final": 17463
+    },
+    "dma_min_free": {
+      "min": 11875,
+      "max": 11875,
+      "baseline": 11875,
+      "final": 11875
+    },
+    "psram_free": {
+      "min": 21987032,
+      "max": 21993196,
+      "baseline": 21993196,
+      "final": 21993196
+    },
+    "psram_min_free": {
+      "min": 21916836,
+      "max": 21916836,
+      "baseline": 21916836,
+      "final": 21916836
+    }
+  },
+  "fragmentation_and_walk_timings": "Unavailable/null; not converted to zero",
+  "midi_packets_delta": 74,
+  "midi_observations": [
+    {
+      "elapsed_s": 860.3669953999997,
+      "delta": 54
+    },
+    {
+      "elapsed_s": 861.2096404000004,
+      "delta": 20
+    }
+  ],
+  "mixer_observations": [
+    {
+      "elapsed_s": 0.1736834999974235,
+      "changes": {
+        "volume1": 16383,
+        "volume2": 16383,
+        "crossfader": 8192,
+        "master_volume": 16383,
+        "headphone_mix": 16383,
+        "headphone_level": 4441,
+        "pregain1": 8192,
+        "pregain2": 8192,
+        "pregain_gain1": 1.0,
+        "pregain_gain2": 1.0,
+        "eq1_low": 8192,
+        "eq1_mid": 8192,
+        "eq1_high": 8192,
+        "eq2_low": 8192,
+        "eq2_mid": 8192,
+        "eq2_high": 8192,
+        "filter1": 8192,
+        "filter2": 8192,
+        "smart_cfx": false,
+        "smart_fader": false,
+        "pfl1": true,
+        "pfl2": true
+      }
+    },
+    {
+      "elapsed_s": 860.3669953999997,
+      "changes": {
+        "headphone_level": 2392
+      }
+    },
+    {
+      "elapsed_s": 861.2096404000004,
+      "changes": {
+        "headphone_level": 1757
+      }
+    }
+  ],
+  "bus_capture_equal": true,
+  "bus_capture_scope": "Disabled/unavailable observer; not proof of absence of errors",
+  "physical_scope": "Pending separate operator confirmation; MIDI/mixer observations do not qualify active-control pressure",
+  "status_jsonl_raw_sha256": "e7d202a5b999c1d3d5e07ea1004509c0b989147fbab64f0ee43367500d6f4a4c"
+}

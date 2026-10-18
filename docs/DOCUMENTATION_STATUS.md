@@ -1,6 +1,6 @@
 # Documentation status
 
-Status: **current documentation authority, reconciled 2026-10-18**.
+Status: **current documentation authority, reconciled 2026-10-19**.
 
 The [MT fallback handoff repair](validation/M3_MT_FALLBACK_HANDOFF_20261018.md)
 reproduces a separate same-generation stale-clock defect: ordinary resampling
@@ -39,7 +39,19 @@ dependency locks unchanged. See the
 [build matrix](validation/evidence/2026-10-18-shared-cache-builds/matrix.json).
 Neither JC image is installed or physically accepted here; JC4880 soak stays
 waived, JC1060 hardware stays deferred to Kayrosen and hosted CI is NOT RUN.
-Final exact-image M3 soak is next and has not started; nothing is published.
+The subsequent final exact-image M3 soak completes3600.286 s /5,301 samples:
+all22 strict counters remain unchanged throughout, final identity stays clean
+1556e8d7 VALID ota_1, both decks stopped, healthy FLX4 FS44.1-kHz streaming.
+Both MT/loops and mixed source rates remain active throughout sampling.
+Output-late24/max12,988 us includes a sample-observed3/60-s cluster, so the
+classification is complete_with_output_late_investigation, not zero-late or an
+unconditional reliability PASS. Full-hour operator audio/display confirmation
+is pending. Headphone LEVEL changes around860–861 s account for74 observed MIDI
+packets; this is not an untouched-controls claim. The
+[all-sample audit](validation/evidence/2026-10-19-m3-cache-bound-soak/audit.json)
+and hashed compressed raw responses preserve that scope. Earlier long-soak
+NOT RUN statements above describe the earlier short-test stage. Nothing is
+published; open JC physical, hosted CI and remaining shared-core gates stand.
 
 The [shared status observer repair](validation/M3_STATUS_OBSERVER_REPAIR_20261018.md)
 removes unbounded internal/DMA largest-block walks from ordinary as well as HS

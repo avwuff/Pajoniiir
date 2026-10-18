@@ -20,8 +20,13 @@ reliability remain unrun. Both decks are stopped, loops OFF. JC4880/JC1060
 ordinary incremental IDF6.0.2 builds and identity/BSP/budget verifiers pass
 clean `2f2b0555` with all three dependency locks unchanged. Their production code
 matches installed1556e8d7; their physical acceptance remains separate. JC4880
-soak is waived, JC1060 hardware deferred, hosted CI NOT RUN. Final M3 soak is
-next but has not started. Keep exact installed image and operator evidence.
+soak is waived, JC1060 hardware deferred, hosted CI NOT RUN. The subsequent
+final M3 hour completes3600.286 s /5,301 samples with all22 strict deltas zero,
+unchanged image/workload and confirmed final stop. Output-late24/max12,988 us
+and a sample-observed3/60-s cluster remain an investigation finding. Full-hour
+operator audio/display confirmation is pending. Preserve the handoff's hashed
+audit and LEVEL-change scope; this is not zero-late or full reliability PASS.
+Keep exact installed image and operator evidence.
 No exact masking-call attribution is implied.
 Re-enable MT only after any required initial track load; avoid reloading an
 already-ready same track between bounded retests. Keep all loss/admission gates

@@ -1,0 +1,11 @@
+{
+  "runner.py": "fd65ca582b79030e0b8d6630be7f56821e70ee967988081f1b2534b509d0e31a",
+  "s2_soak_late_policy.py": "9d6baf501e8029f10bcc11f78325954cafa37c9226fbb2a23eb273972689c8e7",
+  "run.ps1": "5577bf9dd5031f9bc0f303f8b30f772dd2c6c53531dcd090aa9a651a96a7d188",
+  "prepared.json": "d84084cb5c5be07f651e02404bc711a91388e531b32af5f737ad0ae2943b5b4f",
+  "baseline.json": "348885f38509aabc3b2eb1d2aed5152f9e4e641b5e2ec4504318cc827d16fc6f",
+  "firmware.json": "2aaa0f7ad36dab57b7e16ec9900518e917016e246ed7e80d2ac93ab937c4edc4",
+  "initial-playing.json": "d3e78774fba12f5dcfcfd984100a31a90ef1bc70d6bbc3b794f3f4e081ea4102",
+  "initial-ui-timing.json": "803d23539e77de8459f37a3496578a6d277d9dc3af916c203acffeb23f30f4f2",
+  "initial-usb-bus-trace.json": "a6aaf4018877a4726f29da42c014f4891b13264d66f3bcca72dbd1448e8b68c3"
+}

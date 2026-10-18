@@ -257,7 +257,7 @@ restriction. All three committed dependency-lock hashes are unchanged.
 
 | Target | Project | Application bytes | Software result | Current physical scope |
 | --- | --- | ---: | --- | --- |
-| M3 | `main-deck-m3` | 2,603,312 | Existing build/host/package PASS; installed VALID `ota_1` | Three bounded retests above; long soak NOT RUN |
+| M3 | `main-deck-m3` | 2,603,312 | Existing build/host/package PASS; installed VALID `ota_1` | Three bounded retests; completed hour below, late investigation and full-hour operator confirmation pending |
 | JC4880 | `main-deck-p4` | 2,609,952 | Build and board verifier PASS | NOT RUN on this image; earlier smoke remains historical, soak explicitly waived |
 | JC1060 | `main-deck-jc1060` | 2,668,480 | Build and board verifier PASS | NOT RUN; hardware acceptance deferred to Kayrosen |
 
@@ -270,7 +270,57 @@ The original failed JC1060 configure attempt is retained: it collided with
 JC4880 on Component Manager's shared Git cache `index.lock`. Retrying after
 JC4880 exited succeeds without deleting the lock or changing dependencies.
 
-The installed M3 image remains unchanged. Next is the operator-approved final
-M3 timing soak, left until last; it requires a new exact-image run and separate
-full-window operator confirmation. No new soak, OTA, push, release or public
-channel update is performed by these software checks.
+The installed M3 image remains unchanged. These software checks did not perform
+an OTA, push, release or public channel update. The subsequent exact-image soak
+is recorded separately below.
+
+## Final M3/FLX4 hour — 2026-10-18/19
+
+The unchanged clean `1556e8d7dfcb4f016c52ab1a372dd2e076dcaa1f` completes
+**3600.286 s /5,301 samples**, classified
+`complete_with_output_late_investigation`. All22 strict counters are present,
+numeric and unchanged in every sample and the final stopped snapshot. The
+wrapper exits0, both decks end stopped, and final firmware confirms VALID
+`ota_1`, `M3-dev-g1556e8d7dfcb`, ELF
+`4999176a6b7b1fe9c0f48e7c9687a830b45873d8752afc9a8e1a61d8e7992d93`.
+The clock starts after confirmed dual playback; the last poll is3599.785 s,
+followed by the final0.5-s sleep and deadline check. Maximum sample gap is1.112 s.
+
+The whole sampled window retains Casanova Action44.1-kHz/+5% and Ritam moj
+48-kHz/−5%, both MT/four-beat loops, MAIN48-kHz PCM5102A and healthy FLX4
+FS44.1-kHz/16-bit/subslot2 streaming. Controller/storage roots stay1/0.
+Initial and final UI snapshots confirm zoom8; zoom is not polled per sample.
+Both PFL routes are ON. There are74 MIDI packets around860–861 s, coinciding
+with headphone LEVEL changing4441→2392→1757; all other sampled mixer values
+remain fixed. This is not a claim of completely untouched controls or sustained
+jog/exit pressure. Full-hour operator audio/display confirmation is **pending**;
+the short-test confirmations above do not substitute for it.
+
+Output-late increases24 times, maximum12,988 us. Replaying the unchanged frozen
+late policy against every sample reproduces a maximum sample-observed cluster
+of3 events/60 s and its investigation trigger; no new maximum exceeds15,000 us.
+This is neither zero-late nor an unconditional reliability PASS, and is separate
+from the zero ISO/PCM/UAC loss deltas. The diagnostic journal is retained as TEXT;
+sampled task labels do not prove instruction-level attribution. The ordinary
+build's bus observer is disabled/unavailable and its initial/final snapshots
+match; absence of captured events is not independent proof of no USB faults.
+
+Sampled free-memory minima are internal54,583 B, DMA15,259 B and
+PSRAM21,987,032 B. Baseline/final values match (56,787 /17,463 /21,993,196 B),
+and since-boot low-water marks do not change. Largest-block and heap-walk fields
+remain unavailable/null; no live resource walk was used.
+
+[The independent audit](evidence/2026-10-19-m3-cache-bound-soak/audit.json)
+and adjacent SHA-256 inventory preserve the runner, policy, wrapper, original
+responses and deterministic gzip of all status rows. Decompression reproduces
+the original46,162,557-byte JSONL hash
+`e7d202a5b999c1d3d5e07ea1004509c0b989147fbab64f0ee43367500d6f4a4c`.
+Original cache records are retained. No loss threshold was changed, no counter
+reset, and no test restarted. Exact historical masking-call attribution,
+output-late investigation, sustained exit-time input pressure and other-board
+physical gates remain open. This hour does not close the entire shared-core
+implementation or authorize publication.
+
+After the runner exited with wrapper/task result0 and its final evidence was
+saved, the exact one-shot task `Pajoniiir-M3-CacheSoak-20261018T210936Z` was
+removed. The15-minute heartbeat is paused; neither monitor is restarted.
