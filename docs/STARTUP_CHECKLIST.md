@@ -13,9 +13,11 @@ The [ordinary M3 candidate](validation/M3_HEADPHONE_PACKAGE_20261018.md) is now
 installed as `M3-dev-g71ee534269bf`, exact source/ELF and VALID `ota_1` after
 authorized local OTA. Ordinary USB roles, FLX4 and 260 tracks are confirmed;
 both decks remain stopped. GUI/touch are operator-confirmed and physical knob
-readback is LEVEL=0 / MIX=0 after movement. A gradual-level, bounded combined
-smoke remains pending. Successful OTA
-alone closes no M3 listening or playback-control gate.
+readback is LEVEL=0 / MIX=0 after movement. The subsequent 60-s combined smoke
+aborts at 40.642 s on new D2 PCM underruns, ending stopped with loops OFF.
+The operator accepts volume without perceived disturbance; retain telemetry
+FAIL and investigate before a targeted retest. Successful OTA and loudness
+alone do not close the combined playback-control gate.
 
 For the authorized `shared-p4-beta.1` contributor distribution, use the
 [beta record](validation/SHARED_P4_BETA_1_20261011.md) and

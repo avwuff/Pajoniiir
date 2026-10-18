@@ -1,0 +1,57 @@
+{
+  "classification": "TELEMETRY_FAIL",
+  "complete": false,
+  "duration_s": 40.64187680000032,
+  "samples_before_fault": 43,
+  "all_successfully_recorded_samples_maintain_identity_rates_MT_pitch_and_22_baseline_counters": true,
+  "final_strict_deltas": {
+    "uac_format.feedback_invalid": 0,
+    "service_log.dropped": 0,
+    "p4_usb.host.recovery_requests": 0,
+    "p4_usb.host.recovery_failures": 0,
+    "p4_usb.host.recovery_queue_drops": 0,
+    "p4_usb.controller.interface_claim_failures": 0,
+    "p4_usb.controller.transfer_alloc_failures": 0,
+    "p4_usb.controller.midi_disconnects": 0,
+    "p4_usb.controller.midi_in_pipe_errors": 0,
+    "p4_usb.controller.probe_event_drops": 0,
+    "p4_usb.controller.recovery_requests": 0,
+    "p4_usb.controller.midi_in_submit_failures": 0,
+    "p4_usb.controller.midi_out_submit_failures": 0,
+    "p4_usb.runtime.queue_failures": 0,
+    "p4_usb.storage.disconnect_events": 0,
+    "diagnostics.pcm_underrun1": 0,
+    "diagnostics.pcm_underrun2": 3387,
+    "diagnostics.usb_headphones.dropped_blocks": 0,
+    "diagnostics.usb_headphones.overflow_frames": 0,
+    "diagnostics.usb_headphones.underflow_frames": 0,
+    "diagnostics.usb_headphones.packet_failures": 0,
+    "diagnostics.usb_headphones.packet_lost_frames": 0
+  },
+  "final_stopped_loops_off": true,
+  "midi_packets_delta": 1482,
+  "output_late_delta": 0,
+  "headphone_level_range": [
+    0,
+    10071
+  ],
+  "headphone_mix_range": [
+    0,
+    0
+  ],
+  "operator": {
+    "response": "Bez smetnji; glasnoća je dovoljna",
+    "scope": "partial 40.642-second window; sufficient headphone volume and no perceived disturbance; not completion of full 60-second smoke",
+    "all_requested_controls_confirmed": false
+  },
+  "first_fault_capture_limitation": "Runner validates before appending; failing live response was not written, final-stopped snapshot retains PCM2 delta",
+  "observations": [
+    "Both loops activated at 27.789 s",
+    "Last pre-fault recorded sample at 35.498 s still has both loops active and all strict deltas zero",
+    "Fault raised during loop-clear waiting; cleanup confirms both loops OFF",
+    "Internal largest-block query wall time reaches 436751 us before PCM2 loss; whole query includes preemption and does not prove IRQ-disabled time or causation"
+  ],
+  "root_cause": "unproven; investigate loop-exit refill and diagnostic observer timing separately",
+  "rerun": false,
+  "firmware_changed": false
+}

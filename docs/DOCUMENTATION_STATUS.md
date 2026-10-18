@@ -14,7 +14,14 @@ VALID `ota_1`, idle OTA service, FLX4 MIDI/non-faulted 44.1-kHz UAC and 260
 tracks. Both decks remain stopped and the historical crash summary is unchanged.
 The operator confirms GUI/touch; live LEVEL=0 / MIX=0 readback matches the
 reported physical knobs after movement.
-Exact-image physical smoke remains NOT RUN; no public publication is claimed.
+A later operator-ready mixed-rate MT smoke stops at 40.642 s on 3,387 new D2
+PCM underrun counts while awaiting loop-clear completion; the other 21 strict
+deltas and output-late remain zero. Both decks end stopped, loops OFF. The
+operator confirms no perceived disturbance and sufficient headphone volume.
+Volume is accepted for this window; the incomplete combined smoke is a
+telemetry FAIL. Loop-exit refill versus diagnostic observer timing remains
+unresolved; the 436,751-us heap-query wall time does not prove causation.
+Evidence is archived without a firmware change, rerun or public publication.
 
 The [FLX4 headphone-level investigation](validation/FLX4_HEADPHONE_LEVEL_20261018.md)
 reproduces a 12.041-dB dedicated headphone loss in the former JC4880 `c7d2e9cd`

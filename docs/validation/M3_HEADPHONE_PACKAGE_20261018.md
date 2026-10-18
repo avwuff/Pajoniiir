@@ -14,7 +14,7 @@ USB changes, reset, physical test, release or public-channel update.
 | Build | Ordinary ESP-IDF 6.0.2; S2/HS role experiment OFF |
 | Application / signed bundle | 2,603,088 B / 2,603,276 B |
 | Signature | `rel-001`, ECDSA P-256 / SHA-256 |
-| Installed / physical smoke / published | VALID `ota_1` (subsequent authorized OTA below) / NOT RUN / NO |
+| Installed / physical smoke / published | VALID `ota_1` / partial telemetry FAIL below; loudness accepted / NO |
 
 Application SHA-256:
 `72063153d541f3227435a0993ffbb4ef0eb45c481077d40ed61ab07993517d15`
@@ -122,5 +122,46 @@ and its hashed raw snapshots distinguish this installed identity from the
 earlier preparation-only record. The operator confirms GUI/touch, minimum
 headphone LEVEL and MIX at CUE. A subsequent live readback confirms LEVEL=0,
 MIX=0 and both decks stopped at 105.452 seconds uptime, with the same VALID
-identity. Exact-image audio/control smoke remains NOT RUN; no M3 listening
-PASS is inferred from JC4880 acceptance or this successful OTA.
+identity. The subsequently attempted smoke is recorded below; installation
+alone does not qualify audio or controls.
+
+## Subsequent mixed-rate MT smoke: telemetry FAIL, volume accepted
+
+The operator explicitly confirms readiness with MT on both decks and zoom 8.
+One bounded 60-second runner starts with D1 `Casanova Action {320}` at
+44.1 kHz/+5% and D2 `Dino Dvornik - Ritam moj` at 48 kHz/-5%. Both are
+prepared at 15 seconds, initially stopped, with PCM5102A MAIN at 48 kHz and
+FLX4 FS UAC headphones at 44.1 kHz/16-bit. No firmware, profile, USB or Wi-Fi
+change precedes playback.
+
+The runner stops after **40.642 seconds** on **3,387 new PCM underrun counts
+on D2**. All other 21 present strict counter deltas, including USB/UAC loss
+and reconnect counters, are zero; output-late delta is zero. It receives
+1,482 MIDI packets. Both 4-beat loops are observed active at 27.789 seconds;
+the last recorded pre-fault sample at 35.498 seconds still has both loops
+active and all strict deltas zero. The error is raised while waiting for
+loop-clear completion, so the CUE/PLAY phases are not reached. Cleanup
+confirms both decks stopped and both loops OFF, on the same VALID image.
+
+The operator reports **no perceived audio or visual disturbance and sufficient
+headphone loudness**. This accepts volume for the observed M3 bench window;
+it does not override the telemetry failure or qualify the uncompleted smoke.
+LEVEL spans 0..10071 (about 61.5%), MIX stays at CUE, and sampled PFL states
+include both off and both on. No complete MIX sweep or every requested physical
+control sequence is claimed from these samples.
+
+The diagnostic journal also records an internal largest-free-block query of
+436,751 us wall time before the PCM2 loss. The production query includes
+preemption; this number is not measured IRQ-disabled time and does not establish
+the cause of the underrun. Ordinary FS builds still perform internal/DMA heap
+walks, whereas the HS diagnostic configuration skips them. The next bounded
+investigation should distinguish loop-exit refill from observer interference.
+No speculative production fix, new image or automatic rerun is performed.
+
+The [failure audit](evidence/2026-10-18-m3-headphone-smoke/audit.json) preserves
+the runner, preparation, all 43 successful pre-fault samples, final snapshots,
+raw diagnostic log and separate operator response with hashes. The runner
+validates before appending each response: the failing live response itself was
+not written; the final stopped snapshot retains the exact PCM2 delta. This
+limitation is explicit. No new reset, disconnect or output-late event explains
+the stop, and no full combined-smoke PASS or long-soak result is claimed.
