@@ -1,5 +1,11 @@
 # P4 post-release development plan
 
+The [2026-10-18 MT fallback handoff](validation/M3_MT_FALLBACK_HANDOFF_20261018.md)
+has a deterministic production-callback reproduction and minimal consumer-clock
+repair. Qualify/build only M3, then repeat the bounded exact-image loop-exit
+test. Do not infer resolution of UAC timing or queue pressure from host clock
+ownership tests; the prior failure records and strict criteria are retained.
+
 The [2026-10-18 status observer repair](validation/M3_STATUS_OBSERVER_REPAIR_20261018.md)
 removes confirmed unbounded TLSF walks from the shared observation path.
 Software qualification and the single ordinary M3 build pass; clean `3459a97a`

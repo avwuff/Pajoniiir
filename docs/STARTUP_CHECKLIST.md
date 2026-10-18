@@ -1,5 +1,11 @@
 # P4 operation and release checklist
 
+For the [MT fallback handoff candidate](validation/M3_MT_FALLBACK_HANDOFF_20261018.md),
+verify its exact image after software qualification and ordinary M3 packaging.
+Re-enable MT only after any required initial track load; avoid reloading an
+already-ready same track between bounded retests. Keep all loss/admission gates
+strict and the existing failed observer-image records intact.
+
 For the [status observer repair](validation/M3_STATUS_OBSERVER_REPAIR_20261018.md),
 largest-block sizes and walk timings are unavailable on all targets. Verify
 explicit JSON nulls and measured free/low-water counters after candidate boot.

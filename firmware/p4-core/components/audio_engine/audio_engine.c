@@ -1420,14 +1420,19 @@ static bool ae_keylock_render_cb(void *ctx, float tempo_factor,
         atomic_load_bool(&s_start_seek_pending[deck])) return false;
     audio_pcm_timeline_t *timeline = &s_pcm_timelines[deck];
     uint32_t generation = audio_pcm_timeline_generation(timeline);
-    if (!s_keylocks[deck].initialized || s_keylock_generation[deck] != generation) {
-        audio_keylock_reset(&s_keylocks[deck], audio_pcm_timeline_play_seq(timeline));
+    uint64_t play_seq = audio_pcm_timeline_play_seq(timeline);
+    /* Ordinary resampling may have advanced the consumer while MT lacked its
+     * look-ahead after a loop cut or at EOF. A same-generation fallback does
+     * not reset the timeline: never resume the old grain clock and rewind the
+     * real playhead when source PCM becomes available again. */
+    if (!s_keylocks[deck].initialized || s_keylock_generation[deck] != generation ||
+        s_keylocks[deck].logical_seq != play_seq) {
+        audio_keylock_reset(&s_keylocks[deck], play_seq);
         s_keylocks[deck].dense_correlation = board_capabilities_get()->keylock_dense_correlation;
         s_keylocks[deck].antialias = board_capabilities_get()->audio_antialias;
         s_keylock_generation[deck] = generation;
     }
     audio_keylock_configure(&s_keylocks[deck], tempo_factor, rate_ratio);
-    uint64_t play_seq = audio_pcm_timeline_play_seq(timeline);
     if (!audio_keylock_next(&s_keylocks[deck], keylock_timeline_read, ctx,
                             out, out_consumed, &play_seq)) return false;
     return audio_pcm_timeline_set_playhead_output_owner(timeline, play_seq);

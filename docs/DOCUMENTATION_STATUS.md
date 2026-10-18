@@ -2,6 +2,13 @@
 
 Status: **current documentation authority, reconciled 2026-10-18**.
 
+The [MT fallback handoff repair](validation/M3_MT_FALLBACK_HANDOFF_20261018.md)
+reproduces a separate same-generation stale-clock defect: ordinary resampling
+advances the consumer, then MT resumes its old cursor and rewinds it. The real
+engine callback fails the new host regression before repair; all 224 cases
+pass after re-anchoring to the actual playhead. Hardware timing and controller
+admission gates remain open pending exact-image validation.
+
 The [shared status observer repair](validation/M3_STATUS_OBSERVER_REPAIR_20261018.md)
 removes unbounded internal/DMA largest-block walks from ordinary as well as HS
 memory snapshots. Free/low-water counters remain measured; fragmentation and
