@@ -46,10 +46,13 @@ esp_err_t __real_esp_cache_msync(void *p,size_t n,int flags) {
  copied+=n;expected+=n;return ESP_OK;
 }
 int main(void) {
-#if !CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC
  reset(0x1000);assert(__wrap_esp_cache_msync((void *)0x1000,16384,0)==0);
- assert(calls==1 && maximum==16384 && copied==16384);
-#else
+ assert(calls==16 && maximum==1024 && copied==16384);
+ /* Ordinary M3 RGB888 framebuffer operations need the same ownership and
+  * lock-release boundary as experimental HS audio; never publish a partial
+  * region to DMA. This checks actual delegated spans, not host wall time. */
+ reset(0x1000);assert(__wrap_esp_cache_msync((void *)0x1000,800*480*3,2)==0);
+ assert(calls==1125 && maximum==1024 && copied==800*480*3);
  reset(0x1000);assert(__wrap_esp_cache_msync((void *)0x1000,9000,2)==ESP_OK);
  assert(calls==9 && maximum==1024 && copied==9000 && expected==0x1000+9000);
  reset(0x1000);fail_at=2;assert(__wrap_esp_cache_msync((void *)0x1000,16384,0)==7);
@@ -64,7 +67,6 @@ int main(void) {
  reset(0x1000);yielding=false;assert(__wrap_esp_cache_msync((void *)0x1000,16384,0)==0);assert(calls==1);
  reset(0x1000);yielding=true;valid_range=false;
  assert(__wrap_esp_cache_msync((void *)0x1000,16384,0)==0);assert(calls==1);
-#endif
  return 0;
 }
 '''
