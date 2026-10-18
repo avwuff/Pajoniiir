@@ -97,7 +97,8 @@ typedef struct {
     uint32_t interrupted_priority;
     char interrupted_task[16];
 } bsp_main_dma_diag_t;
-/* Bounded ISR counters; reset_gap starts a write's observation window only. */
+/* Bounded ISR counters; reset_gap starts a caller-owned observation window.
+ * Max gap can straddle its start; sampled task identity is not CPU accounting. */
 void bsp_audio_main_dma_snapshot(bsp_main_dma_diag_t *out, bool reset_gap);
 /* Disable the PCM5102 TX channel so a blocked bounded write wakes during STOP.
  * The next set_sample_rate call re-enables the channel. */

@@ -2630,9 +2630,8 @@ static uint32_t *const AE_PHASE_MAX_SLOT[AE_PH_COUNT] = {
 /* Timings of the block currently being rendered, overwritten every block. */
 static uint32_t s_phase_block[AE_PH_COUNT];
 
-/* Coarse split of the mixer loop, so a mix-phase stall can be told apart:
- * confined to one group = a single expensive call, spread across all of them =
- * the whole loop running slow. */
+/* Coarse wall-time split: a localized outlier can be expensive work OR
+ * preemption/interrupt masking within that group. It is not CPU attribution. */
 #define AE_MIX_GROUPS 16
 static uint32_t s_mix_group_max_us;
 static uint32_t s_mix_group_worst;
@@ -2729,6 +2728,9 @@ static inline void ae_phase_note(ae_phase_id_t id, int64_t elapsed_us)
 static int64_t s_last_outlier_us;
 #if AE_FW
 static bsp_main_dma_diag_t s_main_write_dma;
+#if CONFIG_BSP_PCM5102A_MAIN_OUT
+static bsp_main_dma_diag_t s_mix_dma;
+#endif
 #endif
 
 static void ae_report_block_outlier(uint32_t block_us, uint32_t late_threshold_us)
@@ -2759,6 +2761,19 @@ static void ae_report_block_outlier(uint32_t block_us, uint32_t late_threshold_u
                       s_mix_group_worst, s_mix_group_max_us,
                       AE_PHASE_NAME[worst]);
 #if AE_FW
+#if CONFIG_BSP_PCM5102A_MAIN_OUT
+    if (worst == AE_PH_MIX && !s_usb_main_sink) {
+        /* These counters cover the mix window, not the subsequent I2S write.
+         * A DMA gap includes interrupt latency; the highest sampled task
+         * priority/name is context, not attribution of the whole wall time. */
+        service_log_event(SERVICE_LOG_AUDIO_LATE_PHASE, SERVICE_LOG_WARN,
+            4u, s_mix_dma.completions, s_mix_dma.max_gap_us,
+            s_mix_dma.queue_overflows, s_phase_block[AE_PH_MIX], "mix dma");
+        service_log_event(SERVICE_LOG_AUDIO_LATE_PHASE, SERVICE_LOG_WARN,
+            2u, s_mix_dma.interrupted_priority, s_phase_block[AE_PH_MIX],
+            0u, 0u, s_mix_dma.interrupted_task);
+    }
+#endif
     if (worst == AE_PH_MAIN && !s_usb_main_sink) {
         service_log_event(SERVICE_LOG_AUDIO_LATE_PHASE, SERVICE_LOG_WARN,
             4u, s_main_write_dma.completions, s_main_write_dma.max_gap_us,
@@ -4217,10 +4232,16 @@ static void ae_output_task(void *arg)
         int64_t phase_mark = phase_t0;
         ae_phase_note(AE_PH_HEAD, phase_t0 - block_start_us);
 
-        /* Split the mixer loop into a few coarse groups. A stall confined to one
-         * group means a single expensive call; one spread evenly across all of
-         * them means the whole loop is running slow, which points at memory or
-         * cache rather than at any one operation. Sixteen timer reads per block
+#if CONFIG_BSP_PCM5102A_MAIN_OUT
+        /* Two bounded snapshots per block. No allocation, log, heap walk or
+         * new ISR hook in the mixer. The write path starts its own later window. */
+        bsp_main_dma_diag_t mix_dma_before;
+        bsp_audio_main_dma_snapshot(&mix_dma_before, true);
+#endif
+
+        /* Split the mixer loop into coarse wall-time groups. A localized stall
+         * can also be preemption or interrupt masking during that group; DMA
+         * observations supply separate interrupt context. Sixteen timer reads per block
          * is a fraction of a percent of the ~5.8 ms period, unlike timing every
          * one of the 256 frames. */
         uint32_t mix_group_max_us = 0u;
@@ -4273,6 +4294,13 @@ static void ae_output_task(void *arg)
         }
         s_mix_group_max_us = mix_group_max_us;
         s_mix_group_worst = mix_group_worst;
+#if CONFIG_BSP_PCM5102A_MAIN_OUT
+        bsp_main_dma_diag_t mix_dma_after;
+        bsp_audio_main_dma_snapshot(&mix_dma_after, false);
+        s_mix_dma = mix_dma_after;
+        s_mix_dma.completions -= mix_dma_before.completions;
+        s_mix_dma.queue_overflows -= mix_dma_before.queue_overflows;
+#endif
         consumed[deck0_index] += s_scratch_handoff_consumed[deck0_index];
         consumed[deck1_index] += s_scratch_handoff_consumed[deck1_index];
         {
