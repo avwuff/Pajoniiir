@@ -1,5 +1,11 @@
 # P4 operation and release checklist
 
+For the [2026-10-18 FLX4 headphone candidate](validation/FLX4_HEADPHONE_LEVEL_20261018.md),
+start headphone LEVEL fully down before playback and raise gradually. Dedicated
+cue PCM restores 12.041 dB lost in the old transport. Verify the exact image,
+LEVEL/MIX readback, both PFLs, clean headphones and unchanged MAIN on the same
+track; no club-volume or electrical PASS is inferred from host tests alone.
+
 For the authorized `shared-p4-beta.1` contributor distribution, use the
 [beta record](validation/SHARED_P4_BETA_1_20261011.md) and
 [JC1060 handoff](JC1060_BETA_HANDOFF_20261011.md). Verify the kit's board/project,

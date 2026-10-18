@@ -901,6 +901,58 @@ static void test_ddj400_hs_uac1_cadence(void)
     puts("PASS DDJ-400 HS UAC1: raw interval 4, 1-ms cadence, wrong cadence/family/FLX4 rejected, control/stream/stop");
 }
 
+static void test_flx4_dedicated_headphones_preserve_pcm_level(void)
+{
+    assert(controller_usb_audio_stream_set_policy(true, false, false) == ESP_OK);
+    start();
+    const int16_t main[] = {4000, -4000, 32764, -32768, 0, 0};
+    const int16_t phones[] = {16000, -16000, 32767, -32768, 1, -1};
+    assert(controller_usb_audio_stream_write(main, phones, 3, 44100) == ESP_OK);
+    int16_t output[3 * 4];
+    assert(controller_audio_ring_read(&s_ring, output, 3, false) == 3);
+    for (unsigned i = 0; i < 3; ++i) {
+        /* The legacy MAIN mirror retains its established quarter level. Cue
+         * is already mixed/level-controlled: USB transport must not cut 12 dB. */
+        assert(output[i * 4] == main[i * 2] / 4);
+        assert(output[i * 4 + 1] == main[i * 2 + 1] / 4);
+        assert(output[i * 4 + 2] == phones[i * 2]);
+        assert(output[i * 4 + 3] == phones[i * 2 + 1]);
+    }
+    controller_usb_audio_stream_request_stop(true);
+    retire_transfers();
+    assert(controller_usb_audio_stream_poll_cleanup());
+
+    /* A headphone-only write must neither leak to MAIN nor lose level. */
+    start();
+    assert(controller_usb_audio_stream_write(NULL, phones, 3, 44100) == ESP_OK);
+    assert(controller_audio_ring_read(&s_ring, output, 3, false) == 3);
+    for (unsigned i = 0; i < 3; ++i) {
+        assert(output[i * 4] == 0 && output[i * 4 + 1] == 0);
+        assert(output[i * 4 + 2] == phones[i * 2]);
+        assert(output[i * 4 + 3] == phones[i * 2 + 1]);
+    }
+    controller_usb_audio_stream_request_stop(true);
+    retire_transfers();
+    assert(controller_usb_audio_stream_poll_cleanup());
+    /* The 48-kHz engine -> 44.1-kHz FLX4 resampler preserves DC amplitude. */
+    start();
+    int16_t constant_phones[64 * 2];
+    for (unsigned i = 0; i < 64; ++i) {
+        constant_phones[i * 2] = 24000;
+        constant_phones[i * 2 + 1] = -24000;
+    }
+    assert(controller_usb_audio_stream_write(NULL, constant_phones, 64, 48000) == ESP_OK);
+    assert(controller_audio_ring_read(&s_ring, output, 3, false) == 3);
+    for (unsigned i = 0; i < 3; ++i) {
+        assert(output[i * 4] == 0 && output[i * 4 + 1] == 0);
+        assert(output[i * 4 + 2] == 24000 && output[i * 4 + 3] == -24000);
+    }
+    controller_usb_audio_stream_request_stop(true);
+    retire_transfers();
+    assert(controller_usb_audio_stream_poll_cleanup());
+    puts("PASS FLX4 dedicated headphone unity, signed full-scale/low-level PCM, MAIN mirror isolation");
+}
+
 int main(void)
 {
     uint8_t d[sizeof(descriptor)];
@@ -968,6 +1020,7 @@ int main(void)
     test_prime_fault_evidence();
     test_hs_reconnect_under_heap_pressure();
     test_ddj400_hs_uac1_cadence();
+    test_flx4_dedicated_headphones_preserve_pcm_level();
     assert(review_live_transfers == 0 && review_live_payload_bytes == 0);
     puts("PASS UAC 16/24-bit, consumer pacing, bounded timeout, ownership, reconnect and channel routing");
     return 0;

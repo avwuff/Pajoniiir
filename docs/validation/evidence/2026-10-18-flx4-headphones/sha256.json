@@ -1,0 +1,11 @@
+{
+  ".gitattributes": "2cacd8c5b88d28a6324a5b106d17970ce30df8e32f9b76c87d00d4ca430747a8",
+  "controller-profiles.json": "67cf746eb1e6b74777a7151d30c4ebe832eb25bb01dca75b302f7fa8b0d3e6e4",
+  "diagnosis.json": "fa81ce0c396c28e87be61020290204ce39e80afe798dd3233cf90f59b6fe6d67",
+  "firmware.json": "176d0d21fafeee0a0abfe54d4763c52e0d97e125985da6a30e1f5ab86cf8b4fc",
+  "reconnect-status.json": "4570b2608f943ab470b23501d9d7f0b60d1e23a87d877d7c059d7726498c7117",
+  "reconnect-usb-controller-descriptors.json": "14a7c5472260fc928b15dc925c063e2dd0e8a9d4562875b37efcb9406540be96",
+  "regression-after.log": "86033b4c7710b3c5b2887a834f080d9e1c2e0ebcd7d8004c720dfb053e582f13",
+  "regression-before.log": "d8e94cb48d3735f3c8d1dac6eeeaebd8d493942a27af4c18e0f72e5c13cbec5c",
+  "status.json": "55715afae3eb1d7ef564f8b503cdd5940b04e9c5aeb652bffae64048e4feaeb7"
+}

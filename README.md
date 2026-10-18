@@ -54,6 +54,11 @@ beta M3 download retains FLX4 on USB2 and storage on USB3. Select a matching
 firmware configuration before activating a profile. S2 work is closed by
 operator decision with remaining checks waived.
 
+A JC4880 club-use report of low FLX4 headphone volume is tracked in the
+[headphone-level investigation](docs/validation/FLX4_HEADPHONE_LEVEL_20261018.md).
+The candidate correction is awaiting physical comparison; published beta assets
+retain their existing behavior.
+
 The release also includes a limited S2 basic profile and a generic MIDI-CI
 fixture for development. They are not additional hardware-qualified DJ models.
 A historical hour soak qualifies only its exact image and configuration;

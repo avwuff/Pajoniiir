@@ -2051,6 +2051,7 @@ static esp_err_t api_status_handler(httpd_req_t *req)
         "\"crossfader\":%u,"
         "\"master_volume\":%u,"
         "\"headphone_mix\":%u,"
+        "\"headphone_level\":%u,"
         "\"pregain1\":%u,"
         "\"pregain2\":%u,"
         "\"pregain_gain1\":%.3f,"
@@ -2192,6 +2193,7 @@ static esp_err_t api_status_handler(httpd_req_t *req)
         mixer.channel_volume[0], mixer.channel_volume[1], mixer.crossfader,
         mixer.master_volume,
         mixer.headphone_mix,
+        mixer.headphone_level,
         mixer.pregain[0], mixer.pregain[1],
         (double)mixer.pregain_gain[0], (double)mixer.pregain_gain[1],
         mixer.eq[0][AUDIO_EQ_BAND_LOW], mixer.eq[0][AUDIO_EQ_BAND_MID], mixer.eq[0][AUDIO_EQ_BAND_HIGH],

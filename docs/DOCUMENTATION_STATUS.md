@@ -2,6 +2,13 @@
 
 Status: **current documentation authority, reconciled 2026-10-18**.
 
+The [FLX4 headphone-level investigation](validation/FLX4_HEADPHONE_LEVEL_20261018.md)
+reproduces a 12.041-dB dedicated headphone loss in the PCM-paced FLX4 USB
+transport on the installed JC4880 `c7d2e9cd`. Its bounded candidate restores
+dedicated cue unity and adds headphone LEVEL status; physical volume/power
+comparison and the new exact-image qualification remain pending. The old bench
+is unchanged and no playback or OTA was performed during diagnosis.
+
 The [ordinary M3 integration OTA and FLX4 smoke](validation/M3_SHARED_INTEGRATION_OTA_SMOKE_20261018.md)
 installs clean `c0ee8152` as `M3-dev-gc0ee81527b4d`, VALID `ota_0`. The ordinary
 FLX4 USB2/FS/root1 and storage USB3/HS/root0 roles are restored; 260 tracks,

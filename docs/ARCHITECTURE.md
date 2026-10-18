@@ -159,8 +159,12 @@ JC4880 registers no network provider, retaining its local sync path. See
 [K evidence and physical gates](validation/FORK_IMPROVEMENTS_PACKAGE_K_SOFTWARE_20261005.md).
 
 Package F separates the authoritative MAIN sink from USB cue mirroring.
-JC4880 defaults to blocking PCM5102A I2S pacing; its FLX4 format, attenuation
-and ring clock corrections remain unchanged. JC1060 defaults to USB MAIN 1/2
+JC4880 defaults to blocking PCM5102A I2S pacing; its FLX4 format and ring clock
+corrections remain unchanged. The 2026-10-18 headphone candidate removes the
+legacy quarter-amplitude cut from dedicated cue PCM after the mixer; the FLX4
+USB MAIN mirror retains its original level. See the
+[headphone investigation](validation/FLX4_HEADPHONE_LEVEL_20261018.md) for
+software and pending physical evidence. JC1060 defaults to USB MAIN 1/2
 and cue 3/4, with ES8311 disabled. The single producer waits on actual UAC ring
 space with a bounded, epoch-aware wait; USB pacing has no duplicate/trim or
 second codec clock. Accepted USB blocks drive timeline bookkeeping. A failed

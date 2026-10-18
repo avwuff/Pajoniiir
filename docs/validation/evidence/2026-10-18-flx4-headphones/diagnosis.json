@@ -1,0 +1,34 @@
+{
+  "installed_source": "c7d2e9cda2b7bcb99637907694e0ebbe00894783",
+  "board": "jc4880",
+  "controller": "DDJ-FLX4",
+  "uac_audio_control_subtypes": [
+    1,
+    2,
+    3,
+    2,
+    3,
+    1
+  ],
+  "uac_feature_unit_present": false,
+  "pcm_paced": true,
+  "old_dedicated_pcm_example": {
+    "input": 16000,
+    "ring_sample": 4000,
+    "gain_db": -12.041199826559248
+  },
+  "candidate_dedicated_pcm_example": {
+    "input": 16000,
+    "ring_sample": 16000
+  },
+  "candidate_installed": false,
+  "physical_loudness_comparison": "NOT RUN",
+  "separate_power_comparison": "NOT RUN; adapter unavailable",
+  "operator_report": {
+    "headphones": "Audio-Technica ATH-M20x",
+    "mix": "full CUE",
+    "level": "maximum",
+    "power": "JC4880 only",
+    "club_result": "otherwise good; headphones too quiet"
+  }
+}
