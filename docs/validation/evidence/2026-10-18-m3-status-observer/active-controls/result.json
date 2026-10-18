@@ -1,0 +1,123 @@
+{
+  "complete": false,
+  "stopped": true,
+  "samples": 34,
+  "duration_s": 25.967945000000327,
+  "strict_baseline": {
+    "uac_format.feedback_invalid": 0,
+    "service_log.dropped": 0,
+    "p4_usb.host.recovery_requests": 1,
+    "p4_usb.host.recovery_failures": 0,
+    "p4_usb.host.recovery_queue_drops": 0,
+    "p4_usb.controller.interface_claim_failures": 0,
+    "p4_usb.controller.transfer_alloc_failures": 0,
+    "p4_usb.controller.midi_disconnects": 1,
+    "p4_usb.controller.midi_in_pipe_errors": 1,
+    "p4_usb.controller.probe_event_drops": 0,
+    "p4_usb.controller.recovery_requests": 0,
+    "p4_usb.controller.midi_in_submit_failures": 0,
+    "p4_usb.controller.midi_out_submit_failures": 0,
+    "p4_usb.runtime.queue_failures": 0,
+    "p4_usb.storage.disconnect_events": 0,
+    "diagnostics.pcm_underrun1": 0,
+    "diagnostics.pcm_underrun2": 0,
+    "diagnostics.usb_headphones.dropped_blocks": 0,
+    "diagnostics.usb_headphones.overflow_frames": 0,
+    "diagnostics.usb_headphones.underflow_frames": 1956099,
+    "diagnostics.usb_headphones.packet_failures": 0,
+    "diagnostics.usb_headphones.packet_lost_frames": 0
+  },
+  "actions": [
+    {
+      "elapsed_s": 0.0,
+      "action": "D1 cue intent"
+    },
+    {
+      "elapsed_s": 0.475,
+      "action": "D2 cue intent"
+    },
+    {
+      "elapsed_s": 0.754,
+      "action": "D1 play_pause intent"
+    },
+    {
+      "elapsed_s": 1.013,
+      "action": "D2 play_pause intent"
+    },
+    {
+      "elapsed_s": 25.448,
+      "action": "D1 loop_4 intent"
+    },
+    {
+      "elapsed_s": 25.686,
+      "action": "D2 loop_4 intent"
+    },
+    {
+      "elapsed_s": 26.058,
+      "action": "D1 play_pause intent"
+    },
+    {
+      "elapsed_s": 26.145,
+      "action": "D2 play_pause intent"
+    },
+    {
+      "elapsed_s": 26.463,
+      "action": "D1 loop_clear intent"
+    },
+    {
+      "elapsed_s": 26.586,
+      "action": "D2 loop_clear intent"
+    }
+  ],
+  "scope": "60-s walk-free ordinary M3 mixed-rate +/-5% MT/zoom8 FLX4/PCM MAIN, actor loop/CUE, operator PFL/MIX/LEVEL/jog/Browse, no soak",
+  "operator_audio_visual_controls": "pending",
+  "errors": [
+    "New strict error p4_usb.runtime.queue_failures delta=19"
+  ],
+  "strict_deltas": {
+    "uac_format.feedback_invalid": 0,
+    "service_log.dropped": 0,
+    "p4_usb.host.recovery_requests": 0,
+    "p4_usb.host.recovery_failures": 0,
+    "p4_usb.host.recovery_queue_drops": 0,
+    "p4_usb.controller.interface_claim_failures": 0,
+    "p4_usb.controller.transfer_alloc_failures": 0,
+    "p4_usb.controller.midi_disconnects": 0,
+    "p4_usb.controller.midi_in_pipe_errors": 0,
+    "p4_usb.controller.probe_event_drops": 0,
+    "p4_usb.controller.recovery_requests": 0,
+    "p4_usb.controller.midi_in_submit_failures": 0,
+    "p4_usb.controller.midi_out_submit_failures": 0,
+    "p4_usb.runtime.queue_failures": 19,
+    "p4_usb.storage.disconnect_events": 0,
+    "diagnostics.pcm_underrun1": 0,
+    "diagnostics.pcm_underrun2": 0,
+    "diagnostics.usb_headphones.dropped_blocks": 0,
+    "diagnostics.usb_headphones.overflow_frames": 0,
+    "diagnostics.usb_headphones.underflow_frames": 0,
+    "diagnostics.usb_headphones.packet_failures": 0,
+    "diagnostics.usb_headphones.packet_lost_frames": 0
+  },
+  "midi_packets_delta": 2437,
+  "output_late_delta": 1,
+  "output_late_max_us": 10954,
+  "classification": "failed_or_incomplete",
+  "pfl_states": [
+    [
+      false,
+      false
+    ],
+    [
+      true,
+      false
+    ]
+  ],
+  "headphone_mix_min_max": [
+    0,
+    16383
+  ],
+  "headphone_level_min_max": [
+    0,
+    10819
+  ]
+}

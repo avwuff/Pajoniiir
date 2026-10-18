@@ -1,0 +1,3 @@
+Documentation integrity check passed.
+  Markdown/HTML files: 144
+  retired documentation paths checked: 134

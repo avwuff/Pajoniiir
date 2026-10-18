@@ -1,0 +1,304 @@
+{
+  "unit": "us",
+  "scope": "since_boot",
+  "refresh_count": 6306,
+  "coalesced_refreshes": 223,
+  "zoom_beats": 12,
+  "position_samples": {
+    "fresh": [
+      5482,
+      5476
+    ],
+    "retained": [
+      602,
+      608
+    ],
+    "max_streak": [
+      11,
+      11
+    ],
+    "older_than_120ms": [
+      29,
+      29
+    ]
+  },
+  "metrics": {
+    "wake": {
+      "count": 6082,
+      "last_us": 13,
+      "max_us": 17727,
+      "total_us": 606530,
+      "histogram": [
+        6074,
+        2,
+        1,
+        1,
+        1,
+        3,
+        0
+      ]
+    },
+    "frame_interval": {
+      "count": 6081,
+      "last_us": 19997,
+      "max_us": 128148,
+      "total_us": 126054124,
+      "histogram": [
+        0,
+        1,
+        1,
+        1,
+        0,
+        4881,
+        1197
+      ]
+    },
+    "overview_begin": {
+      "count": 6082,
+      "last_us": 99,
+      "max_us": 17831,
+      "total_us": 997802,
+      "histogram": [
+        6072,
+        4,
+        1,
+        1,
+        1,
+        3,
+        0
+      ]
+    },
+    "callback": {
+      "count": 6082,
+      "last_us": 301,
+      "max_us": 56046,
+      "total_us": 16102610,
+      "histogram": [
+        4830,
+        12,
+        0,
+        19,
+        933,
+        235,
+        53
+      ]
+    },
+    "handler": {
+      "count": 10105,
+      "last_us": 27,
+      "max_us": 74243,
+      "total_us": 23755708,
+      "histogram": [
+        8645,
+        81,
+        17,
+        60,
+        114,
+        1030,
+        158
+      ]
+    },
+    "d1_cache": {
+      "count": 1210,
+      "last_us": 17629,
+      "max_us": 20705,
+      "total_us": 803964,
+      "histogram": [
+        1167,
+        0,
+        0,
+        0,
+        0,
+        42,
+        1
+      ]
+    },
+    "d1_blit": {
+      "count": 1210,
+      "last_us": 4731,
+      "max_us": 5846,
+      "total_us": 5029468,
+      "histogram": [
+        0,
+        0,
+        346,
+        864,
+        0,
+        0,
+        0
+      ]
+    },
+    "d1_finish": {
+      "count": 1210,
+      "last_us": 22724,
+      "max_us": 26124,
+      "total_us": 6635558,
+      "histogram": [
+        0,
+        0,
+        0,
+        1167,
+        0,
+        9,
+        34
+      ]
+    },
+    "d2_cache": {
+      "count": 1202,
+      "last_us": 15966,
+      "max_us": 20975,
+      "total_us": 600189,
+      "histogram": [
+        1168,
+        2,
+        0,
+        0,
+        0,
+        29,
+        3
+      ]
+    },
+    "d2_blit": {
+      "count": 1202,
+      "last_us": 4935,
+      "max_us": 6052,
+      "total_us": 5957936,
+      "histogram": [
+        0,
+        0,
+        2,
+        1200,
+        0,
+        0,
+        0
+      ]
+    },
+    "d2_finish": {
+      "count": 1202,
+      "last_us": 21170,
+      "max_us": 48058,
+      "total_us": 12971554,
+      "histogram": [
+        0,
+        0,
+        0,
+        9,
+        1140,
+        17,
+        36
+      ]
+    },
+    "framebuffer_sync": {
+      "count": 1374,
+      "last_us": 7803,
+      "max_us": 29477,
+      "total_us": 2254818,
+      "histogram": [
+        142,
+        1128,
+        54,
+        12,
+        35,
+        1,
+        2
+      ]
+    },
+    "present": {
+      "count": 1374,
+      "last_us": 30,
+      "max_us": 541,
+      "total_us": 35404,
+      "histogram": [
+        1374,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ]
+    },
+    "d1_position_age": {
+      "count": 6084,
+      "last_us": 0,
+      "max_us": 260048,
+      "total_us": 25622329,
+      "histogram": [
+        5482,
+        0,
+        0,
+        0,
+        0,
+        205,
+        397
+      ]
+    },
+    "d2_position_age": {
+      "count": 6084,
+      "last_us": 0,
+      "max_us": 260041,
+      "total_us": 25838581,
+      "histogram": [
+        5476,
+        0,
+        0,
+        0,
+        0,
+        210,
+        398
+      ]
+    },
+    "chrome": {
+      "count": 6082,
+      "last_us": 133,
+      "max_us": 5938,
+      "total_us": 2227986,
+      "histogram": [
+        5265,
+        616,
+        164,
+        37,
+        0,
+        0,
+        0
+      ]
+    },
+    "ui_tail": {
+      "count": 6082,
+      "last_us": 36,
+      "max_us": 55724,
+      "total_us": 331686,
+      "histogram": [
+        6079,
+        0,
+        0,
+        0,
+        2,
+        0,
+        1
+      ]
+    },
+    "lvgl_timers": {
+      "count": 10105,
+      "last_us": 18,
+      "max_us": 61995,
+      "total_us": 5133683,
+      "histogram": [
+        9284,
+        49,
+        372,
+        308,
+        82,
+        7,
+        3
+      ]
+    }
+  },
+  "screensaver": {
+    "shown": false,
+    "physical_events": 2517,
+    "wake_consumed": 0,
+    "last_consumed_id": 0,
+    "last_forwarded_id": 52
+  }
+}

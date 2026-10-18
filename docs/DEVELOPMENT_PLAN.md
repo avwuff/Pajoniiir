@@ -2,9 +2,12 @@
 
 The [2026-10-18 status observer repair](validation/M3_STATUS_OBSERVER_REPAIR_20261018.md)
 removes confirmed unbounded TLSF walks from the shared observation path.
-After software qualification and a single ordinary M3 build, perform a bounded
-loop-exit retest with pre-validation sample capture. Do not claim the PCM2
-underrun cause solved from heap-query wall time or host evidence alone.
+Software qualification and the single ordinary M3 build pass; clean `3459a97a`
+is installed VALID `ota_0`. An active-control retest fails downstream admission,
+and a separate zero-MIDI loop-exit retest fails UAC drop/overflow with one slow
+mix segment. Both are safely stopped and archived. Next investigate output-mix
+callback work versus preemption at loop exit, separately from controller queue
+pressure. Do not claim the preceding PCM2 cause solved by the observer repair.
 
 2026-10-18: prioritize the [FLX4 headphone-level repair](validation/FLX4_HEADPHONE_LEVEL_20261018.md)
 before JC4880 OTA. A production-stream regression reproduces a 12.041-dB

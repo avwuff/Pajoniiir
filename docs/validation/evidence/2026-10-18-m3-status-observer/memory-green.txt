@@ -1,0 +1,7 @@
+==> build audio_engine_memory
+==> run audio_engine_memory
+PASS memory snapshots retain free/low-water values without TLSF walks, timer or journal work
+==> build audio_engine_memory_hs_isolation
+==> run audio_engine_memory_hs_isolation
+PASS memory snapshots retain free/low-water values without TLSF walks, timer or journal work
+Selected functional suites passed; full regression gate was not requested.

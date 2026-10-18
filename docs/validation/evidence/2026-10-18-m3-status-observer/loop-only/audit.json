@@ -1,0 +1,48 @@
+{
+  "classification": "TELEMETRY_FAIL",
+  "duration_s": 42.1864712000006,
+  "samples": 44,
+  "strict_deltas": {
+    "uac_format.feedback_invalid": 0,
+    "service_log.dropped": 0,
+    "p4_usb.host.recovery_requests": 0,
+    "p4_usb.host.recovery_failures": 0,
+    "p4_usb.host.recovery_queue_drops": 0,
+    "p4_usb.controller.interface_claim_failures": 0,
+    "p4_usb.controller.transfer_alloc_failures": 0,
+    "p4_usb.controller.midi_disconnects": 0,
+    "p4_usb.controller.midi_in_pipe_errors": 0,
+    "p4_usb.controller.probe_event_drops": 0,
+    "p4_usb.controller.recovery_requests": 0,
+    "p4_usb.controller.midi_in_submit_failures": 0,
+    "p4_usb.controller.midi_out_submit_failures": 0,
+    "p4_usb.runtime.queue_failures": 0,
+    "p4_usb.storage.disconnect_events": 0,
+    "diagnostics.pcm_underrun1": 0,
+    "diagnostics.pcm_underrun2": 0,
+    "diagnostics.usb_headphones.dropped_blocks": 13,
+    "diagnostics.usb_headphones.overflow_frames": 2320,
+    "diagnostics.usb_headphones.underflow_frames": 0,
+    "diagnostics.usb_headphones.packet_failures": 0,
+    "diagnostics.usb_headphones.packet_lost_frames": 0
+  },
+  "midi_packets_delta": 0,
+  "output_late_delta": 1,
+  "output_late_max_us": 142441,
+  "phase_mix_max_us": 141856,
+  "outlier_journal": {
+    "block_us": 142441,
+    "mix_us": 141856,
+    "mix_group": 13,
+    "mix_group_us": 139045
+  },
+  "all_samples_exact_identity_rates_MT_pitch_and_unavailable_heap_walks": true,
+  "final_stopped_loops_off": true,
+  "failing_sample_preserved": true,
+  "operator": {
+    "response": "Nisam primijetio smetnju",
+    "scope": "partial loop-only test; no perceived disturbance, telemetry FAIL retained"
+  },
+  "interpretation": "Loop-exit-window loss remains without TLSF memory walks or MIDI input. Original PCM2 underrun was not reproduced; different strict UAC overflow/drop failure prevents PASS. Mix-group wall time includes preemption and is not instruction-level attribution.",
+  "root_cause": "unproven; next bounded investigation is output mix callback versus preemption at loop exit"
+}

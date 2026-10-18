@@ -1,0 +1,21 @@
+{
+  "source_sha": "3459a97a5e2060223ebe24272879f0b731d21083",
+  "source_dirty": false,
+  "version": "M3-dev-g3459a97a5e20",
+  "host_qualification_exit_code": 0,
+  "board_build_check": "PASS",
+  "idf_build_exit_code": 0,
+  "esp_idf": "6.0.2",
+  "package_signature_verification": "PASS production packager",
+  "application_bytes": 2602912,
+  "application_sha256": "d60f454304e0a121083af676772583427a735ac1c60d5da2ab581b0731918bbf",
+  "bundle_bytes": 2603100,
+  "bundle_sha256": "d95234def8ae5201390919c0a19f1d9f4f657de8d64ab1d8240c9303c6fe18df",
+  "image_elf_sha256": "8d9d74750a7a1c41aeb1c388f4d67ddc8d6d515561f28b455ea3a06078780880",
+  "original_build_log_sha256": "c896e752d3c0dbf06dc782ed89776f41051623492bf3d9bc963dc9723cc5a9f1",
+  "package_path": "releases/m3-status-observer-3459a97a-20261018/pajoniiir-m3-M3-dev-g3459a97a5e20",
+  "other_board_builds": "NOT RUN; M3-only investigation",
+  "production_loop_decoder_changes": false,
+  "pcm2_cause": "not established",
+  "published": false
+}

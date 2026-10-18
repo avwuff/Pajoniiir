@@ -6,8 +6,16 @@ The [shared status observer repair](validation/M3_STATUS_OBSERVER_REPAIR_2026101
 removes unbounded internal/DMA largest-block walks from ordinary as well as HS
 memory snapshots. Free/low-water counters remain measured; fragmentation and
 walk timings are explicitly unavailable, without weakening resource thresholds.
-Focused regressions pass. Full qualification/build and exact-image loop-exit
-retest are separate gates; the preceding PCM2 smoke failure remains preserved.
+Full host qualification, ordinary M3 build, board/budget checks and signed
+packaging pass. Clean `3459a97a` is installed VALID `ota_0`; live unavailable
+memory fields and GUI are confirmed. The active-control retest stops at
+25.968 s on 19 runtime admission failures; a separate zero-MIDI loop-only
+retest stops at 42.186 s on 13 UAC dropped blocks/2,320 overflow frames and a
+142,441-us output-late event concentrated in one mix segment. PCM deltas are
+zero on both retests. Both end stopped, loops OFF. The operator reports no
+disturbance and sufficient headphone volume; both telemetry FAILs remain.
+The observer defect is repaired, but loop-exit mix timing and controller
+admission remain open. The prior PCM2 failure is preserved, not reclassified.
 
 The [ordinary M3 headphone-repair package](validation/M3_HEADPHONE_PACKAGE_20261018.md)
 is prepared locally as clean `M3-dev-g71ee534269bf`, project `main-deck-m3`.
