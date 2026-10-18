@@ -1,6 +1,16 @@
 # Documentation status
 
-Status: **current documentation authority, reconciled 2026-10-15**.
+Status: **current documentation authority, reconciled 2026-10-18**.
+
+The [ordinary M3 integration OTA and FLX4 smoke](validation/M3_SHARED_INTEGRATION_OTA_SMOKE_20261018.md)
+installs clean `c0ee8152` as `M3-dev-gc0ee81527b4d`, VALID `ota_0`. The ordinary
+FLX4 USB2/FS/root1 and storage USB3/HS/root0 roles are restored; 260 tracks,
+PCM5102A MAIN and FLX4 44.1-kHz headphones are available. The operator confirms
+GUI/touch. One 60.532-s mixed-rate, pitch-zero/MT-OFF smoke receives 2,100 MIDI
+packets; all 22 strict deltas and output-late remain zero. Both-deck loop/CUE
+transitions and the offline all-sample audit pass; both decks end stopped.
+Final operator audio/visual/control confirmation is pending. No new build,
+long soak, push, public beta or channel update occurred.
 
 The [JC1060 contributor kit](JC1060_CONTRIBUTOR_KIT_20261015.md) is ready locally
 for Kayrosen on the already verified clean `c0ee8152` BIN/ELF. The signed OTA
@@ -24,8 +34,9 @@ The [completed integration software verification](reviews/2026-10-14-jc1060-inte
 binds clean `c0ee8152` to all three ordinary ESP-IDF 6.0.2 builds, board/isolation/
 budget and linked restart checks, full required-fixture host qualification with
 no SKIP, four unchanged UI baseline gates, and Windows/Ubuntu dependency-byte
-regressions. Hashes and original host evidence are retained. These images are
-not installed or physically accepted; JC1060 SD, hub, audio reconnect and signed
+regressions. Hashes and original host evidence are retained. The subsequent M3
+installation is scoped above; the other images are not installed or physically
+accepted by this verification. JC1060 SD, hub, audio reconnect and signed
 OTA gates remain open. Full Linux firmware builds and hosted CI remain NOT RUN.
 
 The [completed JC1060/DDJ-400 contributor review](reviews/2026-10-14-jc1060-contributor-review.md)
