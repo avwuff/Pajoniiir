@@ -16,6 +16,19 @@
   "board-check.txt": "87dff8e79200744d42e68af7f46bb2d40d5a955e0250e00a059957c61b9eea08",
   "board_build_identity.json": "09c5e780b0d68fc22ae3ccde40ce160cb3958cb693225410eb437d8748bfd80f",
   "build-summary.txt": "a887c2028731f6bcecd914617f6cf17bf5688ac5a9b4e4a83db78938b3e71cb9",
+  "combined/audit.json": "0b5c3512ee8637c3d24ebbca59614a4c0a34a7d0de0e8bdc8dea26fea9ed9f3d",
+  "combined/baseline.json": "c5458baccadc5bf94de8d42626997ffaf43c3c9d51d02bebbe2a6ddd7c3a3bb1",
+  "combined/final-diagnostic-log.txt": "5f4c9c1816ac44a9e15afac48868f21ac6e6e55832a8f5ae59da8a85b7eb92ae",
+  "combined/final-firmware.json": "06056d82dde96e427893067e7eba5db5d10002d8b61a8de2957424a31550ff19",
+  "combined/final-stopped.json": "f2d53f2e3422f4198ec61e54a1ac63a29b4ef42a00e559736723a057e030dbc5",
+  "combined/final-ui-timing.json": "64cbb2ff7cb3da56f2f0192a0c220bc9d3d43d95033e276dc9311103daa76082",
+  "combined/final-usb-bus-trace.json": "fccbccb77fb97a826c01eb3d623c523fadaaf0122183253fc424c4a3c792f52b",
+  "combined/firmware.json": "06056d82dde96e427893067e7eba5db5d10002d8b61a8de2957424a31550ff19",
+  "combined/initial-ui-timing.json": "006860dc083f58b2b57b9901a3e0aab2ecc46bf762cffed337f7b4b01a41415e",
+  "combined/operator.json": "e8bd261db46d778983d4f93a0ebfa4cb31817689204e0f0358622dfed8a8367b",
+  "combined/result.json": "733c4bf143d39024498aaa0ddaf684b9bfb70cd4f96eb9de80d43a56ca3a3740",
+  "combined/runner.py": "f9615ccdc0df1c0e46bb7adf40e75011b731d0d1f96e093255d65647c6b502d6",
+  "combined/status.jsonl": "48aec69406e79f16d2ffb65355ff34e8c5d00b3256e61d40e15ca7469ad1a529",
   "documentation-check.txt": "9a24411bc5de4f4234e3a34c9cbb299d9e57d4817f4c80a2c7d3eb063128f59b",
   "documentation-final.txt": "9a24411bc5de4f4234e3a34c9cbb299d9e57d4817f4c80a2c7d3eb063128f59b",
   "green.txt": "a93453cd43f28e9ef23e57f7b185aa531b16757ea082b36fd5b5d48b69d59301",
@@ -48,5 +61,5 @@
   "red.txt": "f6fe103c0efdbfda1f58e4ae7dc15a360cc94a187eb1dcd84e3cd626006c2d43",
   "smoke-library.json": "4985a86ea0ebe1a5817905b774a8199f458ac52a0a16eb4cc3ab727c51e0700d",
   "smoke-prepared.json": "6ab0410db5cea03215d1a7f5e860030f74669d47e2b2aeea0728f552e23ff396",
-  "software.json": "fb192f3c3ca107ca0bb2ff67dd55743850f277b3e2c034cfed6794675a0a7236"
+  "software.json": "ff8d587c7f9de85fbd5abc96b2d3e4495b850e9e17faa4f1f8256b140c01202c"
 }

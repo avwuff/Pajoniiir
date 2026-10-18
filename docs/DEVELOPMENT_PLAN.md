@@ -15,9 +15,12 @@ passes host/build/package and is VALID `ota_1`; its100.264-s three-exit replay
 passes all22 strict deltas/late0 and full operator audio/display confirmation.
 An isolated30.145-s jog/Browse run also passes all22 strict deltas/late0 with
 2,406 MIDI packets and operator control/audio/display confirmation. Retain both
-bounded scopes: combined active controls with loop changes, long reliability
-and exact causal attribution remain open.
-Build only M3. Clock tests
+bounded scopes: a subsequent60.133-s combined loop/control/CUE run also passes
+all22 strict deltas/late0 and operator confirmation with1,951 MIDI packets.
+Input is concentrated before/around loop activation, not loop exit. Sustained
+exit-time input pressure, long reliability and exact causal attribution remain
+open. With M3 short retests passing, verify JC4880/JC1060 software builds next.
+Clock tests
 do not close UAC timing or admission gates; preserve all failures and criteria.
 
 The [2026-10-18 status observer repair](validation/M3_STATUS_OBSERVER_REPAIR_20261018.md)

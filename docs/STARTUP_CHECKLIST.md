@@ -13,7 +13,11 @@ is VALID `ota_1`. Replay D1 at32,023 ms / D2 at23,446 ms completes100.264 s,
 three exits, all22 strict deltas/late0 and operator full-window PASS. Both decks
 are stopped, loops OFF. Separate active jog/Browse pressure also passes30.145 s,
 2,406 MIDI packets, all22 strict deltas/late0 and operator confirmation.
-Combined loop transitions with controls and long reliability remain unrun.
+The combined60.133-s loop/control/CUE run passes all22 strict deltas/late0,
+1,951 MIDI packets and operator full-test confirmation. Input largely precedes
+activation and stops before exit: sustained exit-time control pressure and long
+reliability remain unrun. Both decks are stopped, loops OFF. Next verify the
+JC4880/JC1060 software builds without claiming their physical acceptance.
 No exact masking-call attribution is implied.
 Re-enable MT only after any required initial track load; avoid reloading an
 already-ready same track between bounded retests. Keep all loss/admission gates

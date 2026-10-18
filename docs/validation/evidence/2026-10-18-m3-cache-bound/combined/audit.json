@@ -1,0 +1,268 @@
+{
+  "classification": "short_combined_telemetry_and_operator_PASS",
+  "duration_s": 60.13314029999674,
+  "samples": 83,
+  "all_samples_identity_rates_mt_pitch_title_and_22strict_counters_valid": true,
+  "strict_deltas_all_zero": true,
+  "output_late_delta": 0,
+  "midi_delta": 1951,
+  "input_window_note": "Runner first20s field is sampled at first playback iteration after20s; loop-clear wait completes22.467s. See per-sample MIDI observations for actual overlap, not a precise20s event timestamp.",
+  "input_observations": [
+    {
+      "elapsed_s": 0.155,
+      "phase": "playback",
+      "midi_delta": 0,
+      "loops": [
+        false,
+        false
+      ]
+    },
+    {
+      "elapsed_s": 0.808,
+      "phase": "playback",
+      "midi_delta": 0,
+      "loops": [
+        false,
+        false
+      ]
+    },
+    {
+      "elapsed_s": 1.448,
+      "phase": "playback",
+      "midi_delta": 0,
+      "loops": [
+        false,
+        false
+      ]
+    },
+    {
+      "elapsed_s": 2.1,
+      "phase": "playback",
+      "midi_delta": 0,
+      "loops": [
+        false,
+        false
+      ]
+    },
+    {
+      "elapsed_s": 2.697,
+      "phase": "playback",
+      "midi_delta": 51,
+      "loops": [
+        false,
+        false
+      ]
+    },
+    {
+      "elapsed_s": 3.275,
+      "phase": "playback",
+      "midi_delta": 197,
+      "loops": [
+        false,
+        false
+      ]
+    },
+    {
+      "elapsed_s": 3.813,
+      "phase": "playback",
+      "midi_delta": 464,
+      "loops": [
+        false,
+        false
+      ]
+    },
+    {
+      "elapsed_s": 4.373,
+      "phase": "playback",
+      "midi_delta": 751,
+      "loops": [
+        false,
+        false
+      ]
+    },
+    {
+      "elapsed_s": 4.949,
+      "phase": "playback",
+      "midi_delta": 1005,
+      "loops": [
+        false,
+        false
+      ]
+    },
+    {
+      "elapsed_s": 5.512,
+      "phase": "playback",
+      "midi_delta": 1238,
+      "loops": [
+        false,
+        false
+      ]
+    },
+    {
+      "elapsed_s": 6.08,
+      "phase": "playback",
+      "midi_delta": 1417,
+      "loops": [
+        false,
+        false
+      ]
+    },
+    {
+      "elapsed_s": 6.656,
+      "phase": "playback",
+      "midi_delta": 1616,
+      "loops": [
+        false,
+        false
+      ]
+    },
+    {
+      "elapsed_s": 7.224,
+      "phase": "playback",
+      "midi_delta": 1840,
+      "loops": [
+        false,
+        false
+      ]
+    },
+    {
+      "elapsed_s": 8.04,
+      "phase": "playback",
+      "midi_delta": 1939,
+      "loops": [
+        false,
+        false
+      ]
+    },
+    {
+      "elapsed_s": 10.228,
+      "phase": "wait-loop-True",
+      "midi_delta": 1950,
+      "loops": [
+        true,
+        true
+      ]
+    },
+    {
+      "elapsed_s": 10.892,
+      "phase": "playback",
+      "midi_delta": 1951,
+      "loops": [
+        true,
+        true
+      ]
+    },
+    {
+      "elapsed_s": 11.553,
+      "phase": "playback",
+      "midi_delta": 1951,
+      "loops": [
+        true,
+        true
+      ]
+    },
+    {
+      "elapsed_s": 12.208,
+      "phase": "playback",
+      "midi_delta": 1951,
+      "loops": [
+        true,
+        true
+      ]
+    },
+    {
+      "elapsed_s": 12.889,
+      "phase": "playback",
+      "midi_delta": 1951,
+      "loops": [
+        true,
+        true
+      ]
+    },
+    {
+      "elapsed_s": 13.593,
+      "phase": "playback",
+      "midi_delta": 1951,
+      "loops": [
+        true,
+        true
+      ]
+    },
+    {
+      "elapsed_s": 14.248,
+      "phase": "playback",
+      "midi_delta": 1951,
+      "loops": [
+        true,
+        true
+      ]
+    },
+    {
+      "elapsed_s": 14.911,
+      "phase": "playback",
+      "midi_delta": 1951,
+      "loops": [
+        true,
+        true
+      ]
+    },
+    {
+      "elapsed_s": 15.586,
+      "phase": "playback",
+      "midi_delta": 1951,
+      "loops": [
+        true,
+        true
+      ]
+    },
+    {
+      "elapsed_s": 16.221,
+      "phase": "playback",
+      "midi_delta": 1951,
+      "loops": [
+        true,
+        true
+      ]
+    },
+    {
+      "elapsed_s": 17.02,
+      "phase": "playback",
+      "midi_delta": 1951,
+      "loops": [
+        true,
+        true
+      ]
+    },
+    {
+      "elapsed_s": 17.667,
+      "phase": "playback",
+      "midi_delta": 1951,
+      "loops": [
+        true,
+        true
+      ]
+    },
+    {
+      "elapsed_s": 18.339,
+      "phase": "playback",
+      "midi_delta": 1951,
+      "loops": [
+        true,
+        true
+      ]
+    },
+    {
+      "elapsed_s": 22.467,
+      "phase": "wait-loop-False",
+      "midi_delta": 1951,
+      "loops": [
+        false,
+        false
+      ]
+    }
+  ],
+  "all_semantic_transitions_confirmed": true,
+  "both_stopped_loops_off": true,
+  "operator": "Both jogs/Browse, loop/CUE/PLAY transitions, MAIN/FLX4 headphones and waveforms normal across entire60s",
+  "scope": "Short combined test only; no long reliability or other-board physical qualification"
+}

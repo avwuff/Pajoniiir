@@ -17,5 +17,6 @@
   "application_bytes": 2603312,
   "application_sha256": "af44cefe545d3a7507c452ac6b73d4aed08f8fb78689027882fb06cca8787d52",
   "bundle_bytes": 2603500,
-  "bundle_sha256": "e8362bb55d66118e5ccc5b0aa4eaa818d3d371bbc00f6d3f5f0001a5842c9505"
+  "bundle_sha256": "e8362bb55d66118e5ccc5b0aa4eaa818d3d371bbc00f6d3f5f0001a5842c9505",
+  "hardware_combined": "60.133s/83samples/1951MIDI, all22strict deltas0 and late0; full operator PASS; long reliability pending"
 }

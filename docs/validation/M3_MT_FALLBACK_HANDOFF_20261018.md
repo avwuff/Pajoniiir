@@ -222,3 +222,25 @@ inventory to 50 files. This qualifies isolated short input pressure; there are
 no loop changes during this window. The earlier admission FAIL remains part of
 history. Combined active controls with loop transitions and long reliability
 on this image remain unrun; no threshold was weakened and no loss counter reset.
+
+### Short combined loop/control/CUE PASS
+
+The same `1556e8d7` image completes 60.133 s /83 samples with 1,951 MIDI packets,
+all22 strict deltas zero and output-late zero. Both loops activate and clear;
+independent D1 and D2 CUE park / PLAY resume are confirmed. All saved samples
+retain exact source, source rates, MT, pitch, titles and healthy FLX4 FS44.1-kHz
+streaming. Both decks end stopped, loops OFF. The operator confirms responsive
+jogs/Browse, normal loop/CUE/PLAY transitions, clean MAIN/FLX4 headphones and
+fluid waveforms across the entire test. No same-boot outlier appears in the
+post-stop journal. The evidence inventory now contains63 hashed files.
+
+Input timing limits the pressure claim: by8.040 s, 1,939 MIDI packets have
+arrived; both loops are confirmed at10.229 s with1,950 packets, rising to1,951
+by10.892 s. No further packets arrive during loop clear at18.339/18.949 s or
+later CUE phases. This is a short combined semantic/control test, with limited
+input overlap at loop activation, not sustained input pressure through loop
+exit. The runner's `first20s_observed_midi_packets` is sampled after the blocking
+loop-clear wait (22.467 s); it is not an exact timestamp for individual events.
+Per-sample observations preserve this limitation. PFL/MIX routing remains
+outside this test's independently qualified scope. Long reliability, exact
+masking-call attribution and other-board physical acceptance stay open.

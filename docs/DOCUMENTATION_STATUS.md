@@ -28,8 +28,12 @@ window. Both decks are stopped, loops OFF. This closes the short targeted replay
 not long reliability or exact causal attribution. A separate30.145-s active
 jog/Browse test records2,406 MIDI packets, all22 strict deltas/late0 and operator
 confirmation of both controls/audio/display. Both decks are stopped. Combined
-controls with loop transitions and long qualification remain unrun; earlier
-admission/PCM/UAC failures remain preserved.
+controls/loop/CUE run then completes60.133 s /83 samples /1,951 MIDI packets,
+all22 strict deltas/late0 and operator full-test PASS. Input mostly precedes
+loop activation and stops before loop clear; sustained exit-time pressure and
+long qualification remain unrun. Earlier admission/PCM/UAC failures remain
+preserved. Both decks are stopped, loops OFF. JC4880/JC1060 software builds
+are next; their physical gates are unchanged.
 
 The [shared status observer repair](validation/M3_STATUS_OBSERVER_REPAIR_20261018.md)
 removes unbounded internal/DMA largest-block walks from ordinary as well as HS
