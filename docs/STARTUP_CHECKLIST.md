@@ -3,7 +3,14 @@
 For the [MT fallback handoff candidate](validation/M3_MT_FALLBACK_HANDOFF_20261018.md),
 `2fa22631` is VALID `ota_1`, but its loop-exit retest fails UAC drop/overflow
 with a repeated 139-ms mix segment. Both decks are stopped, loops OFF. The next
-mix-window DMA observer requires its own build/package and exact-image check.
+mix-window DMA observer `f1c5ec9c` passes software/build/package, is VALID `ota_0`,
+and completes one 60.267-s loop/CUE window with all 22 strict deltas and late
+zero, operator-confirmed. Keep the stall investigation open: it did not
+reproduce there, and adding observations changes timing. The following phase
+sweep does reproduce PCM/UAC loss and a141-ms DMA gap; both decks are stopped.
+Next qualify/package the shared1-KiB cache-bound candidate and replay D1 at
+32,023 ms / D2 at23,446 ms, same MT/pitch/zoom. Keep all strict gates unchanged;
+admission and PCM continuation remain open.
 Re-enable MT only after any required initial track load; avoid reloading an
 already-ready same track between bounded retests. Keep all loss/admission gates
 strict and the existing failed observer-image records intact.

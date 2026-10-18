@@ -1,0 +1,26 @@
+{
+  "schema_version": 2,
+  "release_version": "M3-dev-gf1c5ec9ca9e9",
+  "source_sha": "f1c5ec9ca9e9e3eba89365384762efb95e426ff7",
+  "development_candidate": true,
+  "signing": {
+    "algorithm": "ecdsa-p256-sha256",
+    "key_id": "rel-001",
+    "signature_file": "manifest.sig"
+  },
+  "targets": [
+    {
+      "target": "p4",
+      "project": "main-deck-m3",
+      "chip_id": "0x0012",
+      "file": "main-deck-m3.bin",
+      "ota_bundle": "main-deck-m3.ddjota",
+      "size": 2603184,
+      "bundle_size": 2603372,
+      "slot_size": 4194304,
+      "sha256": "5ae2cf5d10b8fa5adfe20cce4b21442d685ce7063ca1c0093a1c963e61bb112a",
+      "image_elf_sha256": "b964d5fc5018f43221361e9bc44e8c49407d9a0043b258a3df1974744e931db2",
+      "bundle_sha256": "3d5e5bc485e99976c05a7d2ad16bb7554d3bc57b01e705c99f37b1acece93d37"
+    }
+  ]
+}

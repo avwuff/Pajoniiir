@@ -1,0 +1,17 @@
+{
+  "target": "p4",
+  "state": "idle",
+  "board_id": "m3",
+  "project": "main-deck-m3",
+  "source_sha": "f1c5ec9ca9e9e3eba89365384762efb95e426ff7",
+  "source_dirty": false,
+  "image_elf_sha256": "b964d5fc5018f43221361e9bc44e8c49407d9a0043b258a3df1974744e931db2",
+  "running_image_state": "valid",
+  "running_slot": "ota_0",
+  "running_version": "M3-dev-gf1c5ec9ca9e9",
+  "target_slot": "",
+  "target_version": "",
+  "expected_size": 0,
+  "received_size": 0,
+  "last_error": ""
+}

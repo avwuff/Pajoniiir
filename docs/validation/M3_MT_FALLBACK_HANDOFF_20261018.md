@@ -102,5 +102,75 @@ counts are differences; maximum interrupt gap and highest sampled interrupted
 task/priority provide context. A gap can straddle the observation boundary,
 and the highest sampled task does not establish duration or causal ownership.
 The measurement has overhead and does not prove a timing fix. Audio algorithms,
-gain, USB cadence and strict criteria remain unchanged. This candidate still
-requires software/build checks and an exact-image hardware observation.
+gain, USB cadence and strict criteria remain unchanged.
+
+### DMA observer candidate f1c5ec9c
+
+Full host `-Qualification`, documentation integrity, ordinary M3 ESP-IDF 6.0.2
+incremental reconfigure/build, board/component/budget and signed development
+packaging pass. Clean `f1c5ec9ca9e9e3eba89365384762efb95e426ff7`,
+`M3-dev-gf1c5ec9ca9e9`, installs by local OTA (HTTP200, 15.053 s) and is confirmed
+VALID `ota_0`, ELF `b964d5fc5018f43221361e9bc44e8c49407d9a0043b258a3df1974744e931db2`.
+The operator confirms GUI/Wi-Fi. FLX4 MIDI/FS44.1-kHz UAC and library260 return.
+BIN is 2,603,184 bytes, SHA-256
+`5ae2cf5d10b8fa5adfe20cce4b21442d685ce7063ca1c0093a1c963e61bb112a`;
+bundle is 2,603,372 bytes, SHA-256
+`3d5e5bc485e99976c05a7d2ad16bb7554d3bc57b01e705c99f37b1acece93d37`.
+
+Its first 60.267-s / 70-sample loop/CUE retest completes with all 22 strict
+deltas zero and output-late zero. Both loop exits and each deck's independent
+CUE park / PLAY resume execute; both decks end stopped, loops OFF. The operator
+confirms clean MAIN/headphones, fluid waveforms and normal transitions. MIDI
+delta is zero. PFL remains false/false, MIX/LEVEL16,383 in readback: this does
+not add independent PFL routing or knob acceptance despite preparation intent.
+No large mix outlier is reproduced, so no causal attribution or timing repair
+is established. The observer itself is a timing perturbation. Earlier FAILs
+and the independent active-control admission gate remain open.
+
+Software, signed manifest, OTA, prepared workload and subsequent bounded-run
+evidence are retained in
+[the DMA observer evidence directory](evidence/2026-10-18-m3-mix-dma/sha256.json).
+Only M3 is built; there is no push, release or public OTA change.
+
+### Phase-sweep FAIL and interrupt observation
+
+The next bounded 100-s observation plans three loop exits at different scheduled
+phases. It instead stops on the first exit at 20.192 s / 14 samples. D1 begins
+at32,023 ms, D2 at23,446 ms (different source positions from the preceding
+15-second preparation). Clear intents are11.545/13.297 s. All22 paths are present:
+D2 PCM underrun +1,546, UAC dropped blocks +13 and overflow frames +2,318; the
+other19 strict deltas are zero. MIDI delta0. One output-late is142,477 us.
+Both decks end stopped, loops OFF. The operator reports no disturbance or
+control/cable movement. Retain FAIL; the earlier short PASS does not close it.
+
+Same boot430, journal241,133 ms records mix141,841 us, group15 at139,102 us.
+The newly scoped DMA observation has only **one completion**, **141,430-us
+maximum interrupt gap**, zero queue overflows and highest sampled priority6
+`ae_output`. This supplies evidence of a long interrupt-service gap, not simply
+an expensive MT search. It does not identify the masking call or prove its
+causal relationship to the earlier PCM underrun event at240,978 ms. The DMA
+gap can straddle the measurement boundary; task identity is context, not an
+interrupted-PC capture or CPU-time measurement.
+
+## Shared bounded-cache candidate
+
+Pinned IDF6.0.2 `components/esp_mm/esp_cache_msync.c` holds a common interrupt-
+masking spinlock around C2M writeback and M2C invalidation. The project wrapper
+already divides valid task-context data maintenance into1-KiB calls for the
+experimental HS-audio configuration. Ordinary M3/FLX4 delegates a complete
+operation instead: the HS controller selection accidentally gates a general
+real-time cache policy. A USB ISR can also contend on that common cache lock.
+This is a concrete unbounded-operation path and a plausible explanation of
+the observed interrupt gap; the exact masking call has not been captured.
+
+The production-wrapper regression is extended to require the same1-KiB bound
+in both ordinary and HS configurations, including a full800x480 RGB888 scanout
+span. It is RED on the ordinary wrapper (a16-KiB request delegates once rather
+than16 times), GREEN after removing the HS-only guard. Both configurations
+retain partial-tail coverage, aligned M2C, invalid direction/alignment
+delegation, first-error return and unsplit ISR/outer-critical/uncacheable
+delegation. DMA ownership remains with the synchronous caller until completion.
+No controller, audio, display timing, gain, loss criterion or global IDF mutex
+configuration changes. This bounds bytes, not microseconds. Qualification,
+ordinary M3 build/package and exact-image replay of the failed positions/exit
+phase remain required; PCM continuation and controller admission are still open.

@@ -5,8 +5,13 @@ has a deterministic production-callback reproduction and minimal consumer-clock
 repair. Host qualification and ordinary M3 incremental build/package pass;
 `2fa22631` is VALID `ota_1`. Its loop-exit retest fails on UAC drop/overflow and
 another 139-ms mix segment, despite no operator symptom. Both decks are stopped.
-Next observe existing I2S DMA counters across the mix window to distinguish
-interrupt delay from execution/preemption context. Build only M3. Clock tests
+The mix-window I2S DMA observer `f1c5ec9c` passes host/build/package and is VALID
+`ota_0`; its first 60.267-s loop/CUE retest passes telemetry and operator review.
+The next phase sweep fails at20.192 s with D2 PCM/UAC loss and a141-ms DMA gap
+across the mix window. Extend the existing HS1-KiB task-context cache policy
+to ordinary P4 builds, then replay the failing source positions/exit phase.
+The ordinary-path bound is RED before and GREEN after repair. This is not yet
+a physical timing fix; PCM continuation and admission stay open. Build only M3. Clock tests
 do not close UAC timing or admission gates; preserve all failures and criteria.
 
 The [2026-10-18 status observer repair](validation/M3_STATUS_OBSERVER_REPAIR_20261018.md)

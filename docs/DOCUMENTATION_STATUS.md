@@ -11,8 +11,18 @@ incremental build and signed packaging pass. Clean `2fa22631` is VALID `ota_1`.
 Its 43.137-s loop-exit retest fails on 11 UAC dropped blocks / 2,251 overflow
 frames and a 142,503-us output-late (139,212 us in one mix group); other 20 strict
 deltas are zero. Both decks are stopped, loops OFF; operator reports no symptom
-or control movement. CUE phases were not reached. A bounded mix-window DMA
-observation is the next candidate; hardware timing and admission remain open.
+or control movement. CUE phases were not reached. The bounded mix-window DMA
+observer `f1c5ec9c` passes host/build/package and is VALID `ota_0`. Its first
+60.267-s loop/CUE retest has all 22 strict deltas and output-late zero, with
+operator audio/display/transition confirmation. No outlier reproduced: this
+does not establish its cause or a timing repair. A subsequent phase sweep fails
+at20.192 s on D2 PCM +1,546, UAC drop +13 / overflow +2,318 and output-late142,477 us.
+New DMA context records one completion /141,430-us gap during mix141,841 us,
+supporting interrupt starvation rather than attributing all time to MT work.
+The ordinary path lacks the existing HS1-KiB task-context cache bound; extending
+that shared policy is RED/GREEN host-reproduced and awaits full qualification,
+M3 build/package and exact-image replay. Both decks are stopped; admission and
+PCM continuation remain open. Operator reports no perceived disturbance.
 
 The [shared status observer repair](validation/M3_STATUS_OBSERVER_REPAIR_20261018.md)
 removes unbounded internal/DMA largest-block walks from ordinary as well as HS
