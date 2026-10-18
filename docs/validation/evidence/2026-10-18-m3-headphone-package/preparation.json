@@ -1,0 +1,41 @@
+{
+  "board": "m3",
+  "project": "main-deck-m3",
+  "version": "M3-dev-g71ee534269bf",
+  "source": {
+    "source_sha": "71ee534269bf37ffe2314ff0ae8bd2110212cf0d",
+    "source_dirty": 0
+  },
+  "esp_idf": "6.0.2",
+  "build": "pass",
+  "board_component_budget_identity": "pass",
+  "signed_bundle_and_manifest_verification": "pass via unchanged production packager",
+  "development_candidate": true,
+  "ordinary_roles": {
+    "controller": "USB2 FS root1",
+    "storage": "USB3 HS root0",
+    "main": "PCM5102A fixed 48000 Hz",
+    "wifi": "default ON"
+  },
+  "effective_config_changes_from_c0ee8152": [],
+  "production_changes_from_qualified_605bcd20": [],
+  "host_qualification": "reused; production/test/tooling files identical to qualified source",
+  "installed": false,
+  "operator_smoke": "NOT RUN on M3 candidate",
+  "published": false,
+  "package_path": "releases/m3-headphones-71ee5342-20261018/pajoniiir-m3-M3-dev-g71ee534269bf",
+  "artifacts": {
+    "main-deck-m3.bin": {
+      "bytes": 2603088,
+      "sha256": "72063153d541f3227435a0993ffbb4ef0eb45c481077d40ed61ab07993517d15"
+    },
+    "main-deck-m3.ddjota": {
+      "bytes": 2603276,
+      "sha256": "aaeab422bd4b671d7de17ea43cb1dd2ef1f6b2dd1646f09fc81f436d5b1044ab"
+    },
+    "debug/main-deck-m3.elf": {
+      "bytes": 29252412,
+      "sha256": "aa911155cd5abe00f56e71a69aa91940f191c60efb9889b8b481e9ef5b5c8e88"
+    }
+  }
+}

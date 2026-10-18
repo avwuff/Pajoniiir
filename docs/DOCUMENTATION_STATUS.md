@@ -2,6 +2,20 @@
 
 Status: **current documentation authority, reconciled 2026-10-18**.
 
+The [ordinary M3 headphone-repair package](validation/M3_HEADPHONE_PACKAGE_20261018.md)
+is prepared locally as clean `M3-dev-g71ee534269bf`, project `main-deck-m3`.
+The fresh ESP-IDF 6.0.2 build, ordinary board/component/budget verifier and signed
+bundle/manifest packaging pass. Effective configuration matches the preceding
+ordinary M3 build; the shared production/test/tooling code matches qualified
+`605bcd20`. FLX4 USB2 / storage USB3, PCM5102A MAIN, accepted display/touch and
+Wi-Fi defaults are retained. A subsequent explicitly authorized local OTA
+uploads the same bundle with HTTP 200 and confirms exact source/version/ELF,
+VALID `ota_1`, idle OTA service, FLX4 MIDI/non-faulted 44.1-kHz UAC and 260
+tracks. Both decks remain stopped and the historical crash summary is unchanged.
+The operator confirms GUI/touch; live LEVEL=0 / MIX=0 readback matches the
+reported physical knobs after movement.
+Exact-image physical smoke remains NOT RUN; no public publication is claimed.
+
 The [FLX4 headphone-level investigation](validation/FLX4_HEADPHONE_LEVEL_20261018.md)
 reproduces a 12.041-dB dedicated headphone loss in the former JC4880 `c7d2e9cd`
 PCM-paced FLX4 transport. The repair restores dedicated cue unity and exposes
@@ -18,8 +32,8 @@ A later 60.125-s / 86-sample mixed-rate dual-deck MT/zoom-8 smoke passes with
 isolation. MIX spans CUE..MASTER and LEVEL reaches approximately 91.1%. The
 operator confirms both jogs/Browse, PFL D1/D2, MIX/LEVEL, clean MAIN/headphones
 and fluid waveforms. The exact-image short combined smoke is closed; both decks
-end stopped, loops OFF. No soak or public update occurred. M3 below retains its
-earlier exact-image acceptance and does not yet contain the headphone repair.
+end stopped, loops OFF. No soak or public update occurred. M3 now contains the
+repair on `71ee5342`; its earlier physical acceptance below retains its own scope.
 
 The [ordinary M3 integration OTA and FLX4 smoke](validation/M3_SHARED_INTEGRATION_OTA_SMOKE_20261018.md)
 installs clean `c0ee8152` as `M3-dev-gc0ee81527b4d`, VALID `ota_0`. The ordinary

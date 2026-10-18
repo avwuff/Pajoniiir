@@ -16,6 +16,12 @@ and [JC1060 handoff](JC1060_BETA_HANDOFF_20261011.md). JC1060 physical testing
 was deferred to Kayrosen; JC4880 long soak is explicitly waived, NOT RUN.
 The following dated checkpoints retain their own source and acceptance scope.
 
+The [2026-10-18 ordinary M3 headphone package](validation/M3_HEADPHONE_PACKAGE_20261018.md)
+builds and signs clean `71ee5342` with unchanged qualified production code and
+ordinary board policy. A later authorized local OTA confirms exact identity,
+VALID `ota_1`, FLX4 and 260 tracks with both decks stopped. Exact-image physical
+smoke remains pending. No other board build or public update is part of this step.
+
 The [2026-10-14 JC1060 contributor review](reviews/2026-10-14-jc1060-contributor-review.md)
 is complete on frozen `00041a0d`, with scoped hardware evidence on `4e3aa2b4`
 and production-boundary defect reproductions. Its recommended next step was

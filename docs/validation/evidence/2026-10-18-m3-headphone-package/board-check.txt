@@ -1,0 +1,1 @@
+PASS main-deck-m3: 2603088 bytes, isolated BSP, LVGL 9.5.0, app identity
