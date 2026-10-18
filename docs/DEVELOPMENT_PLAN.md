@@ -11,8 +11,11 @@ The next phase sweep fails at20.192 s with D2 PCM/UAC loss and a141-ms DMA gap
 across the mix window. Extend the existing HS1-KiB task-context cache policy
 to ordinary P4 builds, then replay the failing source positions/exit phase.
 The ordinary-path bound is RED before and GREEN after repair. Clean `1556e8d7`
-passes host/build/package and is VALID `ota_1`; the replay is next. This is not
-yet a physical timing fix; PCM continuation and admission stay open. Build only M3. Clock tests
+passes host/build/package and is VALID `ota_1`; its100.264-s three-exit replay
+passes all22 strict deltas/late0 and full operator audio/display confirmation.
+Retain that bounded scope; next check independent jog/Browse admission pressure
+under playback. Long reliability and exact causal attribution remain open.
+Build only M3. Clock tests
 do not close UAC timing or admission gates; preserve all failures and criteria.
 
 The [2026-10-18 status observer repair](validation/M3_STATUS_OBSERVER_REPAIR_20261018.md)

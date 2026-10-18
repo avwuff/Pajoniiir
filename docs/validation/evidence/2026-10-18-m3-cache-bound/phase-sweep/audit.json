@@ -1,0 +1,26 @@
+{
+  "samples": 142,
+  "duration_s": 100.2644414000024,
+  "all_sample_source_rate_mt_pitch_title_and_22_counters_valid": true,
+  "loop_clear_confirmations": [
+    {
+      "elapsed_s": 15.005,
+      "action": "both loop_clear confirmed"
+    },
+    {
+      "elapsed_s": 44.035,
+      "action": "both loop_clear confirmed"
+    },
+    {
+      "elapsed_s": 74.649,
+      "action": "both loop_clear confirmed"
+    }
+  ],
+  "stopped_and_loops_off": true,
+  "firmware_valid_exact": true,
+  "output_late_delta": 0,
+  "midi_delta": 0,
+  "operator": "Entire 100-second MAIN/FLX4 headphones/waveforms and three loop exits confirmed normal",
+  "scope": "Short targeted replay PASS; not root-cause proof or long soak; controller pressure gate remains open",
+  "pfl_scope": "Raw false/false and MIX/LEVEL16383 retained; not an independent PFL/knob acceptance"
+}

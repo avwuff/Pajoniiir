@@ -21,9 +21,12 @@ New DMA context records one completion /141,430-us gap during mix141,841 us,
 supporting interrupt starvation rather than attributing all time to MT work.
 The ordinary path lacks the existing HS1-KiB task-context cache bound; extending
 that shared policy is RED/GREEN host-reproduced. Clean `1556e8d7` passes host
-qualification, M3 build/package and is VALID `ota_1`, awaiting exact-image replay.
-Both decks are stopped; admission and
-PCM continuation remain open. Operator reports no perceived disturbance.
+qualification, M3 build/package and is VALID `ota_1`. Its exact-source-position
+replay completes 100.264 s /142 samples and three loop exits with all22 strict
+deltas and output-late zero; the operator confirms the full audio/display/exit
+window. Both decks are stopped, loops OFF. This closes the short targeted replay,
+not long reliability or exact causal attribution. Admission under jog/Browse
+remains open; earlier PCM/UAC failures remain preserved.
 
 The [shared status observer repair](validation/M3_STATUS_OBSERVER_REPAIR_20261018.md)
 removes unbounded internal/DMA largest-block walks from ordinary as well as HS

@@ -18,10 +18,22 @@
   "ota-upload-response.json": "4907e83e96bf92ce0416b7e8319d558ba09576c8f6b08131d1b8a0ed982f8a3d",
   "ota-upload-result.json": "07297d079c5607dc663eebd8f8eb9c6927d5d110e79770c96e15c73fcadc20c3",
   "package-verification.txt": "8435bb68c25367b1334b22066f69a2cab897c509ee4bac10bd615a8ce9e11f7a",
+  "phase-sweep/audit.json": "e618685802c8ec7562a517a8f5c605fc97d1be23139aa2187766afc5093e5489",
+  "phase-sweep/baseline.json": "d1bd372ee249ce1fe68d1301cc277ed2f08dcd62376daeaca8254d89bbb7bde8",
+  "phase-sweep/final-diagnostic-log.txt": "5f4c9c1816ac44a9e15afac48868f21ac6e6e55832a8f5ae59da8a85b7eb92ae",
+  "phase-sweep/final-firmware.json": "06056d82dde96e427893067e7eba5db5d10002d8b61a8de2957424a31550ff19",
+  "phase-sweep/final-stopped.json": "7014c47624ef7fdd43036f2f2dab67e4a510102463a7a92acc5563e0508d67dc",
+  "phase-sweep/final-ui-timing.json": "9268c76003a9b5e1c9ab2b56a057f931f25bb0924b234f1712c0e9ea5b16191c",
+  "phase-sweep/final-usb-bus-trace.json": "fccbccb77fb97a826c01eb3d623c523fadaaf0122183253fc424c4a3c792f52b",
+  "phase-sweep/firmware.json": "06056d82dde96e427893067e7eba5db5d10002d8b61a8de2957424a31550ff19",
+  "phase-sweep/initial-ui-timing.json": "2b5968cb05ef13023a03cd24583876ad89bd32afea0a750814223e553adfee75",
+  "phase-sweep/operator.json": "c6d2428c95ee7fea928eee9386ed0927d41159131a37d4d94b46ea4bd1347696",
+  "phase-sweep/result.json": "1542d73d1a7f05b77fb4732993f2dcc5656a68a60de1c87eedcea8f076aa4cf5",
+  "phase-sweep/status.jsonl": "a2e9bf91819e35807f97b73f5d6678163e5061e1390029c7938a6b82862eacb8",
   "phase_sweep.py": "b83276ea386671d57812ce43758fe72d5a3a95b94d6b00519cfc6c80221bf561",
   "prepare.py": "5b2b061942fd575c2227b62139b7e0c508d7176f29cd7b29b0c8efa4964d4c7c",
   "red.txt": "f6fe103c0efdbfda1f58e4ae7dc15a360cc94a187eb1dcd84e3cd626006c2d43",
   "smoke-library.json": "4985a86ea0ebe1a5817905b774a8199f458ac52a0a16eb4cc3ab727c51e0700d",
   "smoke-prepared.json": "6ab0410db5cea03215d1a7f5e860030f74669d47e2b2aeea0728f552e23ff396",
-  "software.json": "2b23a539ee5ce77ec7292f63dc3c87c22f4a5c2794bfac851da49ee725e0ebe5"
+  "software.json": "51b5745eb1b3bb903af20f7addd823104b979c844517e81e31233a2c29d0e1fc"
 }

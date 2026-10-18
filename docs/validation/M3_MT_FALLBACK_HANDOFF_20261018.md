@@ -184,3 +184,27 @@ replay remains required; PCM continuation and controller admission stay open.
 See [the cache-bound evidence](evidence/2026-10-18-m3-cache-bound/sha256.json)
 for raw checks, signed manifest and artifact hashes. Other boards are not built
 or requalified, and no public artifact is changed.
+
+### Exact-image phase replay PASS, 2026-10-18
+
+The first `1556e8d7` phase replay completes **100.264 s / 142 saved samples**
+from D1 32,023 ms and D2 23,446 ms, mixed 44.1/48-kHz sources, +5/-5%, both MT,
+zoom8, MAIN48-kHz and FLX4 FS44.1-kHz UAC. All 22 numeric strict paths remain
+present and unchanged in every saved sample; final deltas and output-late are
+zero. Initial stopped underflow3,290,918 is retained as a nonzero baseline.
+MIDI delta0. Loop clears are confirmed at15.005,44.035,74.649 s; both decks end
+stopped, loops OFF, with the exact clean source/ELF and VALID `ota_1` retained.
+
+The operator confirms clean MAIN and FLX4 headphones, fluid waveforms and all
+three exits throughout the entire window. Status retains PFL false/false and
+MIX/LEVEL16,383; this does not independently qualify PFL or knob routing. No
+same-boot outlier is recorded in the post-stop journal. Source positions match
+the failed phase sweep; actual action timing differs because HTTP scheduling
+is not a sample-accurate phase lock. This is one bounded replay PASS after the
+cache policy correction, not proof of the exact earlier masking call or a
+long reliability qualification. Earlier failures remain intact.
+
+Raw runner, every response, operator confirmation, final snapshots and a
+per-sample audit are in the cache-bound evidence directory, with a 37-file
+SHA-256 inventory checked against staged Git bytes. Independent jog/Browse
+admission pressure remains open and requires a short active-control test.
