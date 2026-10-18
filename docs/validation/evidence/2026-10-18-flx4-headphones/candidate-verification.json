@@ -1,0 +1,33 @@
+{
+  "board": "jc4880",
+  "project": "main-deck-p4",
+  "source": {
+    "source_sha": "605bcd20d6dadf250ce1816d82353ee2ace21867",
+    "source_dirty": 0
+  },
+  "version": "M2.5-231-g605bcd20",
+  "idf": "6.0.2",
+  "qualification_exit_code": 0,
+  "qualification_skip_count": 0,
+  "focused_policy_variants": [
+    "JC4880",
+    "M3-HS"
+  ],
+  "documentation_check": "pass",
+  "board_component_identity_budget_check": "pass",
+  "candidate_installed": false,
+  "artifacts": {
+    "main-deck-p4.bin": {
+      "bytes": 2609808,
+      "sha256": "b5ce34b69fd99b5e983dc024ecf60d41ec515c648aad23b1cd0671f8e3ccb2b8"
+    },
+    "main-deck-p4.ddjota": {
+      "bytes": 2609996,
+      "sha256": "90f19d01348852a01aa8950bdf3f9ce6776ae2c81650f4cba0a3112587fcc0db"
+    },
+    "main-deck-p4.elf": {
+      "bytes": 29755976,
+      "sha256": "f1c788368a7feff414909e248043df085e8e5e5e484d7394a5cf99c80fedfeb7"
+    }
+  }
+}

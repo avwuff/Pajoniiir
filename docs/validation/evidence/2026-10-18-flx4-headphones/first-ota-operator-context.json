@@ -1,0 +1,7 @@
+{
+  "upload_http": 200,
+  "observed_after": "c7d2e9cd VALID ota_0",
+  "operator_confirmation_hr": "iskljucio i ukljucio",
+  "context": "Operator confirmed a power cycle while startup was being checked. Old crash dump unchanged. This is not a clean autonomous startup-failure reproduction.",
+  "controlled_retry": "Same immutable signed package; no changes to firmware bytes"
+}

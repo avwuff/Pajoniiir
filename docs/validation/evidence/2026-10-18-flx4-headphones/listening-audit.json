@@ -1,0 +1,18 @@
+{
+  "offline_all_sample_audit": "pass",
+  "samples": 55,
+  "d1_playing_samples": 55,
+  "all_22_strict_deltas_zero": true,
+  "output_late_delta": 0,
+  "level_raw_min_max": [
+    0,
+    5776
+  ],
+  "midi_packets_delta": 136,
+  "stopped": true,
+  "exact_valid_ota_1": true,
+  "source_sha": "605bcd20d6dadf250ce1816d82353ee2ace21867",
+  "historical_crash_summary_unchanged": true,
+  "operator_confirmation": "operator-confirmation.json",
+  "scope": "Solo D1 bench loudness; not club, full-range sweep or dual-deck qualification"
+}

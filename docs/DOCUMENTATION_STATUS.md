@@ -3,11 +3,18 @@
 Status: **current documentation authority, reconciled 2026-10-18**.
 
 The [FLX4 headphone-level investigation](validation/FLX4_HEADPHONE_LEVEL_20261018.md)
-reproduces a 12.041-dB dedicated headphone loss in the PCM-paced FLX4 USB
-transport on the installed JC4880 `c7d2e9cd`. Its bounded candidate restores
-dedicated cue unity and adds headphone LEVEL status; physical volume/power
-comparison and the new exact-image qualification remain pending. The old bench
-is unchanged and no playback or OTA was performed during diagnosis.
+reproduces a 12.041-dB dedicated headphone loss in the former JC4880 `c7d2e9cd`
+PCM-paced FLX4 transport. The repair restores dedicated cue unity and exposes
+headphone LEVEL. Clean `605bcd20` is now VALID `ota_1`; full host qualification,
+focused USB policies, the JC4880 build/board checks and signed packaging pass.
+After an operator-confirmed power interruption of the first upload, a controlled
+retry confirms startup with the identical package and unchanged historical crash
+summary. A 30.016-s solo-D1 listening window records 136 MIDI packets, all 22
+strict deltas/output-late zero and both decks stopped. The operator corrects the
+initial answer and confirms sufficient loudness with ATH-M20x. The expectation
+that 100% would suit a club is not a club test or measured full-level sweep.
+Broader new-image dual-deck smoke remains separate; no soak or public update
+occurred. M3 below retains its earlier exact-image acceptance.
 
 The [ordinary M3 integration OTA and FLX4 smoke](validation/M3_SHARED_INTEGRATION_OTA_SMOKE_20261018.md)
 installs clean `c0ee8152` as `M3-dev-gc0ee81527b4d`, VALID `ota_0`. The ordinary

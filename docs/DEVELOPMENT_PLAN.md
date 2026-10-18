@@ -3,8 +3,10 @@
 2026-10-18: prioritize the [FLX4 headphone-level repair](validation/FLX4_HEADPHONE_LEVEL_20261018.md)
 before JC4880 OTA. A production-stream regression reproduces a 12.041-dB
 dedicated cue loss; the candidate restores unity after the mixer while retaining
-the legacy USB MAIN mirror level. Software qualification/build and a bounded
-low-level listening comparison gate the candidate; physical acceptance is pending.
+the legacy USB MAIN mirror level. Full host qualification, JC4880 build and signed
+OTA pass; clean `605bcd20` is VALID `ota_1`. The operator's corrected final answer
+accepts loudness in the short solo-D1 bench test. Broader dual-deck/new-image
+physical acceptance and actual club use remain separate from this correction.
 
 The operator authorized shared-core PR #46 delivery and GitHub prerelease
 `shared-p4-beta.1`. See the [beta record](validation/SHARED_P4_BETA_1_20261011.md)

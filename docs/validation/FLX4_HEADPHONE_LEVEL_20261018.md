@@ -57,20 +57,74 @@ headphone channel amplitude assertion. After repair it checks positive/
 negative full-scale and one-LSB samples, distinct MAIN/cue routing, absent
 MAIN, and amplitude through the 48-to-44.1-kHz resampler. Existing MAIN-only
 fallback and generic/native format/lifecycle tests remain in the suite.
-Both JC4880 and M3-HS host policy variants pass the initial focused run.
-Full host qualification and a clean JC4880 ESP-IDF 6.0.2 build are pending.
-Only JC4880 firmware will be built for the next physical test.
+Both JC4880 and M3-HS host policy variants pass, including 48-to-44.1-kHz
+amplitude preservation. Full `-Qualification` host suite passes with no SKIP.
+Documentation integrity and a clean ordinary JC4880 ESP-IDF 6.0.2 build pass,
+including board/component isolation, linked source identity and image budget.
+Only JC4880 firmware was built; no other target's physical gate is reopened.
 
-## Next physical comparison
+Clean candidate source: `605bcd20d6dadf250ce1816d82353ee2ace21867`, version
+`M2.5-231-g605bcd20`. Application 2,609,808 B, signed bundle 2,609,996 B.
 
-Candidate installation/listening is **NOT RUN**. Preserve the original bench
-and record source/ELF plus headphone LEVEL/MIX and PFL. Begin headphone LEVEL
-fully down: the candidate's dedicated USB cue signal can be four times the old
-amplitude. Raise it gradually while comparing the same track, TRIM/EQ and
-ATH-M20x. Check both PFLs, MIX sweep, mute/minimum, distortion and MAIN isolation.
-The firmware does not measure headphone voltage, sound pressure or VBUS.
-No claim that supply limitations or club audibility are solved precedes that
-operator comparison. No public assets/channels are changed; no soak is reopened.
+Application SHA-256:
+`b5ce34b69fd99b5e983dc024ecf60d41ec515c648aad23b1cd0671f8e3ccb2b8`
+
+Signed bundle SHA-256:
+`90f19d01348852a01aa8950bdf3f9ce6776ae2c81650f4cba0a3112587fcc0db`
+
+Matching ELF SHA-256:
+`f1c788368a7feff414909e248043df085e8e5e5e484d7394a5cf99c80fedfeb7`
+
+The production packager verifies the image, signed bundle, manifest, trusted
+key and exact source. The [verification record](evidence/2026-10-18-flx4-headphones/candidate-verification.json)
+retains identities and raw regression/qualification evidence. The operator
+confirms LEVEL is at minimum and readiness for OTA/listening. One signed
+upload returns HTTP 200. During startup the operator confirms switching power
+OFF/ON. The next read shows the former `c7d2e9cd` VALID `ota_0`; the old crash
+summary is byte-for-byte equivalent and its ELF prefix `e2719f73a` does not
+identify this candidate. The service journal records upload verification on
+boot 627, then old firmware boot 629 / POWERON. This is a power-interrupted
+pending-image attempt, not a clean autonomous startup-failure reproduction.
+A controlled retry uses the identical signed bundle, with no requested
+power/RESET action. It completes HTTP 200 and confirms clean `605bcd20`,
+matching ELF, `M2.5-231-g605bcd20`, VALID `ota_1`, idle OTA state and both decks
+stopped. FLX4 MIDI/profile and 44.1-kHz/16-bit UAC are healthy; the old crash
+summary remains identical. Windows DHCP must again be restored after reconnect;
+this host-network issue is not an image startup failure. There were two uploads
+in total: the power-interrupted first attempt and the controlled retry.
+
+## Short listening comparison and corrected operator result
+
+The operator confirms the post-OTA knob exercise. Live API readback establishes
+MIX=0 (full CUE) and LEVEL=0 before playback, rather than treating unchanged
+physical knobs as authoritative over boot defaults. D1 `Casanova Action {320}`
+is loaded at 15 s, PFL D1 enabled, pitch zero/MT OFF, D2 stopped/unloaded.
+The stick has 189 tracks. ATH-M20x and the JC4880-only FLX4 power connection
+remain the original bench setup; there is no separate power adapter test.
+
+One **30.016-s / 55-sample** solo-D1 window records **136 MIDI packets** and
+LEVEL raw **0..5776** (maximum approximately 35.3% of 16383). All 22 present
+strict counter deltas and output-late delta are zero. Both decks finish stopped.
+No headphone-level maximum or club sound pressure measurement is inferred from
+these samples. A separate offline all-sample audit binds the source, healthy
+FLX4 stream, fixed CUE/PFL routing, counters and final stopped state.
+
+The operator first selected "louder but still insufficient", then explicitly
+corrected that answer: **"krivo sam ti rekao. taman je glasno. kad okrenem do
+100% mislim da bi to zadovoljlo i klupske uvjete"**. The corrected answer is
+the final authority for the short listening result: headphone loudness is
+sufficient in this bench test. No distortion was reported; the correction
+specifically confirms loudness. The expectation about 100% in a club remains
+an operator prediction, not a new club acceptance or recorded 100% sweep.
+
+This closes the reported low-headphone-level issue for this short D1 bench
+comparison on the exact installed image. Full two-deck controls/MT/audio smoke,
+D2 PFL and a full MIX sweep on this image are not covered by this solo test.
+The code preserves MAIN behavior and host regressions check channel isolation;
+this window does not add a separate physical MAIN acceptance. No new soak,
+electrical/VBUS measurement, reconnect campaign or public publication occurred.
+For any later audition, start LEVEL low and raise gradually. Historical
+hardware/soak results retain their original image scope.
 
 ## References and working evidence
 
