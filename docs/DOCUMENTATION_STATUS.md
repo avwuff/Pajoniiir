@@ -13,8 +13,13 @@ summary. A 30.016-s solo-D1 listening window records 136 MIDI packets, all 22
 strict deltas/output-late zero and both decks stopped. The operator corrects the
 initial answer and confirms sufficient loudness with ATH-M20x. The expectation
 that 100% would suit a club is not a club test or measured full-level sweep.
-Broader new-image dual-deck smoke remains separate; no soak or public update
-occurred. M3 below retains its earlier exact-image acceptance.
+A later 60.125-s / 86-sample mixed-rate dual-deck MT/zoom-8 smoke passes with
+3,658 MIDI packets, all 22 strict deltas/output-late zero and confirmed loop/CUE
+isolation. MIX spans CUE..MASTER and LEVEL reaches approximately 91.1%. The
+operator confirms both jogs/Browse, PFL D1/D2, MIX/LEVEL, clean MAIN/headphones
+and fluid waveforms. The exact-image short combined smoke is closed; both decks
+end stopped, loops OFF. No soak or public update occurred. M3 below retains its
+earlier exact-image acceptance and does not yet contain the headphone repair.
 
 The [ordinary M3 integration OTA and FLX4 smoke](validation/M3_SHARED_INTEGRATION_OTA_SMOKE_20261018.md)
 installs clean `c0ee8152` as `M3-dev-gc0ee81527b4d`, VALID `ota_0`. The ordinary

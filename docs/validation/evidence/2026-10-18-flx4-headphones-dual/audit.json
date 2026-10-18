@@ -1,0 +1,33 @@
+{
+  "all_sample_audit": "pass",
+  "duration_s": 60.125,
+  "samples": 86,
+  "strict_paths": 22,
+  "strict_deltas_all_zero": true,
+  "output_late_delta": 0,
+  "midi_packets_delta": 3658,
+  "source_sha": "605bcd20d6dadf250ce1816d82353ee2ace21867",
+  "exact_valid_ota_1": true,
+  "fixed_mt_pitch_and_zoom": true,
+  "final_stopped_and_loops_off": true,
+  "pfl_sampled_states": [
+    [
+      true,
+      false
+    ],
+    [
+      true,
+      true
+    ]
+  ],
+  "headphone_mix_min_max": [
+    0,
+    16383
+  ],
+  "headphone_level_min_max": [
+    2245,
+    14919
+  ],
+  "operator_result": "operator-confirmation.json",
+  "scope": "Combined short smoke; JC4880 long soak remains waived"
+}

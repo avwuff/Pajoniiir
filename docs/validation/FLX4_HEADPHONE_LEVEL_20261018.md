@@ -118,13 +118,59 @@ specifically confirms loudness. The expectation about 100% in a club remains
 an operator prediction, not a new club acceptance or recorded 100% sweep.
 
 This closes the reported low-headphone-level issue for this short D1 bench
-comparison on the exact installed image. Full two-deck controls/MT/audio smoke,
-D2 PFL and a full MIX sweep on this image are not covered by this solo test.
-The code preserves MAIN behavior and host regressions check channel isolation;
-this window does not add a separate physical MAIN acceptance. No new soak,
+comparison on the exact installed image. The following combined smoke adds
+the separate two-deck controls/MT/audio and PFL/MIX coverage; it is not inferred
+from the solo test. No new soak,
 electrical/VBUS measurement, reconnect campaign or public publication occurred.
 For any later audition, start LEVEL low and raise gradually. Historical
 hardware/soak results retain their original image scope.
+
+## Combined dual-deck MT / transport / headphone smoke
+
+Later on 2026-10-18, the same clean `605bcd20`, VALID `ota_1` passes one
+operator-ready **60.125-s / 86-sample** combined smoke. No rebuild, OTA,
+controller reconnect or profile change precedes this supplement. D1 is
+`Casanova Action {320}` at 44.1 kHz / +5%; D2 is `Dino Dvornik - Ritam moj`
+at 48 kHz / -5%. Both use MT, zoom 8 and the ordinary PCM5102A 48-kHz MAIN /
+FLX4 FS UAC1 44.1-kHz, 16-bit headphone path. The catalog has 189 tracks.
+
+The operator is asked to use PFL D1/D2 and headphone MIX/LEVEL in the first
+20 s, both jogs/Browse in the next 10 s, then watch/listen while the actor
+performs loop and transient CDJ CUE/PLAY transitions. Persistent Hot Cues are
+not edited. The final operator answer confirms **all requested steps were
+checked and normal**, with clean MAIN/headphones and fluid waveforms.
+
+| Measurement | Result |
+| --- | --- |
+| New MIDI packets | 3,658 |
+| All 22 present strict counter deltas | 0 |
+| Output-late delta / final since-boot maximum | 0 / 0 us |
+| Sampled PFL states | D1 on/D2 off; D1 on/D2 on |
+| Headphone MIX raw range | 0..16383, CUE through MASTER |
+| Headphone LEVEL raw range | 2245..14919, approximately 13.7..91.1% |
+| Identity, rates, MT, pitch, zoom | Maintained on this image |
+| Final transport | Both stopped, loops OFF |
+
+The PFL states listed are the sampled telemetry, not a claim that every brief
+button transition was sampled. Broader physical control behavior is confirmed
+by the operator. No 100% LEVEL sweep or club loudness measurement is added.
+
+| Actor transition | Observed elapsed |
+| --- | ---: |
+| Both 4-beat loops active | 27.375 s |
+| Both loops cleared | 37.078 s |
+| D1 CUE parks only D1 / D1 PLAY resumes | 44.281 / 44.515 s |
+| D2 CUE parks only D2 / D2 PLAY resumes | 51.250 / 51.469 s |
+
+The offline all-sample audit checks every identity, strict counter, rate,
+MT/pitch, healthy stream and track, plus initial/final zoom and final stopped
+state. It passes. Nonzero startup/stopped baseline counters are retained and
+do not become new playback losses. Original runner, all samples, final
+firmware/UI/USB snapshots, separate operator confirmation and hashes are in
+[the combined-smoke evidence](evidence/2026-10-18-flx4-headphones-dual/audit.json).
+This closes the requested short combined JC4880 smoke on the installed image.
+The long soak remains explicitly waived. Other boards, electrical qualification,
+long reconnect campaigns and actual club use retain their separate scope.
 
 ## References and working evidence
 

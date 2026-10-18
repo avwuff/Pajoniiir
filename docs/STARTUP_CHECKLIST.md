@@ -5,6 +5,9 @@ start headphone LEVEL fully down before playback and raise gradually. Dedicated
 cue PCM restores 12.041 dB lost in the old transport. Verify the exact image,
 LEVEL/MIX readback, both PFLs, clean headphones and unchanged MAIN on the same
 track; no club-volume or electrical PASS is inferred from host tests alone.
+The subsequent exact-image combined 60.125-s JC4880 MT/loop/CUE/PFL/MIX/LEVEL
+smoke is operator-confirmed, with all 22 strict deltas/output-late zero and
+both decks stopped. This closes that short smoke, not the waived long soak.
 
 For the authorized `shared-p4-beta.1` contributor distribution, use the
 [beta record](validation/SHARED_P4_BETA_1_20261011.md) and
