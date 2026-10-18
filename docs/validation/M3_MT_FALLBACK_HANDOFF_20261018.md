@@ -206,5 +206,19 @@ long reliability qualification. Earlier failures remain intact.
 
 Raw runner, every response, operator confirmation, final snapshots and a
 per-sample audit are in the cache-bound evidence directory, with a 37-file
-SHA-256 inventory checked against staged Git bytes. Independent jog/Browse
-admission pressure remains open and requires a short active-control test.
+SHA-256 inventory checked against staged Git bytes.
+
+### Isolated active-control PASS
+
+On the same clean installed image, a separate 30.145-s /45-sample dual-MT
+window records 2,406 new MIDI packets while the operator turns both jog rims
+and both Browse controls. All22 strict deltas, including runtime admission
+failures, PCM/UAC/ISO loss, remain zero in every captured sample; output-late0.
+The operator confirms both jogs/Browse responsive, clean MAIN and FLX4
+headphones and fluid waveforms. Both decks end stopped, loops OFF. The post-stop
+journal has no new same-boot audio outlier. Raw responses, runner, final
+snapshots, separate operator confirmation and audit extend the evidence
+inventory to 50 files. This qualifies isolated short input pressure; there are
+no loop changes during this window. The earlier admission FAIL remains part of
+history. Combined active controls with loop transitions and long reliability
+on this image remain unrun; no threshold was weakened and no loss counter reset.

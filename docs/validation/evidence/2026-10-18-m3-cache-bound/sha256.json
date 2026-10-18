@@ -1,5 +1,18 @@
 {
   ".gitattributes": "0b95973e94b16d18b68f157cce5564bc6e9821f194d7f1d12b165fb15c5ad672",
+  "active-controls/audit.json": "22768acf176ba0e57043e73f223ed539549fbadb954bbcdf3301e7476a3fa6df",
+  "active-controls/baseline.json": "85b09154f979c4a721cfeb6fe9f38faf821b94eca1bd4d20980a6689133baff8",
+  "active-controls/final-diagnostic-log.txt": "5f4c9c1816ac44a9e15afac48868f21ac6e6e55832a8f5ae59da8a85b7eb92ae",
+  "active-controls/final-firmware.json": "06056d82dde96e427893067e7eba5db5d10002d8b61a8de2957424a31550ff19",
+  "active-controls/final-stopped.json": "06a869da939a0f75e941cb9fa9770751659b7029bd5312047a0b75b72c2c4d85",
+  "active-controls/final-ui-timing.json": "bf0982dcba3ddd1b8812ad958c69ef74a6e9644c9608c4dca3ff6dd922a6c15f",
+  "active-controls/final-usb-bus-trace.json": "fccbccb77fb97a826c01eb3d623c523fadaaf0122183253fc424c4a3c792f52b",
+  "active-controls/firmware.json": "06056d82dde96e427893067e7eba5db5d10002d8b61a8de2957424a31550ff19",
+  "active-controls/initial-ui-timing.json": "c30821dbb9f10b29c0f7337438e42a281e1fed33441c7d1dbfefc0e0ee2e427c",
+  "active-controls/operator.json": "245835ce8e13fc13a0aa46077e5d864e22964e353cda1013dd7bdfd185ceb89b",
+  "active-controls/result.json": "bdcc378f1e990167ad4337d92546a7a14eb52120134a7b4c2fb3e72c25da0813",
+  "active-controls/runner.py": "f22be92e9929eab0c95f5bae18f754e1797d54ae4f9fc5a01a78dbcef4480cb7",
+  "active-controls/status.jsonl": "50acea14c5c63859d5850ad537ad143b10784769ede5cf61c2f8b4a16ab7e9aa",
   "board-check.txt": "87dff8e79200744d42e68af7f46bb2d40d5a955e0250e00a059957c61b9eea08",
   "board_build_identity.json": "09c5e780b0d68fc22ae3ccde40ce160cb3958cb693225410eb437d8748bfd80f",
   "build-summary.txt": "a887c2028731f6bcecd914617f6cf17bf5688ac5a9b4e4a83db78938b3e71cb9",
@@ -35,5 +48,5 @@
   "red.txt": "f6fe103c0efdbfda1f58e4ae7dc15a360cc94a187eb1dcd84e3cd626006c2d43",
   "smoke-library.json": "4985a86ea0ebe1a5817905b774a8199f458ac52a0a16eb4cc3ab727c51e0700d",
   "smoke-prepared.json": "6ab0410db5cea03215d1a7f5e860030f74669d47e2b2aeea0728f552e23ff396",
-  "software.json": "51b5745eb1b3bb903af20f7addd823104b979c844517e81e31233a2c29d0e1fc"
+  "software.json": "fb192f3c3ca107ca0bb2ff67dd55743850f277b3e2c034cfed6794675a0a7236"
 }

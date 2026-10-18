@@ -1,0 +1,11 @@
+{
+  "samples": 45,
+  "duration_s": 30.14535839999735,
+  "all_samples_exact_source_mt_pitch_title_rate_and_strict_counters_valid": true,
+  "strict_deltas_all22zero": true,
+  "midi_packets_delta": 2406,
+  "output_late_delta": 0,
+  "stopped_and_loops_off": true,
+  "operator": "Both jogs/Browse responsive, MAIN/FLX4 headphones clean, waveforms normal for entire short test",
+  "scope": "30-s isolated active-control PASS. No simultaneous loop changes or long qualification."
+}

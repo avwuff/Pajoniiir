@@ -13,8 +13,10 @@ to ordinary P4 builds, then replay the failing source positions/exit phase.
 The ordinary-path bound is RED before and GREEN after repair. Clean `1556e8d7`
 passes host/build/package and is VALID `ota_1`; its100.264-s three-exit replay
 passes all22 strict deltas/late0 and full operator audio/display confirmation.
-Retain that bounded scope; next check independent jog/Browse admission pressure
-under playback. Long reliability and exact causal attribution remain open.
+An isolated30.145-s jog/Browse run also passes all22 strict deltas/late0 with
+2,406 MIDI packets and operator control/audio/display confirmation. Retain both
+bounded scopes: combined active controls with loop changes, long reliability
+and exact causal attribution remain open.
 Build only M3. Clock tests
 do not close UAC timing or admission gates; preserve all failures and criteria.
 

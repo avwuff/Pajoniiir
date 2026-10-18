@@ -25,8 +25,11 @@ qualification, M3 build/package and is VALID `ota_1`. Its exact-source-position
 replay completes 100.264 s /142 samples and three loop exits with all22 strict
 deltas and output-late zero; the operator confirms the full audio/display/exit
 window. Both decks are stopped, loops OFF. This closes the short targeted replay,
-not long reliability or exact causal attribution. Admission under jog/Browse
-remains open; earlier PCM/UAC failures remain preserved.
+not long reliability or exact causal attribution. A separate30.145-s active
+jog/Browse test records2,406 MIDI packets, all22 strict deltas/late0 and operator
+confirmation of both controls/audio/display. Both decks are stopped. Combined
+controls with loop transitions and long qualification remain unrun; earlier
+admission/PCM/UAC failures remain preserved.
 
 The [shared status observer repair](validation/M3_STATUS_OBSERVER_REPAIR_20261018.md)
 removes unbounded internal/DMA largest-block walks from ordinary as well as HS

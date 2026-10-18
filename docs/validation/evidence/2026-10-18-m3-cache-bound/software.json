@@ -11,7 +11,7 @@
   "elf_sha256": "4999176a6b7b1fe9c0f48e7c9687a830b45873d8752afc9a8e1a61d8e7992d93",
   "build_log_sha256": "e0a7c19707e6c347147bc1ba9f8834fd6e6a529dc1400b062818a6e1f1dbe8b2",
   "package": "releases/m3-cache-bound-1556e8d7-20261018/pajoniiir-m3-M3-dev-g1556e8d7dfcb",
-  "hardware_replay": "100.264s/142 samples, three loop exits, all22strict deltas0, outputlate0, operator audio/visual PASS; active-control pressure remains open",
+  "hardware_replay": "100.264s/142 samples three loop exits and separate30.145s/45 samples/2406MIDI active controls pass all22strict deltas0 and outputlate0, operator confirms both. Combined active controls with loop changes and long reliability not qualified.",
   "other_board_builds": "NOT RUN; M3-only iteration",
   "published": false,
   "application_bytes": 2603312,
