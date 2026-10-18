@@ -1,0 +1,1 @@
+PASS main-deck-p4: 2609952 bytes, isolated BSP, LVGL 9.5.0, app identity

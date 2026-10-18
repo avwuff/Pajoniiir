@@ -19,7 +19,10 @@ bounded scopes: a subsequent60.133-s combined loop/control/CUE run also passes
 all22 strict deltas/late0 and operator confirmation with1,951 MIDI packets.
 Input is concentrated before/around loop activation, not loop exit. Sustained
 exit-time input pressure, long reliability and exact causal attribution remain
-open. With M3 short retests passing, verify JC4880/JC1060 software builds next.
+open. JC4880/JC1060 ordinary IDF6.0.2 incremental builds and board verifiers
+now pass clean `2f2b0555`, with unchanged dependency locks and production code
+identical to installed1556e8d7. No JC physical acceptance or hosted CI is inferred.
+Leave installed M3 unchanged; final exact-image timing soak is next, not started.
 Clock tests
 do not close UAC timing or admission gates; preserve all failures and criteria.
 

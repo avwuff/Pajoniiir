@@ -244,3 +244,33 @@ loop-clear wait (22.467 s); it is not an exact timestamp for individual events.
 Per-sample observations preserve this limitation. PFL/MIX routing remains
 outside this test's independently qualified scope. Long reliability, exact
 masking-call attribution and other-board physical acceptance stay open.
+
+## Other-board software verification after M3 short acceptance
+
+JC4880 and JC1060 ordinary ESP-IDF6.0.2 incremental reconfigure/builds pass
+from clean `2f2b05558ccb68238d7228f59e52cd6c7d06e12f`. The diff from installed
+M3 `1556e8d7` contains documentation/evidence only: all production code and
+host-test sources are identical. The shared full host qualification already
+passes on that production code. These are incremental builds, not fresh clean
+builds or hosted CI runs. Hosted CI remains NOT RUN under the user's quota
+restriction. All three committed dependency-lock hashes are unchanged.
+
+| Target | Project | Application bytes | Software result | Current physical scope |
+| --- | --- | ---: | --- | --- |
+| M3 | `main-deck-m3` | 2,603,312 | Existing build/host/package PASS; installed VALID `ota_1` | Three bounded retests above; long soak NOT RUN |
+| JC4880 | `main-deck-p4` | 2,609,952 | Build and board verifier PASS | NOT RUN on this image; earlier smoke remains historical, soak explicitly waived |
+| JC1060 | `main-deck-jc1060` | 2,668,480 | Build and board verifier PASS | NOT RUN; hardware acceptance deferred to Kayrosen |
+
+Both new board verifiers confirm identity, BSP isolation, LVGL9.5.0, ordinary
+feature policy and image budgets, including the fixed `0x380000` limit. Their
+development version is `M2.5-246-g2f2b0555`; neither image is installed or
+published. BIN/ELF hashes, build-log hashes, sdkconfig hashes and verifier
+outputs are in [the software matrix](evidence/2026-10-18-shared-cache-builds/matrix.json).
+The original failed JC1060 configure attempt is retained: it collided with
+JC4880 on Component Manager's shared Git cache `index.lock`. Retrying after
+JC4880 exited succeeds without deleting the lock or changing dependencies.
+
+The installed M3 image remains unchanged. Next is the operator-approved final
+M3 timing soak, left until last; it requires a new exact-image run and separate
+full-window operator confirmation. No new soak, OTA, push, release or public
+channel update is performed by these software checks.

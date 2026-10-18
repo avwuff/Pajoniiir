@@ -32,8 +32,14 @@ controls/loop/CUE run then completes60.133 s /83 samples /1,951 MIDI packets,
 all22 strict deltas/late0 and operator full-test PASS. Input mostly precedes
 loop activation and stops before loop clear; sustained exit-time pressure and
 long qualification remain unrun. Earlier admission/PCM/UAC failures remain
-preserved. Both decks are stopped, loops OFF. JC4880/JC1060 software builds
-are next; their physical gates are unchanged.
+preserved. Both decks are stopped, loops OFF. JC4880/JC1060 ordinary IDF6.0.2
+incremental builds and board verifiers pass clean `2f2b0555` (production code
+identical to installed1556e8d7), 2,609,952 /2,668,480 bytes respectively; all three
+dependency locks unchanged. See the
+[build matrix](validation/evidence/2026-10-18-shared-cache-builds/matrix.json).
+Neither JC image is installed or physically accepted here; JC4880 soak stays
+waived, JC1060 hardware stays deferred to Kayrosen and hosted CI is NOT RUN.
+Final exact-image M3 soak is next and has not started; nothing is published.
 
 The [shared status observer repair](validation/M3_STATUS_OBSERVER_REPAIR_20261018.md)
 removes unbounded internal/DMA largest-block walks from ordinary as well as HS

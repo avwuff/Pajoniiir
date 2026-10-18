@@ -16,8 +16,12 @@ are stopped, loops OFF. Separate active jog/Browse pressure also passes30.145 s,
 The combined60.133-s loop/control/CUE run passes all22 strict deltas/late0,
 1,951 MIDI packets and operator full-test confirmation. Input largely precedes
 activation and stops before exit: sustained exit-time control pressure and long
-reliability remain unrun. Both decks are stopped, loops OFF. Next verify the
-JC4880/JC1060 software builds without claiming their physical acceptance.
+reliability remain unrun. Both decks are stopped, loops OFF. JC4880/JC1060
+ordinary incremental IDF6.0.2 builds and identity/BSP/budget verifiers pass
+clean `2f2b0555` with all three dependency locks unchanged. Their production code
+matches installed1556e8d7; their physical acceptance remains separate. JC4880
+soak is waived, JC1060 hardware deferred, hosted CI NOT RUN. Final M3 soak is
+next but has not started. Keep exact installed image and operator evidence.
 No exact masking-call attribution is implied.
 Re-enable MT only after any required initial track load; avoid reloading an
 already-ready same track between bounded retests. Keep all loss/admission gates
