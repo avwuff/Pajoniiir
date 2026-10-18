@@ -9,8 +9,9 @@ PCM5102A MAIN and FLX4 44.1-kHz headphones are available. The operator confirms
 GUI/touch. One 60.532-s mixed-rate, pitch-zero/MT-OFF smoke receives 2,100 MIDI
 packets; all 22 strict deltas and output-late remain zero. Both-deck loop/CUE
 transitions and the offline all-sample audit pass; both decks end stopped.
-Final operator audio/visual/control confirmation is pending. No new build,
-long soak, push, public beta or channel update occurred.
+The operator confirms both jogs/Browse, clean MAIN/FLX4 headphones, fluid
+waveforms and disturbance-free loop/CUE transitions, closing this exact-image
+short smoke. No new build, long soak, push, public beta or channel update occurred.
 
 The [JC1060 contributor kit](JC1060_CONTRIBUTOR_KIT_20261015.md) is ready locally
 for Kayrosen on the already verified clean `c0ee8152` BIN/ELF. The signed OTA

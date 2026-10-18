@@ -95,8 +95,13 @@ walk or large diagnostic-log request was made during playback.
 The offline independent audit rechecked all samples, all counter paths,
 monotonic uptime/elapsed time, source, storage mount, UAC format/health, track
 identity, pitch/MT, final stopped state and package hashes. It passed.
-Final operator audio/visual/control confirmation is **pending**; telemetry
-alone does not close the physical check.
+The operator's final confirmation on 2026-10-18 closes this short physical
+smoke: both jogs/Browse responded correctly, MAIN and FLX4 headphones remained
+clean, both waveforms were fluid, and loop/CUE transitions had no disturbance.
+The [operator confirmation](evidence/2026-10-18-m3-integration-ota/operator-confirmation.json)
+is retained separately from the original telemetry result, whose pending field
+reflects the time at which the runner finished. GUI/touch were confirmed before
+the smoke. This closes only the exact-image short smoke described here.
 
 ## Evidence and boundaries
 

@@ -1,0 +1,12 @@
+{
+  "date": "2026-10-18",
+  "source_sha": "c0ee81527b4dbd5d83599140aaa106ebcd27772a",
+  "version": "M3-dev-gc0ee81527b4d",
+  "image_elf_sha256": "282250f0665266e2fb4aa8a348dbf5c0e619401d75df5c686f229fb652267340",
+  "scope": "60.532-second ordinary M3 FLX4 mixed-rate smoke",
+  "question_hr": "Jesu li oba joga/Browse reagirala uredno, MAIN i FLX4 slušalice bili čisti, waveformi fluidni te loop/CUE prijelazi prošli bez smetnji?",
+  "answer_hr": "Da, sve je bilo uredno",
+  "operator_audio_visual_controls": "pass",
+  "gui_touch": "confirmed before smoke",
+  "does_not_qualify": ["long soak", "USB reconnect campaign", "negative OTA or rollback", "all controller actions"]
+}

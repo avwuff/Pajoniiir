@@ -12,6 +12,7 @@
   "installed-library.json": "7244b623ac51c4b03add03eb8f01da47df15e0cf99cea1bc1d9a85a4033acc7b",
   "manifest.json": "bc96577189c16b3ea25da14b148723ffc193da4efa338a7f38dac3178366e662",
   "manifest.sig": "c97e4a2885547f698dd76a6210f30f1fd9d2b780b2589457ce4487616b5b3af2",
+  "operator-confirmation.json": "bd047c54bdf1650e32f3ebe0948174a95e1e27e8a289c2e9fa8db03578cf4f28",
   "result.json": "6332795b28ca9addb2bb03ebe752d5f8484e75c2e6d8d398b8228471360a68b2",
   "smoke.py": "ffa3698a5ee97653e65211a6204444f48c039ba2ae34affbadfec81ee2b17026",
   "status.jsonl": "525fafe45ee9358a1b22fde53a8da6acc65666fdc7c7dabe4b6c42bea17fc8a3"
