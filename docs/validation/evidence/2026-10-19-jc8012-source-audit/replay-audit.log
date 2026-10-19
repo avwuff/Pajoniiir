@@ -1,0 +1,12 @@
+{
+  "panel_entries": 204,
+  "panel_wire_sha256": "3bbccf59f487f54eb71bbe027ffd30f4e6899757b536c3cc1672f882e104c414",
+  "public_panel_equals_donor": true,
+  "official_old_entries": 197,
+  "firmware_entries": 4356,
+  "firmware_differing_pairs": 2,
+  "syntax_probe_exit": 0,
+  "synthetic_firmware_only": true,
+  "linked_image": false,
+  "hardware": "NOT RUN"
+}

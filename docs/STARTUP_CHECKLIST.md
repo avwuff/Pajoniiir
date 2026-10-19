@@ -1,5 +1,12 @@
 # P4 operation and release checklist
 
+The [JC8012 source audit](reviews/2026-10-19-jc8012-source-audit.md) closes PR54's
+merge/CI record, not a new hardware gate. A published Apache-2.0 panel candidate
+is sequence-equivalent to the donor; it is still inactive. Do not bundle the
+registry touch firmware based on its MIT package label: NOTICE excludes it.
+The synthetic-wrapper syntax probe is not an installable component or firmware
+acceptance. Keep IDF6.0.2 and the JC1060 SD experiment OFF in ordinary images.
+
 For [JC board preparation](reviews/2026-10-19-jc-board-preparation.md), leave
 `PAJONIIIR_SD_COLD_POWER_EXPERIMENT` OFF in ordinary builds. Its JC1060-only
 candidate needs a fresh sdkconfig, explicit build/verifier admission and later

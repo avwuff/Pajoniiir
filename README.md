@@ -57,8 +57,9 @@ The disabled [new UI prototype](firmware/p4-core/components/ui_next/README.md)
 uses demo data and is not selected by any production target.
 
 [JC8012 integration preparation](firmware/boards/jc8012p4a1/README.md) provides
-a private PPA preparation tool; the board is not an active target while touch
-and panel-table distribution terms remain unresolved. The separate
+a private PPA preparation tool. The board remains inactive while touch firmware
+distribution is unresolved; a published panel-table candidate is documented in
+the [source audit](docs/reviews/2026-10-19-jc8012-source-audit.md). The separate
 [JC1060 SD cold-power experiment](firmware/boards/jc1060/SD_COLD_POWER_EXPERIMENT.md)
 is opt-in and OFF in production, pending exact-board hardware acceptance.
 

@@ -1,0 +1,37 @@
+{
+  "archive_sha256": "6d10bb0f75cf37ca03346b8262bf3558e183e3e8b15d1588e36f5252bc21a9ea",
+  "archive_bytes": 33818,
+  "file_count": 16,
+  "component_root": "esp_lcd_touch_gsl3680/",
+  "files": [
+    {
+      "path": "esp_lcd_touch_gsl3680/NOTICE",
+      "sha256": "185d0f657565be03f0b3caa48a37d4902e90a43685c86f3e216af45e15f5c5f9",
+      "matches_pinned_repository": true
+    },
+    {
+      "path": "esp_lcd_touch_gsl3680/LICENSE",
+      "sha256": "59793c9e812e026dfe19bb8b84bab77c9da79b8474c2ba21b8e7dfe2da63fb70",
+      "matches_pinned_repository": true
+    },
+    {
+      "path": "esp_lcd_touch_gsl3680/idf_component.yml",
+      "sha256": "a7da41f81b2d46d29f3dc42961e9a0faaa894d90a21820b1d65f1fa0d4b71f61",
+      "matches_pinned_repository": false
+    },
+    {
+      "path": "esp_lcd_touch_gsl3680/esp_lcd_touch_gsl3680.c",
+      "sha256": "efd6723324d325a5877b4411b954ff9f5b348032dc08f539d81d8ec7fecda824",
+      "matches_pinned_repository": true
+    },
+    {
+      "path": "esp_lcd_touch_gsl3680/private_include/gsl3680_firmware.h",
+      "sha256": "4bd01b8a3dea88cb82c0db2fd94759f7412754eff6851b4c1b8f2f0ceae48f4c",
+      "matches_pinned_repository": true
+    }
+  ],
+  "manifest_dependencies_equal": true,
+  "manifest_license_equal": true,
+  "archive_pins_repository_commit": "2afaa070e4e35a5b3ff9c54cfba7cb41c24a4f81",
+  "manifest_byte_difference": "YAML ordering, repository URL scheme and injected commit_sha"
+}

@@ -2,6 +2,18 @@
 
 Status: **current documentation authority, reconciled 2026-10-19**.
 
+PR54 is merged into `master` as `37d5bddb`; its reviewed head and merge both
+pass all thirteen migration jobs, including SD-power. Master also passes
+documentation, Pages and separate dual-USB workflows. The
+[JC8012 source audit](reviews/2026-10-19-jc8012-source-audit.md) finds a published
+Apache-2.0 panel-table candidate whose 204 commands/data/delays equal the donor.
+The registry MIT touch wrapper passes a synthetic-payload syntax-only probe on
+IDF6.0.2, but its NOTICE excludes firmware rights and its manifest requires
+IDF6.1. The actual payload differs from the donor in two values. No payload,
+driver, BSP or framework upgrade is imported by this research; touch distribution
+and all new-board hardware gates remain open. Production defaults and installed
+images are unchanged.
+
 The [JC board preparation](reviews/2026-10-19-jc-board-preparation.md) isolates
 the JC8012 PPA preparation from all three production targets and implements
 an opt-in JC1060 first-mount SD power sequence. Clean `5a005092` passes full

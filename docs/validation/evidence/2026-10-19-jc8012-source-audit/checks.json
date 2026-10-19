@@ -1,0 +1,22 @@
+{
+  "merged_pr": 54,
+  "merge_commit": "37d5bddb663b97a2d893bade2175afe6392788a1",
+  "merge_all_4_workflows": "success",
+  "merge_migration_jobs": 13,
+  "published_panel_candidate_equivalent": true,
+  "panel_entries": 204,
+  "touch_wrapper_syntax_exit": 0,
+  "synthetic_payload_only": true,
+  "replay_exit": 0,
+  "runtime_source_changes": false,
+  "controller_firmware_imported": false,
+  "dependency_lock_changes": false,
+  "full_firmware_build": "NOT RUN (no production changes)",
+  "hardware": "NOT RUN",
+  "ota": "NOT RUN",
+  "documentation_exit": 0,
+  "documentation_files": 163,
+  "retired_documentation_paths_checked": 134,
+  "readme_images_preserved": true,
+  "evidence_payloads_excluded": true
+}
