@@ -10,8 +10,9 @@ of this repair is **NOT RUN**. Install matching post-integration firmware before
 this profile; the published beta2 firmware does not implement `pfl_set`.
 
 The observations below retain their historical donor scope. The old embedded
-`numark-dj2go2-touch-profile.patch` is provenance only; do not apply it over the
-canonical implementation. Its PFL mapping predates this repair. The focused
+`numark-dj2go2-touch-profile.patch` remains available in donor commit `86d6b412`
+history and is removed from the active tree; do not apply it over the canonical
+implementation. Its PFL mapping predates this repair. The focused
 audio fixture is reconstructed from the donor's descriptor summary, not a raw
 USB capture, and does not replace hardware audio/level/LED qualification.
 
