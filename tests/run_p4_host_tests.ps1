@@ -3170,6 +3170,113 @@ $tests = @(
         )
     },
     @{
+        Name = "ui_next_layout"
+        Dir = "tests/ui_next_layout"
+        Target = "test_ui_next_layout.exe"
+        Args = @(
+            "-Wall", "-Wextra", "-Wpedantic", "-Werror=implicit-function-declaration", "-std=c99",
+            "-I../../firmware/p4-core/components/ui_next/include",
+            "-o", "test_ui_next_layout.exe",
+            "test_ui_next_layout.c",
+            "../../firmware/p4-core/components/ui_next/ui_next_layout.c"
+        )
+    },
+    @{
+        Name = "ui_next_wave"
+        Dir = "tests/ui_next_wave"
+        Target = "test_ui_next_wave.exe"
+        Args = @(
+            "-Wall", "-Wextra", "-Wpedantic", "-Werror=implicit-function-declaration", "-std=c99",
+            "-I../../firmware/p4-core/components/ui_next/include",
+            "-o", "test_ui_next_wave.exe",
+            "test_ui_next_wave.c",
+            "../../firmware/p4-core/components/ui_next/ui_next_wave.c",
+            "../../firmware/p4-core/components/ui_next/ui_next_theme.c",
+            "-lm"
+        )
+    },
+    @{
+        Name = "ui_next_key"
+        Dir = "tests/ui_next_key"
+        Target = "test_ui_next_key.exe"
+        Args = @(
+            "-Wall", "-Wextra", "-Wpedantic", "-Werror=implicit-function-declaration", "-std=c99",
+            "-I../../firmware/p4-core/components/ui_next/include",
+            "-o", "test_ui_next_key.exe",
+            "test_ui_next_key.c",
+            "../../firmware/p4-core/components/ui_next/ui_next_key.c",
+            "-lm"
+        )
+    },
+    @{
+        Name = "ui_next_text"
+        Dir = "tests/ui_next_text"
+        Target = "test_ui_next_text.exe"
+        Args = @(
+            "-Wall", "-Wextra", "-Wpedantic", "-Werror=implicit-function-declaration", "-std=c99",
+            "-I../../firmware/p4-core/components/ui_next/include",
+            "-o", "test_ui_next_text.exe",
+            "test_ui_next_text.c",
+            "../../firmware/p4-core/components/ui_next/ui_next_text.c",
+            "-lm"
+        )
+    },
+    @{
+        Name = "ui_next_view"
+        Dir = "tests/ui_next_view"
+        Target = "test_ui_next_view.exe"
+        Args = @(
+            "-Wall", "-Wextra", "-Wpedantic", "-Werror=implicit-function-declaration", "-std=c99",
+            "-I../../firmware/p4-core/components/ui_next/include",
+            "-o", "test_ui_next_view.exe",
+            "test_ui_next_view.c",
+            "../../firmware/p4-core/components/ui_next/ui_next_view.c",
+            "../../firmware/p4-core/components/ui_next/ui_next_key.c",
+            "../../firmware/p4-core/components/ui_next/ui_next_text.c",
+            "-lm"
+        )
+    },
+    @{
+        Name = "ui_next_format"
+        Dir = "tests/ui_next_format"
+        Target = "test_ui_next_format.exe"
+        Args = @(
+            "-Wall", "-Wextra", "-Wpedantic", "-Werror=implicit-function-declaration", "-std=c99",
+            "-I../../firmware/p4-core/components/ui_next/include",
+            "-o", "test_ui_next_format.exe",
+            "test_ui_next_format.c",
+            "../../firmware/p4-core/components/ui_next/ui_next_format.c",
+            "-lm"
+        )
+    },
+    @{
+        Name = "ui_next_sync"
+        Dir = "tests/ui_next_sync"
+        Target = "test_ui_next_sync.exe"
+        Args = @(
+            "-Wall", "-Wextra", "-Wpedantic", "-Werror=implicit-function-declaration", "-std=c99",
+            "-I../../firmware/p4-core/components/ui_next/include",
+            "-o", "test_ui_next_sync.exe",
+            "test_ui_next_sync.c",
+            "../../firmware/p4-core/components/ui_next/ui_next_sync.c",
+            "../../firmware/p4-core/components/ui_next/ui_next_wave.c",
+            "-lm"
+        )
+    },
+    @{
+        Name = "ui_next_color"
+        Dir = "tests/ui_next_color"
+        Target = "test_ui_next_color.exe"
+        Args = @(
+            "-Wall", "-Wextra", "-Wpedantic", "-Werror=implicit-function-declaration", "-std=c99",
+            "-I../../firmware/p4-core/components/ui_next/include",
+            "-o", "test_ui_next_color.exe",
+            "test_ui_next_color.c",
+            "../../firmware/p4-core/components/ui_next/ui_next_color.c",
+            "-lm"
+        )
+    },
+    @{
         Name = "ui_overview_window"
         Dir = "tests/ui_overview_window"
         Target = "test_ui_overview_window.exe"
