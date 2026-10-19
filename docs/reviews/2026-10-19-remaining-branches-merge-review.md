@@ -46,19 +46,21 @@ frozen snapshot, before adding this documentation-only review commit.
 
 ## Findings that affect the merge decision
 
-### P1: the JC8012 PPA backport also enters JC4880's component discovery
+### P1: the JC8012 PPA backport also enters JC4880/M3 component discovery
 
 Commit `eeef2f0d` puts an entire replacement IDF component in
 `firmware/p4-core/components/esp_driver_ppa/`. Its CMake guard is
-`CONFIG_SOC_PPA_SUPPORTED`, not a JC8012 board guard. The existing JC4880
-entrypoint scans the entire `p4-core/components` directory using
+`CONFIG_SOC_PPA_SUPPORTED`, not a JC8012 board guard. The existing JC4880 and M3
+entrypoints scan the entire `p4-core/components` directory using
 `EXTRA_COMPONENT_DIRS`. ESP-IDF 6.0.2 discovers its child components and lets
 project components override IDF components of the same name.
 
-Consequently, a complete merge exposes JC4880 to this replacement even though
-the donor describes it as board-specific. M3 and JC1060 use explicit component
-lists; do not generalize the JC4880 finding to every target. This is a verified
-source/build-selection issue; a merged firmware configure/build was not run.
+Consequently, a complete merge exposes JC4880 and M3 to this replacement even
+though the donor describes it as board-specific. JC1060 uses an explicit
+component list. The initial review incorrectly included M3 in that allow-list
+statement; inspection of the same frozen M3 CMake source during integration
+corrects its scope here. This is a verified source/build-selection issue;
+a merged JC8012 firmware configure/build was not run.
 
 Keep the override inside a board-scoped component directory or provide an
 explicit, fail-closed selection contract before integration. Verify the selected

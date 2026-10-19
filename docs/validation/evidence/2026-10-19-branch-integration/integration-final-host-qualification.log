@@ -1,0 +1,2381 @@
+==> build deck_net_sync
+==> run deck_net_sync
+deck_net_sync: all tests passed
+==> build djlink_sync
+==> run djlink_sync
+djlink sync: loss/reorder/epoch/handoff/status/beat tests passed
+==> build djlink_test_pdb
+==> run djlink_test_pdb
+[I][pdb] Opened PDB: 20480 B, page=4096, tables=2, pages=5
+[I][pdb] Name table 0x02: 0 entries
+[I][pdb] Name table 0x03: 0 entries
+[I][pdb] Name table 0x05: 0 entries
+[I][pdb] Loaded: 29 tracks, 0 artists, 0 albums, 0 keys
+all dj_link_pdb tests passed
+==> build djlink_test_link_anlz
+==> run djlink_test_link_anlz
+[I][anlz] PPTH: "/sd/djlcache/0A1B2C3D.mp3"
+[I][anlz] PQTZ: 300 beats, BPM=124 (raw=12400)
+[I][anlz] PWAV: 400/400 bytes
+[I][anlz] DAT transaction published: bpm=124 beats=300 cues=0
+[I][anlz] PPTH: "/sd/djlcache/0A1B2C3D.mp3"
+[I][anlz] PQTZ: 300 beats, BPM=124 (raw=12400)
+[I][anlz] PWAV: 400/400 bytes
+[I][anlz] DAT transaction published: bpm=124 beats=300 cues=0
+[I][anlz] PWV3: 14250 bytes high-res waveform
+[I][anlz] PPTH: "/sd/djlcache/0A1B2C3D.mp3"
+[I][anlz] PWAV: 400/400 bytes
+[I][anlz] DAT transaction published: bpm=0 beats=0 cues=0
+[I][anlz] PPTH: "/sd/djlcache/0A1B2C3D.mp3"
+[I][anlz] PQTZ: 300 beats, BPM=124 (raw=12400)
+[I][anlz] DAT transaction published: bpm=124 beats=300 cues=0
+[I][anlz] PPTH: "/sd/djlcache/1.mp3"
+[I][anlz] PQTZ: 16 beats, BPM=120 (raw=12000)
+[I][anlz] DAT transaction published: bpm=120 beats=16 cues=0
+[I][anlz] PPTH: "/sd/djlcache/M.mp3"
+[I][anlz] PCOB: 0 cue/loop entries
+[I][anlz] PCOB: 0 cue/loop entries
+[I][anlz] DAT transaction published: bpm=0 beats=0 cues=0
+[I][anlz] PPTH: "/sd/djlcache/M.mp3"
+[I][anlz] PCOB: 0 cue/loop entries
+[I][anlz] PCOB: 0 cue/loop entries
+[I][anlz] DAT transaction published: bpm=0 beats=0 cues=0
+[I][anlz] PPTH: "/sd/test.mp3"
+[I][anlz] PWAV: 400/400 bytes
+[I][anlz] DAT transaction published: bpm=0 beats=0 cues=0
+[I][anlz] PPTH: "/sd/test.mp3"
+[I][anlz] PWAV: 400/400 bytes
+[I][anlz] DAT transaction published: bpm=0 beats=0 cues=0
+[I][anlz] PPTH: "/sd/test.mp3"
+[I][anlz] PWAV: 400/400 bytes
+[I][anlz] DAT transaction published: bpm=0 beats=0 cues=0
+[I][anlz] PPTH: "/sd/test.mp3"
+[I][anlz] PWAV: 400/400 bytes
+[I][anlz] DAT transaction published: bpm=0 beats=0 cues=0
+[I][anlz] PPTH: "/sd/test.mp3"
+[I][anlz] PWAV: 400/400 bytes
+[I][anlz] DAT transaction published: bpm=0 beats=0 cues=0
+[I][anlz] PWV3: 300 bytes high-res waveform
+[I][anlz] PWV3: 300 bytes high-res waveform
+[W][anlz] PWV4 ignored: 2
+[I][anlz] PWV3: 900 bytes high-res waveform
+[I][anlz] PWV3: 900 bytes high-res waveform
+[I][anlz] PPTH: "/sd/djlcache/X.mp3"
+[I][anlz] PQTZ: 16 beats, BPM=128 (raw=12800)
+[I][anlz] PCOB: 2 cue/loop entries
+[I][anlz] PCOB: 2 cue/loop entries
+[I][anlz] DAT transaction published: bpm=128 beats=16 cues=2
+[I][anlz] PPTH: "/sd/djlcache/X.mp3"
+[I][anlz] PQTZ: 16 beats, BPM=128 (raw=12800)
+[I][anlz] PCOB: 0 cue/loop entries
+[I][anlz] PCOB: 0 cue/loop entries
+[I][anlz] DAT transaction published: bpm=128 beats=16 cues=0
+[I][anlz] PPTH: "/sd/djlcache/X.mp3"
+[I][anlz] PQTZ: 16 beats, BPM=128 (raw=12800)
+[I][anlz] DAT transaction published: bpm=128 beats=16 cues=0
+all dj_link_anlz tests passed
+==> build djlink_cache
+==> run djlink_cache
+dj_link_cache: identity A/B, integrity, interruption, space and pins PASS
+==> build djlink_browse
+==> run djlink_browse
+PASS browse ownership, cap, detail window, stale epoch, cancel, partial failure, incoming load routing
+==> build djlink_db_client
+==> run djlink_db_client
+PASS DB client fragments, 2000-row cap, playlists, malformed replies, cancel/epochs, timeout
+==> build djlink_discovery
+==> run djlink_discovery
+PASS dual-player claim, all 64 occupancy sets, conflict, epochs, bounds, wrap
+==> build djlink_test
+==> run djlink_test
+all djlink tests passed
+==> build djlink_test2
+==> run djlink_test2
+all djlink tests passed
+==> build test_db_bounds
+==> run test_db_bounds
+PASS DB short/empty fields, tag mismatch, truncation, payload bounds and TCP prefix consumption
+==> build deck_load_lock
+==> run deck_load_lock
+deck_load_lock: all tests passed
+==> build audio_loop_resize
+==> run audio_loop_resize
+  sweep: 69920 cases, 47936 cuts, 11362 jumps
+audio_loop_resize: all tests passed
+==> build audio_loop_prefix
+==> run audio_loop_prefix
+PASS loop prefix: slow seek runway, source continuity, short laps, stale/missing capture
+==> build audio_seek_skip
+==> run audio_seek_skip
+audio_seek_skip: all tests passed
+==> build audio_track_length
+==> run audio_track_length
+audio_track_length: all tests passed
+==> build audio_cue_preroll
+==> run audio_cue_preroll
+audio_cue_preroll tests passed
+==> build audio_pvbr_validation
+==> run audio_pvbr_validation
+audio_pvbr_validation tests passed
+==> build ui_beat_indicator
+==> run ui_beat_indicator
+ui_beat_indicator tests passed
+==> build audio_load_validation_gate
+==> run audio_load_validation_gate
+audio load validation gate tests passed
+==> build library_validation_gate
+==> run library_validation_gate
+library validation gate tests passed
+==> build ui_load_gate
+==> run ui_load_gate
+TESTS_RUN=16
+ui_load_gate tests passed
+    TESTS_RUN=16 (floor 12)
+==> build ui_track_duration
+==> run ui_track_duration
+ui_track_duration tests passed
+==> build audio_eof_policy
+==> run audio_eof_policy
+audio_eof_policy tests passed
+==> build audio_start_gate
+==> run audio_start_gate
+audio_start_gate tests passed
+==> build audio_output_bookkeeping
+==> run audio_output_bookkeeping
+audio_output_bookkeeping tests passed
+==> build audio_keylock
+==> run audio_keylock
+key-lock crossings=64 consumed=4505
+audio_keylock tests passed
+==> build audio_keylock_m3
+==> run audio_keylock_m3
+48->44.1 MT FIR evaluations=10885 for 10000 output frames
+key-lock crossings=65 consumed=4505
+audio_keylock tests passed
+==> build audio_dsp_jc_memory
+==> run audio_dsp_jc_memory
+PASS JC production DSP memory: keylock=3256 resampler=32, steady PCM and clock preserved
+==> build audio_resampler_antialias
+==> run audio_resampler_antialias
+PASS antialias: suppressed 30 kHz alias, unchanged source clock
+==> build bsp_scanout
+==> run bsp_scanout
+TESTS_RUN=65969
+bsp_scanout tests passed
+==> build audio_keylock_search
+==> run audio_keylock_search
+search ratio=0.250000 tempo=0.950 missing=0 failures=0 max_reads=38 limit=79 max_candidates=15
+search ratio=0.250000 tempo=1.050 missing=0 failures=0 max_reads=34 limit=79 max_candidates=15
+search ratio=0.250000 tempo=0.800 missing=1 failures=1 max_reads=38 limit=79 max_candidates=15
+search ratio=0.918750 tempo=0.950 missing=0 failures=0 max_reads=48 limit=184 max_candidates=15
+search ratio=0.918750 tempo=1.050 missing=0 failures=0 max_reads=48 limit=184 max_candidates=15
+search ratio=0.918750 tempo=0.800 missing=1 failures=5 max_reads=51 limit=184 max_candidates=15
+search ratio=1.000000 tempo=0.950 missing=0 failures=0 max_reads=50 limit=196 max_candidates=15
+search ratio=1.000000 tempo=1.050 missing=0 failures=0 max_reads=51 limit=196 max_candidates=15
+search ratio=1.000000 tempo=0.800 missing=1 failures=5 max_reads=52 limit=196 max_candidates=15
+search ratio=1.088435 tempo=0.950 missing=0 failures=0 max_reads=50 limit=210 max_candidates=15
+search ratio=1.088435 tempo=1.050 missing=0 failures=0 max_reads=52 limit=210 max_candidates=15
+search ratio=1.088435 tempo=0.800 missing=1 failures=6 max_reads=52 limit=210 max_candidates=15
+search ratio=2.176871 tempo=0.950 missing=0 failures=0 max_reads=52 limit=379 max_candidates=15
+search ratio=2.176871 tempo=1.050 missing=0 failures=0 max_reads=48 limit=379 max_candidates=15
+search ratio=2.176871 tempo=0.800 missing=1 failures=13 max_reads=52 limit=379 max_candidates=15
+search ratio=4.000000 tempo=0.950 missing=0 failures=0 max_reads=52 limit=664 max_candidates=15
+search ratio=4.000000 tempo=1.050 missing=0 failures=0 max_reads=52 limit=664 max_candidates=15
+search ratio=4.000000 tempo=0.800 missing=1 failures=16 max_reads=52 limit=664 max_candidates=15
+audio_keylock search read budget tests passed
+==> build audio_keylock_tempo
+==> run audio_keylock_tempo
+tempo response 48000->48000 factor=1.000 onsets=20/20 max_error=0.000ms
+tempo response 44100->48000 factor=1.000 onsets=20/20 max_error=0.018ms
+tempo response 48000->44100 factor=1.000 onsets=20/20 max_error=0.018ms
+tempo response 48000->48000 factor=1.050 onsets=21/21 max_error=1.188ms
+tempo response 44100->48000 factor=1.050 onsets=21/21 max_error=1.171ms
+tempo response 48000->44100 factor=1.050 onsets=21/21 max_error=1.319ms
+tempo response 48000->48000 factor=0.950 onsets=20/20 max_error=0.870ms
+tempo response 44100->48000 factor=0.950 onsets=20/20 max_error=0.868ms
+tempo response 48000->44100 factor=0.950 onsets=20/20 max_error=1.362ms
+tempo response 48000->48000 factor=1.005 onsets=21/21 max_error=0.252ms
+tempo response 44100->48000 factor=1.005 onsets=21/21 max_error=0.251ms
+tempo response 48000->44100 factor=1.005 onsets=21/21 max_error=0.055ms
+tempo response 48000->48000 factor=0.800 onsets=19/19 max_error=2.375ms
+tempo response 44100->48000 factor=0.800 onsets=19/19 max_error=2.794ms
+tempo response 48000->44100 factor=0.800 onsets=19/19 max_error=2.262ms
+tempo response 48000->48000 factor=1.200 onsets=22/22 max_error=1.910ms
+tempo response 44100->48000 factor=1.200 onsets=22/22 max_error=1.895ms
+tempo response 48000->44100 factor=1.200 onsets=22/22 max_error=2.075ms
+audio_keylock acoustic tempo response tests passed
+==> build audio_keylock_soak
+==> run audio_keylock_soak
+deck1 frames=240000 consumed=275999 expected=275999 drift=0.0 frequency=361.600Hz expected_frequency=368.408Hz error=1.848% peak=9088 max_jump=574 clicks=0 clipped=0 origin=275350
+deck2 frames=240000 consumed=187424 expected=187424 drift=0.0 frequency=409.600Hz expected_frequency=408.458Hz error=0.280% peak=9665 max_jump=618 clicks=0 clipped=0 origin=178100
+dual-deck virtual_duration=5.0s mixed_peak=18742 mixed_clipped=0 host_cpu_time=0.020s
+audio_keylock dual-deck soak passed
+==> build audio_diag
+==> run audio_diag
+audio_diag tests passed
+==> build audio_mixer
+==> run audio_mixer
+audio_mixer tests passed
+==> build audio_format
+==> run audio_format
+audio_format tests passed
+==> build audio_recorder_wav
+==> run audio_recorder_wav
+=== audio_recorder_wav tests ===
+== build_header ==
+== patch_sizes ==
+== format_segment ==
+== recover_data_bytes ==
+audio_recorder_wav tests passed
+==> build audio_recorder_pipeline
+==> run audio_recorder_pipeline
+=== audio_recorder_pipeline tests ===
+== ring push/peek/consume ==
+== ring full-drop accounting ==
+== ring wrap integrity ==
+== writer drain (all) ==
+== writer drain (sink error mid-batch) ==
+== writer respects max_blocks ==
+audio_recorder_pipeline tests passed
+==> build audio_recorder_stop_gate
+==> run audio_recorder_stop_gate
+TESTS_RUN=17
+audio_recorder_stop_gate tests passed
+    TESTS_RUN=17 (floor 17)
+==> build audio_recorder_finalize
+==> run audio_recorder_finalize
+TESTS_RUN=15
+audio_recorder_finalize tests passed
+    TESTS_RUN=15 (floor 15)
+==> build audio_recorder_sink
+==> run audio_recorder_sink
+PASS actual sink recovery: sync/rename failures retain partial, corrupt header rejected, frame truncation, no overwrite
+==> build sd_dma
+==> run sd_dma
+PASS actual SD host bounce policy, mount allocation failure, reuse and read/write timing wrappers
+==> build sd_idle_wrapper_on
+==> run sd_idle_wrapper_on
+PASS enabled SD wrapper, SPI passthrough and one-tick yielding
+==> build sd_idle_wrapper_off
+==> run sd_idle_wrapper_off
+PASS disabled SD wrapper uses original implementation for SD and SPI
+==> build sd_idle_wait
+==> run sd_idle_wait
+PASS bounded SD idle polling, immediate ready, deadlines, errors and counters
+==> build audio_recorder_runtime
+==> run audio_recorder_runtime
+PASS actual recorder overflow, START/STOP ownership, download exclusion, disk-full, IO/finalize faults and timeout retention
+==> build sd_io_gate
+==> run sd_io_gate
+=== sd_io_gate tests ===
+== admit: recorder idle ==
+== admit: recorder active ==
+== gate mutual exclusion (standalone) ==
+== recorder-active flag ==
+sd_io_gate tests passed
+==> build service_log
+==> run service_log
+=== service_log tests ===
+== event names + severity ==
+== sanitize ==
+== format_record ==
+== format_header ==
+== should_rotate ==
+service_log tests passed
+==> build media_io_gate_concurrent
+==> run media_io_gate_concurrent
+Host media gate four-thread exclusion, timeout and delayed acquisition PASS
+==> build audio_wav_decoder
+==> run audio_wav_decoder
+audio_wav_decoder tests passed
+==> build audio_engine
+==> run audio_engine
+=== audio_engine tests ===
+Build: AUDIO_ENGINE_PC_TEST
+
+[Test 1] Init and uninitialised-state guards
+  PASS: play before init returns INVALID_STATE
+  PASS: pause before init returns INVALID_STATE
+  PASS: seek before init returns INVALID_STATE
+  PASS: is_playing false before init
+  PASS: position_ms 0 before init
+[I][audio] PCM timeline D0: PSRAM canonical, capacity=192000 frames
+[I][audio] PCM timeline D1: PSRAM canonical, capacity=192000 frames
+  PASS: audio_engine_init returns ESP_OK
+  PASS: decoder contention thread starts
+  PASS: D1 display observation rejects held decoder mutex immediately
+  PASS: busy D1 observation preserves caller snapshot
+  PASS: D2 display observation does not wait behind other deck decode
+  PASS: busy D2 observation preserves caller snapshot
+  PASS: display observation validates deck before lock
+  PASS: display observation validates destination before lock
+  PASS: display observations finish while decoder remains held
+  PASS: display snapshot resumes after decoder releases mutex
+  PASS: display observation uses production status/session/position semantics
+  PASS: display snapshot resumes after decoder releases mutex
+  PASS: display observation uses production status/session/position semantics
+
+[Test 2] Load non-existent file
+[E][audio] Cannot open: /nonexistent/file.mp3
+  PASS: load missing file returns NOT_FOUND
+  PASS: deck status readable after failed load
+  PASS: not playing after failed load
+  PASS: state is ERROR after failed load
+  PASS: load progress is reset after failed load
+  PASS: last error is NOT_FOUND after failed load
+
+[Test 3] Pitch factor calculation
+  PASS: raw pitch 0 maps to +10%
+  PASS: raw pitch 8192 maps to 0%
+  PASS: raw pitch 16383 maps to -10%
+  PASS: set_pitch(8192) no crash
+  PASS: set_pitch(0) no crash
+  PASS: set_pitch(16383) no crash
+  PASS: set_pitch_percent(+16%) no crash
+  PASS: deck 1 set_pitch_percent(-6%) no crash
+  PASS: non-finite pitch percent falls back to normal speed
+
+[Test 4] Mixer state API
+[I][audio] PCM timeline D0: PSRAM canonical, capacity=192000 frames
+[I][audio] PCM timeline D1: PSRAM canonical, capacity=192000 frames
+  PASS: audio_engine_init resets mixer state
+  PASS: default deck 0 gain is unity
+  PASS: default deck 1 gain is unity
+  PASS: default master trim is unity
+  PASS: default controller master volume is max
+  PASS: deck 0 pregain defaults to center
+  PASS: deck 1 pregain defaults to center
+  PASS: invalid pregain deck returns INVALID_ARG
+  PASS: deck 0 pregain accepts center raw value
+  PASS: center pregain leaves deck 0 gain at unity
+  PASS: deck 0 pregain accepts minimum raw value
+  PASS: minimum pregain attenuates deck 0 to quarter gain
+  PASS: deck 0 pregain accepts maximum raw value
+  PASS: maximum pregain boosts deck 0 to +6 dB scalar
+  PASS: deck 0 pregain restores center before other mixer tests
+  PASS: deck 0 channel volume accepts center raw value
+  PASS: deck 0 channel volume affects output gain
+  PASS: deck 1 remains unity
+  PASS: deck 1 channel volume accepts zero raw value
+  PASS: deck 1 channel volume mutes output gain
+  PASS: invalid mixer deck returns INVALID_ARG
+  PASS: deck 1 channel volume accepts max raw value
+  PASS: crossfader accepts max raw value
+  PASS: crossfader right mutes deck 0
+  PASS: crossfader right keeps deck 1
+  PASS: master trim accepts attenuation
+  PASS: master trim keeps muted deck muted
+  PASS: master trim attenuates audible deck gain
+  PASS: master trim clamps boost to unity
+  PASS: master trim never boosts above unity
+  PASS: master trim clamps negative gain to mute
+  PASS: master trim clamps negative gain to zero
+  PASS: master trim rejects NaN as mute
+  PASS: master trim never stores NaN
+  PASS: master trim can restore unity
+  PASS: controller master volume accepts center raw value
+  PASS: controller master volume attenuates audible deck gain
+  PASS: controller master volume restores full raw value
+  PASS: snapshot captures deck 0 raw channel fader
+  PASS: snapshot captures deck 1 raw channel fader
+  PASS: snapshot captures raw crossfader
+  PASS: snapshot captures deck 0 pregain raw value
+  PASS: snapshot captures deck 1 pregain raw value
+  PASS: snapshot captures deck 0 pregain scalar
+  PASS: snapshot captures deck 1 pregain scalar
+  PASS: snapshot captures master trim
+  PASS: snapshot captures controller master volume raw value
+  PASS: snapshot captures deck 0 output gain
+  PASS: snapshot captures deck 1 output gain
+  PASS: deck 0 low EQ defaults to center
+  PASS: deck 0 low EQ accepts raw value
+  PASS: deck 1 high EQ accepts max raw value
+  PASS: deck 0 low EQ stores raw value
+  PASS: deck 1 high EQ stores raw value
+  PASS: invalid EQ deck returns INVALID_ARG
+  PASS: invalid EQ band returns INVALID_ARG
+  PASS: deck 0 filter defaults to center
+  PASS: deck 0 filter accepts raw value
+  PASS: deck 1 filter accepts raw value
+  PASS: deck 0 filter stores raw value
+  PASS: invalid filter deck returns INVALID_ARG
+  PASS: Smart CFX defaults off
+  PASS: Smart CFX toggles on
+  PASS: Smart CFX state reads on
+  PASS: Smart Fader defaults off
+  PASS: Smart Fader toggles on
+  PASS: Smart Fader state reads on
+  PASS: snapshot captures deck 0 low EQ raw value
+  PASS: snapshot captures deck 1 high EQ raw value
+  PASS: snapshot captures deck 0 filter raw value
+  PASS: snapshot captures deck 1 filter raw value
+  PASS: snapshot captures Smart CFX state
+  PASS: snapshot captures Smart Fader state
+  PASS: Smart CFX accepts near-center filter raw
+  PASS: snapshot keeps raw Smart CFX filter value
+  PASS: Smart CFX softens near-center low-pass travel
+  PASS: Smart CFX remains on low-pass side
+  PASS: Beat FX filter defaults off for deck 0
+  PASS: Beat FX filter defaults off for deck 1
+  PASS: Beat FX filter accepts CH2 target
+  PASS: Beat FX filter leaves untargeted deck 0 off
+  PASS: Beat FX filter enables targeted deck 1
+  PASS: Beat FX filter depth 127 maps to max low-pass
+  PASS: Beat FX filter accepts zero-depth both target
+  PASS: Beat FX filter zero depth bypasses deck 0
+  PASS: Beat FX filter zero depth bypasses deck 1
+  PASS: Beat FX filter accepts disabled state
+  PASS: Beat FX filter disabled clears deck 0
+  PASS: Beat FX filter disabled clears deck 1
+  PASS: Beat FX echo defaults off for deck 0
+  PASS: Beat FX echo defaults off for deck 1
+  PASS: Beat FX echo accepts CH1 target
+  PASS: Beat FX echo enables targeted deck 0
+  PASS: Beat FX echo leaves untargeted deck 1 off
+  PASS: Beat FX echo stores delay ms
+  PASS: Beat FX echo depth zero bypasses both decks
+  PASS: Beat FX echo zero depth disables deck 0
+  PASS: Beat FX echo zero depth disables deck 1
+  PASS: Pad FX defaults off for deck 0
+  PASS: Pad FX defaults off for deck 1
+  PASS: Pad FX accepts deck 0 filter pad press
+  PASS: Pad FX activates targeted deck 0
+  PASS: Pad FX leaves deck 1 untouched
+  PASS: Pad FX snapshot reports filter kind
+  PASS: Pad FX accepts matching pad release
+  PASS: Pad FX release clears active deck 0
+  PASS: Pad FX invalid deck returns INVALID_ARG
+  PASS: Pad FX invalid mode returns INVALID_ARG
+  PASS: deck 0 channel volume restores max for Smart Fader assist test
+  PASS: deck 1 channel volume restores max for Smart Fader assist test
+  PASS: crossfader accepts left-side Smart Fader assist test value
+  PASS: Smart Fader keeps open side at unity
+  PASS: Smart Fader squares fade-out side for cleaner transition
+  PASS: crossfader restores center after Smart Fader assist test
+  PASS: snapshot captures limiter sample count
+  PASS: snapshot captures positive overload count
+  PASS: snapshot captures negative overload count
+  PASS: snapshot captures limiter peak input
+[I][audio] PCM timeline D0: PSRAM canonical, capacity=192000 frames
+[I][audio] PCM timeline D1: PSRAM canonical, capacity=192000 frames
+  PASS: audio_engine_init resets limiter telemetry
+  PASS: limiter sample count resets on init
+  PASS: limiter peak resets on init
+
+[Test 4b] Cross-core routing and limiter snapshots
+[I][audio] PCM timeline D0: PSRAM canonical, capacity=192000 frames
+[I][audio] PCM timeline D1: PSRAM canonical, capacity=192000 frames
+  PASS: audio_engine_init resets threaded telemetry fixture
+  PASS: telemetry writer and reader threads start
+  PASS: concurrent routing snapshots stay coherent and limiter counters monotonic
+  PASS: threaded limiter publisher loses no updates
+
+[Test 4c] Limiter snapshot with preempted writer
+[I][audio] PCM timeline D0: PSRAM canonical, capacity=192000 frames
+[I][audio] PCM timeline D1: PSRAM canonical, capacity=192000 frames
+  PASS: audio_engine_init resets preemption telemetry fixture
+  PASS: limiter writer thread starts
+  PASS: limiter snapshot reader thread starts
+  PASS: limiter diagnostics never wait for a preempted output writer
+  PASS: best-effort snapshot may expose a safe partial aggregate
+  PASS: limiter aggregate is complete after the writer resumes
+
+[Test 4a] Beat FX DELAY state API
+[I][audio] PCM timeline D0: PSRAM canonical, capacity=192000 frames
+[I][audio] PCM timeline D1: PSRAM canonical, capacity=192000 frames
+  PASS: audio_engine_init resets Beat FX time-effect state
+  PASS: Beat FX shared delay lines default disabled
+  PASS: Beat FX shared delay lines default to ECHO mode
+  PASS: Beat FX DELAY accepts CH2 target
+  PASS: Beat FX DELAY leaves untargeted deck 0 disabled
+  PASS: Beat FX DELAY enables targeted deck 1
+  PASS: Beat FX DELAY leaves untargeted deck 0 mode unchanged
+  PASS: Beat FX DELAY publishes DELAY mode for targeted deck 1
+  PASS: Beat FX DELAY stores the targeted delay time
+  PASS: Beat FX DELAY command snapshots coherently on the host
+  PASS: Beat FX command pack/unpack preserves the DELAY mode bit
+  PASS: Beat FX DELAY command pack/unpack preserves timing and one-shot parameters
+  PASS: diagnostics report the active DELAY line
+  PASS: diagnostics distinguish DELAY from ECHO mode
+  PASS: diagnostics report DELAY time
+  PASS: Beat FX time line can switch live from DELAY to ECHO
+  PASS: Beat FX ECHO remains enabled after live mode switch
+  PASS: Beat FX live switch publishes ECHO mode
+  PASS: Beat FX ECHO replaces the previous DELAY time
+  PASS: Beat FX ECHO command snapshots coherently on the host
+  PASS: Beat FX command pack/unpack clears DELAY mode and restores ECHO feedback
+  PASS: Beat FX DELAY accepts BOTH target and clamps zero delay
+  PASS: Beat FX DELAY enables both targeted decks
+  PASS: Beat FX DELAY publishes DELAY mode for both decks
+  PASS: Beat FX DELAY clamps zero delay to one millisecond
+  PASS: Beat FX DELAY zero depth bypasses both decks
+  PASS: Beat FX DELAY zero depth disables both decks
+  PASS: Beat FX DELAY disable retains mode for its bounded tail
+  PASS: Beat FX DELAY disabled snapshot clears active delay time
+  PASS: Beat FX DELAY rejects invalid target
+
+[Test 4b] Scratch handoff command ownership
+[I][audio] PCM timeline D0: PSRAM canonical, capacity=192000 frames
+[I][audio] PCM timeline D1: PSRAM canonical, capacity=192000 frames
+  PASS: audio_engine_init resets scratch handoff command state
+  PASS: re-grab publisher does not mutate output-owned phase or gain
+  PASS: output boundary applies re-grab at unity without amplitude jump
+  PASS: release publisher leaves output-owned state untouched
+  PASS: output boundary seeds release fade from unity
+  PASS: latest re-grab command supersedes an unapplied release
+
+[Test 4b] Deck peak meter API
+[I][audio] PCM timeline D0: PSRAM canonical, capacity=192000 frames
+[I][audio] PCM timeline D1: PSRAM canonical, capacity=192000 frames
+  PASS: audio_engine_init resets peak meter state
+  PASS: deck 0 peak defaults to zero
+  PASS: invalid deck peak reads as zero
+  PASS: deck 0 peak returns max absolute sample
+  PASS: deck 0 peak resets after read
+  PASS: deck 1 peak is independent
+
+[Test 4c] Mixer snapshot deck peak API
+[I][audio] PCM timeline D0: PSRAM canonical, capacity=192000 frames
+[I][audio] PCM timeline D1: PSRAM canonical, capacity=192000 frames
+  PASS: audio_engine_init resets peak meter state
+  PASS: snapshot captures deck 0 peak
+  PASS: snapshot captures deck 1 peak
+  PASS: snapshot does not reset deck 0 peak
+  PASS: snapshot does not reset deck 1 peak
+  PASS: display peak captures active audio
+  PASS: idle display peak decays monotonically
+  PASS: idle display peak reaches the meter floor
+
+[Test 4d] Diagnostics snapshot API
+[I][audio] PCM timeline D0: PSRAM canonical, capacity=192000 frames
+[I][audio] PCM timeline D1: PSRAM canonical, capacity=192000 frames
+  PASS: audio_engine_init resets diagnostics snapshot
+  PASS: diagnostics MAIN meter starts at zero
+  PASS: diagnostics playback session epoch starts at zero
+  PASS: diagnostics reports canonical timeline capacity
+  PASS: diagnostics reports canonical timeline backend
+  PASS: diagnostics timeline starts empty
+  PASS: diagnostics timeline generation starts valid
+  PASS: diagnostics PCM underruns start clear
+  PASS: diagnostics scratch edge counters start clear
+  PASS: diagnostics ring 0 starts empty
+  PASS: diagnostics ring 1 starts empty
+  PASS: diagnostics scratch starts inactive
+  PASS: diagnostics reports scratch buffer capacity
+  PASS: diagnostics deck 0 starts inactive
+  PASS: diagnostics deck 1 starts inactive
+  PASS: diagnostics deck 0 sample rate starts unknown
+  PASS: diagnostics deck 1 sample rate starts unknown
+  PASS: diagnostics deck 0 channel count starts unknown
+  PASS: diagnostics deck 1 channel count starts unknown
+  PASS: diagnostics deck 0 file size starts empty
+  PASS: diagnostics deck 1 file size starts empty
+  PASS: diagnostics deck 0 load progress starts empty
+  PASS: diagnostics deck 1 load progress starts empty
+  PASS: diagnostics limiter starts clear
+  PASS: diagnostics USB headphone submitted blocks start clear
+  PASS: diagnostics USB headphone dropped blocks start clear
+  PASS: diagnostics USB headphone submitted frames start clear
+  PASS: diagnostics active UAC data-loss flags start clear
+  PASS: diagnostics publishes playback-session UAC data-loss flags
+  PASS: diagnostics includes limiter sample count
+  PASS: diagnostics includes positive overload count
+  PASS: diagnostics includes negative overload count
+  PASS: diagnostics includes limiter peak
+  PASS: MAIN meter reports the final mixed signal and handles INT16_MIN
+  PASS: MAIN meter releases when the output becomes silent
+  PASS: dummy diagnostics audio file created
+[I][audio] track load D0: dummy_diag_audio.mp3 dur=10000 ms pvbr=no
+[I][audio] MP3 index PC: complete=0 frames=0 length=0 size=1
+  PASS: deck 0 dummy diagnostics load returns ESP_OK
+[I][audio] track load D1: dummy_diag_audio.mp3 dur=10000 ms pvbr=no
+[I][audio] MP3 index PC: complete=0 frames=0 length=0 size=1
+  PASS: deck 1 dummy diagnostics load returns ESP_OK
+  PASS: deck 0 diagnostics play returns ESP_OK
+  PASS: main sink change is rejected while deck 0 plays
+  PASS: rejected sink change preserves current sink
+  PASS: first all-idle to active transition advances playback session epoch
+  PASS: deck 1 diagnostics play returns ESP_OK
+  PASS: diagnostics captures deck 0 active
+  PASS: diagnostics captures deck 1 active
+  PASS: diagnostics captures deck 0 file size
+  PASS: diagnostics captures deck 1 file size
+  PASS: diagnostics captures deck 0 load progress
+  PASS: diagnostics captures deck 1 load progress
+  PASS: starting a second deck within active playback keeps the same session epoch
+  PASS: deck 0 diagnostics pause returns ESP_OK
+  PASS: deck 1 diagnostics pause returns ESP_OK
+  PASS: deck 1 diagnostics restart returns ESP_OK
+  PASS: new all-idle to active transition advances playback session epoch
+
+[Test 4e] Canonical timeline allocation failure fallback
+[I][audio] PCM timeline D0: PSRAM canonical, capacity=192000 frames
+[I][audio] PCM timeline D1: PSRAM canonical, capacity=192000 frames
+  PASS: audio_engine_init prepares fallback test
+  PASS: deck 0 canonical timeline can be unavailable
+  PASS: deck 1 canonical timeline remains independent
+  PASS: diagnostics exposes deck 0 ring fallback capacity
+[W][audio] scratch begin D0 unavailable: canonical timeline not allocated -> platter hold
+  PASS: scratch begin declines without the canonical timeline
+  PASS: ring fallback dummy track created
+[I][audio] track load D0: dummy_ring_fallback_audio.mp3 dur=10000 ms pvbr=no
+[I][audio] MP3 index PC: complete=0 frames=0 length=0 size=1
+  PASS: ring fallback deck still loads
+  PASS: ring fallback deck still starts normal playback
+  PASS: ring fallback deck reports active playback
+  PASS: ring fallback deck stops cleanly
+[I][audio] PCM timeline D0: PSRAM canonical, capacity=192000 frames
+[I][audio] PCM timeline D1: PSRAM canonical, capacity=192000 frames
+  PASS: audio_engine_init restores canonical timeline after fallback test
+
+[Test 4d] WAV load metadata
+[I][audio] PCM timeline D0: PSRAM canonical, capacity=192000 frames
+[I][audio] PCM timeline D1: PSRAM canonical, capacity=192000 frames
+  PASS: audio_engine_init resets WAV load state
+  PASS: dummy WAV file created
+[I][audio] track load D0: dummy_engine_audio.wav dur=0 ms pvbr=no
+  PASS: deck 0 WAV load returns ESP_OK
+  PASS: WAV load captures sample rate
+  PASS: WAV load captures channel count
+  PASS: WAV load captures file size
+  PASS: WAV load completes synchronously in PC test
+  PASS: WAV deck status is readable
+  PASS: WAV deck status reports loaded
+  PASS: WAV deck status is ready after load
+
+[Test 4d2] Duration and session snapshot
+[I][audio] PCM timeline D0: PSRAM canonical, capacity=192000 frames
+[I][audio] PCM timeline D1: PSRAM canonical, capacity=192000 frames
+  PASS: duration status resets engine
+  PASS: duration status WAV fixture created
+  PASS: duration status fixture can be extended
+[I][audio] track load D0: duration_status.wav dur=100 ms pvbr=no
+  PASS: duration status loads misleading analysis duration
+  PASS: duration snapshot is readable
+  PASS: analysis duration stays unchanged
+  PASS: WAV duration follows actual decoded frame count
+  PASS: duration snapshot belongs to the loaded session
+  PASS: duration session can be retired
+  PASS: stopped session is not loaded
+  PASS: stopped status does not expose old duration
+  PASS: stop advances duration ownership
+[I][audio] PCM timeline D0: PSRAM canonical, capacity=192000 frames
+[I][audio] PCM timeline D1: PSRAM canonical, capacity=192000 frames
+  PASS: MP3 EOF resets engine
+  PASS: MP3 EOF fixture opens
+[I][audio] track load D0: measured_eof.mp3 dur=100 ms pvbr=no
+[I][audio] MP3 index PC: complete=1 frames=80 length=2089 size=33360
+  PASS: MP3 EOF loads inaccurate metadata duration
+[I][audio] MP3: 44100 Hz, 2 ch, 128 kbps
+[I][audio] WAV: measured_eof.wav  2.1 s  368640 bytes  44100 Hz 2 ch
+  PASS: MP3 EOF decodes full fixture
+  PASS: MP3 EOF output WAV valid
+  PASS: MP3 EOF output has audio frames
+  PASS: MP3 EOF status readable
+  PASS: MP3 EOF fixture length is independent of metadata
+  PASS: MP3 EOF duration matches actual output frame count
+  PASS: MP3 EOF preserves original analysis span
+  PASS: indexed MP3 accepts forward/backward/start/tail seek
+  PASS: indexed CBR/VBR seek preserves exact remaining source samples
+  PASS: indexed MP3 seek preserves file and analysis duration independently
+  PASS: indexed MP3 accepts forward/backward/start/tail seek
+  PASS: indexed CBR/VBR seek preserves exact remaining source samples
+  PASS: indexed MP3 seek preserves file and analysis duration independently
+  PASS: indexed MP3 accepts forward/backward/start/tail seek
+  PASS: indexed CBR/VBR seek preserves exact remaining source samples
+  PASS: indexed MP3 seek preserves file and analysis duration independently
+  PASS: indexed MP3 accepts forward/backward/start/tail seek
+  PASS: indexed CBR/VBR seek preserves exact remaining source samples
+  PASS: indexed MP3 seek preserves file and analysis duration independently
+  PASS: indexed MP3 accepts forward/backward/start/tail seek
+  PASS: indexed CBR/VBR seek preserves exact remaining source samples
+  PASS: indexed MP3 seek preserves file and analysis duration independently
+  PASS: MP3 EOF retires session
+  PASS: MP3 EOF fixture opens
+[I][audio] track load D0: measured_eof.mp3 dur=10000 ms pvbr=no
+[I][audio] MP3 index PC: complete=1 frames=80 length=2089 size=37618
+  PASS: MP3 EOF loads inaccurate metadata duration
+[I][audio] MP3: 44100 Hz, 2 ch, 128 kbps
+[I][audio] WAV: measured_eof.wav  2.1 s  368640 bytes  44100 Hz 2 ch
+  PASS: MP3 EOF decodes full fixture
+  PASS: MP3 EOF output WAV valid
+  PASS: MP3 EOF output has audio frames
+  PASS: MP3 EOF status readable
+  PASS: MP3 EOF fixture length is independent of metadata
+  PASS: MP3 EOF duration matches actual output frame count
+  PASS: MP3 EOF preserves original analysis span
+  PASS: indexed MP3 accepts forward/backward/start/tail seek
+  PASS: indexed CBR/VBR seek preserves exact remaining source samples
+  PASS: indexed MP3 seek preserves file and analysis duration independently
+  PASS: indexed MP3 accepts forward/backward/start/tail seek
+  PASS: indexed CBR/VBR seek preserves exact remaining source samples
+  PASS: indexed MP3 seek preserves file and analysis duration independently
+  PASS: indexed MP3 accepts forward/backward/start/tail seek
+  PASS: indexed CBR/VBR seek preserves exact remaining source samples
+  PASS: indexed MP3 seek preserves file and analysis duration independently
+  PASS: indexed MP3 accepts forward/backward/start/tail seek
+  PASS: indexed CBR/VBR seek preserves exact remaining source samples
+  PASS: indexed MP3 seek preserves file and analysis duration independently
+  PASS: indexed MP3 accepts forward/backward/start/tail seek
+  PASS: indexed CBR/VBR seek preserves exact remaining source samples
+  PASS: indexed MP3 seek preserves file and analysis duration independently
+  PASS: MP3 EOF retires session
+[I][audio] track load D0: measured_eof.mp3 dur=10000 ms pvbr=no
+[I][audio] MP3 index PC: complete=1 frames=80 length=2089 size=37618
+  PASS: MP3 EOF replacement starts a new measurement
+[I][audio] MP3: 44100 Hz, 2 ch, 128 kbps
+  PASS: MP3 EOF starts partial measurement
+  PASS: MP3 EOF seek withdraws measurement authority
+  PASS: MP3 EOF discontinuous decode terminates
+  PASS: VBR seek skips to exact source sample independent of bitrate/metadata
+  PASS: MP3 EOF after seek retains complete index length instead of a partial count
+  PASS: MP3 EOF discontinuous session retires
+
+[Test 4e] WAV decode path
+[I][audio] PCM timeline D0: PSRAM canonical, capacity=192000 frames
+[I][audio] PCM timeline D1: PSRAM canonical, capacity=192000 frames
+  PASS: audio_engine_init resets WAV decode state
+  PASS: dummy WAV file created for decode
+[I][audio] track load D0: dummy_engine_audio.wav dur=0 ms pvbr=no
+  PASS: deck 0 WAV load returns ESP_OK for decode
+[I][audio] WAV: decoded_engine_audio.wav  0.0 s  16 bytes  44100 Hz 2 ch
+  PASS: WAV deck decodes to WAV output
+  PASS: decoded WAV output exists
+  PASS: decoded WAV header is readable
+  PASS: decoded WAV header is valid PCM
+  PASS: decoded WAV output is stereo
+  PASS: decoded WAV output keeps sample rate
+  PASS: decoded WAV output has expected PCM length
+  PASS: decoded WAV PCM payload is readable
+  PASS: decoded WAV PCM payload matches input
+
+[Test 5] PFL state API
+[I][audio] PCM timeline D0: PSRAM canonical, capacity=192000 frames
+[I][audio] PCM timeline D1: PSRAM canonical, capacity=192000 frames
+  PASS: audio_engine_init resets PFL state
+  PASS: deck 0 PFL defaults off
+  PASS: deck 1 PFL defaults off
+  PASS: deck 0 PFL toggle returns ESP_OK
+  PASS: deck 0 PFL toggles on
+  PASS: deck 1 PFL remains off
+  PASS: deck 0 second PFL toggle returns ESP_OK
+  PASS: deck 0 PFL toggles off
+  PASS: deck 1 PFL toggle returns ESP_OK
+  PASS: deck 1 PFL toggles independently
+  PASS: snapshot captures deck 0 PFL off
+  PASS: snapshot captures deck 1 PFL on
+  PASS: invalid PFL deck returns INVALID_ARG
+  PASS: invalid PFL deck reads as off
+
+[Test 5b] Cue Mode API
+[I][audio] PCM timeline D0: PSRAM canonical, capacity=192000 frames
+[I][audio] PCM timeline D1: PSRAM canonical, capacity=192000 frames
+  PASS: audio_engine_init resets cue mode
+  PASS: default cue mode is 0 (stereo)
+  PASS: default headphone mode is master mono
+  PASS: set_cue_mode(1) returns ESP_OK
+  PASS: cue mode is 1 (split mono)
+  PASS: cue mode split maps to headphone split mono
+  PASS: invalid cue mode returns INVALID_ARG
+  PASS: cue mode remains unchanged on invalid argument
+  PASS: set_cue_mode(0) returns ESP_OK
+  PASS: cue mode is 0 (stereo)
+  PASS: set_headphone_mode(CUE_MONO) returns ESP_OK
+  PASS: headphone mode stores cue mono
+  PASS: cue compatibility mode is split/non-master
+  PASS: invalid headphone mode returns INVALID_ARG
+  PASS: invalid headphone mode leaves previous mode
+
+[Test 5c] Headphone monitor APIs
+[I][audio] PCM timeline D0: PSRAM canonical, capacity=192000 frames
+[I][audio] PCM timeline D1: PSRAM canonical, capacity=192000 frames
+  PASS: audio_engine_init resets headphone mix
+  PASS: headphone mix defaults to full master for legacy monitor behavior
+  PASS: headphone level defaults to max output
+  PASS: headphone mix accepts center raw value
+  PASS: headphone mix stores center raw value
+  PASS: headphone level accepts center raw value
+  PASS: headphone level stores center raw value
+  PASS: headphone mix clamps raw values above max
+  PASS: headphone mix clamps to max
+  PASS: headphone level clamps raw values above max
+  PASS: headphone level clamps to max
+  PASS: snapshot captures headphone mix raw value
+  PASS: snapshot captures headphone level raw value
+
+[Test 5d] Headphone Level output scalar
+  PASS: headphone level leaves master output unchanged
+  PASS: headphone level scales only headphone output
+[I][audio] PCM timeline D0: PSRAM canonical, capacity=192000 frames
+[I][audio] PCM timeline D1: PSRAM canonical, capacity=192000 frames
+  PASS: audio_engine_init resets master cue
+  PASS: master cue defaults enabled
+  PASS: toggle master cue returns ESP_OK
+  PASS: master cue toggles off
+  PASS: second toggle master cue returns ESP_OK
+  PASS: master cue toggles back on
+  PASS: snapshot captures master cue enabled state
+
+[Test 6] Per-deck transition API
+[E][audio] Cannot open: /nonexistent/file.mp3
+  PASS: deck 0 load delegates to current engine
+[E][audio] Cannot open: /nonexistent/file.mp3
+  PASS: deck 1 load has its own engine state
+  PASS: out-of-range deck load returns INVALID_ARG
+  PASS: deck 1 play before load returns INVALID_STATE
+  PASS: deck 1 pause before load returns INVALID_STATE
+  PASS: deck 1 seek before load returns INVALID_STATE
+  PASS: deck 1 reports not playing before load
+  PASS: deck 1 position is zero before load
+
+[Test 7] Per-deck status API
+[I][audio] PCM timeline D0: PSRAM canonical, capacity=192000 frames
+[I][audio] PCM timeline D1: PSRAM canonical, capacity=192000 frames
+  PASS: audio_engine_init resets deck status
+  PASS: deck 0 status read returns ESP_OK
+  PASS: deck 1 status read returns ESP_OK
+  PASS: deck 0 starts idle
+  PASS: deck 1 starts idle
+[E][audio] Cannot open: /nonexistent/file.mp3
+  PASS: deck 1 failed load returns NOT_FOUND
+  PASS: deck 0 status still readable after deck 1 error
+  PASS: deck 1 status readable after deck 1 error
+  PASS: deck 1 error does not affect deck 0 state
+  PASS: deck 1 error does not affect deck 0 error
+  PASS: deck 1 state reports ERROR
+  PASS: deck 1 error reports NOT_FOUND
+  PASS: deck 1 failed load resets progress
+  PASS: invalid deck status returns INVALID_ARG
+  PASS: NULL status output returns INVALID_ARG
+
+[Test 8] Per-deck state split
+  PASS: dummy audio file created
+[I][audio] track load D0: dummy_deck_audio.mp3 dur=10000 ms pvbr=no
+[I][audio] MP3 index PC: complete=0 frames=0 length=0 size=8
+  PASS: deck 0 dummy load returns ESP_OK
+[I][audio] track load D1: dummy_deck_audio.mp3 dur=20000 ms pvbr=no
+[I][audio] MP3 index PC: complete=0 frames=0 length=0 size=8
+  PASS: deck 1 dummy load returns ESP_OK
+  PASS: deck 0 play returns ESP_OK
+  PASS: deck 0 is playing
+  PASS: deck 1 is still stopped
+  PASS: deck 1 play returns ESP_OK
+  PASS: deck 0 remains playing
+  PASS: deck 1 is playing
+  PASS: deck 0 seek returns ESP_OK
+  PASS: deck 1 seek returns ESP_OK
+  PASS: deck 0 position is independent
+  PASS: deck 1 position is independent
+  PASS: deck 0 stop returns ESP_OK
+  PASS: deck 0 stopped
+  PASS: deck 1 remains playing after deck 0 stop
+
+[Test 9] Per-deck loop state
+[I][audio] Audio loop set: 1000 ms to 2000 ms
+  PASS: deck 0 loop set returns ESP_OK
+[I][audio] Audio loop set: 3000 ms to 5000 ms
+  PASS: deck 1 loop set returns ESP_OK
+  PASS: deck 0 loop read returns ESP_OK
+  PASS: deck 0 loop state is independent
+  PASS: deck 1 loop read returns ESP_OK
+  PASS: deck 1 loop state is independent
+  PASS: zero-wait status observes the same complete loop state
+[I][audio] Audio loop cleared
+  PASS: deck 0 loop clear returns ESP_OK
+  PASS: deck 0 cleared loop read returns ESP_OK
+  PASS: deck 0 loop clears
+  PASS: zero-wait status observes loop deletion
+  PASS: deck 1 loop still readable after deck 0 clear
+  PASS: deck 1 loop survives deck 0 clear
+  PASS: invalid deck loop set returns INVALID_ARG
+  PASS: invalid deck loop clear returns INVALID_ARG
+  PASS: invalid deck loop read returns INVALID_ARG
+  PASS: lifecycle WAV fixture created
+  PASS: inflight LOAD thread starts
+  PASS: sink request never waits behind an admitted LOAD
+  PASS: busy LOAD rejection preserves selected sink
+  PASS: concurrent STOP thread starts
+  PASS: STOP cannot return while admitted LOAD is between stop and bind
+[I][audio] track load D0: test_lifecycle.wav dur=0 ms pvbr=no
+  PASS: deck status remains queryable after lifecycle race
+  PASS: STOP retires the session created by the admitted LOAD
+  PASS: session-generation WAV fixture created
+[I][audio] track load D0: test_session_generation.wav dur=0 ms pvbr=no
+  PASS: first LOAD returns a session generation
+  PASS: first session generation is authoritative
+[I][audio] track load D0: test_session_generation.wav dur=0 ms pvbr=no
+  PASS: replacement LOAD returns a session generation
+  PASS: replacement LOAD advances the generation
+  PASS: stale completion cannot stop the replacement session
+  PASS: replacement session remains loaded after stale STOP
+  PASS: matching generation retires its own session
+  PASS: transition-barrier WAV fixture created
+  PASS: global transition acquires LOAD admission barrier
+  PASS: LOAD is rejected while USB/OTA transition owns barrier
+  PASS: transition barrier has a single owner
+[I][audio] track load D0: test_transition_barrier.wav dur=0 ms pvbr=no
+  PASS: LOAD admission resumes after failed/completed transition
+  PASS: resumed session stops cleanly
+
+[Qualification] Required production decoder/seek fixtures
+[I][audio] PCM timeline D0: PSRAM canonical, capacity=192000 frames
+[I][audio] PCM timeline D1: PSRAM canonical, capacity=192000 frames
+  PASS: qualification engine reset
+[I][audio] track load D0: ../fixtures/p4/onset-44100.wav dur=6500 ms pvbr=no
+  PASS: mandatory compressed/PCM fixture loads
+  fixture=../fixtures/p4/onset-44100.wav decoded_frames=286650 onset=11025 mismatches=0
+  PASS: WAV/FLAC production output is exactly lossless, including final partial batch
+  PASS: production seek admitted after EOF
+  seek=1200 acoustic_onset=2205 expected=2205 error=0
+  PASS: seek position is verified by decoded PCM onset on the production path
+  PASS: production seek admitted after EOF
+  seek=4200 acoustic_onset=2205 expected=2205 error=0
+  PASS: seek position is verified by decoded PCM onset on the production path
+  PASS: production seek admitted after EOF
+  seek=6200 acoustic_onset=2205 expected=2205 error=0
+  PASS: seek position is verified by decoded PCM onset on the production path
+  PASS: qualification fixture retires
+[I][audio] PCM timeline D0: PSRAM canonical, capacity=192000 frames
+[I][audio] PCM timeline D1: PSRAM canonical, capacity=192000 frames
+  PASS: qualification engine reset
+[I][audio] track load D0: ../fixtures/p4/onset-48000.flac dur=6500 ms pvbr=no
+  PASS: mandatory compressed/PCM fixture loads
+  fixture=../fixtures/p4/onset-48000.flac decoded_frames=312000 onset=12000 mismatches=0
+  PASS: WAV/FLAC production output is exactly lossless, including final partial batch
+  PASS: production seek admitted after EOF
+  seek=1200 acoustic_onset=2400 expected=2400 error=0
+  PASS: seek position is verified by decoded PCM onset on the production path
+  PASS: production seek admitted after EOF
+  seek=4200 acoustic_onset=2400 expected=2400 error=0
+  PASS: seek position is verified by decoded PCM onset on the production path
+  PASS: production seek admitted after EOF
+  seek=6200 acoustic_onset=2400 expected=2400 error=0
+  PASS: seek position is verified by decoded PCM onset on the production path
+  PASS: qualification fixture retires
+[I][audio] PCM timeline D0: PSRAM canonical, capacity=192000 frames
+[I][audio] PCM timeline D1: PSRAM canonical, capacity=192000 frames
+  PASS: qualification engine reset
+[I][audio] track load D0: ../fixtures/p4/onset-44100.mp3 dur=6500 ms pvbr=no
+[I][audio] MP3 index PC: complete=1 frames=251 length=6556 size=45938
+  PASS: mandatory compressed/PCM fixture loads
+[I][audio] MP3: 44100 Hz, 2 ch, 64 kbps
+  fixture=../fixtures/p4/onset-44100.mp3 decoded_frames=289152 onset=13282 mismatches=0
+  PASS: VBR MP3 full decoded length remains within codec padding bound
+  PASS: production seek admitted after EOF
+  seek=1200 acoustic_onset=4462 expected=4462 error=0
+  PASS: seek position is verified by decoded PCM onset on the production path
+  PASS: production seek admitted after EOF
+  seek=4200 acoustic_onset=4462 expected=4462 error=0
+  PASS: seek position is verified by decoded PCM onset on the production path
+  PASS: production seek admitted after EOF
+  seek=6200 acoustic_onset=4462 expected=4462 error=0
+  PASS: seek position is verified by decoded PCM onset on the production path
+  PASS: qualification fixture retires
+[I][audio] track load D0: ../fixtures/p4/short-48000.wav dur=80 ms pvbr=no
+  PASS: short EOF fixture loads despite longer metadata
+  PASS: short 48-kHz EOF publishes every frame without waiting for analysis span
+  PASS: short EOF retires
+[I][audio] track load D0: ../fixtures/p4/onset-44100.wav dur=6500 ms pvbr=no
+[I][audio] track load D1: ../fixtures/p4/onset-48000.flac dur=6500 ms pvbr=no
+  PASS: 44.1/48-kHz dual-deck fixtures load
+  PASS: mixed-rate deck seek admitted
+  PASS: mixed-rate deck publishes actual PCM
+  PASS: mixed-rate deck starts on selected audible onset
+  PASS: mixed-rate deck retires independently
+  PASS: mixed-rate deck seek admitted
+  PASS: mixed-rate deck publishes actual PCM
+  PASS: mixed-rate deck starts on selected audible onset
+  PASS: mixed-rate deck retires independently
+[I][audio] PCM timeline D0: PSRAM canonical, capacity=192000 frames
+[I][audio] PCM timeline D1: PSRAM canonical, capacity=192000 frames
+  PASS: prefix decoder reset
+[I][audio] track load D0: ../fixtures/p4/onset-44100.mp3 dur=6500 ms pvbr=no
+[I][audio] MP3 index PC: complete=1 frames=251 length=6556 size=45938
+  PASS: required prefix decoder fixture loads
+[I][audio] MP3: 44100 Hz, 2 ch, 64 kbps
+  PASS: decoded source covers capture and continuation
+  PASS: decoded PCM enters retained timeline
+  PASS: supported decoder captures actual manual IN PCM
+  PASS: one second of IN PCM resumes at its exact endpoint
+  PASS: prefix retains the exact decoded stereo source
+  PASS: production decoder seeks to copied prefix endpoint
+  prefix fixture=../fixtures/p4/onset-44100.mp3 resumed_frames=22230 mismatches=0
+  PASS: indexed/reservoir-warmed continuation rejoins full decode without skipped PCM
+  PASS: prefix fixture retires
+[I][audio] PCM timeline D0: PSRAM canonical, capacity=192000 frames
+[I][audio] PCM timeline D1: PSRAM canonical, capacity=192000 frames
+  PASS: prefix decoder reset
+[I][audio] track load D0: ../fixtures/p4/onset-48000.flac dur=6500 ms pvbr=no
+  PASS: required prefix decoder fixture loads
+  PASS: decoded source covers capture and continuation
+  PASS: decoded PCM enters retained timeline
+  PASS: supported decoder captures actual manual IN PCM
+  PASS: one second of IN PCM resumes at its exact endpoint
+  PASS: prefix retains the exact decoded stereo source
+  PASS: production decoder seeks to copied prefix endpoint
+  prefix fixture=../fixtures/p4/onset-48000.flac resumed_frames=25344 mismatches=0
+  PASS: indexed/reservoir-warmed continuation rejoins full decode without skipped PCM
+  PASS: prefix fixture retires
+
+[Test 10] Decode MP3 → WAV
+  Input:  ../fixtures/p4/onset-44100.mp3
+  Limit:  0 ms (full track)
+[I][audio] track load D0: ../fixtures/p4/onset-44100.mp3 dur=0 ms pvbr=no
+[I][audio] MP3 index PC: complete=1 frames=251 length=6556 size=45938
+[I][audio] MP3: 44100 Hz, 2 ch, 64 kbps
+[I][audio] WAV: out.wav  6.6 s  1156608 bytes  44100 Hz 2 ch
+  PASS: decode_to_wav returns ESP_OK
+  PASS: WAV header is valid RIFF/PCM
+  PASS: WAV is stereo
+  PASS: WAV has non-zero sample rate
+  PASS: WAV has PCM data
+  WAV:    44100 Hz, 2 ch, 1156608 B PCM → 6.6 s
+  PASS: seek(5000) returns ESP_OK
+  PASS: position_ms() == 5000 after seek
+[I][audio] WAV: out_from5s.wav  3.0 s  525312 bytes  44100 Hz 2 ch
+  PASS: rewinding export helper decodes bounded window
+  PASS: not playing after stop
+
+============================
+Results: 570 PASS / 0 FAIL
+==> build audio_eq
+==> run audio_eq
+audio_eq tests passed
+==> build audio_filter
+==> run audio_filter
+TESTS_RUN=36
+audio_filter tests passed
+    TESTS_RUN=36 (floor 36)
+==> build audio_smart_cfx
+==> run audio_smart_cfx
+audio_smart_cfx tests passed
+==> build audio_fw_task_plan
+==> run audio_fw_task_plan
+audio_fw_task_plan tests passed
+==> build audio_fw_runtime
+==> run audio_fw_runtime
+audio_fw_runtime tests passed
+==> build usb_storage_session
+==> run usb_storage_session
+== primary connect, mount and disconnect ==
+== ignored secondary disconnect preserves mounted primary ==
+== disconnect during opening invalidates stale completion ==
+== duplicate connect and disconnect are idempotent ==
+== stable reconnect replaces stale unbound enumeration address ==
+== failed mount releases handle and retries in same epoch ==
+== stale prior-session callbacks cannot mutate reconnect ==
+TESTS_RUN=73
+usb_storage_session tests passed
+    TESTS_RUN=73 (floor 73)
+==> build usb_storage_recovery
+==> run usb_storage_recovery
+== cold boot recovery continues until connect ==
+== accepted connect disarms recovery ==
+== owner disconnect rearms full fast-cycle budget ==
+== polling the same disconnected epoch preserves deadline ==
+== epoch change catches connect-disconnect between polls ==
+== repeated connected snapshot remains disarmed ==
+== fast cycles transition to bounded slow cadence ==
+== reconnect starts a fresh recovery epoch ==
+== tick wrap keeps elapsed-time comparison valid ==
+== null recovery guards ==
+TESTS_RUN=88
+usb_storage_recovery tests passed
+    TESTS_RUN=88 (floor 88)
+==> build usb_media_partition
+==> run usb_media_partition
+usb_media_partition tests passed
+==> build audio_compressed_cache
+==> run audio_compressed_cache
+TESTS_RUN=85
+audio_compressed_cache tests passed
+    TESTS_RUN=85 (floor 68)
+==> build audio_fw_preload
+==> run audio_fw_preload
+audio_fw_preload tests passed
+==> build audio_fw_task_context
+==> run audio_fw_task_context
+audio_fw_task_context tests passed
+==> build audio_delay_fx
+==> run audio_delay_fx
+audio_delay_fx tests passed
+==> build audio_flanger_fx
+==> run audio_flanger_fx
+audio_flanger_fx tests passed
+==> build audio_scratch_buffer
+==> run audio_scratch_buffer
+audio_scratch_buffer tests passed
+==> build audio_scratch
+==> run audio_scratch
+audio_scratch tests passed
+==> build audio_censor
+==> run audio_censor
+audio_censor tests passed
+==> build audio_pad_fx
+==> run audio_pad_fx
+audio_pad_fx tests passed
+==> build audio_resampler
+==> run audio_resampler
+audio_resampler tests passed
+==> build audio_output_mixer
+==> run audio_output_mixer
+audio_output_mixer tests passed
+==> build audio_output_sink
+==> run audio_output_sink
+audio_output_sink tests passed
+==> build audio_output_timing
+==> run audio_output_timing
+audio_output_timing tests passed
+==> build audio_wdt_trace
+==> run audio_wdt_trace
+audio_wdt_trace tests passed
+==> build library_load_trace
+==> run library_load_trace
+library_load_trace tests passed
+==> build audio_uac_health
+==> run audio_uac_health
+audio_uac_health tests passed
+==> build controller_usb_audio_stream
+==> run controller_usb_audio_stream
+PASS captured Hercules UAC1: endpoint association, 10.14 feedback, capacity, fractional pacing, stale stop and FLX4 isolation
+PASS FS 48-kHz fast feedback: 49-frame packets and endpoint bounds
+PASS FS 48-kHz fast feedback: 49-frame packets and endpoint bounds
+PASS UAC2 captured HS descriptor, clock RANGE/CUR, feedback, packing and teardown
+PASS UAC2 bounded asynchronous clock settle, wrap, timeout and disconnect
+PASS UAC2 advertised 44.1-kHz fallback, exact readback, fractional HS cadence and resampling
+PASS UAC startup alloc/submit fault provenance and ownership cleanup
+PASS 30 host HS reconnects: bounded retained payload, no new OUT allocation, FS releases all transfers
+PASS DDJ-400 HS UAC1: raw interval 4, 1-ms cadence, wrong cadence/family/FLX4 rejected, control/stream/stop
+PASS Numark FS focused fixture: PCM16 44.1k, sync cadence, MAIN/CUE routing, 48k source conversion, stop
+PASS FLX4 dedicated headphone unity, signed full-scale/low-level PCM, MAIN mirror isolation
+PASS UAC 16/24-bit, consumer pacing, bounded timeout, ownership, reconnect and channel routing
+==> build controller_audio_resampler
+==> run controller_audio_resampler
+controller audio resampler tests passed
+==> build beat_jump
+==> run beat_jump
+beat_jump tests passed
+==> build deck_loaded_track_store
+==> run deck_loaded_track_store
+== reset publishes empty coherent snapshots ==
+== publish clones one complete track generation ==
+== load A then B never mixes key, bpm and ANLZ ==
+== acquire is allocation-free and old snapshot survives swap ==
+== USB clear rejects late old load ==
+== stale clear cannot remove newer track ==
+== per-deck clear rejects late old load ==
+== clear one deck preserves the other ==
+== clone failure never partially replaces current ==
+== valid track without ANLZ uses coherent BPM fallback ==
+== invalid inputs leave store unchanged ==
+== concurrent replace and clone never mix generations ==
+TESTS_RUN=122
+deck_loaded_track_store tests passed
+    TESTS_RUN=122 (floor 103)
+==> build media_identity
+==> run media_identity
+media_identity tests passed
+==> build ui_deck_anlz_store
+==> run ui_deck_anlz_store
+ui_deck_anlz_store tests passed
+==> build ui_event_counter
+==> run ui_event_counter
+== request is durable until sampled generation is applied ==
+== request during processing survives old completion ==
+== burst coalesces to latest generation ==
+== refresh and remove counters remain independent ==
+== null guards ==
+TESTS_RUN=124
+ui_event_counter tests passed
+    TESTS_RUN=124 (floor 124)
+==> build hot_cue_store
+==> run hot_cue_store
+hot_cue_store tests passed
+==> build hot_cue_store_nvs
+==> run hot_cue_store_nvs
+hot_cue_store_nvs: production NVS adapter contract tests passed
+==> build deck_core_dual
+==> run deck_core_dual
+deck_core_dual tests passed
+==> build audio_pcm_timeline
+==> run audio_pcm_timeline
+TESTS_RUN=309
+audio_pcm_timeline tests passed
+    TESTS_RUN=309 (floor 309)
+==> build deck_core_dual_scratch
+==> run deck_core_dual_scratch
+deck_core_dual tests passed
+==> build flx4_led_snapshot
+==> run flx4_led_snapshot
+flx4_led_snapshot tests passed
+==> build ui_library
+==> run ui_library
+TESTS_RUN=48
+ui_library tests passed
+    TESTS_RUN=48 (floor 48)
+==> build p4_ota_policy
+==> run p4_ota_policy
+p4_ota_policy tests passed
+==> build ota_manifest
+==> run ota_manifest
+ota_manifest tests passed
+==> build ui_overlay_map
+==> run ui_overlay_map
+ui_overlay_map tests passed
+==> build p4_startup_gate
+==> run p4_startup_gate
+p4_startup_gate: PASS
+==> build firmware_resources
+==> run firmware_resources
+firmware resource callback/throttle/lifecycle-safe samples passed
+==> build firmware_health
+==> run firmware_health
+firmware_health: PASS
+==> build audio_engine_memory
+==> run audio_engine_memory
+PASS memory snapshots retain free/low-water values without TLSF walks, timer or journal work
+==> build audio_engine_memory_hs_isolation
+==> run audio_engine_memory_hs_isolation
+PASS memory snapshots retain free/low-water values without TLSF walks, timer or journal work
+==> build ui_psram_allocator
+==> run ui_psram_allocator
+PASS: external-only LVGL allocation, failure ownership, heap diagnostics
+==> build ui_settings
+==> run ui_settings
+ui_settings tests passed
+==> build ui_status
+==> run ui_status
+ui_status tests passed
+==> build wifi_link_retry
+==> run wifi_link_retry
+wifi_link_retry tests passed
+==> build p4_ota_pull_status
+==> run p4_ota_pull_status
+p4_ota_pull_status tests passed
+==> build p4_ota_pull_config
+==> run p4_ota_pull_config
+p4_ota_pull_config tests passed
+==> build p4_ota_pull_gate
+==> run p4_ota_pull_gate
+p4_ota_pull_gate tests passed
+==> build p4_ota_pull_manifest
+==> run p4_ota_pull_manifest
+p4_ota_pull_manifest tests passed
+==> build ui_idle
+==> run ui_idle
+ui_idle tests passed
+==> build ui_beat_fx_format
+==> run ui_beat_fx_format
+ui_beat_fx_format tests passed
+==> build restart_diagnostics
+==> run restart_diagnostics
+restart diagnostics: capture, normal cache join, both-core delegation and architecture/pseudo-panic lock bypass PASS
+==> build web_crash_export
+==> run web_crash_export
+Crash export identity/bounds/abort tests passed
+==> build web_api_helpers
+==> run web_api_helpers
+web firmware JSON tests passed
+==> build dns_reply
+==> run dns_reply
+dns_reply tests passed
+==> build ui_position_interpolator
+==> run ui_position_interpolator
+ui_position_interpolator tests passed: retained samples do not rebase; pause, seek, scratch and +/-5% retained bursts
+==> build ui_overview_motion
+==> run ui_overview_motion
+ui_overview_motion tests passed
+==> build ui_next_layout
+==> run ui_next_layout
+ui_next_layout: ok
+==> build ui_next_wave
+==> run ui_next_wave
+ui_next_wave: ok
+==> build ui_next_key
+==> run ui_next_key
+ui_next_key: ok
+==> build ui_next_text
+==> run ui_next_text
+ui_next_text: ok
+==> build ui_next_view
+==> run ui_next_view
+ui_next_view: ok
+==> build ui_next_format
+==> run ui_next_format
+ui_next_format: ok
+==> build ui_next_sync
+==> run ui_next_sync
+ui_next_sync: ok
+==> build ui_next_color
+==> run ui_next_color
+ui_next_color: ok
+==> build ui_overview_window
+==> run ui_overview_window
+ui_overview_window tests passed
+==> build ui_overview_scheduler
+==> run ui_overview_scheduler
+ui_overview_scheduler tests passed
+==> build ui_framebuffer_pair
+==> run ui_framebuffer_pair
+PASS framebuffer pair: sealed ownership, 2000 pixel-reference frames, exact disjoint coverage, zero-copy full redraw
+==> build ui_scanout_timing
+==> run ui_scanout_timing
+PASS scanout timing: in-flight refresh origin, coalescing, histogram boundaries
+==> build ui_overview_grid
+==> run ui_overview_grid
+ui_overview_grid tests passed
+==> build ui_overview_renderer
+==> run ui_overview_renderer
+ui_overview_renderer tests passed
+==> build ui_artwork_jpeg
+==> run ui_artwork_jpeg
+all ui_artwork_jpeg tests passed
+==> build ui_overview_wave_cache
+==> run ui_overview_wave_cache
+PASS production interpolator/cache chain: 4 retained-input rewinds and 5 full redraws become 0 rewinds and 1 initial redraw
+ui_overview_wave_cache tests passed
+==> build anlz
+==> run anlz
+  PWV3 timing requires validated complete uncapped entries[I][anlz] PWV3: 150 bytes high-res waveform
+PASS
+PASS
+  PWV3 timing requires validated complete uncapped entries[I][anlz] PWV3: 150 bytes high-res waveform
+PASS
+PASS
+  PWV3 timing requires validated complete uncapped entries[I][anlz] PWV3: 150 bytes high-res waveform
+PASS
+PASS
+  PWV3 timing requires validated complete uncapped entries[I][anlz] PWV3: 150 bytes high-res waveform
+PASS
+PASS
+  PWV3 timing requires validated complete uncapped entries[I][anlz] PWV3: 131072 bytes high-res waveform
+PASS
+PASS
+  PWV3 analysis span refinement preserves PDB on large mismatchPASS
+Pajoniiir ANLZ Parser Test
+============================
+
+=== Building synthetic test files ===
+  Created: test_synth.dat
+  Created: test_synth.ext
+  Created: test_unicode_ppth.dat
+
+=== anlz_parse_dat() ===
+[I][anlz] PPTH: "/Music/TestArtist/test.mp3"
+[I][anlz] PVBR: 4 seek entries. First 10: 100, 200, 300, 400, 0, 0, 0, 0, 0, 0
+[I][anlz] PQTZ: 2 beats, BPM=128 (raw=12800)
+[I][anlz] PWAV: 400/400 bytes
+[I][anlz] PCOB: 2 cue/loop entries
+[I][anlz] DAT transaction published: bpm=128 beats=2 cues=2
+  parse_dat returns ESP_OK                          PASS
+  audio_path correct                                PASS
+  BPM = 128                                         PASS
+  beat_count = 2                                    PASS
+  beat[0].time_ms = 0                               PASS
+  beat[1].time_ms = 469                             PASS
+  has_vbr = true                                    PASS
+  vbr[0] = 100                                      PASS
+  vbr[3] = 400                                      PASS
+  has_waveform_low = true                           PASS
+  waveform_low[0] = 0 (sawtooth start)              PASS
+  waveform_low[31] = 31 (sawtooth peak)             PASS
+  cue_count = 2                                     PASS
+  cue[0].type = SINGLE                              PASS
+  cue[0].index = 0                                  PASS
+  cue[0].start_ms = 1000                            PASS
+  cue[1].type = LOOP                                PASS
+  cue[1].start_ms = 2000                            PASS
+  cue[1].end_ms = 4000                              PASS
+  waveform_high = NULL before parse_ext             PASS
+
+=== anlz_parse_ext() ===
+[I][anlz] PWV3: 800 bytes high-res waveform
+  parse_ext returns ESP_OK                          PASS
+  waveform_high != NULL after parse_ext             PASS
+  waveform_high_len = 800                           PASS
+  waveform_high[0] = 0                              PASS
+
+=== anlz_clone() ===
+  clone returns ESP_OK                              PASS
+  clone owns an independent beat array              PASS
+  clone owns an independent high waveform           PASS
+
+=== anlz_free() ===
+
+=== anlz_parse_dat() Unicode PPTH ===
+[I][anlz] PPTH: "/Contents/周防義和/UnknownAlbum/Caribbean Blue.mp3"
+[I][anlz] DAT transaction published: bpm=0 beats=0 cues=0
+  parse_dat Unicode PPTH returns ESP_OK             PASS
+  Unicode PPTH path preserved as UTF-8              PASS
+  beats = NULL after free                           PASS
+  waveform_high = NULL after free                   PASS
+  double anlz_free() safe                           PASS
+
+=== Error handling ===
+  parse_dat NULL path → INVALID_ARG               PASS
+  parse_dat NULL out → INVALID_ARG                PASS
+  parse_dat missing file → NOT_FOUND              [E][anlz] Cannot open: /nonexistent/ANLZ0000.DAT
+PASS
+  parse_ext NULL meta → INVALID_ARG               PASS
+  parse_ext missing file → NOT_FOUND              [E][anlz] Cannot open EXT: /nonexistent/ANLZ0000.EXT
+PASS
+[I][anlz] PPTH: "/Music/TestArtist/test.mp3"
+[I][anlz] PVBR: 4 seek entries. First 10: 100, 200, 300, 400, 0, 0, 0, 0, 0, 0
+[I][anlz] PQTZ: 2 beats, BPM=128 (raw=12800)
+[I][anlz] PWAV: 400/400 bytes
+[I][anlz] PCOB: 2 cue/loop entries
+[I][anlz] DAT transaction published: bpm=128 beats=2 cues=2
+[I][anlz] PWV3: 800 bytes high-res waveform
+  PWV4 valid preview and PWV3 load together         PASS
+  PWV4 clone owns independent bounded bytes         PASS
+[I][anlz] PWV3: 800 bytes high-res waveform
+[W][anlz] PWV4 ignored: 2
+  wrong PWV4 entry size keeps PWV3 but clears prior colorPASS
+[I][anlz] PWV3: 800 bytes high-res waveform
+[W][anlz] PWV4 ignored: 2
+  truncated optional PWV4 retains PWV3              PASS
+[I][anlz] PWV3: 800 bytes high-res waveform
+  oversized PWV4 is bounded and reports truncation  PASS
+[I][anlz] PWV3: 800 bytes high-res waveform
+  missing PWV4 clears old color while PWV3 remains  PASS
+  PWV4 peak uses loudest column                     PASS
+  PWV4 red column resampled                         PASS
+  PWV4 green column resampled                       PASS
+  invalid PWV4 columns rejected                     PASS
+[I][anlz] PPTH: "/Music/TestArtist/test.mp3"
+[I][anlz] PVBR: 4 seek entries. First 10: 100, 200, 300, 400, 0, 0, 0, 0, 0, 0
+[I][anlz] PQTZ: 2 beats, BPM=128 (raw=12800)
+[I][anlz] PWAV: 400/400 bytes
+[I][anlz] PCOB: 2 cue/loop entries
+[I][anlz] PCOB: 2 cue/loop entries
+[I][anlz] DAT transaction published: bpm=128 beats=2 cues=2
+  memory cues stay separate from hot pads and report truncationPASS
+  memory cues survive metadata snapshot clone       PASS
+[I][anlz] PPTH: "/Music/TestArtist/test.mp3"
+[I][anlz] PVBR: 4 seek entries. First 10: 100, 200, 300, 400, 0, 0, 0, 0, 0, 0
+[I][anlz] PQTZ: 2 beats, BPM=128 (raw=12800)
+[I][anlz] PWAV: 400/400 bytes
+[I][anlz] PCOB: 2 cue/loop entries
+[E][anlz] DAT rejected before publish (2)
+  invalid memory loop rejects DAT transactionally   PASS
+[I][anlz] PPTH: "/Music/TestArtist/test.mp3"
+[I][anlz] PVBR: 4 seek entries. First 10: 100, 200, 300, 400, 0, 0, 0, 0, 0, 0
+[I][anlz] PQTZ: 2 beats, BPM=128 (raw=12800)
+[I][anlz] PWAV: 400/400 bytes
+[I][anlz] PCOB: 2 cue/loop entries
+[I][anlz] PCOB: 2 cue/loop entries
+[I][anlz] DAT transaction published: bpm=128 beats=2 cues=2
+  EXT Hot Cue D enriches DAT; duplicate A and memory are idempotent[I][anlz] PCOB: 1 cue/loop entries
+[I][anlz] PCOB: 2 cue/loop entries
+[I][anlz] PCOB: 2 cue/loop entries
+[I][anlz] PCOB: 2 cue/loop entries
+[I][anlz] PWV3: 800 bytes high-res waveform
+PASS
+  EXT reparse does not duplicate source hot/memory cues[I][anlz] PCOB: 1 cue/loop entries
+[I][anlz] PCOB: 2 cue/loop entries
+[I][anlz] PCOB: 2 cue/loop entries
+[I][anlz] PCOB: 2 cue/loop entries
+[I][anlz] PWV3: 800 bytes high-res waveform
+PASS
+  conflict/malformed/missing-wave EXT retains published DAT+EXT[I][anlz] PCOB: 1 cue/loop entries
+[E][anlz] EXT rejected; previous metadata retained (2)
+PASS
+  conflict/malformed/missing-wave EXT retains published DAT+EXT[E][anlz] EXT rejected; previous metadata retained (2)
+PASS
+  conflict/malformed/missing-wave EXT retains published DAT+EXT[I][anlz] PCOB: 1 cue/loop entries
+[E][anlz] EXT rejected; previous metadata retained (2)
+PASS
+  conflict/malformed/missing-wave EXT retains published DAT+EXT[I][anlz] PCOB: 1 cue/loop entries
+[E][anlz] EXT rejected; previous metadata retained (3)
+PASS
+  conflict/malformed/missing-wave EXT retains published DAT+EXT[E][anlz] EXT rejected; previous metadata retained (2)
+PASS
+  conflict/malformed/missing-wave EXT retains published DAT+EXT[I][anlz] PCOB: 1 cue/loop entries
+[E][anlz] EXT rejected; previous metadata retained (2)
+PASS
+  empty EXT cue list preserves DAT source cues      [I][anlz] PCOB: 0 cue/loop entries
+[I][anlz] PWV3: 800 bytes high-res waveform
+PASS
+  EXT supports all eight Hot Cue slots and bounded memory enrichment[I][anlz] PCOB: 1 cue/loop entries
+[I][anlz] PCOB: 2 cue/loop entries
+[I][anlz] PCOB: 3 cue/loop entries
+[I][anlz] PCOB: 4 cue/loop entries
+[I][anlz] PCOB: 5 cue/loop entries
+[I][anlz] PCOB: 5 cue/loop entries
+[I][anlz] PCOB: 5 cue/loop entries
+[I][anlz] PCOB: 5 cue/loop entries
+[I][anlz] PCOB: 5 cue/loop entries
+[I][anlz] PCOB: 5 cue/loop entries
+[I][anlz] PCOB: 5 cue/loop entries
+[I][anlz] PCOB: 5 cue/loop entries
+[I][anlz] PCOB: 5 cue/loop entries
+[I][anlz] PCOB: 5 cue/loop entries
+[I][anlz] PCOB: 5 cue/loop entries
+[I][anlz] PCOB: 5 cue/loop entries
+[I][anlz] PCOB: 5 cue/loop entries
+[I][anlz] PCOB: 5 cue/loop entries
+[I][anlz] PCOB: 5 cue/loop entries
+[I][anlz] PCOB: 5 cue/loop entries
+[I][anlz] PCOB: 5 cue/loop entries
+[I][anlz] PCOB: 5 cue/loop entries
+[I][anlz] PWV3: 800 bytes high-res waveform
+PASS
+[I][anlz] PPTH: "/a"
+[I][anlz] PQTZ: 4 beats, BPM=120 (raw=12000)
+[I][anlz] DAT transaction published: bpm=120 beats=4 cues=0
+  standard PQTZ retains original phases 1-4 and downbeat 1PASS
+  committed qualification ANLZ has standard beats and tagged cue A[I][anlz] PPTH: "/Contents/onset-44100.wav"
+[I][anlz] PQTZ: 4 beats, BPM=120 (raw=12000)
+[I][anlz] PCOB: 1 cue/loop entries
+[I][anlz] DAT transaction published: bpm=120 beats=4 cues=1
+PASS
+
+=== Strict truncation corpus ===
+  DAT header/section/payload truncations rejected transactionallyPASS
+  EXT truncations retain the previously published metadata[I][anlz] PPTH: "/Music/TestArtist/test.mp3"
+[I][anlz] PVBR: 4 seek entries. First 10: 100, 200, 300, 400, 0, 0, 0, 0, 0, 0
+[I][anlz] PQTZ: 2 beats, BPM=128 (raw=12800)
+[I][anlz] PWAV: 400/400 bytes
+[I][anlz] PCOB: 2 cue/loop entries
+[I][anlz] DAT transaction published: bpm=128 beats=2 cues=2
+[E][anlz] EXT rejected; previous metadata retained (2)
+[E][anlz] EXT rejected; previous metadata retained (2)
+[E][anlz] EXT rejected; previous metadata retained (2)
+[E][anlz] EXT rejected; previous metadata retained (2)
+[E][anlz] EXT rejected; previous metadata retained (2)
+[E][anlz] EXT rejected; previous metadata retained (2)
+[E][anlz] EXT rejected; previous metadata retained (2)
+[E][anlz] EXT rejected; previous metadata retained (2)
+[E][anlz] EXT rejected; previous metadata retained (2)
+[E][anlz] EXT rejected; previous metadata retained (2)
+PASS
+  DAT rejects a trailing partial section header     PASS
+  DAT rejects duplicate hot-cue slots transactionally[I][anlz] PPTH: "/Music/TestArtist/test.mp3"
+[I][anlz] PVBR: 4 seek entries. First 10: 100, 200, 300, 400, 0, 0, 0, 0, 0, 0
+[I][anlz] PQTZ: 2 beats, BPM=128 (raw=12800)
+[I][anlz] PWAV: 400/400 bytes
+[E][anlz] DAT rejected before publish (2)
+PASS
+
+============================
+TESTS_RUN=72
+Results: 77/72 passed  — ALL PASSED
+    TESTS_RUN=72 (floor 41)
+==> build track_meta_cache
+==> run track_meta_cache
+track_meta_cache v6 tests passed
+==> build library_anlz
+==> run library_anlz
+=== library_anlz tests ===
+== warm cache hit ==
+== cold cache miss ==
+== cache rejection -> parse fallback ==
+== cache-write failure stays non-fatal ==
+== parser failure retires the previous current metadata ==
+== track with no ANLZ path keeps its PDB summary ==
+== sequential replacement frees the old object ==
+== nonzero PDB/audio duration survives ANLZ enrichment ==
+== missing PDB/audio duration falls back to final beat ==
+== immutable track store with compact sort order ==
+== identity accessors resolve rows without record copies ==
+== catalog publication does not reacquire media gate ==
+== catalog publication rejects a mid-copy unmount ==
+== playlist order and artwork are bound to catalog generation ==
+TESTS_RUN=228
+library duration and compact-order tests passed
+    TESTS_RUN=228 (floor 207)
+==> build library_anlz_cache_write
+==> run library_anlz_cache_write
+=== library_anlz tests ===
+== warm cache hit ==
+== cold cache miss ==
+== cache rejection -> parse fallback ==
+== cache-write failure stays non-fatal ==
+== parser failure retires the previous current metadata ==
+== track with no ANLZ path keeps its PDB summary ==
+== sequential replacement frees the old object ==
+== nonzero PDB/audio duration survives ANLZ enrichment ==
+== missing PDB/audio duration falls back to final beat ==
+== immutable track store with compact sort order ==
+== identity accessors resolve rows without record copies ==
+== catalog publication does not reacquire media gate ==
+== catalog publication rejects a mid-copy unmount ==
+== playlist order and artwork are bound to catalog generation ==
+TESTS_RUN=228
+library duration and compact-order tests passed
+    TESTS_RUN=228 (floor 207)
+==> build rekordbox_pdb
+==> run rekordbox_pdb
+=== Rekordbox PDB parser test harness ===
+
+=== API contract tests ===
+  pdb_open NULL path returns error                       PASS
+  pdb_open NULL out returns error                        PASS
+  pdb_open nonexistent file returns error                [E][pdb] Cannot open: /nonexistent/export.pdb
+PASS
+  pdb_track_count(NULL) == 0                             PASS
+  pdb_get_track(NULL, 0, ...) returns error              PASS
+  pdb_close(NULL) does not crash                         PASS
+
+=== DeviceSQL UTF-16 decoding tests ===
+  UTF-16 DeviceSQL preserves non-ASCII as UTF-8          PASS
+  real artist/album near/far/Unicode/ASCII and bounded offsets[I][pdb] Opened PDB: 2048 B, page=512, tables=3, pages=4
+[I][pdb] Name table 0x02: 1 entries
+[I][pdb] Name table 0x03: 1 entries
+[I][pdb] Name table 0x05: 0 entries
+[I][pdb] Loaded: 1 tracks, 1 artists, 1 albums, 0 keys
+PASS
+  real artist/album near/far/Unicode/ASCII and bounded offsets[I][pdb] Opened PDB: 2048 B, page=512, tables=3, pages=4
+[I][pdb] Name table 0x02: 1 entries
+[I][pdb] Name table 0x03: 1 entries
+[I][pdb] Name table 0x05: 0 entries
+[I][pdb] Loaded: 1 tracks, 1 artists, 1 albums, 0 keys
+PASS
+  real artist/album near/far/Unicode/ASCII and bounded offsets[I][pdb] Opened PDB: 2048 B, page=512, tables=3, pages=4
+[I][pdb] Name table 0x02: 1 entries
+[I][pdb] Name table 0x03: 1 entries
+[I][pdb] Name table 0x05: 0 entries
+[I][pdb] Loaded: 1 tracks, 1 artists, 1 albums, 0 keys
+PASS
+  real artist/album near/far/Unicode/ASCII and bounded offsets[I][pdb] Opened PDB: 2048 B, page=512, tables=3, pages=4
+[I][pdb] Name table 0x02: 1 entries
+[I][pdb] Name table 0x03: 1 entries
+[I][pdb] Name table 0x05: 0 entries
+[I][pdb] Loaded: 1 tracks, 1 artists, 1 albums, 0 keys
+PASS
+  real artist/album near/far/Unicode/ASCII and bounded offsets[I][pdb] Opened PDB: 2048 B, page=512, tables=3, pages=4
+[I][pdb] Name table 0x02: 0 entries
+[I][pdb] Name table 0x03: 0 entries
+[I][pdb] Name table 0x05: 0 entries
+[I][pdb] Loaded: 1 tracks, 0 artists, 0 albums, 0 keys
+PASS
+  real artist/album near/far/Unicode/ASCII and bounded offsets[I][pdb] Opened PDB: 2048 B, page=512, tables=3, pages=4
+[I][pdb] Name table 0x02: 0 entries
+[I][pdb] Name table 0x03: 0 entries
+[I][pdb] Name table 0x05: 0 entries
+[I][pdb] Loaded: 1 tracks, 0 artists, 0 albums, 0 keys
+PASS
+  real artist/album near/far/Unicode/ASCII and bounded offsets[I][pdb] Opened PDB: 2048 B, page=512, tables=3, pages=4
+[I][pdb] Name table 0x02: 0 entries
+[I][pdb] Name table 0x03: 0 entries
+[I][pdb] Name table 0x05: 0 entries
+[I][pdb] Loaded: 1 tracks, 0 artists, 0 albums, 0 keys
+PASS
+  Tagged title                                           [I][pdb] Opened PDB: 1024 B, page=512, tables=1, pages=2
+[I][pdb] Name table 0x02: 0 entries
+[I][pdb] Name table 0x03: 0 entries
+[I][pdb] Name table 0x05: 0 entries
+[I][pdb] Loaded: 1 tracks, 0 artists, 0 albums, 0 keys
+PASS
+  fallback.mp3                                           [I][pdb] Opened PDB: 1024 B, page=512, tables=1, pages=2
+[I][pdb] Name table 0x02: 0 entries
+[I][pdb] Name table 0x03: 0 entries
+[I][pdb] Name table 0x05: 0 entries
+[I][pdb] Loaded: 1 tracks, 0 artists, 0 albums, 0 keys
+PASS
+  Č                                                     [I][pdb] Opened PDB: 1024 B, page=512, tables=1, pages=2
+[I][pdb] Name table 0x02: 0 entries
+[I][pdb] Name table 0x03: 0 entries
+[I][pdb] Name table 0x05: 0 entries
+[I][pdb] Loaded: 1 tracks, 0 artists, 0 albums, 0 keys
+PASS
+  fallback.mp3                                           [I][pdb] Opened PDB: 1024 B, page=512, tables=1, pages=2
+[I][pdb] Name table 0x02: 0 entries
+[I][pdb] Name table 0x03: 0 entries
+[I][pdb] Name table 0x05: 0 entries
+[I][pdb] Loaded: 1 tracks, 0 artists, 0 albums, 0 keys
+PASS
+  malformed page-zero row groups do not underflow cursor [I][pdb] Opened PDB: 64 B, page=64, tables=1, pages=1
+[I][pdb] Name table 0x02: 0 entries
+[I][pdb] Name table 0x03: 0 entries
+[I][pdb] Name table 0x05: 0 entries
+[I][pdb] Loaded: 0 tracks, 0 artists, 0 albums, 0 keys
+PASS
+  bounded page reader counts tracks beyond retained index[I][pdb] Opened PDB: 525824 B, page=512, tables=1, pages=1027
+[I][pdb] Name table 0x02: 0 entries
+[I][pdb] Name table 0x03: 0 entries
+[I][pdb] Name table 0x05: 0 entries
+[W][pdb] Track index truncated at 1024 entries
+[I][pdb] Loaded: 1024 tracks, 0 artists, 0 albums, 0 keys
+PASS
+  playlist, entry and artwork rows parse from bounded PDB pages[I][pdb] Opened PDB: 2560 B, page=512, tables=4, pages=5
+[I][pdb] Name table 0x02: 0 entries
+[I][pdb] Name table 0x03: 0 entries
+[I][pdb] Name table 0x05: 0 entries
+[I][pdb] Loaded: 1 tracks, 0 artists, 0 albums, 0 keys
+PASS
+  playlist hierarchy rejects missing parents, tracks and folder entries[I][pdb] Opened PDB: 4096 B, page=512, tables=3, pages=8
+[I][pdb] Name table 0x02: 0 entries
+[I][pdb] Name table 0x03: 0 entries
+[I][pdb] Name table 0x05: 0 entries
+[I][pdb] Loaded: 1 tracks, 0 artists, 0 albums, 0 keys
+PASS
+
+=== Real-file test: ../fixtures/p4/export.pdb ===
+[I][pdb] Opened PDB: 1024 B, page=512, tables=1, pages=2
+[I][pdb] Name table 0x02: 0 entries
+[I][pdb] Name table 0x03: 0 entries
+[I][pdb] Name table 0x05: 0 entries
+[I][pdb] Loaded: 1 tracks, 0 artists, 0 albums, 0 keys
+Tracks loaded: 1
+  track count > 0                                        PASS
+
+#    ID     BPM   Artist                    Title                               ANLZ path                               
+-------------------------------------------------------------------------------------------------------------
+1    123    0     (none)                    Qualification title                 (no anlz)                               
+
+Summary: 1 tracks, 0 with artist name, 0 with ANLZ path
+  all tracks with ANLZ path start with /PIONEER/USBANLZ  PASS
+  all tracks with file path start with /Contents or /    PASS
+
+=== Results: 25/25 passed ===
+==> build support_rtos
+==> run support_rtos
+== queue keeps FIFO order and a real capacity ==
+== peek does not consume, send-to-front and overwrite behave ==
+== binary, mutex and counting semaphores keep real counts ==
+== recursive mutex nests and only releases at depth zero ==
+== task bodies run only when pumped, and self-delete ends them ==
+== notifications land per task and clear as FreeRTOS does ==
+== the tick is driven by the test, not by the host clock ==
+== critical section depth is observable for balance assertions ==
+== reset drops every object so suites cannot leak into each other ==
+TESTS_RUN=108
+fake RTOS model tests passed
+    TESTS_RUN=108 (floor 108)
+==> build app_settings
+==> run app_settings
+== a set before the worker exists still reaches NVS ==
+== a failed NVS write does not update the published snapshot ==
+== out-of-range percentages clamp to 100 ==
+== a slider burst commits once, with the final value ==
+== starting the worker twice does not create a second one ==
+== init loads the stored value and arms the worker with it ==
+== only backlight is debounced; other setters commit at once ==
+== empty NVS starts on RCA and records the current schema ==
+== legacy speaker setting is durably migrated to RCA ==
+== invalid audio route is durably migrated to RCA ==
+== product setter cannot restore the retired speaker route ==
+== OTA configuration is persisted as one coherent blob ==
+== OTA clear persists a tombstone and reports write failure ==
+== Ethernet Link is default-off, durable, and does not publish failed writes ==
+TESTS_RUN=91
+app_settings tests passed
+    TESTS_RUN=91 (floor 46)
+==> build board_adapter
+==> run board_adapter
+board capabilities geometry, identity, sinks and USB roles PASS
+==> build board_adapter_jc1060
+==> run board_adapter_jc1060
+board capabilities geometry, identity, sinks and USB roles PASS
+==> build board_adapter_m3
+==> run board_adapter_m3
+board capabilities geometry, identity, sinks and USB roles PASS
+==> build board_adapter_m3_hs_controller
+==> run board_adapter_m3_hs_controller
+board capabilities geometry, identity, sinks and USB roles PASS
+==> build controller_profile_manager
+==> run controller_profile_manager
+  v4 storage/upload validation and rejection       PASS
+=== controller_profile_manager tests ===
+  meta parse (fixture cross-format guard)          PASS
+  scan + registry match/descriptor                 PASS
+  descriptor match waits for activate ACK           PASS
+  rescan preserves descriptor and forces reactivation PASS
+  disconnect clears live state, preserves profiles      PASS
+  descriptor identity/epoch ordering policy          PASS
+  strict profile ID validation                       PASS
+  atomic profile install + interrupted-swap recovery PASS
+controller_profile_manager tests passed
+==> run restart capture decoder regressions
+....
+----------------------------------------------------------------------
+Ran 4 tests in 0.001s
+
+OK
+==> run board-aware project version qualification
+warning: in the working copy of 'project_version.cmake', LF will be replaced by CRLF the next time Git touches it
+.warning: in the working copy of 'project_version.cmake', LF will be replaced by CRLF the next time Git touches it
+.warning: in the working copy of 'project_version.cmake', LF will be replaced by CRLF the next time Git touches it
+.
+----------------------------------------------------------------------
+Ran 3 tests in 3.033s
+
+OK
+==> run explicit S2 DMA policy admission
+....
+----------------------------------------------------------------------
+Ran 4 tests in 0.391s
+
+OK
+==> run relocated board build verifier
+......
+----------------------------------------------------------------------
+Ran 6 tests in 0.171s
+
+PASS main-deck-m3: 256 bytes, isolated BSP, LVGL 9.5.0, app identity
+OK
+==> run incremental board identity generation
+warning: in the working copy of 'firmware/p4-core/cmake/generate_board_identity.cmake', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'firmware/p4-core/components/board_adapter/board_build_identity.c', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'firmware/p4-core/components/board_adapter/board_build_identity.json.in', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'firmware/p4-core/components/board_adapter/board_build_identity_generated.h.in', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'firmware/p4-core/components/board_adapter/include/board_build_identity.h', LF will be replaced by CRLF the next time Git touches it
+.warning: in the working copy of 'firmware/p4-core/cmake/generate_board_identity.cmake', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'firmware/p4-core/components/board_adapter/board_build_identity.c', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'firmware/p4-core/components/board_adapter/board_build_identity.json.in', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'firmware/p4-core/components/board_adapter/board_build_identity_generated.h.in', LF will be replaced by CRLF the next time Git touches it
+warning: in the working copy of 'firmware/p4-core/components/board_adapter/include/board_build_identity.h', LF will be replaced by CRLF the next time Git touches it
+.
+----------------------------------------------------------------------
+Ran 2 tests in 7.649s
+
+OK
+==> run M3 DMA reclock boundary
+PASS production M3 reclock: reset DMA interval before enable, preserve disable/clock/enable errors
+==> run Wi-Fi lifecycle fault injection
+PASS production Wi-Fi probe lease race and same-worker fresh retry budget
+==> run USB manager startup completion isolation
+PASS production USB startup timeout/late daemon completion without caller notifications
+==> run ota_signing
+..........
+----------------------------------------------------------------------
+Ran 10 tests in 0.514s
+
+OK
+==> run preserving M3 factory migration
+...................
+----------------------------------------------------------------------
+Ran 19 tests in 1.884s
+
+OK
+==> run OTA release helper tests
+OTA release helper tests passed.
+==> preserve matching local ELF/map debug artifacts
+Debug artifact preservation tests passed.
+==> run P4 lifecycle harness self-test
+P4 lifecycle harness self-test passed
+==> run P4 lifecycle I/J batch self-test
+P4 lifecycle I/J batch self-test passed
+==> run P4 lifecycle Group K harness self-test
+P4 lifecycle Group K harness self-test passed
+==> run P4 lifecycle Group L harness self-test
+P4 lifecycle Group L harness self-test passed
+==> run P4 release qualification harness self-test
+P4 release qualification harness self-test passed.
+==> run P4 duplicate raw track-ID acceptance harness self-test
+P4 duplicate raw track-ID acceptance harness self-test passed
+==> run P4 UAC transition stress harness self-test
+P4 UAC transition stress self-test passed.
+P4 host tests passed.
+==> static p4 USB storage reconciles desired/current state and retries mount failures
+==> static p4 USB teardown detaches sole-owner handles before destructive cleanup
+==> static p4 USB MSC patch preserves callback ownership through hot-unplug teardown
+==> static p4 USB media bounds every FatFS transfer by bytes, not sector count
+==> static p4 USB Rekordbox probe distinguishes absent export from transport failure
+==> static p4 status exposes USB storage hot-plug lifecycle evidence
+==> static p4 USB root-port recovery is not disabled by a firmware-lifetime seen-device latch
+==> static p4 USB disconnect is not dependent on a finite event queue
+==> static p4 ANLZ enrichment treats the beatgrid as a duration fallback only
+==> static p4 library builds its real implementation, not a duration wrapper
+==> static p4 defaults suppress brownout-prone ANLZ cache writes
+==> static p4 pull OTA accepts trusted cross-signed certificate chains
+    PASS
+==> static public API contract compiles
+==> static retired API audio_mixer_mix_stereo stays unreachable
+==> static retired API audio_output_block_period_ms stays unreachable
+==> static retired API audio_output_remaining_delay_ms stays unreachable
+==> static retired API audio_scratch_buffer_index_for_ms stays unreachable
+==> static retired API audio_scratch_buffer_push stays unreachable
+==> static retired API audio_scratch_buffer_read stays unreachable
+==> static retired API mock_library_get_current_track_index stays unreachable
+==> static retired API mock_library_load_track_to_deck stays unreachable
+==> static retired compilation wrapper bsp_jc4880_single_fb.c stays deleted
+==> static bsp_jc4880 does not build through bsp_jc4880_single_fb.c
+==> static retired compilation wrapper ui_lvgl_backend_single_fb.c stays deleted
+==> static ui does not build through ui_lvgl_backend_single_fb.c
+==> static retired compilation wrapper web_server_fixed.c stays deleted
+==> static web_server does not build through web_server_fixed.c
+==> static retired compilation wrapper deck_core_live_led.c stays deleted
+==> static deck_core does not build through deck_core_live_led.c
+==> static retired compilation wrapper app_settings_fixed.c stays deleted
+==> static app_settings does not build through app_settings_fixed.c
+==> static retired compilation wrapper wifi_link_leased.c stays deleted
+==> static wifi_link does not build through wifi_link_leased.c
+==> static retired compilation wrapper p4_ota_pull_leased.c stays deleted
+==> static p4_ota_pull does not build through p4_ota_pull_leased.c
+==> static retired compilation wrapper library_duration_fixed.c stays deleted
+==> static library does not build through library_duration_fixed.c
+==> static retired compilation wrapper rekordbox_anlz_fixed.c stays deleted
+==> static library does not build through rekordbox_anlz_fixed.c
+==> static retired compilation wrapper track_meta_cache_fixed.c stays deleted
+==> static library does not build through track_meta_cache_fixed.c
+==> static retired compilation wrapper audio_engine_ordered.c stays deleted
+==> static audio_engine does not build through audio_engine_ordered.c
+==> static retired compilation wrapper controller_profile_manager_ordered.c stays deleted
+==> static controller_profile_manager does not build through controller_profile_manager_ordered.c
+==> static p4 audio_engine builds its real source
+==> static p4 controller profile manager builds its real source
+==> static p4 BSP builds its real source
+==> static p4 microSD shares the IDF6 SDMMC controller already owned by ESP-Hosted
+==> static p4 app_settings builds its real source
+==> static p4 pull OTA reserves and releases the transition lease itself
+==> static p4 pull OTA does not hook vTaskDelete to release the lease
+==> static p4 pull OTA builds its real source
+==> static p4 Wi-Fi probe reserves and releases the transition lease itself
+==> static p4 Wi-Fi ON/OFF control cannot tear down ESP-Hosted during OTA
+==> static p4 wifi_link does not hook vTaskDelete to release the lease
+==> static p4 wifi_link builds its real source
+==> static p4 deck LEDs leave through the single beat-jump-aware send helper
+==> static p4 deck_core builds its real source
+==> static p4 display shares one authoritative framebuffer count
+==> static p4 display allocates only the framebuffer the backend actually uses
+==> static p4 product boot forces the retired speaker PA low before settings load
+==> static p4 retired speaker route is compile-time rejected and keeps PA low
+==> static p4 LVGL backend requests the shared framebuffer count
+==> static p4 firmware status strings are escaped before JSON formatting
+==> static p4 web loop actions go through deck_core, not straight to the audio engine
+==> static p4 web sync uses authoritative deck_core state
+==> static p4 web server never mutates the audio engine loop directly
+==> static p4 web server builds its real source
+==> static p4 OTA handlers consume fragmented request bodies completely
+==> static p4 product defaults explicitly disable the recorder
+==> static p4 recorder requires an explicit storage experiment
+==> static production ANLZ walker rejects partial section envelopes
+==> static production ANLZ parser has no byte-scan tag fallback
+==> static production ANLZ parser routes every read through the checked helpers
+==> static library sorting uses immutable records and compact double-buffered order
+==> static library UI bounds LVGL cells to one eight-row page
+==> static library source defines production selected-row helpers directly
+==> static library sources no longer contain selected-track mock aliases
+==> static shared UI sources use only production selected-track names
+==> static shared library UI source uses only production selected-track names
+==> static firmware UI compiles shared sources directly
+==> static firmware UI source-local selected API bridges stay retired
+==> static UI simulator library implements production selected-track API
+==> static UI simulator library has no mock selected-track API
+==> static UI simulator deck hooks have explicit simulator names
+==> static shared UI has no mock deck hooks
+==> static UI simulator mocks have no mock deck hooks
+==> static migration CI runs UI simulator screenshot gate
+==> static firmware loader binds the fixed cache instead of allocating the whole track
+==> static firmware audio never requires one contiguous allocation per compressed track
+==> static recorder STOP closes admission and waits for active producers before drain
+==> static recorder finalize publishes only after patch sync and close succeed
+==> static recorder stop propagates writer and finalize failures
+==> run USB control completion ownership regression
+USBH control retirement: upstream race reproduced; single/batch/resubmit/empty PASS
+==> run USB ancestry and dependency checkout contracts
+PASS real CMake ancestry source selection, upstream drift rejection, and scoped CRLF dependency clone with inherited settings
+==> run controller audio failure isolation regression
+PASS production audio fault isolation: MIDI retained; stuck/FS/live/gone recovery preserved
+==> run production HS scheduler capture regression
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.384s
+
+OK
+==> run shared USB host interrupt policy regression
+.
+----------------------------------------------------------------------
+Ran 1 test in 1.262s
+
+OK
+==> run fixed internal ISO descriptor pool regression
+.
+----------------------------------------------------------------------
+Ran 1 test in 1.308s
+
+OK
+==> run internal ISO payload allocation regression
+.
+----------------------------------------------------------------------
+Ran 1 test in 1.817s
+
+OK
+==> run per-root USB FIFO capacity regression
+.
+----------------------------------------------------------------------
+Ran 1 test in 2.624s
+
+OK
+==> run USB ISO first-fault production capture
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.994s
+
+OK
+==> run pinned HCD cache ownership regression
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.826s
+
+OK
+==> run task-context cache writeback bound regression
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.781s
+
+OK
+==> run Hosted shared SDMMC restart regression
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.676s
+
+OK
+==> run diagnostic Wi-Fi TX limit regression
+.
+----------------------------------------------------------------------
+Ran 1 test in 1.670s
+
+OK
+==> run production I/O gate initialization regression
+Production media_io_gate single-mutex publication and allocation fail-closed PASS
+Production sd_io_gate single-mutex publication and allocation fail-closed PASS
+==> run service log sync barrier regression
+Production service-log late acknowledgement and bounded timeout PASS
+==> run service log writer lifecycle regression
+Production service-log early records, failed reopen and init cleanup PASS
+==> run copied FatFs VFS fault boundary regression
+Production FatFs ENOSPC/seekdir lock release, position restoration and bool boundary PASS
+==> run copied FatFs mount ownership regression
+Production FatFs duplicate mount ownership, WL cleanup and remount error propagation PASS
+==> run firmware lifecycle regression
+PASS production STOP retries, both startup aborts retain worker ownership, deferred EOF/scratch seek
+==> run codec publication and media fault backoff regression
+PASS production ready-publication, bounded backoff outside lock, reset and deck isolation
+==> run production USB MAIN reconnect and loop EOF regression
+PASS production USB MAIN loss/reconnect/explicit PLAY, repeated loss, seek failure, PCM isolation, fatal faults and engine loop EOF
+==> run production status memory JSON regression
+PASS production status memory JSON: correct counters and explicit unavailable values on FS/HS
+==> run production MT fallback consumer-clock handoff
+max_handoff_resets_per_1024_frames=3
+PASS production MT handoff: 224 same-generation future-withdrawal/fallback cases, both decks/rates/pitch signs; consumer never rewinds, actual seeks remain authoritative
+==> run production board remote startup readiness regression
+PASS production board remote startup before health acceptance: Ethernet HTTP/DHCP/down/failure/timeouts, Wi-Fi and optional/factory policy
+==> run linked startup capture initialization contract
+.......
+----------------------------------------------------------------------
+Ran 7 tests in 0.001s
+
+OK
+==> run production remote load progress and cancellation retirement
+production remote progress/cancellation PASS
+==> run production paired RGB565 fill regression
+D:\AI\Pajoniiir-shared-p4-core\.cache\ui_backend_fill_review\test.c: In function 'ui_lvgl_backend_draw_rect_rgb565':
+D:\AI\Pajoniiir-shared-p4-core\.cache\ui_backend_fill_review\test.c:38:56: warning: comparison of integer expressions of different signedness: 'int' and 'unsigned int' [-Wsign-compare]
+   38 |     if (s_dsi_active_fb_idx < 0 || s_dsi_active_fb_idx >= UI_DSI_FB_COUNT ||
+      |                                                        ^~
+PASS production RGB565 fill: bounded pixels, paired dirty region, cache-error propagation
+==> run production controller profile rescan regression
+PASS production rescan: connected callback after locks/busy release; failure/disconnected/inflight/no-callback paths
+==> run production optional mDNS startup regression
+PASS production mDNS startup: all failures preserve HTTP; owned cleanup and idempotent stop
+==> run production OTA receive lifecycle regression
+PASS production OTA receive: retries release resources; activated slot rejects begin/late abort/duplicate finish
+==> run production USB storage mount reconciliation regression
+PASS production storage mount: fast reconnect publishes false before release/remount; failed mount/retry ordering
+==> run production network mutation lifecycle regression
+PASS production network mutation: session replacement, nonblocking lock, scratch, hold, invalid pitch
+==> run firmware artwork identity ownership regression
+PASS production artwork deep-copy, full-ID isolation, epoch independence and same-address content revisions
+PASS production artwork poll: stale media/page, same-key replacement, fallback, evicted result and bounded retry
+==> run production DJ Link load queue contention regression
+PASS production DJ Link load retention during snapshot contention and stale load rejection
+==> run controller_profile
+....
+----------------------------------------------------------------------
+Ran 4 tests in 0.005s
+
+OK
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.000s
+
+OK
+  v4 selection, scaling, SysEx and malformed data     PASS
+  normalized DDJ400 fixture and FX target selector    PASS
+  S2 MK3 basic source fixture (no hardware claim)     PASS
+  jog mode packed profile actions on both decks      PASS
+=== controller_profile format/runtime tests ===
+  parse validation                                  PASS
+  runtime input mapping                             PASS
+  snapshot replay dedup                             PASS
+  LED output mapping                                PASS
+  CC7 scaling, replay and version compatibility      PASS
+controller_profile tests passed
+=== controller_profile FLX4 golden parity ===
+  input parity: 12288 messages, 1625 matched            PASS
+  snapshot parity: 17 events                        PASS
+  LED parity: 690 combos, 670 mapped                 PASS
+controller_profile parity tests passed
+PASS S2 full compiled profile: mixer/pitch range and center, jog, Shift, LEDs, replay, validators
+DDJ-400 v4: parser/storage CRC and both-deck loop press/release PASS
+PASS Numark DJ2GO2 Touch compiled profile: buttons, Note On/Off, jog, 7-to-14-bit, pads, LEDs, replay, validators
+PASS Hercules native profile: parser/storage, native-control isolation, PCM master, jog, activation/clear
+==> run controller_runtime
+PASS frozen M3 mapper/LED reference provenance
+PASS M3 FLX4 parity: 1834758 messages, 34682 matched, 131072 LED cases, 254 redundant target publications, 256 wrong-channel rejects
+PASS bounded P4 controller event buffer
+CHECKS=284
+PASS bounded P4 local FLX4 controller runtime
+CHECKS=247 EVENTS=2
+PASS P4 local compiled controller profile runtime
+CHECKS=9477 EVENTS=80
+USB host recovery arbiter: 6038 checks passed
+TESTS_RUN=29
+USB host topology: 50 checks passed
+PASS firmware mutex allocation failure, concurrent MIDI/dispatch and callback reentry
+S2 compiled-profile navigation: PASS (both decks, edges, direction, contact ignored, VID/PID)
+S2 compiled-profile navigation: PASS (both decks, edges, direction, contact ignored, VID/PID)
+PASS USB bus trace: bounded history, root isolation, coherent concurrent snapshots
+==> run controller_usb_host
+PASS reusable controller USB-MIDI codec and bounded probe snapshots
+TESTS_RUN=47
+controller MIDI OUT gate: 19 assertions passed
+PASS production queue reset: lower-priority producer retires while owner blocked, gate closed before drain
+Production stream policy: JC4880
+PASS captured Hercules UAC1: endpoint association, 10.14 feedback, capacity, fractional pacing, stale stop and FLX4 isolation
+PASS FS 48-kHz fast feedback: 49-frame packets and endpoint bounds
+PASS FS 48-kHz fast feedback: 49-frame packets and endpoint bounds
+PASS UAC2 captured HS descriptor, clock RANGE/CUR, feedback, packing and teardown
+PASS UAC2 bounded asynchronous clock settle, wrap, timeout and disconnect
+PASS UAC2 advertised 44.1-kHz fallback, exact readback, fractional HS cadence and resampling
+PASS UAC startup alloc/submit fault provenance and ownership cleanup
+PASS 30 host HS reconnects: bounded retained payload, no new OUT allocation, FS releases all transfers
+PASS DDJ-400 HS UAC1: raw interval 4, 1-ms cadence, wrong cadence/family/FLX4 rejected, control/stream/stop
+PASS Numark FS focused fixture: PCM16 44.1k, sync cadence, MAIN/CUE routing, 48k source conversion, stop
+PASS FLX4 dedicated headphone unity, signed full-scale/low-level PCM, MAIN mirror isolation
+PASS UAC 16/24-bit, consumer pacing, bounded timeout, ownership, reconnect and channel routing
+Production stream policy: M3-HS
+PASS captured Hercules UAC1: endpoint association, 10.14 feedback, capacity, fractional pacing, stale stop and FLX4 isolation
+PASS FS 48-kHz fast feedback: 49-frame packets and endpoint bounds
+PASS FS 48-kHz fast feedback: 49-frame packets and endpoint bounds
+PASS UAC2 captured HS descriptor, clock RANGE/CUR, feedback, packing and teardown
+PASS UAC2 bounded asynchronous clock settle, wrap, timeout and disconnect
+PASS UAC2 advertised 44.1-kHz fallback, exact readback, fractional HS cadence and resampling
+PASS UAC startup alloc/submit fault provenance and ownership cleanup
+PASS 30 host HS reconnects: bounded retained payload, no new OUT allocation, FS releases all transfers
+PASS DDJ-400 HS UAC1: raw interval 4, 1-ms cadence, wrong cadence/family/FLX4 rejected, control/stream/stop
+PASS Numark FS focused fixture: PCM16 44.1k, sync cadence, MAIN/CUE routing, 48k source conversion, stop
+PASS FLX4 dedicated headphone unity, signed full-scale/low-level PCM, MAIN mirror isolation
+PASS UAC 16/24-bit, consumer pacing, bounded timeout, ownership, reconnect and channel routing
+==> run controller_led_runtime
+PASS P4 local controller LED runtime
+CHECKS=55 SENDS=176
+==> run profile compiler and converter
+............
+----------------------------------------------------------------------
+Ran 12 tests in 0.003s
+
+OK
+==> run UI runtime memory budget gate
+..
+----------------------------------------------------------------------
+Ran 2 tests in 0.001s
+
+OK
+==> run offline M3 cue migration
+..........
+----------------------------------------------------------------------
+Ran 10 tests in 4.229s
+
+OK
+==> run mandatory qualification fixture integrity
+.
+----------------------------------------------------------------------
+Ran 1 test in 0.003s
+
+OK
+==> run read-only shared P4 reliability monitor
+...........
+----------------------------------------------------------------------
+Ran 11 tests in 46.451s
+
+OK
+==> web UI browser contract
+PASS HTML uses only embedded stylesheet and script assets
+PASS viewport keeps browser zoom available
+PASS every inline UI handler exists in app.js
+PASS failed SYNC mutation never fabricates local deck state
+PASS SYNC button renders authoritative deck_core state
+PASS waveform drag previews locally and commits exactly one seek
+PASS waveform cancellation does not seek
+PASS continuous controls serialize requests and keep the newest value
+PASS late library response cannot overwrite a newer catalog
+TESTS_RUN=9
+    TESTS_RUN=9 (floor 7)
+==> static audio_engine explicit deck state
+==> static project-local ESP-IDF 6 dead diagnostics stay removed
+==> p4 realtime output diagnostics never format ESP logs
+    PASS
+==> static p4 audio output defers position bookkeeping without blocking its deadline
+==> static p4 live seek rearms prebuffer and invalidates stale output progress
+==> static p4 late-output anomalies are aggregated outside the audio task
+==> static p4 media acceptance counters are exposed by status
+==> static p4 natural EOF tail is not reported as PCM starvation
+==> static p4 library load worker preserves internal RAM for audio task startup
+==> static FatFS bool defaults use Kconfig y/n syntax
+==> static CI actions and ESP-IDF image use immutable references
+==> static p4 ANLZ short-read detection is per-task, not a shared global
+==> static p4 discarded track load retires only its own generated audio session
+==> static p4 UI load worker always has a fixed completion token
+==> static p4 UI load completion no longer depends on heap allocation
+==> static p4 deck LOAD lifecycle is serialized and generation-owned
+==> static deck core owns coherent loaded-track publication
+==> static ANLZ readers retain immutable snapshots without cloning
+==> static deck ANLZ acquire no longer deep-copies payloads
+==> static UI ANLZ acquire no longer deep-copies payloads
+==> static UI frame and Overview retain ANLZ for their complete pointer lifetime
+==> static Overview owns ANLZ across LVGL callbacks
+==> static deck core no longer borrows loaded-track fields from UI
+==> static library cross-task events no longer use lossy volatile flags
+==> static library refresh and USB removal use durable event generations
+==> static P4 OTA requires signed bundle before flash begin
+==> static P4 OTA UI selects signed bundle
+==> static P4 Wi-Fi Remote uses the accepted shared service credential
+==> static P4 SoftAP offers WPA2/WPA3 transition mode with PMF capability
+==> static P4 clean configuration enables SoftAP SAE support
+==> static audio_engine per-deck firmware decode PCM buffers
+==> static overview main RGB565 runtime path
+==> static overview runtime avoids full RGB565 redraw
+==> static no test compiles through another test
+==> static audio DSP hot path stays single-precision
+==> static decode warms the compressed cache before taking AE_LOCK
+==> static overview inactive tab does not validate waveform cache
+==> static overview main waveform commits only after successful render
+==> static overview load defers main waveform render to scheduler
+==> static overview waveform cache must not use CPU memmove for steady scroll
+==> static overview mini waveform avoids full canvas invalidation
+==> static overview title avoids continuous LVGL marquee invalidation
+==> static overview timer avoids frame-rate LVGL text invalidation
+==> static P4 Overview shows elapsed + remaining time on the BPM row at BPM font size
+==> static P4 Overview blue title strip is title-only (no time pill)
+==> static P4 Overview title strip avoids split timer labels
+==> static P4 Overview beat strip geometry derives from waveform center
+==> static P4 Overview beat strip avoids legacy hardcoded dot positions
+==> static P4 Overview beat strip uses interpolated deck position
+==> static P4 Overview removes disabled legacy phase meter
+==> static P4 Overview tempo cluster keeps pitch readable
+==> static P4 Overview tempo cluster displays decimal effective BPM
+==> static P4 Overview shows deck-local VU meters beside transport controls
+==> static P4 Overview VU meters avoid transport button overlap
+==> static P4 Overview deck badges stay clear of VU meters
+==> static P4 Overview deck badges avoid legacy wide labels
+==> static P4 Overview deck badges match play/cue size and Library LOAD fill colours
+==> static P4 Overview Beat FX uses compact right rail with effect-colour coding
+==> static P4 Overview Beat FX avoids deck2 title overlap
+==> static deck_core UI-only buttons use semantic button mapping
+==> static audio output pacing includes render time
+==> static P4 local UI excludes removed Key Shift screen
+==> static P4 performance tabs exclude removed Key Shift controls
+==> static P4 performance tabs API excludes removed Key Shift screen
+==> static P4 local UI excludes removed Loop and Beat Jump screens
+==> static P4 performance tabs exclude removed Loop and Beat Jump controls
+==> static P4 performance tabs API excludes removed Loop and Beat Jump screens
+==> static P4 Settings excludes retired monitor speaker switch
+==> static P4 Settings update avoids removed tab index
+==> static P4 Settings wireless switches use dark off-state styling
+==> static P4 Settings mixer status strip keeps title clear of controls
+==> static p4 OTA validates chip and project before activation
+==> static p4 status API exposes controller and service-log health
+==> static p4 status exposes USB1 probe diagnostics
+==> static p4 JC4880 Full-Speed connector selects PHY0 without burning eFuse
+==> static p4 USB host manager applies the requested Full-Speed PHY route
+==> static p4 USB recovery only succeeds after indexed root power-on completes
+==> static p4 USB recovery atomically preserves an active per-root enumeration
+==> static p4 USB manager suppresses recovery once attach or enumeration is active
+==> static p4 USB recovery resumes a prior half-completed power cycle
+==> static p4 status exposes USB root recovery outcomes
+==> static p4 dual USB build applies a fail-closed per-controller FIFO layout
+==> static p4 dual USB FIFO patch preserves bulk HS and periodic OUT FS capacity
+==> static p4 pins the esp-usb disconnect/recycle race fix
+==> static p4 dual-USB defaults keep a bounded flash coredump
+==> static p4 status exposes a safe crash summary without raw coredump bytes
+==> static p4 manager activates the matched profile locally
+==> static p4 controller events and LED output stay local
+==> static p4 controller USB client remains scheduler-unpinned
+==> static p4 controller USB client excludes the experimental CPU0 pin
+==> static p4 UAC consumer and audio producer share a scheduler priority
+==> static p4 audio output priority contract remains explicit
+==> static p4 active control-link component compiles only the local adapter
+==> static p4 active control-link component excludes legacy UART and bulk transport
+==> static p4 active application has no monitor PCM component dependency
+==> static OTA release packager emits only P4 silicon for all three board projects
+==> static OTA release packager excludes the retired S3 target
+==> static p4 status API exposes bounded UAC ring health
+==> static authenticated web controls wake without consuming the mutation
+==> static p4 audio_engine exposes a per-deck platter-hold mute (vinyl phase 1)
+==> static p4 deck_core enters platter-hold on jog touch and scrubs while touched
+==> static p4 audio_engine exposes canonical PCM timeline to scratch without a second PCM copy
+==> static p4 legacy independent scratch PCM store stays retired
+==> static p4 audio_scratch DSP engine renders bidirectional interpolated scratch (vinyl phase 3)
+==> static p4 audio_engine routes a scratching deck to the scratch engine (vinyl phase 4)
+==> static p4 audio_engine cross-fades the scratch->forward release handoff (vinyl phase 4b)
+==> static p4 scratch handoff is output-owned and preserves the 64-bit timeline epoch
+==> static p4 MAIN I2S writes are bounded and STOP wakes the channel
+==> static p4 MAIN I2S output never uses an unbounded driver wait
+==> static p4 FLAC cache faults trigger decoder replacement instead of EOF
+==> static p4 deck_core gates jog touch to scratch behind CONFIG_AUDIO_SCRATCH_ENABLED (vinyl phase 4)
+==> static p4 mixer supports an optional scratch frame source (vinyl phase 4)
+==> static p4 ships with vinyl scratch enabled
+==> static p4 loop wrap withdraws decoded frames published past the loop out point
+==> static p4 OTA config status reports only whether a password is stored
+==> static p4 web server never serialises the OTA passphrase
+==> static p4 settings log the transactional OTA passphrase snapshot's presence, never its value
+==> static p4 Wi-Fi teardown keeps the AP service and the C6 transport separable
+==> static p4 Wi-Fi OFF keeps the one-per-boot ESP-Hosted transport alive
+==> static p4 app version excludes derived tags and enforces the descriptor limit
+==> static p4 app version cannot fall back to an unordered commit hash
+==> static p4 Wi-Fi start retries are bounded
+==> static p4 STA association retries are bounded and diagnostic
+==> static p4 STA visit keeps the C6 transport and always has a way back
+==> static p4 STA visit does not tear down ESP-Hosted
+==> static p4 pull OTA verifies the bundle signature before writing flash
+==> static p4 pull OTA binds the signed version before opening the OTA partition
+==> static p4 pull OTA reports the failing download or flash stage
+==> static p4 pull OTA web status preserves the concrete ESP-IDF error
+==> static p4 pull OTA retries transport idle without accepting EOF
+==> static p4 pull OTA preserves connection-open transport errors
+==> static pull OTA publisher derives channel version from a verified signed bundle
+==> static p4 pull OTA installs only a release a check offered and the caller names back
+==> static p4 gates the recorder master tap behind CONFIG_AUDIO_RECORDER_ENABLED
+==> static p4 gates the recording endpoints behind CONFIG_AUDIO_RECORDER_ENABLED
+==> static p4 ships with the microSD recorder disabled
+==> static p4 audio_engine tears down scratch playback on reload/stop and when a deck stops mid-scratch
+==> static p4 audio_engine permits loaded cue scratch and no-ops an unmatched release
+==> static p4 audio_engine publishes the scratch handoff phase with release/acquire
+==> static p4 scratch begin supports a fast re-grab during release handoff
+==> static p4 UI position follows the audible scratch head
+==> static p4 waveform disables forward interpolation for scratch-authoritative position
+==> static p4 paused seek pre-roll centers cue scratch history and future
+==> static p4 scratch position and release wrap inside active loops
+==> static p4 pitch changes are deferred until scratch fade-out reaches silence
+==> static p4 pitch and jog state use atomic float bits across control and output tasks
+==> static p4 canonical PCM timeline drives decode, output and frame-accurate scratch release
+==> static PCM timeline scheduler probe remains opt-in
+    PASS
+==> static p4 PCM timeline scheduler probe uses an isolated timeline and bounded repetitions
+==> static p4 PCM timeline scheduler handoff occurs after the cursor critical section
+==> static p4 starts the opt-in PCM timeline scheduler probe after audio initialization
+==> static p4 decoder EOF drains pending PCM before natural transport completion
+==> static p4 transport flags use atomic access across decode output and control tasks
+==> static p4 continuous audio output periodically gives IDLE0 a watchdog tick
+==> static p4 scratch freeze promptly releases an in-flight canonical timeline writer
+==> static p4 USB storage wraps the DWC channel interrupt decoder
+==> static p4 DWC decoder wrapper is pinned to the ESP-IDF it mirrors
+==> static p4 DWC decoder still aborts on a non-BNA missing halt
+==> static p4 estimated seek moves the bounded-cache cursor without linear scanning
+==> static p4 deck_core quantize binary-searches the beatgrid
+==> static p4 pdb row-slot iterator validates the whole group before subtraction
+==> static p4 pdb backend reads are bounded and stop after media removal
+==> static p4 web library stream aborts when the client disconnects
+==> static p4 web mutations require allow-listed-host marked POST requests and report queue pressure
+==> static p4 Library-load validation gate is guarded, bounded and requires USB0 absent
+==> static p4 audio-load validation gate is guarded, bounded and requires USB0 present
+==> static p4 software-reboot validation endpoint is guarded and requires idle dual USB
+==> static p4 delayed reboot task is pinned to core zero for ESP32-P4 cache reset
+==> static p4 pull OTA install and restart task is pinned to core zero
+==> static p4 DSP applies control-task FX commands on output block boundaries
+==> static p4 web server does not expose wildcard CORS
+==> static p4 web mutations do not use permissive atoi parsing

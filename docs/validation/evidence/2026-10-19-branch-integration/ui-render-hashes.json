@@ -1,0 +1,42 @@
+[
+  {
+    "name": "perform_1024x600_night.ppm",
+    "bytes": 1843216,
+    "sha256": "53e1e53f6d5d6bc0d7dcc2b7dc8b57758c422f4058cc6aa5d53de998ea1cfdea"
+  },
+  {
+    "name": "perform_1280x800_night.ppm",
+    "bytes": 3072016,
+    "sha256": "57b026a56ba88018f29e57bb13ebd510e7e5c588a889b6f6fe62db8c210bbb19"
+  },
+  {
+    "name": "perform_480x800_day.ppm",
+    "bytes": 1152015,
+    "sha256": "4ac9bfd335fb03551273e08abaeba2595f92dbf9441fa6d75c1f7a74a19d909b"
+  },
+  {
+    "name": "perform_480x800_night.ppm",
+    "bytes": 1152015,
+    "sha256": "5e966965442afd339c4069acfe3039fbf52dbbaa06dd7b5cebbb1372132539d5"
+  },
+  {
+    "name": "perform_600x1024_night.ppm",
+    "bytes": 1843216,
+    "sha256": "e3be803f9293fe43696c4aa05cf75ceed5942b18f8a18ab145c9ed72dc2a2ccb"
+  },
+  {
+    "name": "perform_800x1280_night.ppm",
+    "bytes": 3072016,
+    "sha256": "56f21671ced550bd4649d31fa6af95cff7ca735ad81762d387daea724274b407"
+  },
+  {
+    "name": "perform_800x480_day.ppm",
+    "bytes": 1152015,
+    "sha256": "33c0ce752ece5a2713ce5dc8ad245e835e33d73bafad210cfd9ef898baecb6df"
+  },
+  {
+    "name": "perform_800x480_night.ppm",
+    "bytes": 1152015,
+    "sha256": "1d5b67e0c350c586dd61430c69c51e60f96e3d126d55de6a9958dcb905dc0b55"
+  }
+]

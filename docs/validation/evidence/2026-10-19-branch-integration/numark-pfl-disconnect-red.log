@@ -1,0 +1,3 @@
+==> build deck_core_dual
+==> run deck_core_dual
+Assertion failed: !audio_engine_get_pfl_enabled(deck), file test_deck_core_dual.c, line 1384

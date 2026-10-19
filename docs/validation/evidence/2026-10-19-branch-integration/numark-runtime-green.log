@@ -1,0 +1,15 @@
+PASS frozen M3 mapper/LED reference provenance
+PASS M3 FLX4 parity: 1834758 messages, 34682 matched, 131072 LED cases, 254 redundant target publications, 256 wrong-channel rejects
+PASS bounded P4 controller event buffer
+CHECKS=284
+PASS bounded P4 local FLX4 controller runtime
+CHECKS=247 EVENTS=2
+PASS P4 local compiled controller profile runtime
+CHECKS=9477 EVENTS=80
+USB host recovery arbiter: 6038 checks passed
+TESTS_RUN=29
+USB host topology: 50 checks passed
+PASS firmware mutex allocation failure, concurrent MIDI/dispatch and callback reentry
+S2 compiled-profile navigation: PASS (both decks, edges, direction, contact ignored, VID/PID)
+S2 compiled-profile navigation: PASS (both decks, edges, direction, contact ignored, VID/PID)
+PASS USB bus trace: bounded history, root isolation, coherent concurrent snapshots

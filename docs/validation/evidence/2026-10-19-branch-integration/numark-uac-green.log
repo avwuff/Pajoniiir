@@ -1,0 +1,26 @@
+Production stream policy: JC4880
+PASS captured Hercules UAC1: endpoint association, 10.14 feedback, capacity, fractional pacing, stale stop and FLX4 isolation
+PASS FS 48-kHz fast feedback: 49-frame packets and endpoint bounds
+PASS FS 48-kHz fast feedback: 49-frame packets and endpoint bounds
+PASS UAC2 captured HS descriptor, clock RANGE/CUR, feedback, packing and teardown
+PASS UAC2 bounded asynchronous clock settle, wrap, timeout and disconnect
+PASS UAC2 advertised 44.1-kHz fallback, exact readback, fractional HS cadence and resampling
+PASS UAC startup alloc/submit fault provenance and ownership cleanup
+PASS 30 host HS reconnects: bounded retained payload, no new OUT allocation, FS releases all transfers
+PASS DDJ-400 HS UAC1: raw interval 4, 1-ms cadence, wrong cadence/family/FLX4 rejected, control/stream/stop
+PASS Numark FS focused fixture: PCM16 44.1k, sync cadence, MAIN/CUE routing, 48k source conversion, stop
+PASS FLX4 dedicated headphone unity, signed full-scale/low-level PCM, MAIN mirror isolation
+PASS UAC 16/24-bit, consumer pacing, bounded timeout, ownership, reconnect and channel routing
+Production stream policy: M3-HS
+PASS captured Hercules UAC1: endpoint association, 10.14 feedback, capacity, fractional pacing, stale stop and FLX4 isolation
+PASS FS 48-kHz fast feedback: 49-frame packets and endpoint bounds
+PASS FS 48-kHz fast feedback: 49-frame packets and endpoint bounds
+PASS UAC2 captured HS descriptor, clock RANGE/CUR, feedback, packing and teardown
+PASS UAC2 bounded asynchronous clock settle, wrap, timeout and disconnect
+PASS UAC2 advertised 44.1-kHz fallback, exact readback, fractional HS cadence and resampling
+PASS UAC startup alloc/submit fault provenance and ownership cleanup
+PASS 30 host HS reconnects: bounded retained payload, no new OUT allocation, FS releases all transfers
+PASS DDJ-400 HS UAC1: raw interval 4, 1-ms cadence, wrong cadence/family/FLX4 rejected, control/stream/stop
+PASS Numark FS focused fixture: PCM16 44.1k, sync cadence, MAIN/CUE routing, 48k source conversion, stop
+PASS FLX4 dedicated headphone unity, signed full-scale/low-level PCM, MAIN mirror isolation
+PASS UAC 16/24-bit, consumer pacing, bounded timeout, ownership, reconnect and channel routing
