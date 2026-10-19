@@ -24,7 +24,7 @@ Build with IDF6.0.2 and a **separate build directory and fresh sdkconfig**:
 
 ```powershell
 . C:\Espressif\tools\Microsoft.v6.0.2.PowerShell_profile.ps1
-idf.py -C firmware/main-deck-jc1060 -B .cache/jc1060-sd-power/build `
+idf.py -C firmware/main-deck-jc1060 -B "$PWD/.cache/jc1060-sd-power/build" `
   -DSDKCONFIG="$PWD/.cache/jc1060-sd-power/sdkconfig" `
   -DPAJONIIIR_SD_COLD_POWER_EXPERIMENT=ON build
 python tools/check_board_build.py --project main-deck-jc1060 `

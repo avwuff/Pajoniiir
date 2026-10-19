@@ -1,0 +1,15 @@
+{
+  "source_sha": "5a005092a3bbe499d2d1c48a14c9d34414484916",
+  "build_exit": 0,
+  "verifier_exit": 0,
+  "lock_unchanged": true,
+  "sd_experiment_enabled": true,
+  "production_helper_compiled": true,
+  "ppa_component_path": "C:/Espressif/v6.0.2/esp-idf/components/esp_driver_ppa",
+  "image_bytes": 2669920,
+  "image_sha256": "1AA8B42D46F021DF5A687C0DC88A414E80ADFAB1EDA265E3D8712FBFB89EA119",
+  "board_build_identity": {
+    "source_sha": "5a005092a3bbe499d2d1c48a14c9d34414484916",
+    "source_dirty": 0
+  }
+}

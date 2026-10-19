@@ -1,5 +1,14 @@
 # P4 post-release development plan
 
+2026-10-19 [JC board preparation](reviews/2026-10-19-jc-board-preparation.md):
+the JC8012 private PPA generator and compile/configure isolation contracts are
+ready for a future licensed BSP. Both the GSL3680 payload and factory JD9365
+table remain excluded; do not enable a fourth target until replacements or
+distribution terms are established. JC1060 SD cold power is implemented and
+software-tested behind an OFF-by-default explicit experiment. Kayrosen's
+exact-image hardware gate is still open; do not change JC1060 Wi-Fi defaults.
+The three production builds remain on stock PPA, with unchanged locks.
+
 2026-10-19 branch integration: qualified shared-core PR51 is merged into
 `master` without changing its production tree. The separate integration branch
 imports `ui_next` as a disabled demo and adapts Numark with absolute PFL levels,

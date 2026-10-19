@@ -366,7 +366,7 @@ jobs:
     name: ESP32-P4 JC1060 firmware (${{ matrix.variant }})
     strategy:
       matrix:
-        variant: [regular, recorder, psram, dj-ui]
+        variant: [regular, recorder, psram, dj-ui, sd-power]
     runs-on: ubuntu-latest
     steps:
       - name: Check out tested revision
@@ -396,6 +396,7 @@ jobs:
               if [ "${{ matrix.variant }}" = recorder ] || [ "${{ matrix.variant }}" = psram ]; then flags="-D PAJONIIIR_STORAGE_EXPERIMENT=ON"; fi
               if [ "${{ matrix.variant }}" = dj-ui ]; then flags="-D PAJONIIIR_DJ_UI_PREVIEW=ON"; fi
               if [ "${{ matrix.variant }}" = psram ]; then flags="$flags -D PAJONIIIR_STORAGE_VARIANT=/project/firmware/main-deck-p4/sdkconfig.storage_psram"; fi
+              if [ "${{ matrix.variant }}" = sd-power ]; then flags="-D PAJONIIIR_SD_COLD_POWER_EXPERIMENT=ON"; fi
               idf.py $flags set-target esp32p4
               idf.py $flags reconfigure
               test -f build/config/sdkconfig.h
@@ -421,7 +422,7 @@ jobs:
           exit $code
 
       - name: Verify board isolation and embedded identity
-        run: python3 tools/check_board_build.py --build firmware/main-deck-jc1060/build --project main-deck-jc1060 ${{ (matrix.variant == 'recorder' || matrix.variant == 'psram') && '--experimental-recorder' || '' }}
+        run: python3 tools/check_board_build.py --build firmware/main-deck-jc1060/build --project main-deck-jc1060 ${{ (matrix.variant == 'recorder' || matrix.variant == 'psram') && '--experimental-recorder' || '' }} ${{ matrix.variant == 'sd-power' && '--experimental-sd-power' || '' }}
 
       - name: Verify committed dependency lock is unchanged
         run: |
