@@ -1,0 +1,100 @@
+One canonical P4 core; board-specific signed packages for **JC4880, JC1060 and M3**.
+
+This is a **contributor beta / GitHub prerelease**. Stable **M2.5**, prior
+beta1 assets and public OTA channels remain unchanged. No device is updated by
+publishing this release; M3/JC4880 acceptance below predates publication and
+belongs to the exact, unchanged supplied bytes.
+
+## Changes since beta 1
+
+- Restore FLX4 headphone cue level: remove unintended12.041-dB transport
+  attenuation while retaining the legacy USB MAIN mirror behavior. Both M3 and
+  JC4880 bench listening/control checks are operator-confirmed. Start LEVEL low
+  after updating and raise gradually; this is not a new club-volume/electrical gate.
+- Re-anchor Master Tempo after ordinary-resampler fallback, fixing a reproduced
+  stale consumer-clock rewind (224 production-callback regression cases).
+- Apply the existing1-KiB task-context cache-maintenance bound to ordinary P4
+  builds. Range/alignment/error, ISR/critical delegation and full DMA ownership
+  semantics remain intact; bytes are bounded, not execution time guaranteed.
+- Remove unbounded largest-block heap walks from ordinary diagnostic snapshots.
+  Free/minimum counters remain measured; unavailable fragmentation/walk fields
+  are explicit null, not zero. Avoid resource walks and large logs during playback.
+- Include reviewed shared controller/lifecycle and JC1060 integration repairs,
+  plus DDJ-400 loop halve/double mappings. JC1060 physical gates remain open.
+
+## Downloads and exact identities
+
+The distribution tag is a delivery record, not a common firmware build version.
+Each retained image has its own source SHA; production/test/tool/profile trees
+are identical. We deliberately avoid rebuilding accepted firmware just to make
+the version strings match.
+
+| Board | Embedded version / source | Image bytes | Download |
+| --- | --- | ---: | --- |
+| JC4880 | `M2.5-249-g0a33ec1f` / `0a33ec1fb16c0136dccaa85ca63a6fbc00a4d527` | 2,609,952 | `jc4880-beta-kit.zip` or `main-deck-p4.ddjota` |
+| JC1060 | `M2.5-246-g2f2b0555` / `2f2b05558ccb68238d7228f59e52cd6c7d06e12f` | 2,668,480 | `jc1060-beta-kit.zip` or `main-deck-jc1060.ddjota` |
+| M3 | `M3-dev-g1556e8d7dfcb` / `1556e8d7dfcb4f016c52ab1a372dd2e076dcaa1f` | 2,603,312 | `m3-beta-kit.zip` or `main-deck-m3.ddjota` |
+
+Matching `*-debug.zip` files contain exact ELF/MAP/configuration. Kits include
+signed OTA/manifest, raw application, board/configuration/lock identity, recovery
+bootloader/partition/otadata/flash metadata, module-specific notices and compiled
+profiles. `controller-profiles.zip` provides the same six compiled fixtures;
+profile availability does not imply hardware acceptance on every board.
+
+Verify SHA256SUMS and its detached signature, the signed release manifest and
+each kit inventory. Trusted public DER fingerprint:
+`125ef6eb776729e3018ecc564317254febec4a9a2bf34892e99d57f10bc02e43`.
+The included public key alone does not establish trust. No private signing
+material is included.
+
+Stop both decks, keep power stable, and upload **only the matching board's
+signed `.ddjota`**. Cross-board projects are not interchangeable. Raw BIN and
+the kit's recovery/ contents are verified wired provisioning/recovery material,
+not web OTA; check the actual layout and never erase the chip indiscriminately.
+
+- Ordinary **M3**: FLX4 USB2 FS/root1; storage USB3 HS/root0; PCM5102A MAIN48 kHz.
+  These assets do **not** use the experimental Hercules/S2 controller/storage
+  swap. Historical M3 `main-deck-p4` identity requires the preserving wired
+  migration before `main-deck-m3` OTA. M3-dev has no automatic pull discovery.
+- **JC4880**: controller root1/storage root0, PCM5102A MAIN with board-selected
+  rate (44.1 kHz with FLX4 in the accepted smoke).
+- **JC1060**: controller root0/storage root1, controller MAIN/cue and Ethernet;
+  no Wi-Fi or PCM5102A pin sharing. The kit identity supersedes historical
+  version numbers in its contributor handoff. First hardware tests are Kayrosen's
+  separate gate; this publication does not send him a message.
+
+## Validation and limits
+
+- **M3 supplied bytes**: installed VALID ota_1;100.264-s three-loop-exit replay,
+  30.145-s controls,60.133-s combined semantic checks, then3600.286 s /5301
+  samples of mixed-rate dual MT/loops. All22 strict deltas remain0. The operator
+  confirms clean MAIN/FLX4 headphones, fluid waveforms and stable display for
+  the full hour. Output-late24/max12,988 us includes a sample-observed3/60-s
+  cluster: investigation retained, **not zero-late or unrestricted reliability PASS**.
+- **JC4880 supplied bytes**: installed VALID ota_0;60.234 s /93 samples /1902
+  MIDI packets, all22 strict deltas0 and output-late0. Both loop/CUE transitions
+  and operator controls/PFL/MIX/LEVEL/audio/display confirmed. Long soak is
+  explicitly **waived / NOT RUN**, not PASS. The earlier0.076-s attempt was a
+  monitor-rate mismatch and remains archived as incomplete, not a firmware failure.
+- **JC1060 supplied bytes**: local IDF6.0.2 incremental build/board checks pass.
+  Physical installation/acceptance is **NOT RUN**, deferred to Kayrosen. Required
+  Ethernet/HTTP readiness/rollback, SD warm-reset, USB MAIN reconnect and listening
+  still require this exact image on real hardware.
+- Full host Qualification passed on identical production/test sources. Retained
+  IDF6.0.2 builds, unchanged dependency locks, single-BSP/project/source checks,
+  0x380000 budgets, signatures, matching ELF hashes, compiled fixtures and every
+  ZIP inventory verify. These are **retained incremental builds**, not new clean
+  release builds. Hosted CI is **NOT RUN (operator quota waiver)**.
+- Controls are exercised during playback, but observed input precedes automatic
+  loop exits. Sustained input pressure specifically through exit is not qualified.
+  Exact historical139-ms masking-call attribution and the late cluster stay open.
+- S2 remains **operator-closed with explicit waivers**; no further tests scheduled.
+  Historical S2/Hercules acceptance keeps its own image/topology scope and does
+  not qualify these ordinary M3 downloads. Wider controller LED/pad/FX, real
+  export/library, physical Campaign A and experimental feature gates stay partial
+  or NOT RUN. Recorder/alternate DJ UI and M3 Ethernet/Pro DJ Link stay experimental
+  or disabled in ordinary defaults. The entire shared-core acceptance is not closed.
+
+Distribution source: `d259a71ae716217a6448c374bf52c2c798d67ce8`. Per-board source commits are listed above and in the signed manifest.
+
+[OTA instructions](https://github.com/dvucinozd/Pajoniiir/blob/shared-p4-beta.2/docs/OTA-UPDATE.md) · [Board policies](https://github.com/dvucinozd/Pajoniiir/blob/shared-p4-beta.2/docs/SHARED_P4_BOARDS.md) · [Beta2 delivery record](https://github.com/dvucinozd/Pajoniiir/blob/shared-p4-beta.2/docs/validation/SHARED_P4_BETA_2_20261019.md) · [M3 hour evidence](https://github.com/dvucinozd/Pajoniiir/blob/shared-p4-beta.2/docs/validation/M3_MT_FALLBACK_HANDOFF_20261018.md) · [JC4880 smoke evidence](https://github.com/dvucinozd/Pajoniiir/blob/shared-p4-beta.2/docs/validation/M3_SOAK_CLOSEOUT_JC4880_OTA_20261019.md)

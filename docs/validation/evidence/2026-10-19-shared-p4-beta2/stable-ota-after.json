@@ -1,0 +1,9 @@
+{
+  "schema_version": 1,
+  "release": "M2.5",
+  "p4": {
+    "url": "M2.5/main-deck-p4.ddjota",
+    "size": 2576620,
+    "sha256": "44db191c1785168781e9b2893cac6dda1b92a20a5342c328d7fbfdbbd8707e27"
+  }
+}

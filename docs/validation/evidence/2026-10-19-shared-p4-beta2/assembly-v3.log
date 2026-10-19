@@ -1,0 +1,123 @@
+schema_version=1
+target=p4
+chip_id=18
+image_size=2609952
+project=main-deck-p4
+version=M2.5-249-g0a33ec1f
+sha256=a3ab2b6a8aedf36b265a0b451c4ea63a1c260d209a5a734a702a890a12770b79
+key_id=rel-001
+schema_version=1
+target=p4
+chip_id=18
+image_size=2668480
+project=main-deck-jc1060
+version=M2.5-246-g2f2b0555
+sha256=b031af30c50d9760dffad65d07fdb7837283ac24f74befeec0648b6355691582
+key_id=rel-001
+schema_version=1
+target=p4
+chip_id=18
+image_size=2603312
+project=main-deck-m3
+version=M3-dev-g1556e8d7dfcb
+sha256=af44cefe545d3a7507c452ac6b73d4aed08f8fb78689027882fb06cca8787d52
+key_id=rel-001
+[
+  {
+    "board_id": "jc4880",
+    "project": "main-deck-p4",
+    "source_sha": "0a33ec1fb16c0136dccaa85ca63a6fbc00a4d527",
+    "version": "M2.5-249-g0a33ec1f",
+    "image_bytes": 2609952,
+    "image_sha256": "a3ab2b6a8aedf36b265a0b451c4ea63a1c260d209a5a734a702a890a12770b79",
+    "bundle_bytes": 2610140,
+    "bundle_sha256": "6dc08acd5398fd1b4348adbd3659d453fedaa745d8ccd5e16940b324c6bceefa",
+    "image_elf_sha256": "078cb8c09cbf4b77622facc5d0a09fedef3382f0970a3cd18bbd5ec0357975bc",
+    "ordinary_configuration": true,
+    "physical_acceptance": "Exact supplied image installed VALID ota_0;60.234-s/93-sample mixed-rate MT/loop/CUE/control/audio/display smoke,1902 MIDI,all22 strict deltas0,output-late0; operator confirms all requested functions. Long soak explicitly waived / NOT RUN.",
+    "dependency_lock_sha256": "fdfe2610010b7cb25137a35fff3aba3165bc77ffaeff887df9fc715013d85927",
+    "sdkconfig_sha256": "7761fab5c7034b1de55d3426c4b58e776968d49dcb0192905b21d6674dbb6139",
+    "software_build_mode": "Retained ESP-IDF6.0.2 incremental build; full host Qualification on equivalent1556e8d7 production/test sources; no fresh release rebuild or hosted CI",
+    "source_trees": {
+      "firmware": "0b5e7e3a1a91706f2ff7df6f7cc12f136dd9ee75",
+      "tests": "596548aa30fe39398df6e43dfcfe74d5c63e1e17",
+      "tools": "186a28cc612ec4193b2eaf49cc395aa0d768947c",
+      "controllers": "ce28b3ecbb1a6dfabd3fc29422a83f88b0818238"
+    },
+    "kit": {
+      "file": "jc4880-beta-kit.zip",
+      "size": 4585595,
+      "sha256": "d849c6db4966d75171354e5c68f0ba453995f6ec517c1e92a90ac6386fe187c2"
+    },
+    "debug": {
+      "file": "jc4880-debug.zip",
+      "size": 11036981,
+      "sha256": "cb0590a0a1cd3003ae32d71795aca1ad7c2912ad775e2ffe53ca8e3834afa44c"
+    }
+  },
+  {
+    "board_id": "jc1060",
+    "project": "main-deck-jc1060",
+    "source_sha": "2f2b05558ccb68238d7228f59e52cd6c7d06e12f",
+    "version": "M2.5-246-g2f2b0555",
+    "image_bytes": 2668480,
+    "image_sha256": "b031af30c50d9760dffad65d07fdb7837283ac24f74befeec0648b6355691582",
+    "bundle_bytes": 2668668,
+    "bundle_sha256": "53c55e82b513f5aa217f83acbf738fabca161afcd4cbfe149a127551cdd0169e",
+    "image_elf_sha256": "b23906312cfe27a38340739f02e05971c0f0ad9a48be2a8dba31935d0d8664fb",
+    "ordinary_configuration": true,
+    "physical_acceptance": "Local IDF6.0.2 incremental build/board/software verification only. Supplied image NOT installed or physically accepted; startup/Ethernet/HTTP, SD warm-reset, USB MAIN reconnect and listening gates deferred to Kayrosen.",
+    "dependency_lock_sha256": "b41213015dc95ae87952b56c5e5672503ffe12bc63325c3a68698ee6f958f72e",
+    "sdkconfig_sha256": "70c40dbbafc6e6bc15536cde9eb78614f68c90c3d3049629492bc294767288b3",
+    "software_build_mode": "Retained ESP-IDF6.0.2 incremental build; full host Qualification on equivalent1556e8d7 production/test sources; no fresh release rebuild or hosted CI",
+    "source_trees": {
+      "firmware": "0b5e7e3a1a91706f2ff7df6f7cc12f136dd9ee75",
+      "tests": "596548aa30fe39398df6e43dfcfe74d5c63e1e17",
+      "tools": "186a28cc612ec4193b2eaf49cc395aa0d768947c",
+      "controllers": "ce28b3ecbb1a6dfabd3fc29422a83f88b0818238"
+    },
+    "kit": {
+      "file": "jc1060-beta-kit.zip",
+      "size": 4707579,
+      "sha256": "93f142ba6d84baf0e41ce7f71d25361333aa20d3e58767e0c23601d90b2f571d"
+    },
+    "debug": {
+      "file": "jc1060-debug.zip",
+      "size": 11225697,
+      "sha256": "b5cfbfb49e760032ae27e8a84acffcb3f91590e05927981801e7c994b5f6852f"
+    }
+  },
+  {
+    "board_id": "m3",
+    "project": "main-deck-m3",
+    "source_sha": "1556e8d7dfcb4f016c52ab1a372dd2e076dcaa1f",
+    "version": "M3-dev-g1556e8d7dfcb",
+    "image_bytes": 2603312,
+    "image_sha256": "af44cefe545d3a7507c452ac6b73d4aed08f8fb78689027882fb06cca8787d52",
+    "bundle_bytes": 2603500,
+    "bundle_sha256": "e8362bb55d66118e5ccc5b0aa4eaa818d3d371bbc00f6d3f5f0001a5842c9505",
+    "image_elf_sha256": "4999176a6b7b1fe9c0f48e7c9687a830b45873d8752afc9a8e1a61d8e7992d93",
+    "ordinary_configuration": true,
+    "physical_acceptance": "Exact supplied image installed VALID ota_1; bounded loop/control/CUE checks and3600.286-s/5301-sample dual-MT mixed-rate hour with all22 strict deltas0 and full operator audio/display confirmation. Output-late24/max12988us/sample-observed3-per60s cluster remains investigation; not zero-late or unrestricted reliability PASS.",
+    "dependency_lock_sha256": "d034fe6b34c26d451d75878546947b95dba2a0fedf9f53d10216182784f14f3c",
+    "sdkconfig_sha256": "43e4e2697bba2b70cd21b8aced5003a19048c7d479f765b056bfa0f9c8a0152d",
+    "software_build_mode": "Retained ESP-IDF6.0.2 incremental build; full host Qualification on equivalent1556e8d7 production/test sources; no fresh release rebuild or hosted CI",
+    "source_trees": {
+      "firmware": "0b5e7e3a1a91706f2ff7df6f7cc12f136dd9ee75",
+      "tests": "596548aa30fe39398df6e43dfcfe74d5c63e1e17",
+      "tools": "186a28cc612ec4193b2eaf49cc395aa0d768947c",
+      "controllers": "ce28b3ecbb1a6dfabd3fc29422a83f88b0818238"
+    },
+    "kit": {
+      "file": "m3-beta-kit.zip",
+      "size": 4568680,
+      "sha256": "7b0c99652df9e5ff1feaa6e2c35558148224ade4c25f54888401bd2059e6db6d"
+    },
+    "debug": {
+      "file": "m3-debug.zip",
+      "size": 10881172,
+      "sha256": "295b1bb2a1b7713698dbcfdf0d7979bb3c94cb686e2f8434f80b9d75ff5b0f90"
+    }
+  }
+]
+PASS unchanged binaries, signatures, source equivalence, embedded metadata, debug ELF, profile compilation and ZIP inventories

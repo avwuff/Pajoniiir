@@ -1,5 +1,13 @@
 # P4 post-release development plan
 
+2026-10-19: [shared-p4-beta.2](validation/SHARED_P4_BETA_2_20261019.md) is published
+with the exact accepted M3/JC4880 bytes and software-verified JC1060 candidate.
+Sixteen public downloads and222 ZIP inventory entries verify, along with all
+signatures/identities. No firmware rebuild or additional hardware test is part
+of delivery. Stable M2.5/public OTA, S2 closeout, JC4880 soak waiver and deferred
+JC1060 physical gates remain unchanged. Continue only separately justified
+open-gate work; do not repeat accepted M3/JC4880 blocks merely for publication.
+
 2026-10-19: [final-hour review and JC4880 follow-up](validation/M3_SOAK_CLOSEOUT_JC4880_OTA_20261019.md)
 complete the offline M3 late assessment with its finding retained. Keep M3 on
 the accepted1556e8d7 image. JC4880 clean0a33ec1f builds/signs and installs VALID

@@ -5,6 +5,17 @@ Date: 2026-10-11. Future physical testing owner: contributor Kayrosen
 Physical acceptance of the published beta is **NOT RUN**; preparing this handoff
 did not contact the contributor or imply that testing had begun.
 
+Update2026-10-19: the published
+[shared-p4-beta.2](https://github.com/dvucinozd/Pajoniiir/releases/tag/shared-p4-beta.2)
+now provides `jc1060-beta-kit.zip`, signed `main-deck-jc1060.ddjota` and matching
+debug ZIP for clean `2f2b05558ccb68238d7228f59e52cd6c7d06e12f`, embedded
+`M2.5-246-g2f2b0555`. Use the beta2 signed manifest/BETA-IDENTITY and
+[delivery record](validation/SHARED_P4_BETA_2_20261019.md) for its exact hashes.
+This supersedes the historical package identities below for the new download,
+not their scoped test evidence. Its physical checks remain NOT RUN and no
+message has been sent to Kayrosen. The first bounded block and network/storage/
+USB MAIN recovery gates below still require the exact new image on hardware.
+
 Update 2026-10-15: the [new signed integration kit](JC1060_CONTRIBUTOR_KIT_20261015.md)
 is prepared locally on clean `c0ee8152` with the shared repairs and updated
 DDJ-400 loop mappings. Its README, short checklist, recovery material, exact

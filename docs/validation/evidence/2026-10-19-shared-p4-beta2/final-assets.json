@@ -1,0 +1,82 @@
+[
+  {
+    "file": "controller-profiles.zip",
+    "size": 31491,
+    "sha256": "fa144e7cee2eb2699e09f7585aa092f04b8a13d3be29405b14630b3423c1e10e"
+  },
+  {
+    "file": "ddj_ota_release_public.der",
+    "size": 91,
+    "sha256": "125ef6eb776729e3018ecc564317254febec4a9a2bf34892e99d57f10bc02e43"
+  },
+  {
+    "file": "jc1060-beta-kit.zip",
+    "size": 4707579,
+    "sha256": "93f142ba6d84baf0e41ce7f71d25361333aa20d3e58767e0c23601d90b2f571d"
+  },
+  {
+    "file": "jc1060-debug.zip",
+    "size": 11225697,
+    "sha256": "b5cfbfb49e760032ae27e8a84acffcb3f91590e05927981801e7c994b5f6852f"
+  },
+  {
+    "file": "jc4880-beta-kit.zip",
+    "size": 4585595,
+    "sha256": "d849c6db4966d75171354e5c68f0ba453995f6ec517c1e92a90ac6386fe187c2"
+  },
+  {
+    "file": "jc4880-debug.zip",
+    "size": 11036981,
+    "sha256": "cb0590a0a1cd3003ae32d71795aca1ad7c2912ad775e2ffe53ca8e3834afa44c"
+  },
+  {
+    "file": "m3-beta-kit.zip",
+    "size": 4568680,
+    "sha256": "7b0c99652df9e5ff1feaa6e2c35558148224ade4c25f54888401bd2059e6db6d"
+  },
+  {
+    "file": "m3-debug.zip",
+    "size": 10881172,
+    "sha256": "295b1bb2a1b7713698dbcfdf0d7979bb3c94cb686e2f8434f80b9d75ff5b0f90"
+  },
+  {
+    "file": "main-deck-jc1060.ddjota",
+    "size": 2668668,
+    "sha256": "53c55e82b513f5aa217f83acbf738fabca161afcd4cbfe149a127551cdd0169e"
+  },
+  {
+    "file": "main-deck-m3.ddjota",
+    "size": 2603500,
+    "sha256": "e8362bb55d66118e5ccc5b0aa4eaa818d3d371bbc00f6d3f5f0001a5842c9505"
+  },
+  {
+    "file": "main-deck-p4.ddjota",
+    "size": 2610140,
+    "sha256": "6dc08acd5398fd1b4348adbd3659d453fedaa745d8ccd5e16940b324c6bceefa"
+  },
+  {
+    "file": "release-manifest.json",
+    "size": 8105,
+    "sha256": "152cf2e5aa3012693e2718d37ed6a7efcfc67b068e92aec290fb7b6b98fbc48d"
+  },
+  {
+    "file": "release-manifest.sig",
+    "size": 64,
+    "sha256": "eed672fde0070bacc6736007c1fc58241b20de33e3f629aa6318630889f1438d"
+  },
+  {
+    "file": "RELEASE-NOTES.md",
+    "size": 7247,
+    "sha256": "97556eb2b4496e4b1fb65adf2bb5539a84371a1d09c9ec47619d4b4b30e7fea8"
+  },
+  {
+    "file": "SHA256SUMS.sig",
+    "size": 64,
+    "sha256": "10beb9edd8f147cb4db76e1823541162800c23a9ad8055f2f64173b7dbd0c3c5"
+  },
+  {
+    "file": "SHA256SUMS.txt",
+    "size": 1216,
+    "sha256": "786c8c72e5b71ec16f06e3ccb9820e6c02f91c4d05dd752a433f4238cd8a692b"
+  }
+]

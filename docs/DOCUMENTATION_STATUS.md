@@ -2,6 +2,15 @@
 
 Status: **current documentation authority, reconciled 2026-10-19**.
 
+[shared-p4-beta.2](validation/SHARED_P4_BETA_2_20261019.md) is now published and
+independently verified as a non-Latest GitHub prerelease. Sixteen public assets
+match their sealed originals;222 ZIP entries, all signatures and exact
+board/source/version/ELF/configuration records verify. Retained accepted M3 and
+JC4880 binaries are unchanged; JC1060 remains software-only pending Kayrosen.
+The three embedded versions/sources intentionally differ under one distribution
+tag. Stable M2.5, beta1 assets and public latest.json are unchanged. Hosted CI
+remains NOT RUN under the quota waiver; no new physical acceptance is inferred.
+
 The [final-hour offline review and JC4880 OTA](validation/M3_SOAK_CLOSEOUT_JC4880_OTA_20261019.md)
 complete the saved-journal interpretation without modifying production firmware
 or repeating M3's accepted hour. The selected same-boot window has no new

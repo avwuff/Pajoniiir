@@ -15,7 +15,10 @@ JC4880 clean0a33ec1f installs VALID ota_0 and completes60.234 s /93 samples,
 all22 strict deltas/late0,1,902 MIDI packets and full operator short-test
 control/audio/display confirmation. This does not transfer M3's hour to JC4880;
 its soak stays waived and input does not overlap the automatic loop exit.
-There is no new public release or OTA-channel update. Historical phase/P01–P10
+The subsequent [shared-p4-beta.2 distribution](validation/SHARED_P4_BETA_2_20261019.md)
+publishes these retained M3/JC4880 images and the software-verified JC1060
+candidate, with separate build sources and unchanged bytes. Stable M2.5, beta1
+assets and public OTA remain unchanged. Historical phase/P01–P10
 ledgers below retain their own source scope, open gates and explicit waivers;
 S2 remains closed, JC4880 soak waived, JC1060 hardware deferred and CI NOT RUN.
 

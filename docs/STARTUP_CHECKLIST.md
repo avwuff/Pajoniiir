@@ -1,5 +1,12 @@
 # P4 operation and release checklist
 
+For published [shared-p4-beta.2](validation/SHARED_P4_BETA_2_20261019.md), verify
+the signed release manifest/SHA256SUMS and each board's separate source identity.
+The downloaded M3/JC4880 images retain their exact accepted bytes; JC1060 is
+software-verified only. Do not transfer acceptance across project/board/image
+or use recovery partition files for ordinary web OTA. No new installation is
+requested by publication; stable M2.5/public OTA and existing waivers stand.
+
 For the [2026-10-19 follow-up](validation/M3_SOAK_CLOSEOUT_JC4880_OTA_20261019.md),
 M3's accepted hour and retained late finding remain unchanged. JC4880
 M2.5-249-g0a33ec1f is VALID ota_0 with exact source/ELF and operator GUI

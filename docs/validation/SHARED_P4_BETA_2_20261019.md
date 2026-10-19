@@ -1,7 +1,7 @@
 # Shared P4 beta 2 delivery record
 
 Date:2026-10-19. Distribution: `shared-p4-beta.2`, a contributor prerelease.
-Status: preparation in progress; publication has not yet been verified.
+Status: **published and independently verified** on2026-10-19 (Europe/Zagreb).
 
 ## Frozen board images
 
@@ -70,8 +70,57 @@ hour. Stable M2.5, existing beta1 assets and public OTA channels stay unchanged.
 
 ## Delivery verification
 
-The final assets will contain per-board signed manifests, a signed release
+The final assets contain per-board signed manifests, a signed release
 manifest, SHA-256 inventories, controller profiles with provenance and matching
 debug archives. Kit ZIP inventories, signatures and every published/downloaded
-asset must verify before publication is recorded as complete. No contributor
+asset verifies before publication is recorded as complete. No contributor
 message or additional device installation is part of this delivery.
+
+## Verified publication
+
+[shared-p4-beta.2](https://github.com/dvucinozd/Pajoniiir/releases/tag/shared-p4-beta.2)
+is published, non-draft, explicitly prerelease and `make_latest:false`.
+Release ID:417044096; published2026-10-19T08:08:54Z.
+The annotated tag object9ed56d5521fe7c818bb67fe5ec805755b226eff0 resolves to
+distribution/documentation source `d259a71ae716217a6448c374bf52c2c798d67ce8`.
+All three per-board build commits are ancestors of that pushed source; the
+signed release manifest records their separate identities and common
+firmware/test/tool/profile tree hashes. No firmware was rebuilt for publication.
+
+Sixteen assets are public: three signed OTA bundles, three board kits, three
+matching debug ZIPs, six-profile ZIP, public DER key, release manifest/signature,
+release notes and SHA256SUMS/signature. Every ZIP's full inventory is checked,
+222 entries in total. All six profile JSON files recompile byte-identically to
+their supplied S3CP fixtures. Each kit retains module-specific notices and
+recovery flash metadata, checked against the included recovery files.
+Only complete PEM private-key payloads are rejected by the artifact scan;
+standalone TLS parser delimiter strings in the binary are not private keys.
+
+All16 draft assets were downloaded and verified before publication. All16
+published assets were then independently downloaded without GitHub authentication
+from their public URLs and matched byte-for-byte by SHA-256. Release-manifest,
+SHA256SUMS, per-board manifest and bundle signatures verify against the trusted
+repository key; each image/project/source/version/debug ELF match verifies.
+No artifact was overwritten during assembly or after publication.
+
+Stable latest remains M2.5, release ID404235364, with unchanged asset IDs,
+sizes and digests. Beta1's existing asset IDs/sizes/digests also match the
+before-publication snapshot. The public
+`https://ota.pajoniiir.eu/latest.json` bytes match exactly before/after; no OTA
+channel was written. Current hosted CI remains NOT RUN under the explicit quota
+waiver; the `[skip ci]` push did not create a new run. This is not a CI PASS.
+All20 original README image/embed references are retained. Local documentation
+integrity passes147 Markdown/HTML files and134 retired-path checks before
+publication; the final documentation bookkeeping receives a separate check.
+README and user-manual source links are reconciled with beta2. A new Pages
+deployment is NOT RUN under the Actions quota waiver; editing its source does
+not claim that the live manual site has redeployed.
+
+The [publication audit](evidence/2026-10-19-shared-p4-beta2/publication-audit.json)
+and adjacent signed manifest/hash inventory retain the immutable identities,
+public-download audit and stable/beta1/OTA snapshots. Full binaries and matching
+debug files are the GitHub release assets; local originals also remain in
+`.cache/shared-p4-beta.2/assembly-v3/assets/`. Earlier incomplete assembly
+attempts remain local and were not uploaded. The temporary exact-source JC1060
+packaging checkout is removed after its source/artifact checks; no contributor
+message or new device installation occurs during publication.
