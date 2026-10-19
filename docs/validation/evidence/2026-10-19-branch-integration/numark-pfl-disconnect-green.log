@@ -1,0 +1,7 @@
+==> build deck_core_dual
+==> run deck_core_dual
+deck_core_dual tests passed
+==> build deck_core_dual_scratch
+==> run deck_core_dual_scratch
+deck_core_dual tests passed
+Selected functional suites passed; full regression gate was not requested.

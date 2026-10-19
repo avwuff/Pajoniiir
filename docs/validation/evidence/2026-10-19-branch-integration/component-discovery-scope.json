@@ -1,0 +1,23 @@
+[
+  {
+    "ref": "584dc0d2b43e8a9deb847b83191a87f40f5a4d0b",
+    "path": "firmware/main-deck-p4/CMakeLists.txt",
+    "first_line": 7,
+    "excerpt": "set(EXTRA_COMPONENT_DIRS\n    \"${CMAKE_CURRENT_LIST_DIR}/../p4-core/components\"\n    \"${CMAKE_CURRENT_LIST_DIR}/../boards/jc4880\"\n    \"${CMAKE_CURRENT_LIST_DIR}/../common/control_state_reconciler\"\n    \"${CMAKE_CURRENT_LIST_DIR}/../common/firmware_health\"\n    \"${CMAKE_CURRENT_LIST_DIR}/../common/ota_manifest\"\n    \"${CMAKE_CURRENT_LIST_DIR}/../common/djlink\"\n    \"${CMAKE_CURRENT_LIST_DIR}/../common/dj_link_core\")\n\nif(PAJONIIIR_STORAGE_EXPERIMENT)\n    set(SDKCONFIG_DEFAULTS \"${CMAKE_CURRENT_LIST_DIR}/sdkconfig.defaults;${CMAKE_CURRENT_LIST_DIR}/sdkconfig.storage_experiment\")\n    if(PAJONIIIR_STORAGE_VARIANT)",
+    "blob_sha256": "2634e87d2a6903ec0e3f3643a444bbf810d177d56f051cbc9fddbb251e332738"
+  },
+  {
+    "ref": "584dc0d2b43e8a9deb847b83191a87f40f5a4d0b",
+    "path": "firmware/main-deck-m3/CMakeLists.txt",
+    "first_line": 21,
+    "excerpt": "set(EXTRA_COMPONENT_DIRS\n    \"${CMAKE_CURRENT_LIST_DIR}/../p4-core/components\"\n    \"${CMAKE_CURRENT_LIST_DIR}/../boards/m3\"\n    \"${CMAKE_CURRENT_LIST_DIR}/../common/control_state_reconciler\"\n    \"${CMAKE_CURRENT_LIST_DIR}/../common/firmware_health\"\n    \"${CMAKE_CURRENT_LIST_DIR}/../common/ota_manifest\"\n    \"${CMAKE_CURRENT_LIST_DIR}/../common/djlink\"\n    \"${CMAKE_CURRENT_LIST_DIR}/../common/dj_link_core\")\n\nif(PAJONIIIR_STORAGE_EXPERIMENT)\n    set(SDKCONFIG_DEFAULTS \"${CMAKE_CURRENT_LIST_DIR}/sdkconfig.defaults;${CMAKE_CURRENT_LIST_DIR}/../main-deck-p4/sdkconfig.storage_experiment\")\n    if(PAJONIIIR_STORAGE_VARIANT)",
+    "blob_sha256": "357c79364f0d4e78b6fdcacb90a798632d574c9cd8c926cbcf27c4aeb1ed6e5c"
+  },
+  {
+    "ref": "584dc0d2b43e8a9deb847b83191a87f40f5a4d0b",
+    "path": "firmware/main-deck-jc1060/CMakeLists.txt",
+    "first_line": 17,
+    "excerpt": "set(EXTRA_COMPONENT_DIRS \"${CMAKE_CURRENT_LIST_DIR}/../boards/jc1060\")\nforeach(component IN LISTS PAJONIIIR_SHARED_COMPONENTS)\n    list(APPEND EXTRA_COMPONENT_DIRS \"${CMAKE_CURRENT_LIST_DIR}/../p4-core/components/${component}\")\nendforeach()\nlist(APPEND EXTRA_COMPONENT_DIRS\n    \"${CMAKE_CURRENT_LIST_DIR}/../common/control_state_reconciler\"\n    \"${CMAKE_CURRENT_LIST_DIR}/../common/firmware_health\"\n    \"${CMAKE_CURRENT_LIST_DIR}/../common/ota_manifest\"\n    \"${CMAKE_CURRENT_LIST_DIR}/../common/djlink\"\n    \"${CMAKE_CURRENT_LIST_DIR}/../common/dj_link_core\")\nif(PAJONIIIR_STORAGE_EXPERIMENT)\n    list(APPEND SDKCONFIG_DEFAULTS \"${CMAKE_CURRENT_LIST_DIR}/../main-deck-p4/sdkconfig.storage_experiment\")",
+    "blob_sha256": "431006c39a4f46c43c44d784834914e8513387f1dafeeb9b5f2f7e0f4421b0d6"
+  }
+]

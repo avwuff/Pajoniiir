@@ -1,0 +1,4 @@
+# Preserve exact evidence bytes, including native Windows log line endings.
+* -text whitespace=cr-at-eol
+# Compiler/test stdout is immutable data, including its padding/blank notices.
+*.log -whitespace

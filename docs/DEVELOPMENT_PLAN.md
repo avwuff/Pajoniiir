@@ -1,5 +1,15 @@
 # P4 post-release development plan
 
+2026-10-19 branch integration: qualified shared-core PR51 is merged into
+`master` without changing its production tree. The separate integration branch
+imports `ui_next` as a disabled demo and adapts Numark with absolute PFL levels,
+durable delivery and real profile/USB stream regressions. Existing controllers
+retain momentary-toggle PFL. This is software integration, not new physical
+acceptance or an OTA request. Keep published beta2 and installed images intact.
+JC8012 licensing/PPA isolation and optional JC1060 SD/Wi-Fi work remain separate;
+do not merge their donor implementations wholesale. See the
+[branch review](reviews/2026-10-19-remaining-branches-merge-review.md).
+
 2026-10-19: [shared-p4-beta.2](validation/SHARED_P4_BETA_2_20261019.md) is published
 with the exact accepted M3/JC4880 bytes and software-verified JC1060 candidate.
 Sixteen public downloads and222 ZIP inventory entries verify, along with all

@@ -183,6 +183,8 @@ def resolve_event(event):
         ns = NS_DECK1 if domain == "deck1" else NS_DECK2
         if name == "pfl":
             return TYPE_BUTTON, NS_MIXER | (0x03 if domain == "deck1" else 0x04)
+        if name == "pfl_set":
+            return TYPE_BUTTON, 0x85 if domain == "deck1" else 0x86
         if name not in DECK_CTL:
             raise ValueError("unknown deck event: " + event)
         return DECK_EVENT_TYPES.get(name, TYPE_BUTTON), ns + DECK_CTL[name]

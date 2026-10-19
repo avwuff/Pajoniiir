@@ -9,6 +9,12 @@ compiler = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(compiler)
 
 class OutputValidation(unittest.TestCase):
+    def test_latching_pfl_is_additive_to_momentary_toggle(self):
+        self.assertEqual(compiler.resolve_event('deck1.pfl'), (1, 0x53))
+        self.assertEqual(compiler.resolve_event('deck2.pfl'), (1, 0x54))
+        self.assertEqual(compiler.resolve_event('deck1.pfl_set'), (1, 0x85))
+        self.assertEqual(compiler.resolve_event('deck2.pfl_set'), (1, 0x86))
+
     def test_channel_voice_status_boundaries(self):
         for status in (0, 0x7f, 0xf0, 0xff):
             with self.subTest(status=status), self.assertRaises(ValueError):

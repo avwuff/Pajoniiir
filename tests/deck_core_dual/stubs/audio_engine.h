@@ -324,6 +324,7 @@ extern int audio_engine_stub_master_cue_toggle_count;
 extern bool audio_engine_stub_master_cue_enabled;
 extern int audio_engine_stub_crossfader;
 extern int audio_engine_stub_pfl_toggle_count[2];
+extern bool audio_engine_stub_pfl_enabled[2];
 extern int audio_engine_stub_eq_raw[2][AUDIO_EQ_BAND_COUNT];
 extern int audio_engine_stub_eq_set_count[2][AUDIO_EQ_BAND_COUNT];
 extern int audio_engine_stub_filter_raw[2];
@@ -493,6 +494,13 @@ static inline esp_err_t audio_engine_toggle_pfl(uint8_t deck) {
   if (deck >= 2)
     return ESP_ERR_INVALID_ARG;
   audio_engine_stub_pfl_toggle_count[deck]++;
+  audio_engine_stub_pfl_enabled[deck] = !audio_engine_stub_pfl_enabled[deck];
+  return ESP_OK;
+}
+
+static inline esp_err_t audio_engine_set_pfl(uint8_t deck, bool enabled) {
+  if (deck >= 2) return ESP_ERR_INVALID_ARG;
+  audio_engine_stub_pfl_enabled[deck] = enabled;
   return ESP_OK;
 }
 
@@ -518,5 +526,5 @@ static inline bool audio_engine_get_smart_fader_enabled(void) {
 static inline bool audio_engine_get_pfl_enabled(uint8_t deck) {
   if (deck >= 2)
     return false;
-  return (audio_engine_stub_pfl_toggle_count[deck] % 2) != 0;
+  return audio_engine_stub_pfl_enabled[deck];
 }

@@ -9,6 +9,7 @@
 #include "control_link.h"
 
 static unsigned s_checks;
+static unsigned s_reject_events;
 static flx4_control_event_t s_events[256];
 static size_t s_event_count;
 
@@ -114,6 +115,7 @@ static size_t build_large_replay_profile(uint8_t *blob)
 static esp_err_t event_cb(const flx4_control_event_t *event, void *ctx)
 {
     (void)ctx;
+    if (s_reject_events) { --s_reject_events; return ESP_ERR_TIMEOUT; }
     if (s_event_count < sizeof(s_events) / sizeof(s_events[0])) {
         s_events[s_event_count++] = *event;
     }
@@ -193,8 +195,52 @@ static void test_initialization(void)
     }
 }
 
+static void test_latching_pfl_retries_and_releases_across_connection_epochs(void)
+{
+    const controller_runtime_config_t config = {.event_cb = event_cb};
+    uint8_t blob[CP_HEADER_SIZE + CP_INPUT_ENTRY_SIZE + CP_OUTPUT_ENTRY_SIZE];
+    const size_t len = build_profile(blob);
+    uint8_t *entry = blob + CP_HEADER_SIZE;
+    entry[0] = 0x90; entry[1] = 0x1b;
+    entry[2] = CP_IN_NOTE_BUTTON; entry[4] = CTRL_TYPE_BUTTON;
+    wr_u16(entry + 6, 0);
+    for (unsigned deck = 0; deck < 2; ++deck) {
+        CHECK(controller_runtime_init(&config) == ESP_OK);
+        entry[5] = deck ? CTRL_ID_DECK2_PFL_SET : CTRL_ID_DECK1_PFL_SET;
+        wr_u32(blob + 12, cp_crc32(blob + 16, len - 16));
+        CHECK(controller_profile_runtime_activate(blob, len, 0x1234, 0x5678));
+        controller_runtime_set_connected(true);
+        CHECK(controller_runtime_dispatch_pending(128) == 0);
+        s_event_count = 0;
+        usb_midi_message_t on = midi(0x90, 0x1b, 127);
+        usb_midi_message_t off = midi(0x90, 0x1b, 0);
+        CHECK(controller_runtime_handle_midi(&on));
+        s_reject_events = 1;
+        CHECK(controller_runtime_dispatch_pending(128) == 0);
+        CHECK(controller_runtime_dispatch_pending(128) == 1);
+        CHECK(s_event_count == 1 && s_events[0].id == entry[5] && s_events[0].value == 1);
+        /* Saturated wake/order tokens cannot lose the final physical OFF. */
+        for (unsigned i = 0; i < 128; ++i) CHECK(controller_runtime_handle_midi(&on));
+        CHECK(controller_runtime_handle_midi(&off));
+        CHECK(controller_runtime_dispatch_pending(128) == 1);
+        CHECK(s_event_count == 2 && s_events[1].value == 0);
+        CHECK(controller_runtime_handle_midi(&on));
+        CHECK(controller_runtime_dispatch_pending(128) == 1);
+        CHECK(s_event_count == 3 && s_events[2].value == 1);
+        /* A departed connection releases its absolute level; reconnect never
+         * replays the old ON as a new physical toggle. */
+        controller_runtime_set_connected(false);
+        controller_runtime_set_connected(true);
+        CHECK(controller_runtime_dispatch_pending(128) == 1);
+        CHECK(s_event_count == 4 && s_events[3].value == 0);
+        controller_profile_runtime_clear();
+    }
+}
+
 int main(void)
 {
+    test_latching_pfl_retries_and_releases_across_connection_epochs();
+    s_event_count = 0;
     test_initialization();
     const controller_runtime_config_t config = {
         .event_cb = event_cb,

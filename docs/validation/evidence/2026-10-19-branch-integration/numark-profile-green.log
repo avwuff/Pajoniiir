@@ -1,0 +1,30 @@
+....
+----------------------------------------------------------------------
+Ran 4 tests in 0.005s
+
+OK
+...
+----------------------------------------------------------------------
+Ran 3 tests in 0.000s
+
+OK
+  v4 selection, scaling, SysEx and malformed data     PASS
+  normalized DDJ400 fixture and FX target selector    PASS
+  S2 MK3 basic source fixture (no hardware claim)     PASS
+  jog mode packed profile actions on both decks      PASS
+=== controller_profile format/runtime tests ===
+  parse validation                                  PASS
+  runtime input mapping                             PASS
+  snapshot replay dedup                             PASS
+  LED output mapping                                PASS
+  CC7 scaling, replay and version compatibility      PASS
+controller_profile tests passed
+=== controller_profile FLX4 golden parity ===
+  input parity: 12288 messages, 1625 matched            PASS
+  snapshot parity: 17 events                        PASS
+  LED parity: 690 combos, 670 mapped                 PASS
+controller_profile parity tests passed
+PASS S2 full compiled profile: mixer/pitch range and center, jog, Shift, LEDs, replay, validators
+DDJ-400 v4: parser/storage CRC and both-deck loop press/release PASS
+PASS Numark DJ2GO2 Touch compiled profile: buttons, Note On/Off, jog, 7-to-14-bit, pads, LEDs, replay, validators
+PASS Hercules native profile: parser/storage, native-control isolation, PCM master, jog, activation/clear

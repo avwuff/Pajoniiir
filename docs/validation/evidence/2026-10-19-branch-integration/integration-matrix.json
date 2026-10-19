@@ -1,0 +1,57 @@
+[
+  {
+    "source_sha": "abffb203bfc4807b9ef622f520b02a9335afc415",
+    "idf_version": "ESP-IDF v6.0.2",
+    "project": "main-deck-m3",
+    "build_exit": 0,
+    "verifier_exit": 0,
+    "lock_sha256": "D034FE6B34C26D451D75878546947B95DBA2A0FEDF9F53D10216182784F14F3C",
+    "lock_unchanged": true,
+    "ui_next_selected": false,
+    "ppa_component_path": "C:/Espressif/v6.0.2/esp-idf/components/esp_driver_ppa",
+    "image_bytes": 2602928,
+    "image_sha256": "A9FEFB251CF6F6CCC49B7F37A8BE5372041A3CC89D544AA0B4F3FF54705A6AE9",
+    "board_build_identity": {
+      "source_sha": "abffb203bfc4807b9ef622f520b02a9335afc415",
+      "source_dirty": 0
+    },
+    "project_version": "M3-dev-gabffb203bfc4",
+    "embedded_version": "M3-dev-gabffb203bfc4"
+  },
+  {
+    "source_sha": "abffb203bfc4807b9ef622f520b02a9335afc415",
+    "idf_version": "ESP-IDF v6.0.2",
+    "project": "main-deck-p4",
+    "build_exit": 0,
+    "verifier_exit": 0,
+    "lock_sha256": "FDFE2610010B7CB25137A35FFF3ABA3165BC77FFAEFF887DF9FC715013D85927",
+    "lock_unchanged": true,
+    "ui_next_selected": false,
+    "ppa_component_path": "C:/Espressif/v6.0.2/esp-idf/components/esp_driver_ppa",
+    "image_bytes": 2609728,
+    "image_sha256": "ED2259CBC0E4290DF21B091DA936926B936C86FEDBBA3D1FD3F97C54FF8CF6FC",
+    "board_build_identity": {
+      "source_sha": "abffb203bfc4807b9ef622f520b02a9335afc415",
+      "source_dirty": 0
+    },
+    "embedded_version": "M2.5-284-gabffb203"
+  },
+  {
+    "source_sha": "abffb203bfc4807b9ef622f520b02a9335afc415",
+    "idf_version": "ESP-IDF v6.0.2",
+    "project": "main-deck-jc1060",
+    "build_exit": 0,
+    "verifier_exit": 0,
+    "lock_sha256": "B41213015DC95AE87952B56C5E5672503FFE12BC63325C3A68698EE6F958F72E",
+    "lock_unchanged": true,
+    "ui_next_selected": false,
+    "ppa_component_path": "C:/Espressif/v6.0.2/esp-idf/components/esp_driver_ppa",
+    "image_bytes": 2668352,
+    "image_sha256": "3D489470B1D12AD534DEDFFC61B2D984D041FF91589A10B2A3CFC82D5147C133",
+    "board_build_identity": {
+      "source_sha": "abffb203bfc4807b9ef622f520b02a9335afc415",
+      "source_dirty": 0
+    },
+    "embedded_version": "M2.5-284-gabffb203"
+  }
+]

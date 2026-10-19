@@ -18,8 +18,13 @@
 
 #define CONTROL_HELD_SIMPLE_COUNT       6u
 #define CONTROL_HELD_PER_DECK_PAD_COUNT 24u
+#if defined(CTRL_ID_DECK1_PFL_SET) && defined(CTRL_ID_DECK2_PFL_SET)
+#define CONTROL_HELD_PFL_COUNT          2u
+#else
+#define CONTROL_HELD_PFL_COUNT          0u
+#endif
 #define CONTROL_HELD_STATE_COUNT        \
-    (CONTROL_HELD_SIMPLE_COUNT + 2u * CONTROL_HELD_PER_DECK_PAD_COUNT)
+    (CONTROL_HELD_SIMPLE_COUNT + 2u * CONTROL_HELD_PER_DECK_PAD_COUNT + CONTROL_HELD_PFL_COUNT)
 
 typedef struct {
     bool observed;
@@ -38,6 +43,12 @@ typedef struct {
 static inline int control_held_state_key(uint8_t id, int16_t value)
 {
     switch (id) {
+#if defined(CTRL_ID_DECK1_PFL_SET) && defined(CTRL_ID_DECK2_PFL_SET)
+    case CTRL_ID_DECK1_PFL_SET:
+        return CONTROL_HELD_SIMPLE_COUNT + 2u * CONTROL_HELD_PER_DECK_PAD_COUNT;
+    case CTRL_ID_DECK2_PFL_SET:
+        return CONTROL_HELD_SIMPLE_COUNT + 2u * CONTROL_HELD_PER_DECK_PAD_COUNT + 1u;
+#endif
     case CTRL_ID_DECK1_JOG_TOUCH: return 0;
     case CTRL_ID_DECK2_JOG_TOUCH: return 1;
     case CTRL_ID_DECK1_SHIFT: return 2;

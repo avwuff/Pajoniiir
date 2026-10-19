@@ -1,0 +1,40 @@
+{
+  "source_sha": "abffb203bfc4807b9ef622f520b02a9335afc415",
+  "host_qualification_exit": 0,
+  "host_qualification_optional_skip": false,
+  "functional_build_steps": 142,
+  "run_steps": 203,
+  "focused_ui_logic_tests": 8,
+  "ui_demo_perform_render_exit": 0,
+  "ui_demo_perform_frames": [
+    "perform_1024x600_night.ppm",
+    "perform_1280x800_night.ppm",
+    "perform_480x800_day.ppm",
+    "perform_480x800_night.ppm",
+    "perform_600x1024_night.ppm",
+    "perform_800x1280_night.ppm",
+    "perform_800x480_day.ppm",
+    "perform_800x480_night.ppm"
+  ],
+  "red_green": [
+    {
+      "red": "numark-pfl-red-isolated.log",
+      "green": "numark-pfl-green.log",
+      "boundary": "idempotent per-deck PFL set"
+    },
+    {
+      "red": "numark-pfl-disconnect-red.log",
+      "green": "numark-pfl-disconnect-green.log",
+      "boundary": "absolute level lifecycle cleanup; legacy toggle retained"
+    }
+  ],
+  "physical_new_image": "NOT RUN",
+  "ota": "NOT RUN",
+  "signed_packaging": "NOT RUN",
+  "unchanged_existing_profile_sha256": {
+    "pioneer_ddj_flx4": "b9f8a786eb4659280801a5e7435f8ab945d3700640b0fdbb2ddfbaff06de82db",
+    "pioneer_ddj_400": "2fc922ec2986249f4af7c7a077367e4bb5b9e9f22ced5b3d137e853d21f74408",
+    "ni_traktor_s2_mk3_full": "ab9259c51c2b18cf5b67e2e279e3a0fbf9ee167a489f345b813a9ef37f40725f",
+    "hercules_djcontrol_inpulse_500": "570b59ecca6baa7319ef85ca92d7d3a11fbe11ea1f9c9c580a8779031a40f549"
+  }
+}

@@ -2,6 +2,18 @@
 
 Status: **current documentation authority, reconciled 2026-10-19**.
 
+The [branch integration](reviews/2026-10-19-branch-integration.md) merges the
+qualified shared core through PR51, imports new UI as an explicitly disabled
+prototype and adapts Numark with absolute PFL levels and real regressions.
+Final clean `abffb203` passes full host qualification and ordinary IDF6.0.2
+build/identity/isolation checks for M3, JC4880 and JC1060, with unchanged locks
+and stock PPA. The new Numark mapping requires newer firmware than beta2;
+new-image hardware/signing/OTA remain NOT RUN. Automatic CI on baseline master
+`d878c066` now passes all four workflows, including twelve migration jobs and
+Pages deployment; this is scoped to that SHA. Existing installed acceptance,
+JC4880 soak waiver and JC1060 physical gates remain unchanged. JC8012 and old
+JC1060 whole-donor merges remain excluded.
+
 The [remaining-branches merge review](reviews/2026-10-19-remaining-branches-merge-review.md)
 freezes all remote development tips and the local APTA branch. It recommends
 integrating the qualified shared branch into master first, retaining new UI as

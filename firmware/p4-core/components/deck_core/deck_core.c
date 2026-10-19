@@ -80,6 +80,9 @@ static bool              s_snapshot_suppress_inactive_pads;
 static bool              s_beat_jump_pad_led_valid[DECK_CORE_DECK_COUNT][8];
 static uint8_t           s_beat_jump_pad_led_state[DECK_CORE_DECK_COUNT][8];
 static bool              s_deck_shift_held[DECK_CORE_DECK_COUNT];
+/* Absolute PFL levels belong to the connected surface. Legacy momentary PFL
+ * toggles remain persistent software mixer state across disconnects. */
+static bool              s_pfl_level_owned[DECK_CORE_DECK_COUNT];
 /* Jog platter touch (vinyl mode Phase 1): true while the platter top is held.
  * Touching during playback enters platter-hold (audio silenced + position frozen)
  * and jogs then scrub the position; s_jog_hold_active[] remembers a hold was
@@ -625,6 +628,8 @@ static bool event_is_mixer_control(const ctrl_event_t *ev)
                   ev->id == CTRL_ID_CROSSFADER ||
                   ev->id == CTRL_ID_DECK1_PFL ||
                   ev->id == CTRL_ID_DECK2_PFL ||
+                  ev->id == CTRL_ID_DECK1_PFL_SET ||
+                  ev->id == CTRL_ID_DECK2_PFL_SET ||
                   ev->id == CTRL_ID_CH1_TRIM ||
                   ev->id == CTRL_ID_CH2_TRIM ||
                   ev->id == CTRL_ID_CH1_EQ_HIGH ||
@@ -1885,6 +1890,12 @@ static void on_state_event(const ctrl_event_t *ev)
             handle_jog_touch(deck, false, &s_decks[deck]);
             handle_cue_button(deck, false, &s_decks[deck]);
             s_decks[deck].loop_adjust_mode = DECK_CORE_LOOP_ADJUST_NONE;
+            /* Lifecycle STATE bypasses wake consumption. Do not rely on a
+             * later physical-style OFF token while the screen is covered. */
+            if (s_pfl_level_owned[deck]) {
+                audio_engine_set_pfl(deck, false);
+                s_pfl_level_owned[deck] = false;
+            }
         }
     } else {
         ESP_LOGW(TAG, "unknown FLX4 connection state %d", ev->value);
@@ -3059,11 +3070,21 @@ static void on_mixer_control(uint8_t id, int16_t raw)
         break;
     case CTRL_ID_DECK1_PFL:
         if (raw != 0) {
+            s_pfl_level_owned[CTRL_DECK_1] = false;
             audio_engine_toggle_pfl(CTRL_DECK_1);
         }
         break;
+    case CTRL_ID_DECK1_PFL_SET:
+        s_pfl_level_owned[CTRL_DECK_1] = true;
+        audio_engine_set_pfl(CTRL_DECK_1, raw != 0);
+        break;
+    case CTRL_ID_DECK2_PFL_SET:
+        s_pfl_level_owned[CTRL_DECK_2] = true;
+        audio_engine_set_pfl(CTRL_DECK_2, raw != 0);
+        break;
     case CTRL_ID_DECK2_PFL:
         if (raw != 0) {
+            s_pfl_level_owned[CTRL_DECK_2] = false;
             audio_engine_toggle_pfl(CTRL_DECK_2);
         }
         break;
@@ -3721,6 +3742,7 @@ void deck_core_test_reset(void)
     memset(s_beat_jump_pad_led_valid, 0, sizeof(s_beat_jump_pad_led_valid));
     memset(s_beat_jump_pad_led_state, 0, sizeof(s_beat_jump_pad_led_state));
     memset(s_deck_shift_held, 0, sizeof(s_deck_shift_held));
+    memset(s_pfl_level_owned, 0, sizeof(s_pfl_level_owned));
     memset(s_jog_touched, 0, sizeof(s_jog_touched));
     memset(s_jog_hold_active, 0, sizeof(s_jog_hold_active));
     memset(s_jog_scratch_active, 0, sizeof(s_jog_scratch_active));

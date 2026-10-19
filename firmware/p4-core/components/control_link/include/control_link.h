@@ -229,6 +229,10 @@ typedef enum {
 /* Flat global overflow region (no namespace). */
 #define CTRL_ID_BEAT_FX_BEAT_DEC_SHIFT 0x83
 #define CTRL_ID_BEAT_FX_BEAT_INC_SHIFT 0x84
+/* Absolute mixer levels for controllers with latching PFL buttons. The
+ * original mixer namespace is full; these additive IDs do not change toggles. */
+#define CTRL_ID_DECK1_PFL_SET         0x85
+#define CTRL_ID_DECK2_PFL_SET         0x86
 #define CTRL_DESC_CAP_MIDI_IN   0x0001
 #define CTRL_DESC_CAP_MIDI_OUT  0x0002
 #define CTRL_DESC_CAP_USB_AUDIO 0x0004
