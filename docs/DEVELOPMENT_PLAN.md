@@ -1,5 +1,14 @@
 # P4 post-release development plan
 
+2026-10-19: [final-hour review and JC4880 follow-up](validation/M3_SOAK_CLOSEOUT_JC4880_OTA_20261019.md)
+complete the offline M3 late assessment with its finding retained. Keep M3 on
+the accepted1556e8d7 image. JC4880 clean0a33ec1f builds/signs and installs VALID
+ota_0; its60.234-s mixed-rate MT/loop/CUE/control smoke passes all22 strict
+deltas/late0 and operator confirmation. Input precedes the automatic loop
+transitions; sustained exit pressure is not qualified. No new
+soak, speculative firmware change or public publication is scheduled here.
+The following dated investigation stages retain their original scopes.
+
 The [2026-10-18 MT fallback handoff](validation/M3_MT_FALLBACK_HANDOFF_20261018.md)
 has a deterministic production-callback reproduction and minimal consumer-clock
 repair. Host qualification and ordinary M3 incremental build/package pass;

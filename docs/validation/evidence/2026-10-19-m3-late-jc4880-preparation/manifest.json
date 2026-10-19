@@ -1,0 +1,26 @@
+{
+  "schema_version": 2,
+  "release_version": "M2.5-249-g0a33ec1f",
+  "source_sha": "0a33ec1fb16c0136dccaa85ca63a6fbc00a4d527",
+  "development_candidate": false,
+  "signing": {
+    "algorithm": "ecdsa-p256-sha256",
+    "key_id": "rel-001",
+    "signature_file": "manifest.sig"
+  },
+  "targets": [
+    {
+      "target": "p4",
+      "project": "main-deck-p4",
+      "chip_id": "0x0012",
+      "file": "main-deck-p4.bin",
+      "ota_bundle": "main-deck-p4.ddjota",
+      "size": 2609952,
+      "bundle_size": 2610140,
+      "slot_size": 4194304,
+      "sha256": "a3ab2b6a8aedf36b265a0b451c4ea63a1c260d209a5a734a702a890a12770b79",
+      "image_elf_sha256": "078cb8c09cbf4b77622facc5d0a09fedef3382f0970a3cd18bbd5ec0357975bc",
+      "bundle_sha256": "6dc08acd5398fd1b4348adbd3659d453fedaa745d8ccd5e16940b324c6bceefa"
+    }
+  ]
+}

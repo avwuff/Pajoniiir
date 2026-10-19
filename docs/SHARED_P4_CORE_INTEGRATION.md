@@ -1,8 +1,25 @@
 # Shared P4 core integration
 
-Status: implementation in progress; partial exact-image M3 acceptance, no publication.
+Status: implementation in progress; exact-image acceptance and historical
+publication scopes remain separate.
 
-## Current closeout, 2026-10-11
+## Current closeout, 2026-10-19
+
+The [final M3 hour](validation/M3_MT_FALLBACK_HANDOFF_20261018.md) completes
+3600.286 s on unchanged clean1556e8d7, VALID ota_1, with all22 strict deltas zero
+and full-hour operator audio/display confirmation. Output-late24/max12,988 us,
+including a sample-observed3/60-s cluster, retains its investigation finding.
+The [offline review and JC4880 follow-up](validation/M3_SOAK_CLOSEOUT_JC4880_OTA_20261019.md)
+retain that evidence and the corresponding local signed JC4880 candidate.
+JC4880 clean0a33ec1f installs VALID ota_0 and completes60.234 s /93 samples,
+all22 strict deltas/late0,1,902 MIDI packets and full operator short-test
+control/audio/display confirmation. This does not transfer M3's hour to JC4880;
+its soak stays waived and input does not overlap the automatic loop exit.
+There is no new public release or OTA-channel update. Historical phase/P01–P10
+ledgers below retain their own source scope, open gates and explicit waivers;
+S2 remains closed, JC4880 soak waived, JC1060 hardware deferred and CI NOT RUN.
+
+## Historical closeout, 2026-10-11
 
 The [final development handoff](reviews/2026-10-11-shared-core-final-handoff.md)
 supersedes current-state and next-action statements below. Installed clean

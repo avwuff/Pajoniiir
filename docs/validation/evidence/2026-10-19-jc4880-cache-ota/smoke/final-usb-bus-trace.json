@@ -1,0 +1,22 @@
+{
+  "schema": 1,
+  "scope": "bounded_isr_history",
+  "roots": [
+    {
+      "root": 0,
+      "available": false,
+      "total": 0,
+      "events": []
+    },
+    {
+      "root": 1,
+      "available": false,
+      "total": 0,
+      "events": []
+    }
+  ],
+  "iso_first_fault": {
+    "enabled": false,
+    "captured": false
+  }
+}

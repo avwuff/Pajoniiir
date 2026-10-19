@@ -328,3 +328,10 @@ implementation or authorize publication.
 After the runner exited with wrapper/task result0 and its final evidence was
 saved, the exact one-shot task `Pajoniiir-M3-CacheSoak-20261018T210936Z` was
 removed. The15-minute heartbeat is paused; neither monitor is restarted.
+
+The subsequent [offline late review and JC4880 OTA](M3_SOAK_CLOSEOUT_JC4880_OTA_20261019.md)
+complete the saved-journal interpretation, retaining the late investigation
+finding. JC4880 clean0a33ec1f has identical production code and now installs
+VALID ota_0 with a separate60.234-s all22-deltas/late0, operator-confirmed short
+smoke. This supersedes its earlier matrix's NOT RUN installation/short scope,
+not the explicit soak waiver or other-board physical boundaries.

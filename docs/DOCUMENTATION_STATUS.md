@@ -2,6 +2,23 @@
 
 Status: **current documentation authority, reconciled 2026-10-19**.
 
+The [final-hour offline review and JC4880 OTA](validation/M3_SOAK_CLOSEOUT_JC4880_OTA_20261019.md)
+complete the saved-journal interpretation without modifying production firmware
+or repeating M3's accepted hour. The selected same-boot window has no new
+>=50-ms outlier; rate-limited phase/DMA context does not identify an exact cause.
+Ordinary JC4880 `M2.5-249-g0a33ec1f` passes incremental IDF6.0.2 build, board
+verification and signed packaging, then a single HTTP200 OTA confirms VALID
+ota_0 and operator GUI acceptance after host DHCP restoration. Its short smoke
+is recorded separately; the first monitor attempt incorrectly imposed M3's
+48-kHz MAIN policy on JC4880's selected44.1-kHz rate and is incomplete, with all
+strict deltas unchanged. The corrected60.234-s/93-sample smoke records1,902 MIDI
+packets, all22 strict deltas/late0, confirmed loop/CUE/PLAY actions and final
+stopped/loops OFF. The operator confirms controls, clean MAIN/FLX4 headphones
+and fluid waveforms. MIDI precedes automatic loop activation/exit, so sustained
+exit-time pressure is not inferred. All101 saved sample/action/boundary status
+snapshots pass independent offline audit. No public release/channel or JC soak
+waiver changes.
+
 The [MT fallback handoff repair](validation/M3_MT_FALLBACK_HANDOFF_20261018.md)
 reproduces a separate same-generation stale-clock defect: ordinary resampling
 advances the consumer, then MT resumes its old cursor and rewinds it. The real

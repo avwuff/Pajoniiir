@@ -1,0 +1,17 @@
+{
+  "target": "p4",
+  "state": "idle",
+  "board_id": "jc4880",
+  "project": "main-deck-p4",
+  "source_sha": "0a33ec1fb16c0136dccaa85ca63a6fbc00a4d527",
+  "source_dirty": false,
+  "image_elf_sha256": "078cb8c09cbf4b77622facc5d0a09fedef3382f0970a3cd18bbd5ec0357975bc",
+  "running_image_state": "valid",
+  "running_slot": "ota_0",
+  "running_version": "M2.5-249-g0a33ec1f",
+  "target_slot": "",
+  "target_version": "",
+  "expected_size": 0,
+  "received_size": 0,
+  "last_error": ""
+}

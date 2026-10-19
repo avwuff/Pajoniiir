@@ -1,0 +1,109 @@
+{
+  "classification": "short_telemetry_and_operator_pass",
+  "source_sha": "0a33ec1fb16c0136dccaa85ca63a6fbc00a4d527",
+  "image_elf_sha256": "078cb8c09cbf4b77622facc5d0a09fedef3382f0970a3cd18bbd5ec0357975bc",
+  "duration_s": 60.23398749999615,
+  "samples": 93,
+  "strict_counters": 22,
+  "all_saved_sample_and_action_deltas_zero": true,
+  "output_late_delta": 0,
+  "midi_packets_delta": 1902,
+  "midi_observations": [
+    {
+      "elapsed_s": 7.371190099998785,
+      "delta": 50
+    },
+    {
+      "elapsed_s": 7.96032529999502,
+      "delta": 16
+    },
+    {
+      "elapsed_s": 8.64463799999794,
+      "delta": 58
+    },
+    {
+      "elapsed_s": 9.224830199993448,
+      "delta": 84
+    },
+    {
+      "elapsed_s": 9.793197999999393,
+      "delta": 289
+    },
+    {
+      "elapsed_s": 10.340883499993652,
+      "delta": 283
+    },
+    {
+      "elapsed_s": 10.89498669999739,
+      "delta": 19
+    },
+    {
+      "elapsed_s": 11.448869799998647,
+      "delta": 156
+    },
+    {
+      "elapsed_s": 12.012455299998692,
+      "delta": 239
+    },
+    {
+      "elapsed_s": 12.596216999998433,
+      "delta": 237
+    },
+    {
+      "elapsed_s": 13.184656499994162,
+      "delta": 114
+    },
+    {
+      "elapsed_s": 13.81658679999964,
+      "delta": 3
+    },
+    {
+      "elapsed_s": 14.537595999994664,
+      "delta": 5
+    },
+    {
+      "elapsed_s": 15.199731699998665,
+      "delta": 6
+    },
+    {
+      "elapsed_s": 15.832714399999531,
+      "delta": 5
+    },
+    {
+      "elapsed_s": 16.406354299993836,
+      "delta": 5
+    },
+    {
+      "elapsed_s": 17.074787499994272,
+      "delta": 1
+    },
+    {
+      "elapsed_s": 17.68027489999804,
+      "delta": 2
+    },
+    {
+      "elapsed_s": 18.245117799997388,
+      "delta": 1
+    },
+    {
+      "elapsed_s": 18.79793939999945,
+      "delta": 135
+    },
+    {
+      "elapsed_s": 19.472293999999238,
+      "delta": 194
+    }
+  ],
+  "final_stopped_loops_off": true,
+  "main_rate": 44100,
+  "flx4_rate": 44100,
+  "source_rates": [
+    44100,
+    48000
+  ],
+  "startup_counter_context": "One recovery, MIDI disconnect/pipe error and stopped underflow3187384 already exist in baseline; unchanged throughout this test. No zero-since-boot claim.",
+  "monitor_attempt_context": "First0.076-s attempt incomplete because its runner imposed M3 fixed48000 instead of JC4880 selected44100; raw result retained, all strict deltas0. Corrected runner changes board-rate assertion only, no loss threshold or firmware change.",
+  "preflight_filename_context": "ota/preflight-* was refreshed after OTA and contains a later readback; ota/before-* preserves original admission state before the single upload.",
+  "status_jsonl_raw_sha256": "daf41846af205ef5c65e921c4ac97694aa44197a18389395126fd482f415ddfe",
+  "incomplete_status_jsonl_raw_sha256": "ca32736558d8a7ac0324bea67d2ece0c2726e054013e77a2e6b82615b915d3a1"
+}

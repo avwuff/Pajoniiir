@@ -1,0 +1,29 @@
+{
+  "source_sha": "0a33ec1fb16c0136dccaa85ca63a6fbc00a4d527",
+  "version": "M2.5-249-g0a33ec1f",
+  "project": "main-deck-p4",
+  "build_mode": "ESP-IDF6.0.2 incremental reconfigure/build; not a fresh clean build",
+  "production_code_and_test_sources_identical_to_m3": "1556e8d7dfcb4f016c52ab1a372dd2e076dcaa1f",
+  "application_bytes": 2609952,
+  "application_sha256": "a3ab2b6a8aedf36b265a0b451c4ea63a1c260d209a5a734a702a890a12770b79",
+  "bundle_bytes": 2610140,
+  "bundle_sha256": "6dc08acd5398fd1b4348adbd3659d453fedaa745d8ccd5e16940b324c6bceefa",
+  "image_elf_sha256": "078cb8c09cbf4b77622facc5d0a09fedef3382f0970a3cd18bbd5ec0357975bc",
+  "build_and_board_verifier": "PASS",
+  "bundle_and_manifest_signature_verification": "PASS",
+  "host_tests": "Existing full Qualification PASS on identical1556e8d7 production/test code; no firmware/test change, not rerun for documentation-only HEAD",
+  "dependency_locks": {
+    "firmware/main-deck-jc1060/dependencies.lock": "b41213015dc95ae87952b56c5e5672503ffe12bc63325c3a68698ee6f958f72e",
+    "firmware/main-deck-m3/dependencies.lock": "d034fe6b34c26d451d75878546947b95dba2a0fedf9f53d10216182784f14f3c",
+    "firmware/main-deck-p4/dependencies.lock": "fdfe2610010b7cb25137a35fff3aba3165bc77ffaeff887df9fc715013d85927"
+  },
+  "package_path": "releases/jc4880-cache-bound-0a33ec1f-20261019/pajoniiir-M2.5-249-g0a33ec1f",
+  "debug_archive": "debug/debug-manifest.json and retained ELF in local package",
+  "installation": "NOT RUN; awaiting JC4880 preparation",
+  "physical_smoke": "NOT RUN on this image",
+  "jc4880_soak": "WAIVED BY OPERATOR / NOT RUN",
+  "jc1060_physical": "Deferred to Kayrosen / NOT RUN",
+  "hosted_ci": "NOT RUN; user quota restriction",
+  "published": false,
+  "scope": "Local signed bench candidate only; no push, public release or OTA channel change"
+}

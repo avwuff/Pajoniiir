@@ -1,5 +1,16 @@
 # P4 operation and release checklist
 
+For the [2026-10-19 follow-up](validation/M3_SOAK_CLOSEOUT_JC4880_OTA_20261019.md),
+M3's accepted hour and retained late finding remain unchanged. JC4880
+M2.5-249-g0a33ec1f is VALID ota_0 with exact source/ELF and operator GUI
+confirmation. Its ordinary FLX4-selected MAIN rate is44.1 kHz with
+fixed_output_sample_rate0; do not impose M3's fixed48-kHz condition. Preserve
+the incomplete first monitor attempt and separate corrected smoke evidence.
+Keep headphone LEVEL low initially and retain all22 strict loss checks.
+The corrected60.234-s smoke is complete:93 samples/1,902 MIDI, all22 strict
+deltas/late0, verified loops and CUE/PLAY on both decks, final stopped/loops OFF
+and operator control/audio/display PASS. JC4880 soak remains waived, not PASS.
+
 For the [MT fallback handoff candidate](validation/M3_MT_FALLBACK_HANDOFF_20261018.md),
 `2fa22631` is VALID `ota_1`, but its loop-exit retest fails UAC drop/overflow
 with a repeated 139-ms mix segment. Both decks are stopped, loops OFF. The next
