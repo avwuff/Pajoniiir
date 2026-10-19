@@ -625,6 +625,8 @@ static bool event_is_mixer_control(const ctrl_event_t *ev)
                   ev->id == CTRL_ID_CROSSFADER ||
                   ev->id == CTRL_ID_DECK1_PFL ||
                   ev->id == CTRL_ID_DECK2_PFL ||
+                  ev->id == CTRL_ID_DECK1_PFL_SET ||
+                  ev->id == CTRL_ID_DECK2_PFL_SET ||
                   ev->id == CTRL_ID_CH1_TRIM ||
                   ev->id == CTRL_ID_CH2_TRIM ||
                   ev->id == CTRL_ID_CH1_EQ_HIGH ||
@@ -3061,6 +3063,12 @@ static void on_mixer_control(uint8_t id, int16_t raw)
         if (raw != 0) {
             audio_engine_toggle_pfl(CTRL_DECK_1);
         }
+        break;
+    case CTRL_ID_DECK1_PFL_SET:
+        audio_engine_set_pfl(CTRL_DECK_1, raw != 0);
+        break;
+    case CTRL_ID_DECK2_PFL_SET:
+        audio_engine_set_pfl(CTRL_DECK_2, raw != 0);
         break;
     case CTRL_ID_DECK2_PFL:
         if (raw != 0) {

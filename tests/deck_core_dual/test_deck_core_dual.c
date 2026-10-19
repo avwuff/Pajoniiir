@@ -22,6 +22,7 @@ int audio_engine_stub_master_cue_toggle_count;
 bool audio_engine_stub_master_cue_enabled;
 int audio_engine_stub_crossfader;
 int audio_engine_stub_pfl_toggle_count[DECK_CORE_DECK_COUNT];
+bool audio_engine_stub_pfl_enabled[DECK_CORE_DECK_COUNT];
 int audio_engine_stub_eq_raw[DECK_CORE_DECK_COUNT][AUDIO_EQ_BAND_COUNT];
 int audio_engine_stub_eq_set_count[DECK_CORE_DECK_COUNT][AUDIO_EQ_BAND_COUNT];
 int audio_engine_stub_filter_raw[DECK_CORE_DECK_COUNT];
@@ -308,6 +309,8 @@ static ctrl_event_t beat_fx_depth(int16_t value)
 
 static void reset_audio_engine_stub(void)
 {
+    audio_engine_stub_pfl_enabled[0] = false;
+    audio_engine_stub_pfl_enabled[1] = false;
     for (uint8_t deck = 0; deck < DECK_CORE_DECK_COUNT; deck++) {
         audio_engine_stub_deck_play_result[deck] = ESP_OK;
         audio_engine_stub_deck_playing[deck] = false;
@@ -1357,6 +1360,24 @@ static void test_mixer_namespace_routes_pfl_toggle_on_press(void)
 
     assert(audio_engine_stub_pfl_toggle_count[CTRL_DECK_1] == 1);
     assert(audio_engine_stub_pfl_toggle_count[CTRL_DECK_2] == 1);
+}
+
+static void test_latching_pfl_sets_each_deck_without_toggling_duplicates(void)
+{
+    deck_core_test_reset();
+    reset_audio_engine_stub();
+    audio_engine_stub_pfl_toggle_count[0] = 0;
+    audio_engine_stub_pfl_toggle_count[1] = 0;
+    for (uint8_t deck = 0; deck < 2; ++deck) {
+        const uint8_t id = deck ? CTRL_ID_DECK2_PFL_SET : CTRL_ID_DECK1_PFL_SET;
+        const int16_t levels[] = {1, 1, 0, 0, 1, 0};
+        for (unsigned i = 0; i < sizeof(levels) / sizeof(levels[0]); ++i) {
+            ctrl_event_t event = mixer_button(id, levels[i]);
+            deck_core_test_apply_event(&event);
+            assert(audio_engine_get_pfl_enabled(deck) == (levels[i] != 0));
+            assert(!audio_engine_get_pfl_enabled((uint8_t)(1u - deck)));
+        }
+    }
 }
 
 static void test_sync_button_toggles_requested_deck_sync_led_state(void)
@@ -3529,6 +3550,7 @@ int main(void)
     test_mixer_namespace_routes_eq_controls();
     test_mixer_namespace_routes_filter_controls();
     test_mixer_namespace_routes_pfl_toggle_on_press();
+    test_latching_pfl_sets_each_deck_without_toggling_duplicates();
     test_smart_buttons_toggle_audio_state_and_leds();
     test_shifted_smart_buttons_are_noop_placeholders();
     test_beat_fx_defaults_and_state_controls();

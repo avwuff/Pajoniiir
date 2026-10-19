@@ -320,6 +320,8 @@ float audio_engine_get_master_trim(void);
 uint32_t audio_engine_get_output_sample_rate(void);
 void audio_engine_get_output_gains(float *deck0_gain, float *deck1_gain);
 esp_err_t audio_engine_toggle_pfl(uint8_t deck);
+/* Idempotent level contract for latching controller buttons. */
+esp_err_t audio_engine_set_pfl(uint8_t deck, bool enabled);
 bool audio_engine_get_pfl_enabled(uint8_t deck);
 esp_err_t audio_engine_toggle_smart_cfx(void);
 bool audio_engine_get_smart_cfx_enabled(void);

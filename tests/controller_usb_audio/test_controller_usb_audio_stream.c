@@ -14,6 +14,7 @@ int review_claim_result = 0;
 #include "fixtures/s2_mk3_hs_config.h"
 #include "fixtures/hercules_inpulse_500_fs_config.h"
 #include "fixtures/ddj400_hs_as_config.h"
+#include "fixtures/numark_touch_fs_as_config.h"
 
 static unsigned packet_detail_count;
 static uint32_t packet_details[4][4];
@@ -901,6 +902,40 @@ static void test_ddj400_hs_uac1_cadence(void)
     puts("PASS DDJ-400 HS UAC1: raw interval 4, 1-ms cadence, wrong cadence/family/FLX4 rejected, control/stream/stop");
 }
 
+static void test_numark_touch_fs(void)
+{
+    assert(controller_usb_audio_stream_is_quiesced());
+    assert(controller_usb_audio_stream_set_policy(false, false, false) == ESP_OK);
+    flx4_uac_playback_format_t fmt;
+    assert(select_stream_format(numark_touch_fs_as_config,
+                                sizeof(numark_touch_fs_as_config), &fmt));
+    assert(fmt.channels == 4 && fmt.bits_per_sample == 16 && fmt.bytes_per_sample == 2);
+    assert(fmt.max_packet_size == 384 && fmt.interval == 1 && !fmt.requires_feedback);
+    assert(flx4_uac_format_supports_rate(&fmt, 44100));
+    assert(!flx4_uac_format_supports_rate(&fmt, 48000));
+    assert(controller_usb_audio_stream_start((void*)1, (void*)2,
+        numark_touch_fs_as_config, sizeof(numark_touch_fs_as_config), (void*)3, 10, 5) == ESP_OK);
+    s_control->status = USB_TRANSFER_STATUS_COMPLETED;
+    control_callback(s_control);
+    assert(s_streaming && !s_faulted && s_target_rate == 44100 && !s_feedback_active);
+    /* Exercise conversion and the generic MAIN 1/2, CUE 3/4 owner. */
+    int16_t main_bus[256*2], cue_bus[256*2];
+    for (unsigned i = 0; i < 256; ++i) {
+        main_bus[i*2] = 4000; main_bus[i*2+1] = -4000;
+        cue_bus[i*2] = 8000; cue_bus[i*2+1] = -8000;
+    }
+    assert(controller_usb_audio_stream_write(main_bus, cue_bus, 256, 48000) == ESP_OK);
+    int16_t routed[4];
+    assert(controller_audio_ring_read(&s_ring, routed, 1, false) == 1);
+    assert(routed[0] == 4000 && routed[1] == -4000);
+    assert(routed[2] == 8000 && routed[3] == -8000);
+    controller_usb_audio_stream_request_stop(false);
+    retire_transfers(); finish_cleanup();
+    assert(controller_usb_audio_stream_is_quiesced());
+    assert(controller_usb_audio_stream_set_policy(true, false, false) == ESP_OK);
+    puts("PASS Numark FS focused fixture: PCM16 44.1k, sync cadence, MAIN/CUE routing, 48k source conversion, stop");
+}
+
 static void test_flx4_dedicated_headphones_preserve_pcm_level(void)
 {
     assert(controller_usb_audio_stream_set_policy(true, false, false) == ESP_OK);
@@ -1020,6 +1055,7 @@ int main(void)
     test_prime_fault_evidence();
     test_hs_reconnect_under_heap_pressure();
     test_ddj400_hs_uac1_cadence();
+    test_numark_touch_fs();
     test_flx4_dedicated_headphones_preserve_pcm_level();
     assert(review_live_transfers == 0 && review_live_payload_bytes == 0);
     puts("PASS UAC 16/24-bit, consumer pacing, bounded timeout, ownership, reconnect and channel routing");

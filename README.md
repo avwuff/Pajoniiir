@@ -47,6 +47,14 @@ The table distinguishes tested functions from profiles awaiting hardware checks.
 | [Hercules DJControl Inpulse 500](controllers/hercules_djcontrol_inpulse_500/README.md) | Beta support; tested on M3 and JC4880 | USB MIDI/LED feedback, UAC1 headphones and native headphone Mix/Volume; M3 requires the experimental USB port swap | M3 exact-image hour and JC4880 short functional blocks accepted. Individual pad/FX/LED coverage remains partial; controller RCA MAIN is unqualified. |
 | [Native Instruments Traktor Kontrol S2 MK3](controllers/ni_traktor_s2_mk3_full/README.md) | Experimental M3 support; operator-closed with explicit waivers | MIDI mode, shared MIDI/LED profile and HS UAC2 headphones; controller USB3 / storage USB2 | Historical exact-image 48/44.1-kHz hours accepted. Remaining checks were waived, not passed; other boards are unqualified. |
 | [Pioneer DDJ-400](controllers/pioneer_ddj_400/README.md) | Software profile available; canonical-image hardware acceptance NOT RUN | Shared MIDI/LED and USB audio implementation | Loop halve/double included; four memory-store/delete inputs remain omitted. Scoped contributor testing is recorded separately; new-image qualification is pending. |
+| [Numark DJ2GO2 Touch](controllers/numark_dj2go2_touch/README.md) | Software profile; repaired-image hardware acceptance NOT RUN | MIDI/LED, latching PFL levels and focused FS UAC1 contract | Requires newer firmware than published beta2; native/software level interaction and remaining LED/pad coverage need qualification. |
+
+The [Numark DJ2GO2 Touch profile](controllers/numark_dj2go2_touch/README.md) is
+available for software testing with firmware containing the latching-PFL
+integration. Its new absolute-PFL mapping requires newer firmware than the
+published beta2 images; repaired-image hardware qualification remains NOT RUN.
+The disabled [new UI prototype](firmware/p4-core/components/ui_next/README.md)
+uses demo data and is not selected by any production target.
 
 FLX4 remains the ordinary reference controller. M3 Hercules/S2 testing uses an
 **explicit experimental port swap: controller USB3, storage USB2**; the ordinary

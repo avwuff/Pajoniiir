@@ -1,0 +1,988 @@
+diff --git a/README.md b/README.md
+index 4298f57..ff627dd 100644
+--- a/README.md
++++ b/README.md
+@@ -47,6 +47,7 @@ The table distinguishes tested functions from profiles awaiting hardware checks.
+ | [Hercules DJControl Inpulse 500](controllers/hercules_djcontrol_inpulse_500/README.md) | Beta support; tested on M3 and JC4880 | USB MIDI/LED feedback, UAC1 headphones and native headphone Mix/Volume; M3 requires the experimental USB port swap | M3 exact-image hour and JC4880 short functional blocks accepted. Individual pad/FX/LED coverage remains partial; controller RCA MAIN is unqualified. |
+ | [Native Instruments Traktor Kontrol S2 MK3](controllers/ni_traktor_s2_mk3_full/README.md) | Experimental M3 support; operator-closed with explicit waivers | MIDI mode, shared MIDI/LED profile and HS UAC2 headphones; controller USB3 / storage USB2 | Historical exact-image 48/44.1-kHz hours accepted. Remaining checks were waived, not passed; other boards are unqualified. |
+ | [Pioneer DDJ-400](controllers/pioneer_ddj_400/README.md) | Software profile available; hardware acceptance NOT RUN | Shared MIDI/LED and USB audio implementation | Source-backed mapping; local MIDI/LED/audio/reconnect qualification is pending. Eight memory-call/store/delete inputs remain omitted. |
++| [Numark DJ2GO2 Touch](controllers/numark_dj2go2_touch/README.md) | Software profile available; hardware acceptance NOT RUN | Shared MIDI/LED profile; USB audio needs a direct root-port connection and a descriptor the runtime accepts | Mapping from the Mixxx project. USB ID, audio descriptor and level-knob behavior are unconfirmed. SAMPLER pads are not mapped. |
+ 
+ FLX4 remains the ordinary reference controller. M3 Hercules/S2 testing uses an
+ **explicit experimental port swap: controller USB3, storage USB2**; the ordinary
+diff --git a/controllers/numark_dj2go2_touch/README.md b/controllers/numark_dj2go2_touch/README.md
+new file mode 100644
+index 0000000..0208606
+--- /dev/null
++++ b/controllers/numark_dj2go2_touch/README.md
+@@ -0,0 +1,92 @@
++# Numark DJ2GO2 Touch: software profile
++
++Status: software profile. Hardware acceptance: **NOT RUN**. No test with a real DJ2GO2 Touch has run. The profile comes from a public mapping and passes the host tests only. Do not call it supported until a bench check records the real MIDI, LED and audio behavior.
++
++Build: S3CP v4, 1999 bytes, 100 inputs, 30 outputs, VID/PID `15E4:003C`.
++
++## Source
++
++The MIDI addresses come from the Mixxx mapping for this controller. The author is tandy1000. The profile takes addresses and control roles only. It does not copy script code.
++
++- Repository: [mixxxdj/mixxx](https://github.com/mixxxdj/mixxx), commit `0fffd3d0d07b755c34c1730f7b87afadd8f2be19`.
++- `res/controllers/Numark_DJ2GO2_Touch.midi.xml`, SHA-256 `30807f8e574e857149c4e5b3f79e2d07ab8a841e159c040852a8c5d7b1641990`.
++- `res/controllers/Numark_DJ2GO2_Touch_scripts.js`, SHA-256 `8c39e503fcd2c1c6be23c997d7c092b58ee91aec22d32fa1fa7392e1f1fd900f`.
++
++The XML file has no outputs. The LED messages and the initial SysEx come from the script. Mixxx sends each LED message to the same note as the input.
++
++The USB ID `15E4:003C` comes from public USB ID listings, not from a captured descriptor. The listings probably share one origin. Read the ID on the real unit with `lsusb` before the first use.
++
++## Controls
++
++Deck 1 uses status `0x90` for transport and `0x94` for pads. Deck 2 uses `0x91` and `0x95`. Global controls use MIDI channel 16 (`0x9F` and `0xBF`). Notes are Note On. The profile also matches Note Off (`0x8n`) for every note.
++
++| Control | MIDI | P4 event |
++| --- | --- | --- |
++| PLAY, CUE, SYNC | Notes `0x00`, `0x01`, `0x02` | `deckN.play`, `cue`, `sync` |
++| Headphone cue | Note `0x1B` | `deckN.pfl` |
++| Jog wheel touch | Note `0x06` | `deckN.jog_touch` |
++| Jog wheel turn | CC `0x06`, two's complement | `deckN.jog_scratch` |
++| Tempo fader | CC `0x09`, 7 bit | `deckN.tempo` |
++| Level knob | CC `0x16`, 7 bit | `mixer.chN_volume` |
++| Pads, CUES mode | Notes `0x01` to `0x04` | Hot cue pads 1 to 4 |
++| Pads, CUES mode, PAD MODE held | Notes `0x09` to `0x0C` | Hot cue pads 1 to 4, shifted (clear) |
++| Pads, AUTO mode | Notes `0x11` to `0x14` | Beat loop pads 1 to 4 |
++| Pads, MANUAL mode | Notes `0x21`, `0x22`, `0x23`, `0x24` | Loop in, loop out, reloop exit, reloop stop |
++| Pads, SAMPLER mode | Notes `0x31` to `0x34` | Not mapped |
++| LOAD | Notes `0x02` (deck 1), `0x03` (deck 2) | `browser.load_deckN` |
++| Browse push | Note `0x06` | `browser.press` |
++| Browse turn | CC `0x00`, `0x01` and `0x7F` | `browser.delta` |
++| Crossfader | CC `0x08`, 7 bit | `mixer.crossfader` |
++| Master Level | CC `0x0A`, 7 bit | `system.master_volume` |
++| Cue Level | CC `0x0C`, 7 bit | `system.headphone_level` |
++
++The 7-bit controls use `cc7_to14`. The values 0, 64 and 127 become 0, 8192 and 16383. The tempo fader has no inversion. The Mixxx script uses the same direction as the Mixxx DDJ-400 script, and the DDJ-400 profile also has no inversion.
++
++A release counts as a press when its velocity is above zero. The profile assumes a release velocity of 0. The Mixxx script uses the same rule.
++
++## Sound card
++
++The controller has a built-in USB audio interface. The Mixxx manual lists outputs 1 and 2 as Main and outputs 3 and 4 as headphones. The profile sets `usb_audio` and `headphone_channels` 3 and 4. These fields only describe the profile. They do not start audio.
++
++The P4 audio runtime reads the USB descriptor and selects the format. It needs four channels, PCM, 16 or 24 bits, and 44100 or 48000 Hz. It tries 44100 Hz first. For a controller that is not an FLX4, the output endpoint must be adaptive or synchronous. The runtime accepts an asynchronous endpoint only with an explicit feedback endpoint.
++
++The runtime starts USB audio only when the controller connects directly to a root port. A controller behind a hub gets MIDI only. If the descriptor does not meet the rules, MIDI stays active and audio stays off.
++
++The descriptor of the Touch is not known yet. Capture it with `lsusb -v` on a PC before the first audio test. Read the channel count and the `bmAttributes` value of the isochronous OUT endpoint.
++
++The profile maps Master Level and Cue Level to software levels. It does not set `native_headphone_controls`. It is not known if these knobs also change the analog output. If they do, the level changes twice. Test this on the bench. The compiler rejects `native_headphone_controls` together with the Cue Level mapping.
++
++## Differences from the Mixxx mapping
++
++- **Level knob.** Mixxx maps it to a quick-effect filter. The forum post for the mapping calls this assignment non-standard. The profile maps it to channel volume. To match Mixxx, use `mixer.chN_filter`.
++- **Right deck RELOOP STOP.** The Mixxx XML lists status `0x95` twice for this pad. The left deck has `0x84` and `0x94`. The profile uses `0x85` and `0x95` for the right deck.
++- **AUTO pads.** Mixxx makes loops of 1, 2, 4 and 8 beats. P4 beat loop pads 1 to 4 make loops of 1/32, 1/16, 1/8 and 1/4 beat. The `pad_bank` type cannot start at a later P4 pad.
++- **SAMPLER pads.** P4 ignores the sampler pad mode. These inputs stay under `omitted_inputs` in `profile.json`.
++- **MANUAL pads `0x23` and `0x24`.** The profile maps the inputs. P4 has no LED for these two pads.
++- **Initial SysEx.** Mixxx sends `F0 00 01 3F 3C 48 F7` at start. The script names it `ControllerStatusSysex`. The profile sends it once at each activation. The reply is not documented. We expect the controller to send its knob and fader positions. A capture must confirm this.
++
++## Jog wheel
++
++Each wheel sends one CC for the turn and one note for the touch. The profile maps the CC to `jog_scratch`. The deck core uses the touch state to choose scratch, bend or scrub. Clockwise turns give positive values in the Mixxx script. No hardware test has confirmed this.
++
++## Build and install
++
++1. Run `python tools/controller_profile/compile_profile.py controllers/numark_dj2go2_touch/profile.json -o controllers/numark_dj2go2_touch/profile.s3bin`.
++2. Copy `profile.s3bin` to `/controllers/numark_dj2go2_touch/` on the SD card.
++
++To upload the file over Wi-Fi instead, follow [CONTROLLER_PROFILE_UPDATE.md](../../docs/CONTROLLER_PROFILE_UPDATE.md). Use firmware that accepts S3CP v4. The M2.4 image rejects this profile. The schema is in [CONTROLLER_PROFILE_SCHEMA.md](../../docs/CONTROLLER_PROFILE_SCHEMA.md).
++
++## Tests
++
++Run `tests/controller_profile/run_tests.ps1`. It builds `test_numark_dj2go2_touch.c` and runs it against `profile.s3bin`. The test checks every mapped address, Note On and Note Off, the 7-to-14-bit values, the pads, the LEDs, the replay set and CRC rejection.
++
++## Bench checks not run
++
++1. Read the USB ID with `lsusb`.
++2. Read the audio descriptor with `lsusb -v`.
++3. Press each button. Record the Note Off velocity.
++4. Move each tempo fader. Check the direction and the end points.
++5. Turn each jog wheel. Check the direction and the touch state.
++6. Check the LEDs in all four pad modes.
++7. Set Master Level and Cue Level. Listen for a double level change.
++8. Play audio to Main and to the headphones. Disconnect and connect the USB cable.
+diff --git a/controllers/numark_dj2go2_touch/profile.json b/controllers/numark_dj2go2_touch/profile.json
+new file mode 100644
+index 0000000..9ffdb9c
+--- /dev/null
++++ b/controllers/numark_dj2go2_touch/profile.json
+@@ -0,0 +1,634 @@
++{
++  "schema": "p4-controller-profile-v1",
++  "name": "Numark DJ2GO2 Touch",
++  "vendor": "Numark",
++  "source": "Derived from the Mixxx mapping Numark_DJ2GO2_Touch.midi.xml and Numark_DJ2GO2_Touch_scripts.js (author tandy1000), Mixxx commit 0fffd3d0d07b755c34c1730f7b87afadd8f2be19. See README.md.",
++  "vid": "0x15E4",
++  "pid": "0x003C",
++  "decks": 2,
++  "capabilities": {
++    "led_feedback": true,
++    "usb_audio": true,
++    "jog_touch": true,
++    "pitch_14bit": true
++  },
++  "init_sysex": [
++    240,
++    0,
++    1,
++    63,
++    60,
++    72,
++    247
++  ],
++  "inputs": [
++    {
++      "type": "button",
++      "event": "deck1.play",
++      "status": "0x90",
++      "data1": "0x00"
++    },
++    {
++      "type": "button",
++      "event": "deck1.play",
++      "status": "0x80",
++      "data1": "0x00"
++    },
++    {
++      "type": "button",
++      "event": "deck1.cue",
++      "status": "0x90",
++      "data1": "0x01"
++    },
++    {
++      "type": "button",
++      "event": "deck1.cue",
++      "status": "0x80",
++      "data1": "0x01"
++    },
++    {
++      "type": "button",
++      "event": "deck1.sync",
++      "status": "0x90",
++      "data1": "0x02"
++    },
++    {
++      "type": "button",
++      "event": "deck1.sync",
++      "status": "0x80",
++      "data1": "0x02"
++    },
++    {
++      "type": "button",
++      "event": "deck1.pfl",
++      "status": "0x90",
++      "data1": "0x1B"
++    },
++    {
++      "type": "button",
++      "event": "deck1.pfl",
++      "status": "0x80",
++      "data1": "0x1B"
++    },
++    {
++      "type": "button",
++      "event": "deck1.jog_touch",
++      "status": "0x90",
++      "data1": "0x06"
++    },
++    {
++      "type": "button",
++      "event": "deck1.jog_touch",
++      "status": "0x80",
++      "data1": "0x06"
++    },
++    {
++      "type": "encoder_2c",
++      "event": "deck1.jog_scratch",
++      "status": "0xB0",
++      "data1": "0x06"
++    },
++    {
++      "type": "cc7_to14",
++      "event": "deck1.tempo",
++      "status": "0xB0",
++      "data1": "0x09",
++      "replay": false
++    },
++    {
++      "type": "cc7_to14",
++      "event": "mixer.ch1_volume",
++      "status": "0xB0",
++      "data1": "0x16",
++      "replay": true
++    },
++    {
++      "type": "pad_bank",
++      "deck": 1,
++      "shifted": false,
++      "status": "0x94",
++      "first_data1": "0x01",
++      "count": 4,
++      "mode": "hot_cue"
++    },
++    {
++      "type": "pad_bank",
++      "deck": 1,
++      "shifted": false,
++      "status": "0x84",
++      "first_data1": "0x01",
++      "count": 4,
++      "mode": "hot_cue"
++    },
++    {
++      "type": "pad_bank",
++      "deck": 1,
++      "shifted": true,
++      "status": "0x94",
++      "first_data1": "0x09",
++      "count": 4,
++      "mode": "hot_cue"
++    },
++    {
++      "type": "pad_bank",
++      "deck": 1,
++      "shifted": true,
++      "status": "0x84",
++      "first_data1": "0x09",
++      "count": 4,
++      "mode": "hot_cue"
++    },
++    {
++      "type": "pad_bank",
++      "deck": 1,
++      "shifted": false,
++      "status": "0x94",
++      "first_data1": "0x11",
++      "count": 4,
++      "mode": "beat_loop"
++    },
++    {
++      "type": "pad_bank",
++      "deck": 1,
++      "shifted": false,
++      "status": "0x84",
++      "first_data1": "0x11",
++      "count": 4,
++      "mode": "beat_loop"
++    },
++    {
++      "type": "button",
++      "event": "deck1.loop_in",
++      "status": "0x94",
++      "data1": "0x21"
++    },
++    {
++      "type": "button",
++      "event": "deck1.loop_in",
++      "status": "0x84",
++      "data1": "0x21"
++    },
++    {
++      "type": "button",
++      "event": "deck1.loop_out",
++      "status": "0x94",
++      "data1": "0x22"
++    },
++    {
++      "type": "button",
++      "event": "deck1.loop_out",
++      "status": "0x84",
++      "data1": "0x22"
++    },
++    {
++      "type": "button",
++      "event": "deck1.reloop_exit",
++      "status": "0x94",
++      "data1": "0x23"
++    },
++    {
++      "type": "button",
++      "event": "deck1.reloop_exit",
++      "status": "0x84",
++      "data1": "0x23"
++    },
++    {
++      "type": "ext_action",
++      "deck": 1,
++      "action": "reloop_stop",
++      "status": "0x94",
++      "data1": "0x24"
++    },
++    {
++      "type": "ext_action",
++      "deck": 1,
++      "action": "reloop_stop",
++      "status": "0x84",
++      "data1": "0x24"
++    },
++    {
++      "type": "button",
++      "event": "browser.load_deck1",
++      "status": "0x9F",
++      "data1": "0x02"
++    },
++    {
++      "type": "button",
++      "event": "browser.load_deck1",
++      "status": "0x8F",
++      "data1": "0x02"
++    },
++    {
++      "type": "button",
++      "event": "deck2.play",
++      "status": "0x91",
++      "data1": "0x00"
++    },
++    {
++      "type": "button",
++      "event": "deck2.play",
++      "status": "0x81",
++      "data1": "0x00"
++    },
++    {
++      "type": "button",
++      "event": "deck2.cue",
++      "status": "0x91",
++      "data1": "0x01"
++    },
++    {
++      "type": "button",
++      "event": "deck2.cue",
++      "status": "0x81",
++      "data1": "0x01"
++    },
++    {
++      "type": "button",
++      "event": "deck2.sync",
++      "status": "0x91",
++      "data1": "0x02"
++    },
++    {
++      "type": "button",
++      "event": "deck2.sync",
++      "status": "0x81",
++      "data1": "0x02"
++    },
++    {
++      "type": "button",
++      "event": "deck2.pfl",
++      "status": "0x91",
++      "data1": "0x1B"
++    },
++    {
++      "type": "button",
++      "event": "deck2.pfl",
++      "status": "0x81",
++      "data1": "0x1B"
++    },
++    {
++      "type": "button",
++      "event": "deck2.jog_touch",
++      "status": "0x91",
++      "data1": "0x06"
++    },
++    {
++      "type": "button",
++      "event": "deck2.jog_touch",
++      "status": "0x81",
++      "data1": "0x06"
++    },
++    {
++      "type": "encoder_2c",
++      "event": "deck2.jog_scratch",
++      "status": "0xB1",
++      "data1": "0x06"
++    },
++    {
++      "type": "cc7_to14",
++      "event": "deck2.tempo",
++      "status": "0xB1",
++      "data1": "0x09",
++      "replay": false
++    },
++    {
++      "type": "cc7_to14",
++      "event": "mixer.ch2_volume",
++      "status": "0xB1",
++      "data1": "0x16",
++      "replay": true
++    },
++    {
++      "type": "pad_bank",
++      "deck": 2,
++      "shifted": false,
++      "status": "0x95",
++      "first_data1": "0x01",
++      "count": 4,
++      "mode": "hot_cue"
++    },
++    {
++      "type": "pad_bank",
++      "deck": 2,
++      "shifted": false,
++      "status": "0x85",
++      "first_data1": "0x01",
++      "count": 4,
++      "mode": "hot_cue"
++    },
++    {
++      "type": "pad_bank",
++      "deck": 2,
++      "shifted": true,
++      "status": "0x95",
++      "first_data1": "0x09",
++      "count": 4,
++      "mode": "hot_cue"
++    },
++    {
++      "type": "pad_bank",
++      "deck": 2,
++      "shifted": true,
++      "status": "0x85",
++      "first_data1": "0x09",
++      "count": 4,
++      "mode": "hot_cue"
++    },
++    {
++      "type": "pad_bank",
++      "deck": 2,
++      "shifted": false,
++      "status": "0x95",
++      "first_data1": "0x11",
++      "count": 4,
++      "mode": "beat_loop"
++    },
++    {
++      "type": "pad_bank",
++      "deck": 2,
++      "shifted": false,
++      "status": "0x85",
++      "first_data1": "0x11",
++      "count": 4,
++      "mode": "beat_loop"
++    },
++    {
++      "type": "button",
++      "event": "deck2.loop_in",
++      "status": "0x95",
++      "data1": "0x21"
++    },
++    {
++      "type": "button",
++      "event": "deck2.loop_in",
++      "status": "0x85",
++      "data1": "0x21"
++    },
++    {
++      "type": "button",
++      "event": "deck2.loop_out",
++      "status": "0x95",
++      "data1": "0x22"
++    },
++    {
++      "type": "button",
++      "event": "deck2.loop_out",
++      "status": "0x85",
++      "data1": "0x22"
++    },
++    {
++      "type": "button",
++      "event": "deck2.reloop_exit",
++      "status": "0x95",
++      "data1": "0x23"
++    },
++    {
++      "type": "button",
++      "event": "deck2.reloop_exit",
++      "status": "0x85",
++      "data1": "0x23"
++    },
++    {
++      "type": "ext_action",
++      "deck": 2,
++      "action": "reloop_stop",
++      "status": "0x95",
++      "data1": "0x24"
++    },
++    {
++      "type": "ext_action",
++      "deck": 2,
++      "action": "reloop_stop",
++      "status": "0x85",
++      "data1": "0x24"
++    },
++    {
++      "type": "button",
++      "event": "browser.load_deck2",
++      "status": "0x9F",
++      "data1": "0x03"
++    },
++    {
++      "type": "button",
++      "event": "browser.load_deck2",
++      "status": "0x8F",
++      "data1": "0x03"
++    },
++    {
++      "type": "button",
++      "event": "browser.press",
++      "status": "0x9F",
++      "data1": "0x06"
++    },
++    {
++      "type": "button",
++      "event": "browser.press",
++      "status": "0x8F",
++      "data1": "0x06"
++    },
++    {
++      "type": "encoder_2c",
++      "event": "browser.delta",
++      "status": "0xBF",
++      "data1": "0x00"
++    },
++    {
++      "type": "cc7_to14",
++      "event": "mixer.crossfader",
++      "status": "0xBF",
++      "data1": "0x08",
++      "replay": true
++    },
++    {
++      "type": "cc7_to14",
++      "event": "system.master_volume",
++      "status": "0xBF",
++      "data1": "0x0A",
++      "replay": true
++    },
++    {
++      "type": "cc7_to14",
++      "event": "system.headphone_level",
++      "status": "0xBF",
++      "data1": "0x0C",
++      "replay": true
++    }
++  ],
++  "outputs": [
++    {
++      "kind": "note",
++      "led": "play",
++      "deck_status": [
++        "0x90",
++        "0x91"
++      ],
++      "data1": "0x00"
++    },
++    {
++      "kind": "note",
++      "led": "cue",
++      "deck_status": [
++        "0x90",
++        "0x91"
++      ],
++      "data1": "0x01"
++    },
++    {
++      "kind": "note",
++      "led": "sync",
++      "deck_status": [
++        "0x90",
++        "0x91"
++      ],
++      "data1": "0x02"
++    },
++    {
++      "kind": "note",
++      "led": "pfl",
++      "deck_status": [
++        "0x90",
++        "0x91"
++      ],
++      "data1": "0x1B"
++    },
++    {
++      "kind": "note",
++      "led": "loop_in",
++      "deck_status": [
++        "0x94",
++        "0x95"
++      ],
++      "data1": "0x21"
++    },
++    {
++      "kind": "note",
++      "led": "loop_out",
++      "deck_status": [
++        "0x94",
++        "0x95"
++      ],
++      "data1": "0x22"
++    },
++    {
++      "kind": "note",
++      "led": "hot_cue_pads[0]",
++      "deck_status": [
++        "0x94",
++        "0x95"
++      ],
++      "data1": "0x01"
++    },
++    {
++      "kind": "note",
++      "led": "hot_cue_pads[1]",
++      "deck_status": [
++        "0x94",
++        "0x95"
++      ],
++      "data1": "0x02"
++    },
++    {
++      "kind": "note",
++      "led": "hot_cue_pads[2]",
++      "deck_status": [
++        "0x94",
++        "0x95"
++      ],
++      "data1": "0x03"
++    },
++    {
++      "kind": "note",
++      "led": "hot_cue_pads[3]",
++      "deck_status": [
++        "0x94",
++        "0x95"
++      ],
++      "data1": "0x04"
++    },
++    {
++      "kind": "note",
++      "led": "beat_loop_pads[0]",
++      "deck_status": [
++        "0x94",
++        "0x95"
++      ],
++      "data1": "0x11"
++    },
++    {
++      "kind": "note",
++      "led": "beat_loop_pads[1]",
++      "deck_status": [
++        "0x94",
++        "0x95"
++      ],
++      "data1": "0x12"
++    },
++    {
++      "kind": "note",
++      "led": "beat_loop_pads[2]",
++      "deck_status": [
++        "0x94",
++        "0x95"
++      ],
++      "data1": "0x13"
++    },
++    {
++      "kind": "note",
++      "led": "beat_loop_pads[3]",
++      "deck_status": [
++        "0x94",
++        "0x95"
++      ],
++      "data1": "0x14"
++    },
++    {
++      "kind": "note",
++      "led": "track_load_deck1",
++      "deck": "any",
++      "status": "0x9F",
++      "data1": "0x02"
++    },
++    {
++      "kind": "note",
++      "led": "track_load_deck2",
++      "deck": "any",
++      "status": "0x9F",
++      "data1": "0x03"
++    }
++  ],
++  "audio": {
++    "enabled": true,
++    "headphone_channels": [
++      3,
++      4
++    ],
++    "preferred_sample_rate": 44100
++  },
++  "omitted_inputs": [
++    {
++      "type": "pad_bank",
++      "deck": 1,
++      "mode": "sampler",
++      "status": "0x94",
++      "first_data1": "0x31",
++      "count": 4,
++      "reason": "P4 deck core ignores sampler pad mode (out of scope); not exported"
++    },
++    {
++      "type": "pad_bank",
++      "deck": 2,
++      "mode": "sampler",
++      "status": "0x95",
++      "first_data1": "0x31",
++      "count": 4,
++      "reason": "P4 deck core ignores sampler pad mode (out of scope); not exported"
++    },
++    {
++      "type": "output",
++      "led": "reloop_toggle_and_reloop_stop",
++      "status": "0x94/0x95",
++      "data1": "0x23/0x24",
++      "reason": "No P4 LED id for these two loop pads; their inputs are mapped"
++    }
++  ]
++}
+diff --git a/controllers/numark_dj2go2_touch/profile.s3bin b/controllers/numark_dj2go2_touch/profile.s3bin
+new file mode 100644
+index 0000000000000000000000000000000000000000..e55c3c5f432e029763a55a55e579c8ae62ee474e
+GIT binary patch
+literal 1999
+zcmZ9NO>PrG6ok8Hti*Pr1pfpfj1UCa<&QrJf+c<;Bo-_J;Q&Cm1wskZwAdxK)V=l<
+zk`wp{NSpz&X2)`<=boo-l~?bpQoR{_%F{;=4-Q-Amif7C%&#AR&VFx<&AKt>i@9k`
+zv1}&B)b<Jld}@47i6<6*Z(&EDcv8T>mife!5&WafC!Q?9A7(!B#Zp-p{p4SC+I6{+
+z@m27lT?lgj-rCyU6FgnquP-87<uY=i+=^T_Tv5KFd`0<+^1c)Iz0m#L$S;*wBEM2z
+zjeMZjr+h{Eit-iZeJ}27>;8V^j`ARKS9utDMXyi!it-iZE6V%Zc%IkO^QnmaCj3$6
+z6Z<>xZ)85Pzl;0bLUr|iiD%NkPbq&+Je7X$CI36|RQi2C^NFXj?@8tpPo>`<GM{)V
+z{eG1B#Fx_d2g$#bzCX@b`u;BUJxE_)iy!+Qq_1G@dyu|@_4f+WSFrZoQQlGBQQlEL
+zNMEr}`yQmPVC{R5zJj&yLHY{TzB|f0$~($C$_MEy_G#aP^cAdq57Jk#_B}{n!P<96
+zc}ICic}Mvm{oYT{#}S83_|Gz*I7q+8nNJ*~-*40NbHuX}`OhhTPCS!-9cMoA+@NnC
+zlRs~xU++`D=3VgDj90<m5@W&<a&jUYtTp(1#TkgBqnV-Wyav5!^fl-@x1f(2y#-xo
+zoK<+G#69cQ;OCArjx4-Nni;yzcr|#v))sV~x1sB`wxR311HEka>_FFf7kaDFccJTy
+zqtN#ny$4-q98tdC=zZuq51<bkeE?l&9C?1&=tJl_KdlX3VexzIW7hlmYwYv!n}7cS
+DLKvgs
+
+literal 0
+HcmV?d00001
+
+diff --git a/tests/controller_profile/run_tests.ps1 b/tests/controller_profile/run_tests.ps1
+index a5ab640..ef57798 100644
+--- a/tests/controller_profile/run_tests.ps1
++++ b/tests/controller_profile/run_tests.ps1
+@@ -33,6 +33,12 @@ try {
+     if ($LASTEXITCODE -ne 0) { throw "S2 full profile build failed" }
+     & $FullExe
+     if ($LASTEXITCODE -ne 0) { throw "S2 full profile test failed" }
++    $NumarkExe = Join-Path $BuildDir "test_numark_dj2go2_touch.exe"
++    & gcc @Common -DCONTROLLER_PROFILE_MANAGER_PC_TEST "-I$Manager/include" test_numark_dj2go2_touch.c $ProfileSource `
++        (Join-Path $Manager "controller_profile_manager.c") -o $NumarkExe
++    if ($LASTEXITCODE -ne 0) { throw "Numark DJ2GO2 Touch profile build failed" }
++    & $NumarkExe
++    if ($LASTEXITCODE -ne 0) { throw "Numark DJ2GO2 Touch profile test failed" }
+     $HerculesExe = Join-Path $BuildDir "test_hercules_native.exe"
+     $Runtime = Join-Path $Components "controller_profile_runtime"
+     & gcc @Common -DCONTROLLER_PROFILE_MANAGER_PC_TEST -DCONTROLLER_PROFILE_RUNTIME_PC_TEST `
+diff --git a/tests/controller_profile/test_numark_dj2go2_touch.c b/tests/controller_profile/test_numark_dj2go2_touch.c
+new file mode 100644
+index 0000000..77b9ceb
+--- /dev/null
++++ b/tests/controller_profile/test_numark_dj2go2_touch.c
+@@ -0,0 +1,193 @@
++#include "controller_profile.h"
++#include "controller_profile_manager.h"
++#include "control_link.h"
++#include <assert.h>
++#include <stdio.h>
++#include <string.h>
++
++static unsigned replayed;
++
++static bool replay_cb(uint8_t type, uint8_t id, int16_t value, void *ctx)
++{
++    (void)ctx;
++    assert(type == CTRL_TYPE_PITCH && value >= 0 && value <= 16383);
++    assert(id != CTRL_ID_DECK1_TEMPO && id != CTRL_ID_DECK2_TEMPO);
++    ++replayed;
++    return true;
++}
++
++/* A 7-bit CC must be monotonic, hit 0 / 8192 / 16383 and map to one event id. */
++static void sweep_cc7(const cp_profile_t *p, cp_runtime_t *rt, uint8_t status,
++                      uint8_t cc, uint8_t id)
++{
++    int16_t previous = -1;
++    for (unsigned raw = 0; raw < 128; ++raw) {
++        cp_event_t e;
++        assert(cp_runtime_process(p, rt, status, cc, (uint8_t)raw, &e));
++        assert(e.type == CTRL_TYPE_PITCH && e.id == id);
++        assert(e.value >= previous && e.value >= 0 && e.value <= 16383);
++        if (raw == 0) assert(e.value == 0);
++        if (raw == 64) assert(e.value == 8192);
++        if (raw == 127) assert(e.value == 16383);
++        previous = e.value;
++    }
++}
++
++/* Press is Note On with velocity > 0. Release can be Note Off or Note On 0. */
++static void check_button(const cp_profile_t *p, cp_runtime_t *rt, uint8_t on_status,
++                         uint8_t note, uint8_t id)
++{
++    cp_event_t e;
++    assert(cp_runtime_process(p, rt, on_status, note, 127, &e));
++    assert(e.type == CTRL_TYPE_BUTTON && e.id == id && e.value == 1);
++    assert(cp_runtime_process(p, rt, (uint8_t)(on_status - 0x10), note, 0, &e));
++    assert(e.type == CTRL_TYPE_BUTTON && e.id == id && e.value == 0);
++    assert(cp_runtime_process(p, rt, on_status, note, 0, &e));
++    assert(e.type == CTRL_TYPE_BUTTON && e.id == id && e.value == 0);
++}
++
++static void check_pad(const cp_profile_t *p, cp_runtime_t *rt, uint8_t on_status,
++                      uint8_t note, uint8_t id, int mode, unsigned pad, bool shifted)
++{
++    cp_event_t e;
++    assert(cp_runtime_process(p, rt, on_status, note, 100, &e));
++    assert(e.type == CTRL_TYPE_BUTTON && e.id == id);
++    assert(e.value == CTRL_PAD_ACTION_VALUE(mode, pad, shifted, true));
++    assert(cp_runtime_process(p, rt, (uint8_t)(on_status - 0x10), note, 0, &e));
++    assert(e.value == CTRL_PAD_ACTION_VALUE(mode, pad, shifted, false));
++}
++
++static void check_led(const cp_profile_t *p, uint8_t led, uint8_t deck, uint8_t status,
++                      uint8_t note)
++{
++    uint8_t out[3];
++    assert(cp_profile_map_led(p, led, deck, 1, out));
++    assert(out[0] == status && out[1] == note && out[2] == 0x7F);
++    assert(cp_profile_map_led(p, led, deck, 0, out));
++    assert(out[0] == status && out[1] == note && out[2] == 0x00);
++}
++
++int main(void)
++{
++    uint8_t blob[16384];
++    FILE *f = fopen("../../controllers/numark_dj2go2_touch/profile.s3bin", "rb");
++    assert(f);
++    size_t len = fread(blob, 1, sizeof(blob), f);
++    assert(!ferror(f) && feof(f));
++    fclose(f);
++
++    static cp_profile_t p;
++    static cp_runtime_t rt;
++    cp_event_t e;
++    controller_profile_meta_t meta = {0};
++    assert(cp_profile_parse(blob, len, &p) == CP_OK);
++    assert(controller_profile_meta_parse(blob, len, &meta) == ESP_OK && meta.valid);
++    assert(blob[4] == 4); /* S3CP v4: initial SysEx. */
++    assert(p.vid == 0x15e4 && p.pid == 0x003c);
++    assert(p.input_count == 100 && p.output_count == 30 && p.decks == 2);
++    assert(p.flags & CP_PF_LED_FEEDBACK);
++    assert(p.flags & CP_PF_USB_AUDIO);
++    assert(p.flags & CP_PF_JOG_TOUCH);
++    assert(p.flags & CP_PF_PITCH_14BIT);
++    assert(!(p.flags & CP_PF_NATIVE_HEADPHONES)); /* Levels are software controls. */
++    assert(!(p.flags & CP_PF_FILTER_ALWAYS));
++
++    /* Initial SysEx is the Mixxx controller-status request. */
++    static const uint8_t sysex[] = {0xF0, 0x00, 0x01, 0x3F, 0x3C, 0x48, 0xF7};
++    assert(blob[30] == sizeof(sysex) && blob[31] == 0);
++    assert(len >= sizeof(sysex) && memcmp(blob + len - sizeof(sysex), sysex, sizeof(sysex)) == 0);
++
++    cp_runtime_init(&rt);
++    for (unsigned d = 0; d < 2; ++d) {
++        const uint8_t ns = d ? CTRL_NS_DECK2 : CTRL_NS_DECK1;
++        const uint8_t on = (uint8_t)(0x90 + d);
++        const uint8_t pad = (uint8_t)(0x94 + d);
++        const uint8_t cc = (uint8_t)(0xB0 + d);
++
++        check_button(&p, &rt, on, 0x00, (uint8_t)(ns + CTRL_DECK_CTL_PLAY));
++        check_button(&p, &rt, on, 0x01, (uint8_t)(ns + CTRL_DECK_CTL_CUE));
++        check_button(&p, &rt, on, 0x02, (uint8_t)(ns + CTRL_DECK_CTL_SYNC));
++        check_button(&p, &rt, on, 0x1B, (uint8_t)(CTRL_ID_DECK1_PFL + d));
++        check_button(&p, &rt, on, 0x06, (uint8_t)(ns + CTRL_DECK_CTL_JOG_TOUCH));
++
++        /* One CC drives jog_scratch. deck_core turns it into bend when untouched. */
++        assert(cp_runtime_process(&p, &rt, cc, 0x06, 1, &e));
++        assert(e.type == CTRL_TYPE_ENCODER && e.id == ns + CTRL_DECK_CTL_JOG_SCRATCH);
++        assert(e.value == 1);
++        assert(cp_runtime_process(&p, &rt, cc, 0x06, 127, &e) && e.value == -1);
++        assert(cp_runtime_process(&p, &rt, cc, 0x06, 63, &e) && e.value == 63);
++        assert(cp_runtime_process(&p, &rt, cc, 0x06, 65, &e) && e.value == -63);
++        assert(!cp_runtime_process(&p, &rt, cc, 0x06, 0x00, &e));
++        assert(!cp_runtime_process(&p, &rt, cc, 0x06, 0x40, &e));
++
++        sweep_cc7(&p, &rt, cc, 0x09, (uint8_t)(ns + CTRL_DECK_CTL_TEMPO));
++        sweep_cc7(&p, &rt, cc, 0x16, d ? CTRL_ID_CH2_VOLUME : CTRL_ID_CH1_VOLUME);
++
++        for (unsigned i = 0; i < 4; ++i) {
++            const uint8_t id = (uint8_t)(ns + CTRL_DECK_CTL_PAD_ACTION);
++            check_pad(&p, &rt, pad, (uint8_t)(0x01 + i), id, CTRL_PAD_MODE_HOT_CUE, i, false);
++            check_pad(&p, &rt, pad, (uint8_t)(0x09 + i), id, CTRL_PAD_MODE_HOT_CUE, i, true);
++            check_pad(&p, &rt, pad, (uint8_t)(0x11 + i), id, CTRL_PAD_MODE_BEAT_LOOP, i, false);
++            /* Sampler pads have no P4 action and stay unmatched. */
++            assert(!cp_runtime_process(&p, &rt, pad, (uint8_t)(0x31 + i), 100, &e));
++            assert(!cp_runtime_process(&p, &rt, (uint8_t)(pad - 0x10), (uint8_t)(0x31 + i), 0, &e));
++        }
++        check_button(&p, &rt, pad, 0x21, (uint8_t)(ns + CTRL_DECK_CTL_LOOP_IN));
++        check_button(&p, &rt, pad, 0x22, (uint8_t)(ns + CTRL_DECK_CTL_LOOP_OUT));
++        check_button(&p, &rt, pad, 0x23, (uint8_t)(ns + CTRL_DECK_CTL_RELOOP_EXIT));
++        assert(cp_runtime_process(&p, &rt, pad, 0x24, 127, &e));
++        assert(e.id == ns + CTRL_DECK_CTL_EXT_ACTION);
++        assert(e.value == CTRL_DECK_EXT_VALUE(CTRL_DECK_EXT_ACTION_RELOOP_STOP, true));
++        assert(cp_runtime_process(&p, &rt, (uint8_t)(pad - 0x10), 0x24, 0, &e));
++        assert(e.value == CTRL_DECK_EXT_VALUE(CTRL_DECK_EXT_ACTION_RELOOP_STOP, false));
++
++        /* LOAD is on channel 16: note 2 for deck 1, note 3 for deck 2. */
++        check_button(&p, &rt, 0x9F, (uint8_t)(0x02 + d), (uint8_t)(CTRL_ID_LOAD_DECK1 + d));
++
++        check_led(&p, LED_PLAY, (uint8_t)d, on, 0x00);
++        check_led(&p, LED_CUE, (uint8_t)d, on, 0x01);
++        check_led(&p, LED_SYNC, (uint8_t)d, on, 0x02);
++        check_led(&p, LED_PFL, (uint8_t)d, on, 0x1B);
++        check_led(&p, LED_LOOP_IN, (uint8_t)d, pad, 0x21);
++        check_led(&p, LED_LOOP_OUT, (uint8_t)d, pad, 0x22);
++        for (unsigned i = 0; i < 4; ++i) {
++            check_led(&p, (uint8_t)(LED_HOT_CUE_PAD_1 + i), (uint8_t)d, pad, (uint8_t)(0x01 + i));
++            check_led(&p, (uint8_t)(LED_BEAT_LOOP_PAD_1 + i), (uint8_t)d, pad, (uint8_t)(0x11 + i));
++        }
++        /* The Touch has four pads per bank. P4 pads 5 to 8 have no LED. */
++        uint8_t out[3];
++        assert(!cp_profile_map_led(&p, (uint8_t)(LED_HOT_CUE_PAD_1 + 4), (uint8_t)d, 1, out));
++        assert(!cp_profile_map_led(&p, (uint8_t)(LED_BEAT_LOOP_PAD_1 + 4), (uint8_t)d, 1, out));
++        /* Track-load LEDs are global ("any deck"). */
++        check_led(&p, LED_TRACK_LOAD_DECK1, (uint8_t)d, 0x9F, 0x02);
++        check_led(&p, LED_TRACK_LOAD_DECK2, (uint8_t)d, 0x9F, 0x03);
++    }
++
++    /* Browse encoder: +1 / -1 on channel 16, push is a button. */
++    assert(cp_runtime_process(&p, &rt, 0xBF, 0x00, 1, &e));
++    assert(e.type == CTRL_TYPE_ENCODER && e.id == CTRL_ID_BROWSE_DELTA && e.value == 1);
++    assert(cp_runtime_process(&p, &rt, 0xBF, 0x00, 127, &e) && e.value == -1);
++    check_button(&p, &rt, 0x9F, 0x06, CTRL_ID_BROWSE_PRESS);
++
++    sweep_cc7(&p, &rt, 0xBF, 0x08, CTRL_ID_CROSSFADER);
++    sweep_cc7(&p, &rt, 0xBF, 0x0A, CTRL_ID_MASTER_VOLUME);
++    sweep_cc7(&p, &rt, 0xBF, 0x0C, CTRL_ID_HEADPHONE_LEVEL);
++
++    /* Replay covers 2 channel levels, crossfader, master and headphone level. */
++    assert(cp_runtime_emit_snapshot(&p, &rt, replay_cb, NULL) == 5 && replayed == 5);
++
++    /* Unmapped addresses and a wrong status do not match. */
++    assert(!cp_runtime_process(&p, &rt, 0x90, 0x7F, 127, &e));
++    assert(!cp_runtime_process(&p, &rt, 0xB2, 0x09, 64, &e));
++
++    /* A payload byte changed without a new CRC is rejected by the parser and by
++     * the upload validator. */
++    uint8_t bad[sizeof(blob)];
++    memcpy(bad, blob, len);
++    bad[32 + 3] ^= 0x01;
++    assert(cp_profile_parse(bad, len, &p) == CP_ERR_CRC);
++    assert(controller_profile_meta_parse(bad, len, &meta) != ESP_OK);
++
++    puts("PASS Numark DJ2GO2 Touch compiled profile: buttons, Note On/Off, jog, 7-to-14-bit, pads, LEDs, replay, validators");
++    return 0;
++}

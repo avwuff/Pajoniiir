@@ -6745,6 +6745,13 @@ void audio_engine_get_output_gains(float *deck0_gain, float *deck1_gain)
     if (deck1_gain) *deck1_gain = pre1 * post1 * master;
 }
 
+esp_err_t audio_engine_set_pfl(uint8_t deck, bool enabled)
+{
+    if (!deck_is_valid(deck)) return ESP_ERR_INVALID_ARG;
+    atomic_store_bool(&s_pfl_enabled[deck], enabled);
+    return ESP_OK;
+}
+
 esp_err_t audio_engine_toggle_pfl(uint8_t deck)
 {
     if (!deck_is_valid(deck)) return ESP_ERR_INVALID_ARG;

@@ -1,5 +1,12 @@
 # P4 operation and release checklist
 
+For the 2026-10-19 branch integration, `ui_next` remains a disabled demo, not a
+production startup component. Numark's `deckN.pfl_set` profile requires matching
+post-integration firmware; published beta2 does not implement that semantic
+extension. Preserve FLX4/DDJ-400 toggle behavior. New-image Numark hardware gates
+remain NOT RUN; no installation, controller swap or additional soak is requested
+by this software integration. Existing accepted images and waivers remain intact.
+
 For published [shared-p4-beta.2](validation/SHARED_P4_BETA_2_20261019.md), verify
 the signed release manifest/SHA256SUMS and each board's separate source identity.
 The downloaded M3/JC4880 images retain their exact accepted bytes; JC1060 is

@@ -39,6 +39,12 @@ try {
     if ($LASTEXITCODE -ne 0) { throw "DDJ-400 profile build failed" }
     & $Ddj400Exe
     if ($LASTEXITCODE -ne 0) { throw "DDJ-400 profile test failed" }
+    $NumarkExe = Join-Path $BuildDir "test_numark_dj2go2_touch.exe"
+    & gcc @Common -DCONTROLLER_PROFILE_MANAGER_PC_TEST "-I$Manager/include" test_numark_dj2go2_touch.c $ProfileSource `
+        (Join-Path $Manager "controller_profile_manager.c") -o $NumarkExe
+    if ($LASTEXITCODE -ne 0) { throw "Numark profile build failed" }
+    & $NumarkExe
+    if ($LASTEXITCODE -ne 0) { throw "Numark profile test failed" }
     $HerculesExe = Join-Path $BuildDir "test_hercules_native.exe"
     $Runtime = Join-Path $Components "controller_profile_runtime"
     & gcc @Common -DCONTROLLER_PROFILE_MANAGER_PC_TEST -DCONTROLLER_PROFILE_RUNTIME_PC_TEST `

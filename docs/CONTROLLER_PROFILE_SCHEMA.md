@@ -35,6 +35,23 @@ the real board/controller and exact firmware SHA before hardware support claims.
   `controllers/pioneer_ddj_flx4/profile.json` must reproduce it exactly (the
   `controller_profile` host parity test enforces this).
 
+## Latching PFL buttons
+
+`deckN.pfl` remains a momentary BUTTON action: nonzero toggles PFL and zero is
+release-only. A controller whose physical button alternates Note On 127 and
+Note Off 0 on successive presses must use the additive `deckN.pfl_set` BUTTON
+action instead. Its 0/1 values directly set PFL OFF/ON, including duplicate
+values and deferred delivery. The IDs are `0x85` (D1) and `0x86` (D2); the
+existing mixer namespace and binary S3CP v2/v3/v4 layouts are unchanged.
+
+This vocabulary requires firmware containing the 2026-10-19 latching-PFL
+integration; older beta2 images do not implement these IDs. Install compatible
+firmware before uploading a profile using them. The Numark profile uses this
+contract. Existing FLX4/DDJ-400 profiles retain `deckN.pfl` and their compiled
+bytes remain unchanged. Absolute PFL levels participate in durable delivery:
+queue pressure retains the latest level and disconnect releases it to OFF.
+Reconnect never invents an ON before a new physical level is observed.
+
 ## SD/TF layout
 
 ```text
