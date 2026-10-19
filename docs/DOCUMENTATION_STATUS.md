@@ -2,6 +2,16 @@
 
 Status: **current documentation authority, reconciled 2026-10-19**.
 
+PR52 merges UI/Numark integration into master `5666c608`. Its automatic CI
+passes eleven firmware jobs, documentation, Pages and dual-USB checks, but the
+migration host job fails on a missing PFL-state definition in the UI mock.
+The follow-up adds that definition only; all nine simulator presentations
+pass unchanged screenshot baselines locally. Production code/build evidence
+is retained; hosted harness-repair verification remains separate. The failed
+workflow is not relabeled. Beta2 asset sizes/digests are unchanged; a fresh
+public OTA probe fails expired-certificate validation, so its current bytes
+are not re-verified. See the [integration record](reviews/2026-10-19-branch-integration.md).
+
 The [branch integration](reviews/2026-10-19-branch-integration.md) merges the
 qualified shared core through PR51, imports new UI as an explicitly disabled
 prototype and adapts Numark with absolute PFL levels and real regressions.

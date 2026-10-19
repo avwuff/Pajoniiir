@@ -1,0 +1,688 @@
+Cloning into '/home/runner/work/Pajoniiir/Pajoniiir/.cache/ui_simulator/lvgl-263ae5e13dec'...
+From https://github.com/lvgl/lvgl
+ * branch                263ae5e13dec1e525109aed556cec1bbdfdecd5a -> FETCH_HEAD
+HEAD is now at 263ae5e13 fix(windows): pass thread handle, not pointer to handle (#9948)
+-- The C compiler identification is GNU 13.3.0
+-- The CXX compiler identification is GNU 13.3.0
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: /usr/bin/gcc - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: /usr/bin/g++ - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- The ASM compiler identification is GNU
+-- Found assembler: /usr/bin/gcc
+-- /home/runner/work/Pajoniiir/Pajoniiir/tests/ui_simulator/lv_conf.h
+-- Using configuration: /home/runner/work/Pajoniiir/Pajoniiir/tests/ui_simulator/lv_conf.h
+-- Found PkgConfig: /usr/bin/pkg-config (found version "1.8.1")
+-- Configuring done (1.1s)
+-- Generating done (0.1s)
+-- Build files have been written to: /home/runner/work/Pajoniiir/Pajoniiir/.cache/ui_simulator/build
+[1/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/core/lv_obj_class.c.o
+[2/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/core/lv_obj_id_builtin.c.o
+[3/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/core/lv_group.c.o
+[4/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/core/lv_obj_draw.c.o
+[5/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/core/lv_obj_event.c.o
+[6/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/core/lv_obj_property.c.o
+[7/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/core/lv_obj.c.o
+[8/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/core/lv_obj_style_gen.c.o
+[9/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/core/lv_obj_tree.c.o
+[10/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/core/lv_obj_scroll.c.o
+[11/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/core/lv_obj_pos.c.o
+[12/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/debugging/monkey/lv_monkey.c.o
+[13/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/debugging/sysmon/lv_sysmon.c.o
+[14/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/core/lv_observer.c.o
+[15/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/debugging/test/lv_test_display.c.o
+[16/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/debugging/test/lv_test_helpers.c.o
+[17/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/debugging/test/lv_test_indev.c.o
+[18/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/debugging/test/lv_test_fs.c.o
+[19/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/debugging/test/lv_test_indev_gesture.c.o
+[20/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/core/lv_refr.c.o
+[21/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/debugging/test/lv_test_screenshot_compare.c.o
+[22/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/core/lv_obj_style.c.o
+[23/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/debugging/vg_lite_tvg/vg_lite_matrix.c.o
+[24/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/convert/neon/lv_draw_buf_convert_neon.c.o
+[25/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/convert/helium/lv_draw_buf_convert_helium.c.o
+[26/537] Building CXX object lvgl/CMakeFiles/lvgl.dir/src/debugging/vg_lite_tvg/vg_lite_tvg.cpp.o
+[27/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/dma2d/lv_draw_dma2d.c.o
+[28/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/dma2d/lv_draw_dma2d_img.c.o
+[29/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/convert/lv_draw_buf_convert.c.o
+[30/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/dma2d/lv_draw_dma2d_fill.c.o
+[31/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/espressif/ppa/lv_draw_ppa_buf.c.o
+[32/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/espressif/ppa/lv_draw_ppa.c.o
+[33/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/display/lv_display.c.o
+[34/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/eve/lv_draw_eve.c.o
+[35/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/eve/lv_draw_eve_arc.c.o
+[36/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/espressif/ppa/lv_draw_ppa_fill.c.o
+[37/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/eve/lv_draw_eve_fill.c.o
+[38/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/espressif/ppa/lv_draw_ppa_img.c.o
+[39/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/eve/lv_draw_eve_letter.c.o
+[40/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/eve/lv_draw_eve_ram_g.c.o
+[41/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/eve/lv_draw_eve_triangle.c.o
+[42/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/eve/lv_eve.c.o
+[43/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/eve/lv_draw_eve_image.c.o
+[44/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/eve/lv_draw_eve_line.c.o
+[45/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/lv_draw_3d.c.o
+[46/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/lv_draw_blur.c.o
+[47/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/lv_draw_arc.c.o
+[48/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/lv_draw.c.o
+[49/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/lv_draw_line.c.o
+[50/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/lv_draw_image.c.o
+[51/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/lv_draw_mask.c.o
+[52/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/lv_draw_triangle.c.o
+[53/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/lv_draw_buf.c.o
+[54/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/lv_draw_rect.c.o
+[55/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/lv_draw_label.c.o
+[56/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/lv_draw_vector.c.o
+[57/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nanovg/lv_draw_nanovg_3d.c.o
+[58/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nanovg/lv_draw_nanovg.c.o
+[59/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nanovg/lv_draw_nanovg_arc.c.o
+[60/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nanovg/lv_draw_nanovg_blur.c.o
+[61/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nanovg/lv_draw_nanovg_box_shadow.c.o
+[62/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/lv_image_decoder.c.o
+[63/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nanovg/lv_draw_nanovg_border.c.o
+[64/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nanovg/lv_draw_nanovg_grad.c.o
+[65/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nanovg/lv_draw_nanovg_label.c.o
+[66/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nanovg/lv_draw_nanovg_mask_rect.c.o
+[67/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nanovg/lv_draw_nanovg_fill.c.o
+[68/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nanovg/lv_draw_nanovg_line.c.o
+[69/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nanovg/lv_draw_nanovg_image.c.o
+[70/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nanovg/lv_draw_nanovg_layer.c.o
+[71/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nanovg/lv_draw_nanovg_vector.c.o
+[72/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nanovg/lv_draw_nanovg_triangle.c.o
+[73/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nanovg/lv_nanovg_utils.c.o
+[74/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nanovg/lv_nanovg_image_cache.c.o
+[75/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nanovg/lv_nanovg_fbo_cache.c.o
+[76/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nema_gfx/lv_draw_nema_gfx_arc.c.o
+[77/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nema_gfx/lv_draw_nema_gfx.c.o
+[78/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nema_gfx/lv_draw_nema_gfx_border.c.o
+[79/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nema_gfx/lv_draw_nema_gfx_fill.c.o
+[80/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nema_gfx/lv_draw_nema_gfx_cache.c.o
+[81/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nema_gfx/lv_draw_nema_gfx_line.c.o
+[82/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nema_gfx/lv_draw_nema_gfx_label.c.o
+[83/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nema_gfx/lv_draw_nema_gfx_img.c.o
+[84/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nema_gfx/lv_draw_nema_gfx_triangle.c.o
+[85/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nema_gfx/lv_draw_nema_gfx_layer.c.o
+[86/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nema_gfx/lv_draw_nema_gfx_utils.c.o
+[87/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nema_gfx/lv_draw_nema_gfx_stm32_hal.c.o
+[88/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nxp/g2d/lv_draw_buf_g2d.c.o
+[89/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nxp/g2d/lv_draw_g2d_img.c.o
+[90/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nema_gfx/lv_draw_nema_gfx_vector.c.o
+[91/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nema_gfx/lv_nema_gfx_path.c.o
+[92/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nxp/g2d/lv_draw_g2d.c.o
+[93/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nxp/g2d/lv_draw_g2d_fill.c.o
+[94/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nxp/pxp/lv_draw_buf_pxp.c.o
+[95/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nxp/pxp/lv_draw_pxp.c.o
+[96/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nxp/g2d/lv_g2d_buf_map.c.o
+[97/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nxp/pxp/lv_draw_pxp_img.c.o
+[98/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nxp/g2d/lv_g2d_utils.c.o
+[99/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nxp/pxp/lv_draw_pxp_fill.c.o
+[100/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nxp/pxp/lv_draw_pxp_layer.c.o
+[101/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nxp/pxp/lv_pxp_cfg.c.o
+[102/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nxp/pxp/lv_pxp_utils.c.o
+[103/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/renesas/dave2d/lv_draw_dave2d.c.o
+[104/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/renesas/dave2d/lv_draw_dave2d_arc.c.o
+[105/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/nxp/pxp/lv_pxp_osa.c.o
+[106/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/opengles/lv_draw_opengles.c.o
+[107/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/renesas/dave2d/lv_draw_dave2d_fill.c.o
+[108/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/renesas/dave2d/lv_draw_dave2d_border.c.o
+[109/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/renesas/dave2d/lv_draw_dave2d_line.c.o
+[110/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/renesas/dave2d/lv_draw_dave2d_image.c.o
+[111/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/renesas/dave2d/lv_draw_dave2d_label.c.o
+[112/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/renesas/dave2d/lv_draw_dave2d_mask_rectangle.c.o
+[113/537] Building ASM object lvgl/CMakeFiles/lvgl.dir/src/draw/sw/blend/helium/lv_blend_helium.S.o
+[114/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/renesas/dave2d/lv_draw_dave2d_triangle.c.o
+[115/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/sdl/lv_draw_sdl.c.o
+[116/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/snapshot/lv_snapshot.c.o
+[117/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/renesas/dave2d/lv_draw_dave2d_utils.c.o
+[118/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/sw/blend/lv_draw_sw_blend.c.o
+[119/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/sw/blend/lv_draw_sw_blend_to_a8.c.o
+[120/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/sw/blend/lv_draw_sw_blend_to_i1.c.o
+[121/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/sw/blend/lv_draw_sw_blend_to_l8.c.o
+[122/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/sw/blend/lv_draw_sw_blend_to_al88.c.o
+[123/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/sw/blend/neon/lv_draw_sw_blend_neon_to_rgb565.c.o
+[124/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/sw/blend/lv_draw_sw_blend_to_argb8888_premultiplied.c.o
+[125/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/sw/blend/lv_draw_sw_blend_to_rgb565.c.o
+[126/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/sw/blend/neon/lv_draw_sw_blend_neon_to_rgb888.c.o
+[127/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/sw/blend/riscv_v/lv_draw_sw_blend_riscv_v_to_rgb888.c.o
+[128/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/sw/lv_draw_sw.c.o
+[129/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/sw/blend/lv_draw_sw_blend_to_argb8888.c.o
+[130/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/sw/lv_draw_sw_border.c.o
+[131/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/sw/lv_draw_sw_arc.c.o
+[132/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/sw/lv_draw_sw_blur.c.o
+[133/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/sw/lv_draw_sw_grad.c.o
+[134/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/sw/lv_draw_sw_fill.c.o
+[135/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/sw/lv_draw_sw_line.c.o
+[136/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/sw/lv_draw_sw_letter.c.o
+[137/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/sw/lv_draw_sw_box_shadow.c.o
+[138/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/sw/blend/lv_draw_sw_blend_to_rgb888.c.o
+[139/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/sw/lv_draw_sw_mask_rect.c.o
+[140/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/sw/blend/lv_draw_sw_blend_to_rgb565_swapped.c.o
+[141/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/sw/lv_draw_sw_vector.c.o
+[142/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/vg_lite/lv_draw_buf_vg_lite.c.o
+[143/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/sw/lv_draw_sw_triangle.c.o
+[144/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/sw/lv_draw_sw_img.c.o
+[145/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/vg_lite/lv_draw_vg_lite.c.o
+[146/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/vg_lite/lv_draw_vg_lite_border.c.o
+[147/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/vg_lite/lv_draw_vg_lite_arc.c.o
+[148/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/sw/lv_draw_sw_utils.c.o
+[149/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/vg_lite/lv_draw_vg_lite_fill.c.o
+[150/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/vg_lite/lv_draw_vg_lite_box_shadow.c.o
+[151/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/vg_lite/lv_draw_vg_lite_img.c.o
+[152/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/vg_lite/lv_draw_vg_lite_layer.c.o
+[153/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/sw/lv_draw_sw_mask.c.o
+[154/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/vg_lite/lv_draw_vg_lite_label.c.o
+[155/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/sw/lv_draw_sw_transform.c.o
+[156/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/vg_lite/lv_draw_vg_lite_line.c.o
+[157/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/vg_lite/lv_draw_vg_lite_mask_rect.c.o
+[158/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/vg_lite/lv_draw_vg_lite_triangle.c.o
+[159/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/vg_lite/lv_draw_vg_lite_vector.c.o
+[160/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/vg_lite/lv_vg_lite_bitmap_font_cache.c.o
+[161/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/vg_lite/lv_vg_lite_decoder.c.o
+[162/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/vg_lite/lv_vg_lite_grad.c.o
+[163/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/vg_lite/lv_vg_lite_math.c.o
+[164/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/vg_lite/lv_vg_lite_path.c.o
+[165/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/display/drm/lv_linux_drm.c.o
+[166/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/vg_lite/lv_vg_lite_utils.c.o
+[167/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/vg_lite/lv_vg_lite_pending.c.o
+[168/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/draw/vg_lite/lv_vg_lite_stroke.c.o
+[169/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/display/drm/lv_linux_drm_egl.c.o
+[170/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/display/fb/lv_linux_fbdev.c.o
+[171/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/display/drm/lv_linux_drm_common.c.o
+[172/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/display/lcd/lv_lcd_generic_mipi.c.o
+[173/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/display/ili9341/lv_ili9341.c.o
+[174/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/display/ft81x/lv_ft81x.c.o
+[175/537] Building CXX object lvgl/CMakeFiles/lvgl.dir/src/drivers/display/lovyan_gfx/lv_lovyan_gfx.cpp.o
+[176/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/display/nv3007/lv_nv3007.c.o
+[177/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/display/renesas_glcdc/lv_renesas_glcdc.c.o
+[178/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/display/nxp_elcdif/lv_nxp_elcdif.c.o
+[179/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/display/st7735/lv_st7735.c.o
+[180/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/display/st7789/lv_st7789.c.o
+[181/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/display/st_ltdc/lv_st_ltdc.c.o
+[182/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/display/st7796/lv_st7796.c.o
+[183/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/evdev/lv_evdev.c.o
+[184/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/libinput/lv_xkb.c.o
+[185/537] Building CXX object lvgl/CMakeFiles/lvgl.dir/src/drivers/display/tft_espi/lv_tft_espi.cpp.o
+[186/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/libinput/lv_libinput.c.o
+[187/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/draw/eve/lv_draw_eve_display.c.o
+[188/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/nuttx/lv_nuttx_entry.c.o
+[189/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/nuttx/lv_nuttx_fbdev.c.o
+[190/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/nuttx/lv_nuttx_cache.c.o
+[191/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/nuttx/lv_nuttx_image_cache.c.o
+[192/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/nuttx/lv_nuttx_lcd.c.o
+[193/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/nuttx/lv_nuttx_profiler.c.o
+[194/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/nuttx/lv_nuttx_libuv.c.o
+[195/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/nuttx/lv_nuttx_mouse.c.o
+[196/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/nuttx/lv_nuttx_touchscreen.c.o
+[197/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/opengles/assets/lv_opengles_shader.c.o
+[198/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/opengles/glad/src/egl.c.o
+[199/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/opengles/glad/src/gl.c.o
+[200/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/opengles/glad/src/gles2.c.o
+[201/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/opengles/lv_opengles_glfw.c.o
+[202/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/opengles/lv_opengles_texture.c.o
+[203/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/opengles/lv_opengles_debug.c.o
+[204/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/opengles/lv_opengles_driver.c.o
+[205/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/opengles/lv_opengles_egl.c.o
+[206/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/opengles/opengl_shader/lv_opengl_shader_manager.c.o
+[207/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/qnx/lv_qnx.c.o
+[208/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/sdl/lv_sdl_egl.c.o
+[209/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/opengles/opengl_shader/lv_opengl_shader_program.c.o
+[210/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/sdl/lv_sdl_keyboard.c.o
+[211/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/sdl/lv_sdl_sw.c.o
+[212/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/sdl/lv_sdl_mousewheel.c.o
+[213/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/sdl/lv_sdl_texture.c.o
+[214/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/sdl/lv_sdl_mouse.c.o
+[215/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/uefi/lv_uefi_context.c.o
+[216/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/uefi/lv_uefi_display.c.o
+[217/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/sdl/lv_sdl_window.c.o
+[218/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/uefi/lv_uefi_indev_touch.c.o
+[219/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/uefi/lv_uefi_private.c.o
+[220/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/uefi/lv_uefi_indev_keyboard.c.o
+[221/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/uefi/lv_uefi_indev_pointer.c.o
+[222/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/wayland/lv_wayland_backend_egl.c.o
+[223/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/wayland/lv_wayland.c.o
+[224/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/wayland/lv_wayland_backend_g2d.c.o
+[225/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/wayland/lv_wayland_keyboard.c.o
+[226/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/wayland/lv_wayland_touch.c.o
+[227/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/wayland/lv_wayland_backend_shm.c.o
+[228/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/wayland/lv_wayland_window.c.o
+[229/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/wayland/lv_wayland_xdg_shell.c.o
+[230/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/wayland/lv_wayland_pointer.c.o
+[231/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/wayland/lv_wayland_seat.c.o
+[232/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/windows/lv_windows_context.c.o
+[233/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/x11/lv_x11_input.c.o
+[234/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/windows/lv_windows_display.c.o
+[235/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/windows/lv_windows_input.c.o
+[236/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/drivers/x11/lv_x11_display.c.o
+[237/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/fmt_txt/lv_font_fmt_txt.c.o
+[238/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/font_manager/lv_font_manager.c.o
+[239/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/font_manager/lv_font_manager_recycle.c.o
+[240/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/imgfont/lv_imgfont.c.o
+[241/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/binfont_loader/lv_binfont_loader.c.o
+[242/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/lv_font_dejavu_16_persian_hebrew.c.o
+[243/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/lv_font_montserrat_10.c.o
+[244/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/lv_font.c.o
+[245/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/lv_font_montserrat_12.c.o
+[246/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/lv_font_montserrat_12_subpx.c.o
+[247/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/lv_font_montserrat_14_aligned.c.o
+[248/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/lv_font_montserrat_14.c.o
+[249/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/lv_font_montserrat_16.c.o
+[250/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/lv_font_montserrat_18.c.o
+[251/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/lv_font_montserrat_20.c.o
+[252/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/lv_font_montserrat_22.c.o
+[253/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/lv_font_montserrat_24.c.o
+[254/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/lv_font_montserrat_26.c.o
+[255/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/lv_font_montserrat_28_compressed.c.o
+[256/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/lv_font_montserrat_30.c.o
+[257/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/lv_font_montserrat_28.c.o
+[258/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/lv_font_montserrat_32.c.o
+[259/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/lv_font_montserrat_36.c.o
+[260/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/lv_font_montserrat_34.c.o
+[261/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/lv_font_montserrat_40.c.o
+[262/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/lv_font_montserrat_46.c.o
+[263/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/lv_font_montserrat_44.c.o
+[264/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/lv_font_montserrat_38.c.o
+[265/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/lv_font_montserrat_48.c.o
+[266/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/lv_font_montserrat_42.c.o
+[267/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/lv_font_montserrat_8.c.o
+[268/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/lv_font_unscii_16.c.o
+[269/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/lv_font_source_han_sans_sc_14_cjk.c.o
+[270/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/lv_font_unscii_8.c.o
+[271/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/indev/lv_indev_gesture.c.o
+[272/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/font/lv_font_source_han_sans_sc_16_cjk.c.o
+[273/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/indev/lv_gridnav.c.o
+[274/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/FT800-FT813/EVE_commands.c.o
+[275/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/layouts/lv_layout.c.o
+[276/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/layouts/flex/lv_flex.c.o
+[277/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/layouts/grid/lv_grid.c.o
+[278/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/indev/lv_indev_scroll.c.o
+[279/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/FT800-FT813/EVE_supplemental.c.o
+[280/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/barcode/code128.c.o
+[281/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/barcode/lv_barcode.c.o
+[282/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/indev/lv_indev.c.o
+[283/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/bmp/lv_bmp.c.o
+[284/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/freetype/lv_freetype_glyph.c.o
+[285/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/ffmpeg/lv_ffmpeg.c.o
+[286/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/freetype/lv_freetype_outline.c.o
+[287/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/freetype/lv_freetype.c.o
+[288/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/freetype/lv_freetype_image.c.o
+[289/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/frogfs/src/frogfs.c.o
+[290/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/fsdrv/lv_fs_cbfs.c.o
+[291/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/freetype/lv_ftsystem.c.o
+[292/537] Building CXX object lvgl/CMakeFiles/lvgl.dir/src/libs/fsdrv/lv_fs_arduino_esp_littlefs.cpp.o
+[293/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/frogfs/src/decomp_raw.c.o
+[294/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/bin_decoder/lv_bin_decoder.c.o
+[295/537] Building CXX object lvgl/CMakeFiles/lvgl.dir/src/libs/fsdrv/lv_fs_arduino_sd.cpp.o
+[296/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/fsdrv/lv_fs_fatfs.c.o
+[297/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/fsdrv/lv_fs_frogfs.c.o
+[298/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/fsdrv/lv_fs_posix.c.o
+[299/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/fsdrv/lv_fs_littlefs.c.o
+[300/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/fsdrv/lv_fs_memfs.c.o
+[301/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/fsdrv/lv_fs_win32.c.o
+[302/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/fsdrv/lv_fs_stdio.c.o
+[303/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/fsdrv/lv_fs_uefi.c.o
+[304/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/gif/gif.c.o
+[305/537] Building CXX object lvgl/CMakeFiles/lvgl.dir/src/libs/gltf/gltf_data/lv_gltf_data_animations.cpp.o
+[306/537] Building CXX object lvgl/CMakeFiles/lvgl.dir/src/libs/gltf/gltf_data/lv_gltf_data.cpp.o
+[307/537] Building CXX object lvgl/CMakeFiles/lvgl.dir/src/libs/gltf/gltf_data/lv_gltf_data_primitive.cpp.o
+[308/537] Building CXX object lvgl/CMakeFiles/lvgl.dir/src/libs/gltf/gltf_data/lv_gltf_data_cache.cpp.o
+[309/537] Building CXX object lvgl/CMakeFiles/lvgl.dir/src/libs/gltf/gltf_data/lv_gltf_data_injest.cpp.o
+[310/537] Building CXX object lvgl/CMakeFiles/lvgl.dir/src/libs/gltf/gltf_data/lv_gltf_data_shader.cpp.o
+[311/537] Building CXX object lvgl/CMakeFiles/lvgl.dir/src/libs/gltf/gltf_data/lv_gltf_data_mesh.cpp.o
+[312/537] Building CXX object lvgl/CMakeFiles/lvgl.dir/src/libs/gltf/gltf_data/lv_gltf_data_texture.cpp.o
+[313/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/gltf/gltf_data/lv_gltf_model_loader.c.o
+[314/537] Building CXX object lvgl/CMakeFiles/lvgl.dir/src/libs/gltf/gltf_data/lv_gltf_data_skin.cpp.o
+[315/537] Building CXX object lvgl/CMakeFiles/lvgl.dir/src/libs/gltf/gltf_data/lv_gltf_model_node.cpp.o
+[316/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/gltf/gltf_environment/lv_gltf_ibl_sampler.c.o
+[317/537] Building CXX object lvgl/CMakeFiles/lvgl.dir/src/libs/gltf/gltf_data/lv_gltf_uniform_locations.cpp.o
+[318/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/gltf/gltf_view/assets/chromatic.c.o
+[319/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/gltf/gltf_view/assets/lv_gltf_view_shader.c.o
+[320/537] Building CXX object lvgl/CMakeFiles/lvgl.dir/src/libs/gltf/gltf_view/lv_gltf_view.cpp.o
+[321/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/gltf/math/lv_3dmath.c.o
+[322/537] Building CXX object lvgl/CMakeFiles/lvgl.dir/src/libs/gltf/gltf_view/lv_gltf_view_shader.cpp.o
+[323/537] Building CXX object lvgl/CMakeFiles/lvgl.dir/src/libs/gltf/math/lv_gltf_math.cpp.o
+[324/537] Building CXX object lvgl/CMakeFiles/lvgl.dir/src/libs/gltf/gltf_view/lv_gltf_view_render.cpp.o
+[325/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/libwebp/lv_libwebp.c.o
+[326/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/libpng/lv_libpng.c.o
+[327/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/libjpeg_turbo/lv_libjpeg_turbo.c.o
+[328/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/gstreamer/lv_gstreamer.c.o
+[329/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/lodepng/lv_lodepng.c.o
+[330/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/lodepng/lodepng.c.o
+[331/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/qrcode/qrcodegen.c.o
+[332/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/nanovg/nanovg.c.o
+[333/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/lz4/lz4.c.o
+[334/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/qrcode/lv_qrcode.c.o
+[335/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/rle/lv_rle.c.o
+[336/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/rlottie/lv_rlottie.c.o
+[337/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/svg/lv_svg.c.o
+[338/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/svg/lv_svg_parser.c.o
+[339/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/svg/lv_svg_decoder.c.o
+[340/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/svg/lv_svg_token.c.o
+[341/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/svg/lv_svg_render.c.o
+[342/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/tiny_ttf/lv_tiny_ttf.c.o
+[343/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/tjpgd/lv_tjpgd.c.o
+[344/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/vg_lite_driver/VGLite/vg_lite_matrix.c.o
+[345/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/vg_lite_driver/VGLite/vg_lite.c.o
+[346/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/vg_lite_driver/VGLite/vg_lite_image.c.o
+[347/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/vg_lite_driver/VGLite/vg_lite_stroke.c.o
+[348/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/vg_lite_driver/VGLite/vg_lite_path.c.o
+[349/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/vg_lite_driver/lv_vg_lite_hal/lv_vg_lite_hal.c.o
+[350/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/vg_lite_driver/VGLiteKernel/vg_lite_kernel.c.o
+[351/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/vg_lite_driver/lv_vg_lite_hal/vg_lite_os.c.o
+[352/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/lv_init.c.o
+[353/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/libs/tjpgd/tjpgd.c.o
+[354/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/cache/class/lv_cache_lru_ll.c.o
+[355/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/cache/class/lv_cache_sc_da.c.o
+[356/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/cache/instance/lv_image_header_cache.c.o
+[357/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/cache/class/lv_cache_lru_rb.c.o
+[358/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/cache/lv_cache_entry.c.o
+[359/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/cache/instance/lv_image_cache.c.o
+[360/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/cache/lv_cache.c.o
+[361/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/lv_bidi.c.o
+[362/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/lv_anim_timeline.c.o
+[363/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/lv_async.c.o
+[364/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/lv_area.c.o
+[365/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/lv_array.c.o
+[366/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/lv_anim.c.o
+[367/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/lv_circle_buf.c.o
+[368/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/lv_color.c.o
+[369/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/lv_color_op.c.o
+[370/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/lv_event.c.o
+[371/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/lv_grad.c.o
+[372/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/lv_iter.c.o
+[373/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/lv_log.c.o
+[374/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/lv_fs.c.o
+[375/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/lv_lru.c.o
+[376/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/lv_math.c.o
+[377/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/lv_palette.c.o
+[378/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/lv_matrix.c.o
+[379/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/lv_ll.c.o
+[380/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/lv_profiler_builtin.c.o
+[381/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/lv_templ.c.o
+[382/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/lv_profiler_builtin_posix.c.o
+[383/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/lv_pending.c.o
+[384/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/lv_text_ap.c.o
+[385/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/lv_style.c.o
+[386/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/lv_rb.c.o
+[387/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/osal/lv_cmsis_rtos2.c.o
+[388/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/lv_tree.c.o
+[389/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/lv_utils.c.o
+[390/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/lv_timer.c.o
+[391/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/osal/lv_linux.c.o
+[392/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/osal/lv_freertos.c.o
+[393/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/lv_style_gen.c.o
+[394/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/osal/lv_os.c.o
+[395/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/osal/lv_mqx.c.o
+[396/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/osal/lv_os_none.c.o
+[397/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/misc/lv_text.c.o
+[398/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/osal/lv_sdl2.c.o
+[399/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/osal/lv_pthread.c.o
+[400/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/osal/lv_rtthread.c.o
+[401/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/others/file_explorer/lv_file_explorer.c.o
+[402/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/others/fragment/lv_fragment.c.o
+[403/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/osal/lv_windows.c.o
+[404/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/stdlib/builtin/lv_string_builtin.c.o
+[405/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/others/translation/lv_translation.c.o
+[406/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/stdlib/builtin/lv_sprintf_builtin.c.o
+[407/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/others/fragment/lv_fragment_manager.c.o
+[408/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/stdlib/builtin/lv_mem_core_builtin.c.o
+[409/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/stdlib/clib/lv_sprintf_clib.c.o
+[410/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/stdlib/builtin/lv_tlsf.c.o
+[411/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/stdlib/lv_mem.c.o
+[412/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/stdlib/clib/lv_mem_core_clib.c.o
+[413/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/stdlib/rtthread/lv_mem_core_rtthread.c.o
+[414/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/stdlib/rtthread/lv_sprintf_rtthread.c.o
+[415/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/stdlib/rtthread/lv_string_rtthread.c.o
+[416/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/stdlib/clib/lv_string_clib.c.o
+[417/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/stdlib/micropython/lv_mem_core_micropython.c.o
+[418/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/stdlib/uefi/lv_mem_core_uefi.c.o
+[419/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/themes/lv_theme.c.o
+[420/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/themes/simple/lv_theme_simple.c.o
+[421/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/tick/lv_tick.c.o
+[422/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/3dtexture/lv_3dtexture.c.o
+[423/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/themes/mono/lv_theme_mono.c.o
+[424/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/animimage/lv_animimage.c.o
+[425/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/button/lv_button.c.o
+[426/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/arclabel/lv_arclabel.c.o
+[427/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/calendar/lv_calendar_chinese.c.o
+[428/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/themes/default/lv_theme_default.c.o
+[429/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/calendar/lv_calendar.c.o
+[430/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/calendar/lv_calendar_header_dropdown.c.o
+[431/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/bar/lv_bar.c.o
+[432/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/calendar/lv_calendar_header_arrow.c.o
+[433/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/arc/lv_arc.c.o
+[434/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/gif/lv_gif.c.o
+[435/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/canvas/lv_canvas.c.o
+[436/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/buttonmatrix/lv_buttonmatrix.c.o
+[437/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/checkbox/lv_checkbox.c.o
+[438/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/ime/lv_ime_pinyin.c.o
+[439/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/imagebutton/lv_imagebutton.c.o
+[440/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/image/lv_image.c.o
+[441/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/keyboard/lv_keyboard.c.o
+[442/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/dropdown/lv_dropdown.c.o
+[443/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/lottie/lv_lottie.c.o
+[444/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/chart/lv_chart.c.o
+[445/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/line/lv_line.c.o
+[446/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/objx_templ/lv_objx_templ.c.o
+[447/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/led/lv_led.c.o
+[448/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/list/lv_list.c.o
+[449/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/property/lv_arc_properties.c.o
+[450/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/property/lv_animimage_properties.c.o
+[451/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/label/lv_label.c.o
+[452/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/property/lv_bar_properties.c.o
+[453/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/msgbox/lv_msgbox.c.o
+[454/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/property/lv_buttonmatrix_properties.c.o
+[455/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/property/lv_chart_properties.c.o
+[456/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/property/lv_image_properties.c.o
+[457/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/property/lv_keyboard_properties.c.o
+[458/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/property/lv_dropdown_properties.c.o
+[459/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/menu/lv_menu.c.o
+[460/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/property/lv_checkbox_properties.c.o
+[461/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/property/lv_led_properties.c.o
+[462/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/property/lv_line_properties.c.o
+[463/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/property/lv_label_properties.c.o
+[464/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/property/lv_menu_properties.c.o
+[465/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/property/lv_roller_properties.c.o
+[466/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/property/lv_span_properties.c.o
+[467/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/property/lv_obj_properties.c.o
+[468/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/property/lv_scale_properties.c.o
+[469/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/property/lv_slider_properties.c.o
+[470/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/property/lv_style_properties.c.o
+[471/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/property/lv_spinbox_properties.c.o
+[472/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/property/lv_spinner_properties.c.o
+[473/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/property/lv_tabview_properties.c.o
+[474/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/property/lv_table_properties.c.o
+[475/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/property/lv_switch_properties.c.o
+[476/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/property/lv_textarea_properties.c.o
+[477/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/slider/lv_slider.c.o
+[478/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/spinner/lv_spinner.c.o
+[479/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/switch/lv_switch.c.o
+[480/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/spinbox/lv_spinbox.c.o
+[481/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/roller/lv_roller.c.o
+[482/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/tileview/lv_tileview.c.o
+[483/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/tabview/lv_tabview.c.o
+[484/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/win/lv_win.c.o
+[485/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/scale/lv_scale.c.o
+[486/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/span/lv_span.c.o
+[487/537] Building C object CMakeFiles/ui_simulator_e2e.dir/simulator_mocks.c.o
+[488/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_idle.c.o
+[489/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/table/lv_table.c.o
+[490/537] Building C object CMakeFiles/ui_simulator_e2e.dir/simulator_library.c.o
+In file included from /home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/library/include/library.h:27,
+                 from /home/runner/work/Pajoniiir/Pajoniiir/tests/ui_simulator/simulator_library.c:8:
+/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/library/include/rekordbox_pdb.h:35: warning: "ESP_ERR_INVALID_ARG" redefined
+   35 | #  define ESP_ERR_INVALID_ARG  1
+      | 
+In file included from /home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/library/include/library.h:25:
+/home/runner/work/Pajoniiir/Pajoniiir/tests/support/stubs/esp_err.h:19: note: this is the location of the previous definition
+   19 | #define ESP_ERR_INVALID_ARG      0x102
+      | 
+/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/library/include/rekordbox_pdb.h:36: warning: "ESP_ERR_NOT_FOUND" redefined
+   36 | #  define ESP_ERR_NOT_FOUND    2
+      | 
+/home/runner/work/Pajoniiir/Pajoniiir/tests/support/stubs/esp_err.h:22: note: this is the location of the previous definition
+   22 | #define ESP_ERR_NOT_FOUND        0x105
+      | 
+/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/library/include/rekordbox_pdb.h:37: warning: "ESP_ERR_NO_MEM" redefined
+   37 | #  define ESP_ERR_NO_MEM       3
+      | 
+/home/runner/work/Pajoniiir/Pajoniiir/tests/support/stubs/esp_err.h:18: note: this is the location of the previous definition
+   18 | #define ESP_ERR_NO_MEM           0x101
+      | 
+/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/library/include/rekordbox_pdb.h:38: warning: "ESP_FAIL" redefined
+   38 | #  define ESP_FAIL             4
+      | 
+/home/runner/work/Pajoniiir/Pajoniiir/tests/support/stubs/esp_err.h:15: note: this is the location of the previous definition
+   15 | #define ESP_FAIL -1
+      | 
+[491/537] Building C object CMakeFiles/ui_simulator_e2e.dir/ui_simulator_e2e.c.o
+In file included from /home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/library/include/library.h:27,
+                 from /home/runner/work/Pajoniiir/Pajoniiir/tests/ui_simulator/ui_simulator_e2e.c:10:
+/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/library/include/rekordbox_pdb.h:35: warning: "ESP_ERR_INVALID_ARG" redefined
+   35 | #  define ESP_ERR_INVALID_ARG  1
+      | 
+In file included from /home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/include/ui.h:8,
+                 from /home/runner/work/Pajoniiir/Pajoniiir/tests/ui_simulator/ui_simulator_e2e.c:8:
+/home/runner/work/Pajoniiir/Pajoniiir/tests/support/stubs/esp_err.h:19: note: this is the location of the previous definition
+   19 | #define ESP_ERR_INVALID_ARG      0x102
+      | 
+/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/library/include/rekordbox_pdb.h:36: warning: "ESP_ERR_NOT_FOUND" redefined
+   36 | #  define ESP_ERR_NOT_FOUND    2
+      | 
+/home/runner/work/Pajoniiir/Pajoniiir/tests/support/stubs/esp_err.h:22: note: this is the location of the previous definition
+   22 | #define ESP_ERR_NOT_FOUND        0x105
+      | 
+/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/library/include/rekordbox_pdb.h:37: warning: "ESP_ERR_NO_MEM" redefined
+   37 | #  define ESP_ERR_NO_MEM       3
+      | 
+/home/runner/work/Pajoniiir/Pajoniiir/tests/support/stubs/esp_err.h:18: note: this is the location of the previous definition
+   18 | #define ESP_ERR_NO_MEM           0x101
+      | 
+/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/library/include/rekordbox_pdb.h:38: warning: "ESP_FAIL" redefined
+   38 | #  define ESP_FAIL             4
+      | 
+/home/runner/work/Pajoniiir/Pajoniiir/tests/support/stubs/esp_err.h:15: note: this is the location of the previous definition
+   15 | #define ESP_FAIL -1
+      | 
+[492/537] Building C object lvgl/CMakeFiles/lvgl.dir/src/widgets/textarea/lv_textarea.c.o
+[493/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/Musieer_48.c.o
+[494/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/splash_screen.c.o
+[495/537] Building C object CMakeFiles/ui_simulator_e2e.dir/simulator_artwork.c.o
+[496/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_artwork_thumb.c.o
+[497/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_load_gate.c.o
+[498/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_artwork_placeholder.c.o
+[499/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_active_deck_leds.c.o
+[500/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/Musieer_80.c.o
+[501/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui.c.o
+In file included from /home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/library/include/library.h:27,
+                 from /home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui.c:12:
+/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/library/include/rekordbox_pdb.h:35: warning: "ESP_ERR_INVALID_ARG" redefined
+   35 | #  define ESP_ERR_INVALID_ARG  1
+      | 
+In file included from /home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/include/ui.h:8,
+                 from /home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui.c:7:
+/home/runner/work/Pajoniiir/Pajoniiir/tests/support/stubs/esp_err.h:19: note: this is the location of the previous definition
+   19 | #define ESP_ERR_INVALID_ARG      0x102
+      | 
+/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/library/include/rekordbox_pdb.h:36: warning: "ESP_ERR_NOT_FOUND" redefined
+   36 | #  define ESP_ERR_NOT_FOUND    2
+      | 
+/home/runner/work/Pajoniiir/Pajoniiir/tests/support/stubs/esp_err.h:22: note: this is the location of the previous definition
+   22 | #define ESP_ERR_NOT_FOUND        0x105
+      | 
+/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/library/include/rekordbox_pdb.h:37: warning: "ESP_ERR_NO_MEM" redefined
+   37 | #  define ESP_ERR_NO_MEM       3
+      | 
+/home/runner/work/Pajoniiir/Pajoniiir/tests/support/stubs/esp_err.h:18: note: this is the location of the previous definition
+   18 | #define ESP_ERR_NO_MEM           0x101
+      | 
+/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/library/include/rekordbox_pdb.h:38: warning: "ESP_FAIL" redefined
+   38 | #  define ESP_FAIL             4
+      | 
+/home/runner/work/Pajoniiir/Pajoniiir/tests/support/stubs/esp_err.h:15: note: this is the location of the previous definition
+   15 | #define ESP_FAIL -1
+      | 
+[502/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_color_preview.c.o
+[503/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_mixer_view.c.o
+[504/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_event_counter.c.o
+[505/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_overview_motion.c.o
+[506/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_deck_anlz_store.c.o
+[507/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_overview_perf.c.o
+[508/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_controls.c.o
+[509/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_overview_scheduler.c.o
+[510/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_overview_grid.c.o
+[511/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_overlay_map.c.o
+[512/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_performance_target.c.o
+[513/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_position_interpolator.c.o
+[514/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_waveform_model.c.o
+[515/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_overview_wave_cache.c.o
+[516/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_library.c.o
+In file included from /home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/library/include/library.h:27,
+                 from /home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_library.c:165:
+/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/library/include/rekordbox_pdb.h:35: warning: "ESP_ERR_INVALID_ARG" redefined
+   35 | #  define ESP_ERR_INVALID_ARG  1
+      | 
+In file included from /home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/deck_core/include/deck_core.h:5,
+                 from /home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/include/ui_library.h:64,
+                 from /home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_library.c:1:
+/home/runner/work/Pajoniiir/Pajoniiir/tests/support/stubs/esp_err.h:19: note: this is the location of the previous definition
+   19 | #define ESP_ERR_INVALID_ARG      0x102
+      | 
+/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/library/include/rekordbox_pdb.h:36: warning: "ESP_ERR_NOT_FOUND" redefined
+   36 | #  define ESP_ERR_NOT_FOUND    2
+      | 
+/home/runner/work/Pajoniiir/Pajoniiir/tests/support/stubs/esp_err.h:22: note: this is the location of the previous definition
+   22 | #define ESP_ERR_NOT_FOUND        0x105
+      | 
+/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/library/include/rekordbox_pdb.h:37: warning: "ESP_ERR_NO_MEM" redefined
+   37 | #  define ESP_ERR_NO_MEM       3
+      | 
+/home/runner/work/Pajoniiir/Pajoniiir/tests/support/stubs/esp_err.h:18: note: this is the location of the previous definition
+   18 | #define ESP_ERR_NO_MEM           0x101
+      | 
+/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/library/include/rekordbox_pdb.h:38: warning: "ESP_FAIL" redefined
+   38 | #  define ESP_FAIL             4
+      | 
+/home/runner/work/Pajoniiir/Pajoniiir/tests/support/stubs/esp_err.h:15: note: this is the location of the previous definition
+   15 | #define ESP_FAIL -1
+      | 
+[517/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_beat_indicator.c.o
+[518/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_beat_fx_format.c.o
+[519/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_overview_window.c.o
+[520/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/library/anlz_snapshot.c.o
+[521/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_overview_renderer.c.o
+[522/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_status.c.o
+[523/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/control_link/flx4_led_snapshot.c.o
+[524/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_performance_tabs.c.o
+[525/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_settings.c.o
+[526/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/beat_jump/beat_jump.c.o
+[527/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/deck_core/deck_load_lock.c.o
+[528/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/deck_core/deck_loaded_track_store.c.o
+[529/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/tests/deck_core_dual/control_link_stub.c.o
+[530/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/library/rekordbox_anlz.c.o
+[531/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_overview.c.o
+[532/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/media_identity/media_identity.c.o
+[533/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/deck_core/deck_net_sync.c.o
+[534/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/tests/deck_core_dual/hot_cue_store_stub.c.o
+[535/537] Linking CXX static library lvgl/lib/liblvgl.a
+[536/537] Building C object CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/deck_core/deck_core.c.o
+[537/537] Linking CXX executable ui_simulator_e2e
+FAILED: [code=1] ui_simulator_e2e 
+: && /usr/bin/g++ -O3 -DNDEBUG -Wl,--dependency-file=CMakeFiles/ui_simulator_e2e.dir/link.d CMakeFiles/ui_simulator_e2e.dir/ui_simulator_e2e.c.o CMakeFiles/ui_simulator_e2e.dir/simulator_library.c.o CMakeFiles/ui_simulator_e2e.dir/simulator_mocks.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_idle.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/splash_screen.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/Musieer_80.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/Musieer_48.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_library.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_artwork_thumb.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_artwork_placeholder.c.o CMakeFiles/ui_simulator_e2e.dir/simulator_artwork.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_load_gate.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_overview.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_color_preview.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_active_deck_leds.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_controls.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_deck_anlz_store.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_event_counter.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_mixer_view.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_overview_motion.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_overlay_map.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_overview_perf.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_overview_scheduler.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_overview_renderer.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_overview_wave_cache.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_overview_grid.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_performance_target.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_performance_tabs.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_position_interpolator.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_waveform_model.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_beat_indicator.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_settings.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_status.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_beat_fx_format.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/ui/ui_overview_window.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/library/anlz_snapshot.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/library/rekordbox_anlz.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/beat_jump/beat_jump.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/control_link/flx4_led_snapshot.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/deck_core/deck_core.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/deck_core/deck_net_sync.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/deck_core/deck_load_lock.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/deck_core/deck_loaded_track_store.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/media_identity/media_identity.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/tests/deck_core_dual/control_link_stub.c.o CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/tests/deck_core_dual/hot_cue_store_stub.c.o -o ui_simulator_e2e  lvgl/lib/liblvgl.a  -lm && :
+/usr/bin/ld: CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/deck_core/deck_core.c.o: warning: relocation against `audio_engine_stub_pfl_enabled' in read-only section `.text'
+/usr/bin/ld: CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/deck_core/deck_core.c.o: in function `publish_flx4_led_snapshot':
+deck_core.c:(.text+0x35db): undefined reference to `audio_engine_stub_pfl_enabled'
+/usr/bin/ld: CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/deck_core/deck_core.c.o: in function `on_state_event':
+deck_core.c:(.text+0x3916): undefined reference to `audio_engine_stub_pfl_enabled'
+/usr/bin/ld: deck_core.c:(.text+0x3954): undefined reference to `audio_engine_stub_pfl_enabled'
+/usr/bin/ld: CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/deck_core/deck_core.c.o: in function `deck_core_test_apply_event':
+deck_core.c:(.text+0x63c0): undefined reference to `audio_engine_stub_pfl_enabled'
+/usr/bin/ld: deck_core.c:(.text+0x63d6): undefined reference to `audio_engine_stub_pfl_enabled'
+/usr/bin/ld: CMakeFiles/ui_simulator_e2e.dir/home/runner/work/Pajoniiir/Pajoniiir/firmware/p4-core/components/deck_core/deck_core.c.o:deck_core.c:(.text+0x64ad): more undefined references to `audio_engine_stub_pfl_enabled' follow
+/usr/bin/ld: warning: creating DT_TEXTREL in a PIE
+collect2: error: ld returned 1 exit status
+ninja: build stopped: subcommand failed.

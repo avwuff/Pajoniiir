@@ -1,0 +1,113 @@
+-- D:/AI/Pajoniiir-shared-p4-core/tests/ui_simulator/lv_conf.h
+-- Using configuration: D:/AI/Pajoniiir-shared-p4-core/tests/ui_simulator/lv_conf.h
+-- Could NOT find PkgConfig (missing: PKG_CONFIG_EXECUTABLE) 
+-- Configuring done (0.6s)
+-- Generating done (0.2s)
+-- Build files have been written to: D:/AI/Pajoniiir-shared-p4-core/.cache/ui_simulator/build
+[1/16] Building C object CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/control_link/flx4_led_snapshot.c.obj
+[2/16] Building C object CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/tests/deck_core_dual/control_link_stub.c.obj
+[3/16] Building C object CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_beat_fx_format.c.obj
+[4/16] Building C object CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/beat_jump/beat_jump.c.obj
+[5/16] Building C object CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/media_identity/media_identity.c.obj
+[6/16] Building C object CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/deck_core/deck_core.c.obj
+[7/16] Building C object CMakeFiles/ui_simulator_e2e.dir/simulator_mocks.c.obj
+[8/16] Building C object CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_controls.c.obj
+[9/16] Building C object CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_settings.c.obj
+[10/16] Building C object CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_status.c.obj
+[11/16] Building C object CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_performance_tabs.c.obj
+[12/16] Building C object CMakeFiles/ui_simulator_e2e.dir/ui_simulator_e2e.c.obj
+In file included from D:/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/library/include/library.h:27,
+                 from D:/AI/Pajoniiir-shared-p4-core/tests/ui_simulator/ui_simulator_e2e.c:10:
+D:/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/library/include/rekordbox_pdb.h:35:11: warning: 'ESP_ERR_INVALID_ARG' redefined
+   35 | #  define ESP_ERR_INVALID_ARG  1
+      |           ^~~~~~~~~~~~~~~~~~~
+In file included from D:/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/include/ui.h:8,
+                 from D:/AI/Pajoniiir-shared-p4-core/tests/ui_simulator/ui_simulator_e2e.c:8:
+D:/AI/Pajoniiir-shared-p4-core/tests/support/stubs/esp_err.h:19:9: note: this is the location of the previous definition
+   19 | #define ESP_ERR_INVALID_ARG      0x102
+      |         ^~~~~~~~~~~~~~~~~~~
+D:/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/library/include/rekordbox_pdb.h:36:11: warning: 'ESP_ERR_NOT_FOUND' redefined
+   36 | #  define ESP_ERR_NOT_FOUND    2
+      |           ^~~~~~~~~~~~~~~~~
+D:/AI/Pajoniiir-shared-p4-core/tests/support/stubs/esp_err.h:22:9: note: this is the location of the previous definition
+   22 | #define ESP_ERR_NOT_FOUND        0x105
+      |         ^~~~~~~~~~~~~~~~~
+D:/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/library/include/rekordbox_pdb.h:37:11: warning: 'ESP_ERR_NO_MEM' redefined
+   37 | #  define ESP_ERR_NO_MEM       3
+      |           ^~~~~~~~~~~~~~
+D:/AI/Pajoniiir-shared-p4-core/tests/support/stubs/esp_err.h:18:9: note: this is the location of the previous definition
+   18 | #define ESP_ERR_NO_MEM           0x101
+      |         ^~~~~~~~~~~~~~
+D:/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/library/include/rekordbox_pdb.h:38:11: warning: 'ESP_FAIL' redefined
+   38 | #  define ESP_FAIL             4
+      |           ^~~~~~~~
+D:/AI/Pajoniiir-shared-p4-core/tests/support/stubs/esp_err.h:15:9: note: this is the location of the previous definition
+   15 | #define ESP_FAIL -1
+      |         ^~~~~~~~
+[13/16] Building C object CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui.c.obj
+In file included from D:/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/library/include/library.h:27,
+                 from D:/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui.c:12:
+D:/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/library/include/rekordbox_pdb.h:35:11: warning: 'ESP_ERR_INVALID_ARG' redefined
+   35 | #  define ESP_ERR_INVALID_ARG  1
+      |           ^~~~~~~~~~~~~~~~~~~
+In file included from D:/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/include/ui.h:8,
+                 from D:/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui.c:7:
+D:/AI/Pajoniiir-shared-p4-core/tests/support/stubs/esp_err.h:19:9: note: this is the location of the previous definition
+   19 | #define ESP_ERR_INVALID_ARG      0x102
+      |         ^~~~~~~~~~~~~~~~~~~
+D:/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/library/include/rekordbox_pdb.h:36:11: warning: 'ESP_ERR_NOT_FOUND' redefined
+   36 | #  define ESP_ERR_NOT_FOUND    2
+      |           ^~~~~~~~~~~~~~~~~
+D:/AI/Pajoniiir-shared-p4-core/tests/support/stubs/esp_err.h:22:9: note: this is the location of the previous definition
+   22 | #define ESP_ERR_NOT_FOUND        0x105
+      |         ^~~~~~~~~~~~~~~~~
+D:/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/library/include/rekordbox_pdb.h:37:11: warning: 'ESP_ERR_NO_MEM' redefined
+   37 | #  define ESP_ERR_NO_MEM       3
+      |           ^~~~~~~~~~~~~~
+D:/AI/Pajoniiir-shared-p4-core/tests/support/stubs/esp_err.h:18:9: note: this is the location of the previous definition
+   18 | #define ESP_ERR_NO_MEM           0x101
+      |         ^~~~~~~~~~~~~~
+D:/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/library/include/rekordbox_pdb.h:38:11: warning: 'ESP_FAIL' redefined
+   38 | #  define ESP_FAIL             4
+      |           ^~~~~~~~
+D:/AI/Pajoniiir-shared-p4-core/tests/support/stubs/esp_err.h:15:9: note: this is the location of the previous definition
+   15 | #define ESP_FAIL -1
+      |         ^~~~~~~~
+[14/16] Building C object CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_library.c.obj
+In file included from D:/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/library/include/library.h:27,
+                 from D:/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_library.c:165:
+D:/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/library/include/rekordbox_pdb.h:35:11: warning: 'ESP_ERR_INVALID_ARG' redefined
+   35 | #  define ESP_ERR_INVALID_ARG  1
+      |           ^~~~~~~~~~~~~~~~~~~
+In file included from D:/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/deck_core/include/deck_core.h:5,
+                 from D:/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/include/ui_library.h:64,
+                 from D:/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_library.c:1:
+D:/AI/Pajoniiir-shared-p4-core/tests/support/stubs/esp_err.h:19:9: note: this is the location of the previous definition
+   19 | #define ESP_ERR_INVALID_ARG      0x102
+      |         ^~~~~~~~~~~~~~~~~~~
+D:/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/library/include/rekordbox_pdb.h:36:11: warning: 'ESP_ERR_NOT_FOUND' redefined
+   36 | #  define ESP_ERR_NOT_FOUND    2
+      |           ^~~~~~~~~~~~~~~~~
+D:/AI/Pajoniiir-shared-p4-core/tests/support/stubs/esp_err.h:22:9: note: this is the location of the previous definition
+   22 | #define ESP_ERR_NOT_FOUND        0x105
+      |         ^~~~~~~~~~~~~~~~~
+D:/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/library/include/rekordbox_pdb.h:37:11: warning: 'ESP_ERR_NO_MEM' redefined
+   37 | #  define ESP_ERR_NO_MEM       3
+      |           ^~~~~~~~~~~~~~
+D:/AI/Pajoniiir-shared-p4-core/tests/support/stubs/esp_err.h:18:9: note: this is the location of the previous definition
+   18 | #define ESP_ERR_NO_MEM           0x101
+      |         ^~~~~~~~~~~~~~
+D:/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/library/include/rekordbox_pdb.h:38:11: warning: 'ESP_FAIL' redefined
+   38 | #  define ESP_FAIL             4
+      |           ^~~~~~~~
+D:/AI/Pajoniiir-shared-p4-core/tests/support/stubs/esp_err.h:15:9: note: this is the location of the previous definition
+   15 | #define ESP_FAIL -1
+      |         ^~~~~~~~
+[15/16] Building C object CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_overview.c.obj
+[16/16] Linking CXX executable ui_simulator_e2e.exe
+FAILED: ui_simulator_e2e.exe 
+C:\WINDOWS\system32\cmd.exe /C "cd . && C:\msys64\ucrt64\bin\g++.exe -O3 -DNDEBUG -static-libgcc -static-libstdc++ CMakeFiles/ui_simulator_e2e.dir/ui_simulator_e2e.c.obj CMakeFiles/ui_simulator_e2e.dir/simulator_library.c.obj CMakeFiles/ui_simulator_e2e.dir/simulator_mocks.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_idle.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/splash_screen.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/Musieer_80.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/Musieer_48.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_library.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_artwork_thumb.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_artwork_placeholder.c.obj CMakeFiles/ui_simulator_e2e.dir/simulator_artwork.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_load_gate.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_overview.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_color_preview.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_active_deck_leds.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_controls.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_deck_anlz_store.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_event_counter.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_mixer_view.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_overview_motion.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_overlay_map.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_overview_perf.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_overview_scheduler.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_overview_renderer.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_overview_wave_cache.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_overview_grid.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_performance_target.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_performance_tabs.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_position_interpolator.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_waveform_model.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_beat_indicator.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_settings.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_status.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_beat_fx_format.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/ui/ui_overview_window.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/library/anlz_snapshot.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/library/rekordbox_anlz.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/beat_jump/beat_jump.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/control_link/flx4_led_snapshot.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/deck_core/deck_core.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/deck_core/deck_net_sync.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/deck_core/deck_load_lock.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/deck_core/deck_loaded_track_store.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/media_identity/media_identity.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/tests/deck_core_dual/control_link_stub.c.obj CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/tests/deck_core_dual/hot_cue_store_stub.c.obj -o ui_simulator_e2e.exe -Wl,--out-implib,libui_simulator_e2e.dll.a -Wl,--major-image-version,0,--minor-image-version,0  lvgl/lib/liblvgl.a  -lm  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32 && cd ."
+C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: CMakeFiles/ui_simulator_e2e.dir/D_/AI/Pajoniiir-shared-p4-core/firmware/p4-core/components/deck_core/deck_core.c.obj:deck_core.c:(.rdata$.refptr.audio_engine_stub_pfl_enabled[.refptr.audio_engine_stub_pfl_enabled]+0x0): undefined reference to `audio_engine_stub_pfl_enabled'
+
+collect2.exe: error: ld returned 1 exit status
+ninja: build stopped: subcommand failed.

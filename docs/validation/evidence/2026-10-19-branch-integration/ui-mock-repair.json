@@ -1,0 +1,10 @@
+{
+  "failed_master": "5666c608b0e856db4c4ab69fbe2aa02a7c528560",
+  "cause": "Missing audio_engine_stub_pfl_enabled definition in UI simulator mock",
+  "local_red_reproduced": true,
+  "local_green_exit": 0,
+  "presentations": 9,
+  "unchanged_baseline_hashes_passed": 143,
+  "firmware_changed": false,
+  "hosted_repair_ci": "PENDING"
+}
