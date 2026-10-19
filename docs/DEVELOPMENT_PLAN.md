@@ -26,7 +26,8 @@ Leave installed M3 unchanged. Its subsequent final timing soak completes
 3600.286 s /5,301 samples with all22 strict deltas zero, mixed-rate dual MT/loops
 and healthy FLX4 FS44.1-kHz streaming; both decks end stopped. Output-late24,
 max12,988 us and a sample-observed3/60-s cluster retain an investigation finding.
-Full-hour operator confirmation remains pending. Headphone LEVEL changed near
+Full-hour operator audio/display confirmation is recorded on2026-10-19; the
+output-late investigation remains open. Headphone LEVEL changed near
 861 s (74 MIDI packets); no sustained active-control pressure is inferred.
 See the handoff's final-hour audit and hashed records. This closes the telemetry
 observation window, not exact causal attribution or all reliability gates.

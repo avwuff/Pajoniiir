@@ -257,7 +257,7 @@ restriction. All three committed dependency-lock hashes are unchanged.
 
 | Target | Project | Application bytes | Software result | Current physical scope |
 | --- | --- | ---: | --- | --- |
-| M3 | `main-deck-m3` | 2,603,312 | Existing build/host/package PASS; installed VALID `ota_1` | Three bounded retests; completed hour below, late investigation and full-hour operator confirmation pending |
+| M3 | `main-deck-m3` | 2,603,312 | Existing build/host/package PASS; installed VALID `ota_1` | Three bounded retests; completed hour physically confirmed below, late investigation remains open |
 | JC4880 | `main-deck-p4` | 2,609,952 | Build and board verifier PASS | NOT RUN on this image; earlier smoke remains historical, soak explicitly waived |
 | JC1060 | `main-deck-jc1060` | 2,668,480 | Build and board verifier PASS | NOT RUN; hardware acceptance deferred to Kayrosen |
 
@@ -293,8 +293,12 @@ Initial and final UI snapshots confirm zoom8; zoom is not polled per sample.
 Both PFL routes are ON. There are74 MIDI packets around860–861 s, coinciding
 with headphone LEVEL changing4441→2392→1757; all other sampled mixer values
 remain fixed. This is not a claim of completely untouched controls or sustained
-jog/exit pressure. Full-hour operator audio/display confirmation is **pending**;
-the short-test confirmations above do not substitute for it.
+jog/exit pressure. On2026-10-19 the operator replies “set je bio uredan” to the
+full-hour audio/display question: clean MAIN/FLX4 headphones, fluid waveforms
+and stable screen are physically confirmed for the entire hour. The separate
+[operator confirmation](evidence/2026-10-19-m3-cache-bound-soak/operator-confirmation.json)
+supplies the confirmation that was pending when the original audit was saved;
+the original audit and telemetry result remain unchanged.
 
 Output-late increases24 times, maximum12,988 us. Replaying the unchanged frozen
 late policy against every sample reproduces a maximum sample-observed cluster

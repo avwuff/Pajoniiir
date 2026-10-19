@@ -45,8 +45,10 @@ all22 strict counters remain unchanged throughout, final identity stays clean
 Both MT/loops and mixed source rates remain active throughout sampling.
 Output-late24/max12,988 us includes a sample-observed3/60-s cluster, so the
 classification is complete_with_output_late_investigation, not zero-late or an
-unconditional reliability PASS. Full-hour operator audio/display confirmation
-is pending. Headphone LEVEL changes around860–861 s account for74 observed MIDI
+unconditional reliability PASS. On2026-10-19 the operator confirms clean MAIN
+and FLX4 headphones, fluid waveforms and stable display for the entire hour;
+the later operator-confirmation record preserves this separately from the
+original audit. Headphone LEVEL changes around860–861 s account for74 observed MIDI
 packets; this is not an untouched-controls claim. The
 [all-sample audit](validation/evidence/2026-10-19-m3-cache-bound-soak/audit.json)
 and hashed compressed raw responses preserve that scope. Earlier long-soak

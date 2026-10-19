@@ -24,7 +24,7 @@ soak is waived, JC1060 hardware deferred, hosted CI NOT RUN. The subsequent
 final M3 hour completes3600.286 s /5,301 samples with all22 strict deltas zero,
 unchanged image/workload and confirmed final stop. Output-late24/max12,988 us
 and a sample-observed3/60-s cluster remain an investigation finding. Full-hour
-operator audio/display confirmation is pending. Preserve the handoff's hashed
+operator audio/display confirmation is recorded on2026-10-19. Preserve the handoff's hashed
 audit and LEVEL-change scope; this is not zero-late or full reliability PASS.
 Keep exact installed image and operator evidence.
 No exact masking-call attribution is implied.

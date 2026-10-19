@@ -1,0 +1,14 @@
+{
+  "recorded_local_date": "2026-10-19",
+  "source": "Direct operator reply in this chat to the full-hour audio/display confirmation request",
+  "operator_reply_verbatim": "set je bio uredan",
+  "source_sha": "1556e8d7dfcb4f016c52ab1a372dd2e076dcaa1f",
+  "duration_s": 3600.2862093000003,
+  "physical_full_hour": "PASS",
+  "scope": "MAIN and FLX4 headphones clean; both waveforms fluid and screen stable over the completed hour",
+  "telemetry_classification_unchanged": "complete_with_output_late_investigation",
+  "output_late_delta": 24,
+  "output_late_max_us": 12988,
+  "sample_observed_cluster_60s": 3,
+  "limitations": "Does not close output-late investigation, exact historical root-cause attribution, sustained exit-time input pressure, other-board physical gates or the entire shared-core implementation. The original audit.json records operator confirmation as pending at audit time; this later record supplies that confirmation."
+}
