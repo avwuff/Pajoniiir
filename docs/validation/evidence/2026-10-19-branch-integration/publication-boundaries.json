@@ -1,0 +1,6 @@
+{
+  "beta2_assets": 16,
+  "github_asset_sizes_digests_unchanged": true,
+  "new_download_rehash": "NOT RUN; compared API digests to sealed independent-download audit",
+  "public_latest_probe_error": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: certificate has expired (_ssl.c:1032)>"
+}

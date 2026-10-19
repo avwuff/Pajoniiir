@@ -48,6 +48,7 @@ int audio_engine_stub_master_cue_toggle_count = 0;
 bool audio_engine_stub_master_cue_enabled = false;
 int audio_engine_stub_crossfader = 8192;
 int audio_engine_stub_pfl_toggle_count[2] = {1, 0};
+bool audio_engine_stub_pfl_enabled[2] = {true, false};
 int audio_engine_stub_eq_raw[2][AUDIO_EQ_BAND_COUNT] = {{8192, 8192, 8192},
                                                         {8192, 8192, 8192}};
 int audio_engine_stub_eq_set_count[2][AUDIO_EQ_BAND_COUNT] = {{0}};

@@ -125,6 +125,29 @@ the BSP/entrypoint/default product UI trees are unchanged from the PR51 baseline
 
 ## Hosted verification and remaining gates
 
+PR52 is merged at `5666c608b0e856db4c4ab69fbe2aa02a7c528560`; its tree equals
+the pushed integration head `988a5b2e`. New UI and Numark donor tips are both
+ancestors of master. Existing contributor branches remain present.
+
+The automatic migration workflow on this merge passes all eleven firmware jobs
+but fails the host job's subsequent UI simulator link. The shared audio test
+stub gained `audio_engine_stub_pfl_enabled`, while `simulator_mocks.c` lacked
+its definition. This is a test-harness integration defect, not a firmware
+build failure. The exact missing-symbol failure is reproduced locally; adding
+the mock initialized to `{true, false}` preserves the previous screenshot
+PFL state. All nine existing simulator presentations then pass their exact
+baseline hashes without changes: legacy, product compact/wide/M3, native
+compact/wide, runtime compact/wide and Link wide. Production code is unchanged
+by this follow-up, so the `abffb203` firmware build evidence remains scoped to
+the identical production tree. Hosted validation of the harness repair is
+tracked separately; the failed merge workflow is retained, not called PASS.
+
+Documentation, Pages deployment and dual-USB gates on `5666c608` pass. API asset
+metadata for all sixteen beta2 files still matches the sealed independent
+download audit. A fresh public OTA HTTPS probe fails certificate validation
+because the served certificate is expired; no insecure retry or channel update
+is performed. Current public OTA bytes therefore are not re-verified here.
+
 After PR51 merged, GitHub automatically completed all four workflows on exact
 master `d878c066`: documentation integrity, Pages deployment, P4 dual-USB
 software gates and ESP-IDF migration. The latter has twelve successful jobs,
