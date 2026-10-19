@@ -2,15 +2,24 @@
 
 Status: **current documentation authority, reconciled 2026-10-19**.
 
+PR53 repairs the UI mock on master `5b09a1d8`: all twelve migration CI jobs
+pass, including the host/UI screenshot gate and eleven firmware configurations.
+Documentation, Pages deployment and the separate dual-USB workflow pass; all
+four automatic workflows are successful on that exact SHA. Locally, nine presentations /143
+hashes retain their exact baselines. Production code matches clean tested
+`abffb203`; no firmware installation, signing or release asset change follows.
+
 PR52 merges UI/Numark integration into master `5666c608`. Its automatic CI
 passes eleven firmware jobs, documentation, Pages and dual-USB checks, but the
 migration host job fails on a missing PFL-state definition in the UI mock.
 The follow-up adds that definition only; all nine simulator presentations
 pass unchanged screenshot baselines locally. Production code/build evidence
 is retained; hosted harness-repair verification remains separate. The failed
-workflow is not relabeled. Beta2 asset sizes/digests are unchanged; a fresh
-public OTA probe fails expired-certificate validation, so its current bytes
-are not re-verified. See the [integration record](reviews/2026-10-19-branch-integration.md).
+workflow is not relabeled. Beta2 asset sizes/digests are unchanged. Python's
+OTA certificate error is followed by a successful default-validation Schannel
+curl fetch: the public metadata bytes retain their original SHA-256. No
+insecure bypass or channel update is performed. See the
+[integration record](reviews/2026-10-19-branch-integration.md).
 
 The [branch integration](reviews/2026-10-19-branch-integration.md) merges the
 qualified shared core through PR51, imports new UI as an explicitly disabled

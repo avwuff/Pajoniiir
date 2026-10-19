@@ -21,6 +21,14 @@ not signed packages, installation evidence or new physical acceptance.
 | `collect_integration.py`, `build_integration.ps1` | Local verification orchestration. Reproduction needs checkout of the exact implementation SHA, configured IDF/toolchain and the retained local build outputs. |
 | `SHA256SUMS.txt` | Exact archive file hashes. Directory-local attributes preserve bytes across Git checkout line-ending settings. |
 
+The post-merge follow-up adds `integration-migration-ci.json` and the failed
+CI UI log for master `5666c608`, local RED/GREEN simulator logs and
+`ui-mock-repair.json` (nine presentations /143 unchanged screenshot hashes).
+`ui-numark-merged.json` records PR52. `publication-boundaries.json` distinguishes
+Python's certificate error from the successful default-validation Schannel
+download and records the unchanged public metadata hash. Later CI closeout
+snapshots supersede the pending field in the historical mock-repair record.
+
 Build output paths in logs are local evidence, not instructions to flash.
 The final M3 image hash is the one in `integration-matrix.json`, after explicit
 reconfigure; earlier cached-version preliminary images are not this final

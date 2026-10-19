@@ -2,5 +2,8 @@
   "beta2_assets": 16,
   "github_asset_sizes_digests_unchanged": true,
   "new_download_rehash": "NOT RUN; compared API digests to sealed independent-download audit",
-  "public_latest_probe_error": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: certificate has expired (_ssl.c:1032)>"
+  "python_probe_error": "<urlopen error [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: certificate has expired (_ssl.c:1032)>",
+  "public_latest_verifier": "curl 8.21.0 Schannel, default certificate validation; no insecure option",
+  "public_latest_sha256": "0066575e5c9b91b83dd39c928e532f263408627df29ebce55b1b699406f1c7a9",
+  "public_latest_bytes_unchanged": true
 }

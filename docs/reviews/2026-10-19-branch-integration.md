@@ -125,6 +125,19 @@ the BSP/entrypoint/default product UI trees are unchanged from the PR51 baseline
 
 ## Hosted verification and remaining gates
 
+The test-harness repair is merged through
+[PR53](https://github.com/dvucinozd/Pajoniiir/pull/53) at exact master
+`5b09a1d8e6d214d5ee7ad79a1dc1f0f7798ec39e`. Its automatic
+[migration workflow](https://github.com/dvucinozd/Pajoniiir/actions/runs/39254715585)
+passes all twelve jobs, including the host job's UI screenshot gate and eleven
+firmware configurations. Documentation, Pages and the separate
+[dual-USB workflow](https://github.com/dvucinozd/Pajoniiir/actions/runs/39254715582)
+also pass: all four automatic workflows are successful on this exact SHA. This
+closes the missing-mock link defect described below; no baseline or production
+firmware change was needed. Final outcomes are archived in the closeout
+snapshots. The final record update is documentation/evidence only and does not
+transfer this exact-SHA CI claim to a different production tree.
+
 PR52 is merged at `5666c608b0e856db4c4ab69fbe2aa02a7c528560`; its tree equals
 the pushed integration head `988a5b2e`. New UI and Numark donor tips are both
 ancestors of master. Existing contributor branches remain present.
@@ -144,9 +157,14 @@ tracked separately; the failed merge workflow is retained, not called PASS.
 
 Documentation, Pages deployment and dual-USB gates on `5666c608` pass. API asset
 metadata for all sixteen beta2 files still matches the sealed independent
-download audit. A fresh public OTA HTTPS probe fails certificate validation
-because the served certificate is expired; no insecure retry or channel update
-is performed. Current public OTA bytes therefore are not re-verified here.
+download audit. The first Python HTTPS probe reports an expired-certificate
+validation error. A subsequent Windows Schannel-backed curl probe succeeds
+with default certificate validation, without an insecure option, and the
+downloaded public OTA metadata hashes to the original
+`0066575e5c9b91b83dd39c928e532f263408627df29ebce55b1b699406f1c7a9`.
+The Python/Schannel validation difference is retained; it does not establish
+that all clients see an expired server certificate. Public channel bytes are
+verified unchanged and no channel update is performed.
 
 After PR51 merged, GitHub automatically completed all four workflows on exact
 master `d878c066`: documentation integrity, Pages deployment, P4 dual-USB

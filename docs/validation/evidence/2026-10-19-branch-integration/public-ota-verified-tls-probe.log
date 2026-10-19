@@ -1,0 +1,21 @@
+  % Total    % Received % Xferd  Average Speed  Time    Time    Time   Current
+                                 Dload  Upload  Total   Spent   Left   Speed
+
+  0      0   0      0   0      0      0      0                              0
+  0    210   0      0   0      0      0      0                              0
+  0    210   0      0   0      0      0      0                              0
+  0    210   0      0   0      0      0      0                              0
+HTTP/1.1 200 OK
+Date: Mon, 19 Oct 2026 12:47:42 GMT
+Content-Type: application/json
+Content-Length: 210
+Connection: keep-alive
+Server: cloudflare
+Last-Modified: Tue, 06 Oct 2026 02:10:03 GMT
+Accept-Ranges: bytes
+Nel: {"report_to":"cf-nel","success_fraction":0.0,"max_age":604800}
+cf-cache-status: DYNAMIC
+Report-To: {"group":"cf-nel","max_age":604800,"endpoints":[{"url":"https://a.nel.cloudflare.com/report/v4?s=m35tm6QpBeAtF8bAF8DUF2rYhEeR%2BFBg2sk9nTFC17gYgTBY7NLz%2BZFc6NqaI0zesUwykNNM6DnKzuCY0IV2v%2BBrtpnO8ragAQT%2Ft%2BbsXH69AjcZkmebSQS%2Bppt9goB6Gxb3"}]}
+CF-RAY: a4cfe492df12e3f2-OTP
+alt-svc: h3=":443"; ma=86400
+
