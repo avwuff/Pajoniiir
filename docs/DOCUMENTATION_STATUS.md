@@ -2,6 +2,15 @@
 
 Status: **current documentation authority, reconciled 2026-10-19**.
 
+The [remaining-branches merge review](reviews/2026-10-19-remaining-branches-merge-review.md)
+freezes all remote development tips and the local APTA branch. It recommends
+integrating the qualified shared branch into master first, retaining new UI as
+a disabled prototype, repairing Numark PFL/test wiring, and splitting JC8012
+from inherited donor repairs, the PPA override and unresolved touch-driver
+provenance. The JC1060 donor is already selectively adapted; APTA is ancestral.
+Virtual merges and focused software checks do not qualify new hardware. This
+review performs no merge, branch deletion, firmware change or publication.
+
 [shared-p4-beta.2](validation/SHARED_P4_BETA_2_20261019.md) is now published and
 independently verified as a non-Latest GitHub prerelease. Sixteen public assets
 match their sealed originals;222 ZIP entries, all signatures and exact

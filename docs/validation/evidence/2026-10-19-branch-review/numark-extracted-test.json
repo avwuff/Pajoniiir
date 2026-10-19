@@ -1,0 +1,7 @@
+{
+  "compile_exit": 0,
+  "compile_output": "",
+  "scope": "Test extracted from embedded patch only, against current production parser/manager; not a branch-provided runner or PFL deck actor test",
+  "run_exit": 0,
+  "run_output": "PASS Numark DJ2GO2 Touch compiled profile: buttons, Note On/Off, jog, 7-to-14-bit, pads, LEDs, replay, validators\n"
+}

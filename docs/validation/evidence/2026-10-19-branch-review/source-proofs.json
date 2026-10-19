@@ -1,0 +1,82 @@
+[
+  {
+    "ref": "694ecd6a3f59caa99fd0811e11e0c29d77219411",
+    "path": "firmware/boards/jc8012p4a1/esp_lcd_touch_gsl3680/README.md",
+    "blob_sha256": "459816345f8a3aa5284dff29961797362e22a22e3ba90bc6a5dc5ed08e263596",
+    "first_line": 1,
+    "last_line": 14,
+    "text": "# esp_lcd_touch_gsl3680 (vendor copy)\n\nGSL3680 capacitive touch driver for the Guition JC8012P4A1 (I2C 0x40), copied from the vendor\ndemo package https://github.com/sukesh-ak/JC8012P4A1-GUITION-ESP32-P4_ESP32-C6\n(`1-Demo/idf-examples/common_components/esp_lcd_touch_gsl3680/`, 2026-10-13). It contains the\ncontroller's firmware table (`include/esp_lcd_touch_gsl3680.h`) and Silead's point-id code.\n\n**No licence is attached** to this code or to the firmware table. It was taken on the project\nowner's explicit decision (2026-10-13, option A) to make the touch panel of the owner's own unit\nwork. Before any release: get a licence from Guition, or replace it (for example with the\npublished `guition-jc/esp_lcd_touch_gsl3680` once the project moves to ESP-IDF 6.1). Do not\ncopy the `espcontrol` `gsl3680` component instead: it is GPLv3 (from `kvj/esphome`).\nSee `docs/validation/jc8012p4a1/BOARD_NOTES.md`."
+  },
+  {
+    "ref": "694ecd6a3f59caa99fd0811e11e0c29d77219411",
+    "path": "firmware/p4-core/components/esp_driver_ppa/CMakeLists.txt",
+    "blob_sha256": "3e1bd7269f80ba9ec60b9bd6933263ebf3260baa440c0c44688f469ceedd50fc",
+    "first_line": 1,
+    "last_line": 28,
+    "text": "idf_build_get_property(target IDF_TARGET)\n\nset(srcs)\nset(public_include \"include\")\nif(CONFIG_SOC_PPA_SUPPORTED)\n    list(APPEND srcs \"src/ppa_core.c\"\n                     \"src/ppa_srm.c\"\n                     \"src/ppa_blend.c\"\n                     \"src/ppa_fill.c\")\nendif()\n\nif(${target} STREQUAL \"linux\")\n    set(priv_requires \"\")\nelse()\n    set(priv_requires esp_mm esp_pm esp_driver_dma efuse)\nendif()\n\n\nidf_component_register(SRCS ${srcs}\n                       INCLUDE_DIRS ${public_include}\n                       REQUIRES esp_hal_ppa\n                       PRIV_REQUIRES \"${priv_requires}\"\n                      )"
+  },
+  {
+    "ref": "584dc0d2b43e8a9deb847b83191a87f40f5a4d0b",
+    "path": "firmware/main-deck-p4/CMakeLists.txt",
+    "blob_sha256": "2634e87d2a6903ec0e3f3643a444bbf810d177d56f051cbc9fddbb251e332738",
+    "first_line": 1,
+    "last_line": 22,
+    "text": "cmake_minimum_required(VERSION 3.22)\ninclude(\"${CMAKE_CURRENT_LIST_DIR}/../p4-core/cmake/dependency_checkout.cmake\")\n\ninclude(\"${CMAKE_CURRENT_LIST_DIR}/../p4-core/cmake/project_version.cmake\")\npajoniiir_resolve_version(\"M2*\")\n\nset(EXTRA_COMPONENT_DIRS\n    \"${CMAKE_CURRENT_LIST_DIR}/../p4-core/components\"\n    \"${CMAKE_CURRENT_LIST_DIR}/../boards/jc4880\"\n    \"${CMAKE_CURRENT_LIST_DIR}/../common/control_state_reconciler\"\n    \"${CMAKE_CURRENT_LIST_DIR}/../common/firmware_health\"\n    \"${CMAKE_CURRENT_LIST_DIR}/../common/ota_manifest\"\n    \"${CMAKE_CURRENT_LIST_DIR}/../common/djlink\"\n    \"${CMAKE_CURRENT_LIST_DIR}/../common/dj_link_core\")\n\nif(PAJONIIIR_STORAGE_EXPERIMENT)\n    set(SDKCONFIG_DEFAULTS \"${CMAKE_CURRENT_LIST_DIR}/sdkconfig.defaults;${CMAKE_CURRENT_LIST_DIR}/sdkconfig.storage_experiment\")\n    if(PAJONIIIR_STORAGE_VARIANT)\n        list(APPEND SDKCONFIG_DEFAULTS \"${PAJONIIIR_STORAGE_VARIANT}\")\n    endif()\nendif()\nif(PAJONIIIR_DJ_UI_PREVIEW)"
+  },
+  {
+    "ref": "584dc0d2b43e8a9deb847b83191a87f40f5a4d0b",
+    "path": "firmware/p4-core/components/deck_core/deck_core.c",
+    "blob_sha256": "49850b43ef414c4ced59c88f5d61a66742adb3a8653f9634e4b358ae45176ebd",
+    "first_line": 3059,
+    "last_line": 3073,
+    "text": "        break;\n    case CTRL_ID_DECK1_PFL:\n        if (raw != 0) {\n            audio_engine_toggle_pfl(CTRL_DECK_1);\n        }\n        break;\n    case CTRL_ID_DECK2_PFL:\n        if (raw != 0) {\n            audio_engine_toggle_pfl(CTRL_DECK_2);\n        }\n        break;\n    case CTRL_ID_CH1_EQ_HIGH:\n        audio_engine_set_eq(CTRL_DECK_1, AUDIO_EQ_BAND_HIGH, value);\n        break;\n    case CTRL_ID_CH2_EQ_HIGH:"
+  },
+  {
+    "ref": "86d6b412b2ba11908b48518dfaf26d51f6c3e0f6",
+    "path": "controllers/numark_dj2go2_touch/README.md",
+    "blob_sha256": "970f8007cdeb9afa4731af3664078de475dd518f1b04de104372dc4f6bc6a675",
+    "first_line": 109,
+    "last_line": 113,
+    "text": "- **There is one PAD MODE button and no SHIFT button.** Pressing PAD MODE cycles CUES, AUTO, MANUAL, SAMPLER, CUES. Each press sends, on both pad channels at once (`0x94` and `0x95`), note 0: Note On velocity 5 (to AUTO), 11 (to MANUAL), 7 (to SAMPLER) and a Note Off velocity 0 (back to CUES). The pads then send the notes in the table above: CUES notes 1-4, AUTO 0x11-0x14, MANUAL 0x21-0x24, SAMPLER 0x31-0x34, all with Note Off velocity 0. The profile does not need note 0 on the pad channels: the mode is implied by the pad notes. The \"PAD MODE held\" row in the controls table (notes 0x09 to 0x0C) was not seen in these captures and is not confirmed.\n- **Finding, PFL (headphone cue, note 0x1B on `0x90` and `0x91`):** the button latches. Press one sends Note On 127, press two sends **Note Off velocity 0**, press three Note On 127 again. The firmware toggles PFL only when the value is non-zero (`deck_core.c` `on_mixer_control`, `CTRL_ID_DECK1_PFL` / `DECK2_PFL`: `if (raw != 0)`), so the Note Off of the second press would be ignored and the P4 PFL would run opposite to the button from the second press on. Read from the code and the captures, **not yet checked on the P4**: press PFL three times with the controller on the P4 and watch `pfl1` / `pfl2` in `/api/status`. Confirmed on the P4 (see below). **A profile-only fix does not work:** dropping the `0x80` / `0x81` entries leaves the Note Off of press two unmatched, so the P4 toggles only on presses 1, 3, 5 and still ends opposite to the button (ON, ON, OFF). The schema cannot turn a Note Off into a toggle either: `button` emits `data2 > 0 ? 1 : 0` (0 on a Note Off), and `note_select` takes a Note On status and ignores zero velocity (`CONTROLLER_PROFILE_SCHEMA.md`, input entry types). The fix needs a firmware change, for example a level-type PFL event that **sets** the state to the received 1 / 0 instead of toggling (a latching button), selected per profile so the FLX4 and DDJ-400 momentary buttons keep toggling. To decide with the shared-core owner; the profile is left unchanged.\n\n### Operator observations on the P4 (2026-10-13)\n"
+  },
+  {
+    "ref": "86d6b412b2ba11908b48518dfaf26d51f6c3e0f6",
+    "path": "controllers/numark_dj2go2_touch/README.md",
+    "blob_sha256": "970f8007cdeb9afa4731af3664078de475dd518f1b04de104372dc4f6bc6a675",
+    "first_line": 81,
+    "last_line": 86,
+    "text": "## Tests\n\nRun `tests/controller_profile/run_tests.ps1`. It builds `test_numark_dj2go2_touch.c` and runs it against `profile.s3bin`. The test checks these items: every mapped address, Note On and Note Off, the 7-to-14-bit values, the pads, the LEDs, the replay set, and CRC rejection.\n\nRun `tests/controller_usb_audio/run_tests.ps1` for the descriptor and stream test.\n"
+  },
+  {
+    "ref": "86d6b412b2ba11908b48518dfaf26d51f6c3e0f6",
+    "path": "controllers/numark_dj2go2_touch/README.md",
+    "blob_sha256": "970f8007cdeb9afa4731af3664078de475dd518f1b04de104372dc4f6bc6a675",
+    "first_line": 56,
+    "last_line": 60,
+    "text": "\nThe test `test_numark_touch_fs` in `tests/controller_usb_audio` runs the real format selection and stream start on this descriptor. It also checks the channel routing. MAIN goes to channels 1 and 2. The cue bus goes to channels 3 and 4. The test uses a descriptor rebuilt from the text listing, not raw bytes.\n\nThe profile maps Master Level and Cue Level to software levels. It does not set `native_headphone_controls`. It is not known if these knobs also change the analog output. If they do, the level changes twice. Test this on the bench. The compiler rejects `native_headphone_controls` together with the Cue Level mapping.\n"
+  },
+  {
+    "ref": "b8dccf260db4c919cae209091a70ef18f89f18cc",
+    "path": "docs/reference/new-ui/CORE_GAPS.md",
+    "blob_sha256": "596dc32d77cbb99e19f0e447946d480fc093d0347256c0252427da2825ef2dcf",
+    "first_line": 5,
+    "last_line": 12,
+    "text": "All 15 screens are drawn in LVGL on demo data (`components/ui_next`, rendered by\n`tests/ui_next_sim`). Every `CORE-GAP` comment in that component points to a line\nbelow. Nothing is wired to the core and nothing reacts to touch yet.\n\nThe new UI adds **no feature to the core**. Each screen draws demo data. When a\nscreen needs something the core does not give, the need is listed here and the\nscreen shows a placeholder.\n"
+  },
+  {
+    "ref": "00041a0dd1c704781af4d991b663c05cdb6bd4c3",
+    "path": "firmware/p4-core/components/usb_storage/usb_storage_shared.c",
+    "blob_sha256": "c20f8850ee55abb65bdadba286958d13269369ef6a5a25873bdaf10eebd31414",
+    "first_line": 24,
+    "last_line": 33,
+    "text": "     * root of a hub child cannot be resolved. With a hub on the storage\n     * connector the root is not checked; the device must still be observed. */\n    const bool hub = board_capabilities_get()->storage_via_hub;\n    const esp_err_t rc = usb_host_manager_device_matches_root(\n        address, SHARED_STORAGE_ROOT_INDEX, !hub, &matches);\n    if (hub && rc == ESP_OK) {\n        return true;\n    }\n    if (rc == ESP_ERR_NOT_FOUND) {\n        /* The topology client and MSC client receive the same enumeration"
+  },
+  {
+    "ref": "694ecd6a3f59caa99fd0811e11e0c29d77219411",
+    "path": "firmware/boards/jc-common/board_peripherals.c",
+    "blob_sha256": "3c2635b0604d471c5b7e5715825afb8f4489c5e06931e667da35dd34eeaf3703",
+    "first_line": 606,
+    "last_line": 643,
+    "text": "#if defined(CONFIG_ESP_HOSTED_SDIO_HOST_INTERFACE) && \\\n    ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(6, 0, 0)\n    host.init = bsp_sdmmc_host_already_initialized;\n#endif\n    if (!s_sd_pwr) {\n        sd_pwr_ctrl_ldo_config_t ldo_config = {\n            .ldo_chan_id = BSP_SD_LDO_CHAN,\n        };\n        esp_err_t pwr_rc = sd_pwr_ctrl_new_on_chip_ldo(&ldo_config, &s_sd_pwr);\n#if CONFIG_PAJONIIIR_BOARD_JC8012P4A1 || CONFIG_PAJONIIIR_BOARD_JC1060\n        if (pwr_rc == ESP_OK) {\n            // Acquiring enabled the rail, releasing it switches it off.\n            sd_pwr_ctrl_del_on_chip_ldo(s_sd_pwr);\n            s_sd_pwr = NULL;\n            static const gpio_num_t sd_pins[] = {\n                GPIO_NUM_43, GPIO_NUM_44, GPIO_NUM_39, GPIO_NUM_40, GPIO_NUM_41, GPIO_NUM_42,\n            };\n            for (size_t i = 0; i < sizeof(sd_pins) / sizeof(sd_pins[0]); i++) {\n                gpio_reset_pin(sd_pins[i]);\n                gpio_set_direction(sd_pins[i], GPIO_MODE_OUTPUT);\n                gpio_set_level(sd_pins[i], 0);\n            }\n            vTaskDelay(pdMS_TO_TICKS(BSP_SD_POWER_CYCLE_OFF_MS));\n            for (size_t i = 0; i < sizeof(sd_pins) / sizeof(sd_pins[0]); i++) {\n                gpio_reset_pin(sd_pins[i]);\n            }\n            pwr_rc = sd_pwr_ctrl_new_on_chip_ldo(&ldo_config, &s_sd_pwr);\n        }\n#endif\n        if (pwr_rc != ESP_OK) {\n            ESP_LOGW(TAG, \"SD LDO%d power control unavailable (%s) \u2014 /sd unavailable\",\n                     BSP_SD_LDO_CHAN, esp_err_to_name(pwr_rc));\n            return ESP_OK;\n        }\n    }\n    host.pwr_ctrl_handle = s_sd_pwr;\n\n    sdmmc_slot_config_t slot_config = SDMMC_SLOT_CONFIG_DEFAULT();"
+  }
+]

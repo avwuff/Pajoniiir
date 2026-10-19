@@ -1,0 +1,57 @@
+[
+  {
+    "ref": "origin/codex/shared-p4-core-m3",
+    "sha": "584dc0d2b43e8a9deb847b83191a87f40f5a4d0b",
+    "total_count": 0,
+    "checks": []
+  },
+  {
+    "ref": "origin/jc8012p4a1-v3",
+    "sha": "694ecd6a3f59caa99fd0811e11e0c29d77219411",
+    "total_count": 0,
+    "checks": []
+  },
+  {
+    "ref": "origin/kay/jc1060-hw-bench",
+    "sha": "00041a0dd1c704781af4d991b663c05cdb6bd4c3",
+    "total_count": 0,
+    "checks": []
+  },
+  {
+    "ref": "origin/kay/new-ui",
+    "sha": "b8dccf260db4c919cae209091a70ef18f89f18cc",
+    "total_count": 0,
+    "checks": []
+  },
+  {
+    "ref": "origin/numark-dj2go2-touch",
+    "sha": "86d6b412b2ba11908b48518dfaf26d51f6c3e0f6",
+    "total_count": 0,
+    "checks": []
+  },
+  {
+    "ref": "codex/p4-apta-library",
+    "sha": "364930b65eceefb562fec597c6c0c681c96084e7",
+    "total_count": 3,
+    "checks": [
+      {
+        "name": "ESP32-P4 firmware",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/dvucinozd/Pajoniiir/actions/runs/32299156991/job/96217482730"
+      },
+      {
+        "name": "Host regression tests",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/dvucinozd/Pajoniiir/actions/runs/32299156991/job/96217482695"
+      },
+      {
+        "name": "ESP32-S3 firmware",
+        "status": "completed",
+        "conclusion": "success",
+        "url": "https://github.com/dvucinozd/Pajoniiir/actions/runs/32299156991/job/96217482376"
+      }
+    ]
+  }
+]

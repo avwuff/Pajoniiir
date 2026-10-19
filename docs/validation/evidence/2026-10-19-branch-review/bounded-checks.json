@@ -1,0 +1,70 @@
+{
+  "ui_source_sha": "b8dccf260db4c919cae209091a70ef18f89f18cc",
+  "numark_source_sha": "86d6b412b2ba11908b48518dfaf26d51f6c3e0f6",
+  "ui_unit_checks": [
+    {
+      "name": "ui_next_layout",
+      "compile_exit": 0,
+      "compile_output": "",
+      "run_exit": 0,
+      "run_output": "ui_next_layout: ok\n"
+    },
+    {
+      "name": "ui_next_wave",
+      "compile_exit": 0,
+      "compile_output": "",
+      "run_exit": 0,
+      "run_output": "ui_next_wave: ok\n"
+    },
+    {
+      "name": "ui_next_key",
+      "compile_exit": 0,
+      "compile_output": "",
+      "run_exit": 0,
+      "run_output": "ui_next_key: ok\n"
+    },
+    {
+      "name": "ui_next_text",
+      "compile_exit": 0,
+      "compile_output": "",
+      "run_exit": 0,
+      "run_output": "ui_next_text: ok\n"
+    },
+    {
+      "name": "ui_next_view",
+      "compile_exit": 0,
+      "compile_output": "",
+      "run_exit": 0,
+      "run_output": "ui_next_view: ok\n"
+    },
+    {
+      "name": "ui_next_format",
+      "compile_exit": 0,
+      "compile_output": "",
+      "run_exit": 0,
+      "run_output": "ui_next_format: ok\n"
+    },
+    {
+      "name": "ui_next_sync",
+      "compile_exit": 0,
+      "compile_output": "",
+      "run_exit": 0,
+      "run_output": "ui_next_sync: ok\n"
+    },
+    {
+      "name": "ui_next_color",
+      "compile_exit": 0,
+      "compile_output": "",
+      "run_exit": 0,
+      "run_output": "ui_next_color: ok\n"
+    }
+  ],
+  "numark_current_compiler_byte_parity": true,
+  "numark_binary_bytes": 1999,
+  "numark_binary_sha256": "bc00acd35ff0b5d182578140af9446f3183483798f013da6172a58a7f6ca4621",
+  "numark_documented_tests_missing_from_branch": [
+    "tests/controller_profile/test_numark_dj2go2_touch.c"
+  ],
+  "numark_patch_test_present": true,
+  "scope": "Eight pure UI logic tests and Numark compiler parity only; no firmware/simulator/hardware acceptance, branch merge or working-tree source change"
+}
