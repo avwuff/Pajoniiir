@@ -1377,7 +1377,19 @@ static void test_latching_pfl_sets_each_deck_without_toggling_duplicates(void)
             assert(audio_engine_get_pfl_enabled(deck) == (levels[i] != 0));
             assert(!audio_engine_get_pfl_enabled((uint8_t)(1u - deck)));
         }
+        ctrl_event_t on = mixer_button(id, 1);
+        deck_core_test_apply_event(&on);
+        ctrl_event_t unplug = flx4_connection_state(CTRL_FLX4_DISCONNECTED);
+        deck_core_test_apply_event(&unplug);
+        assert(!audio_engine_get_pfl_enabled(deck));
     }
+    /* Legacy momentary PFL is a persistent software toggle, unchanged by an
+     * unplug. Only absolute controller-owned levels receive this cleanup. */
+    ctrl_event_t toggle = mixer_button(CTRL_ID_DECK1_PFL, 1);
+    deck_core_test_apply_event(&toggle);
+    ctrl_event_t unplug = flx4_connection_state(CTRL_FLX4_DISCONNECTED);
+    deck_core_test_apply_event(&unplug);
+    assert(audio_engine_get_pfl_enabled(CTRL_DECK_1));
 }
 
 static void test_sync_button_toggles_requested_deck_sync_led_state(void)
