@@ -1,0 +1,14 @@
+{
+  "idf_version": "6.0.2",
+  "donor_sha": "694ecd6a3f59caa99fd0811e11e0c29d77219411",
+  "idf_files": {
+    "CMakeLists.txt": "3e1bd7269f80ba9ec60b9bd6933263ebf3260baa440c0c44688f469ceedd50fc",
+    "include/driver/ppa.h": "9c3a60c31e7de90182b1d406680378580e2f3303f23dbbb843e743d41007ce8e",
+    "src/ppa_core.c": "fb7afe6256e6c9a94d07ffd63484019dcef02eb23916196bced82bfaca0ff82e",
+    "src/ppa_priv.h": "dca8976141dd429d256fecb93ad61b8d13f8a95890c2b2d7c4f4463aba794eb3",
+    "src/ppa_srm.c": "2697aa6c1f011afc6c61865017a21313639cf933d5b858b89ef39ace72c75cce",
+    "src/ppa_blend.c": "d318569aa08b49701cfc44b424372bb9b87b085c8e118b7ff277d67785e3414f",
+    "src/ppa_fill.c": "53301d37706395a582e17378bb6362d889fcca73692ea2b44101391892461c3f"
+  },
+  "donor_srm_sha256": "7b63e35d0c8b64cfb3aa9b041529295ab81fd73e8f29ff83c6b17eb6807ec469"
+}

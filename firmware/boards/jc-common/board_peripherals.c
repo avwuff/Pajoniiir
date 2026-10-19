@@ -541,6 +541,55 @@ esp_err_t bsp_audio_main_i2s_abort_write(void)
 #endif
 }
 
+#if CONFIG_PAJONIIIR_SD_COLD_POWER_EXPERIMENT
+#if !CONFIG_PAJONIIIR_BOARD_JC1060
+#error "SD cold-power experiment requires the JC1060 slot/power ownership contract"
+#endif
+#include "sd_cold_power.h"
+static jc_sd_power_state_t s_sd_cold_power;
+static bool s_sd_mount_started;
+static const gpio_num_t s_sd_pins[] = {43, 44, 39, 40, 41, 42};
+
+static esp_err_t sd_power_on(void *ctx)
+{
+    (void)ctx;
+    sd_pwr_ctrl_ldo_config_t config = {.ldo_chan_id = BSP_SD_LDO_CHAN};
+    return sd_pwr_ctrl_new_on_chip_ldo(&config, &s_sd_pwr);
+}
+
+static esp_err_t sd_power_off(void *ctx)
+{
+    (void)ctx;
+    esp_err_t rc = sd_pwr_ctrl_del_on_chip_ldo(s_sd_pwr);
+    if (rc == ESP_OK) s_sd_pwr = NULL; /* IDF retains handle on release failure. */
+    return rc;
+}
+
+static esp_err_t sd_pin_low(void *ctx, size_t pin)
+{
+    (void)ctx;
+    esp_err_t rc = gpio_reset_pin(s_sd_pins[pin]);
+    if (rc == ESP_OK) rc = gpio_set_level(s_sd_pins[pin], 0);
+    if (rc == ESP_OK) rc = gpio_set_direction(s_sd_pins[pin], GPIO_MODE_OUTPUT);
+    return rc;
+}
+
+static esp_err_t sd_pin_restore(void *ctx, size_t pin)
+{
+    (void)ctx;
+    return gpio_reset_pin(s_sd_pins[pin]);
+}
+
+static void sd_power_wait(void *ctx, unsigned ms)
+{
+    (void)ctx;
+    vTaskDelay(pdMS_TO_TICKS(ms));
+}
+#endif
+
+/* Called once by app_main before storage users start. This BSP is the sole
+ * slot-0 owner; ESP-Hosted initializes only slot 1. Preserve that startup
+ * ordering: this is not a concurrent/runtime card recovery API. */
 esp_err_t bsp_sd_init(void)
 {
     if (s_sd_card) {
@@ -559,6 +608,20 @@ esp_err_t bsp_sd_init(void)
 #if defined(CONFIG_ESP_HOSTED_SDIO_HOST_INTERFACE) && \
     ESP_IDF_VERSION >= ESP_IDF_VERSION_VAL(6, 0, 0)
     host.init = bsp_sdmmc_host_already_initialized;
+#endif
+#if CONFIG_PAJONIIIR_SD_COLD_POWER_EXPERIMENT
+    const jc_sd_power_ops_t power_ops = {
+        .power_on = sd_power_on, .power_off = sd_power_off,
+        .clamp_low = sd_pin_low, .restore_pin = sd_pin_restore,
+        .wait_ms = sd_power_wait,
+    };
+    esp_err_t cold_rc = jc_sd_cold_power_once(&s_sd_cold_power, &power_ops, NULL,
+                                             !s_sd_mount_started && !s_sd_pwr);
+    if (cold_rc != ESP_OK) {
+        ESP_LOGE(TAG, "SD cold-power experiment failed (%s); /sd unavailable",
+                 esp_err_to_name(cold_rc));
+        return ESP_OK; /* A failed cleanup must not fall through to mounting. */
+    }
 #endif
     if (!s_sd_pwr) {
         sd_pwr_ctrl_ldo_config_t ldo_config = {
@@ -594,6 +657,9 @@ esp_err_t bsp_sd_init(void)
              slot_config.d0, slot_config.d1, slot_config.d2, slot_config.d3);
 
     esp_err_t rc = ESP_FAIL;
+#if CONFIG_PAJONIIIR_SD_COLD_POWER_EXPERIMENT
+    s_sd_mount_started = true;
+#endif
     for (int attempt = 1; attempt <= BSP_SD_MOUNT_ATTEMPTS; attempt++) {
         rc = esp_vfs_fat_sdmmc_mount("/sd", &host, &slot_config, &mount_config, &s_sd_card);
         if (rc == ESP_OK) {

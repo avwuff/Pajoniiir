@@ -1,0 +1,2 @@
+# Opt-in only; no production default changes. Requires physical acceptance.
+CONFIG_PAJONIIIR_SD_COLD_POWER_EXPERIMENT=y
