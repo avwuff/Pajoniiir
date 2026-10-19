@@ -1,0 +1,14 @@
+PASS main-deck-m3: 2603088 bytes, isolated BSP, LVGL 9.5.0, app identity
+schema_version=1
+target=p4
+chip_id=18
+image_size=2603088
+project=main-deck-m3
+version=M3-dev-g71ee534269bf
+sha256=72063153d541f3227435a0993ffbb4ef0eb45c481077d40ed61ab07993517d15
+key_id=rel-001
+Signed OTA release package: D:\AI\Pajoniiir-shared-p4-core\releases\m3-headphones-71ee5342-20261018\pajoniiir-m3-M3-dev-g71ee534269bf
+  P4 2603088 bytes sha256=72063153d541f3227435a0993ffbb4ef0eb45c481077d40ed61ab07993517d15
+  signing key id=rel-001 algorithm=ECDSA-P256-SHA256
+  upload main-deck-m3.ddjota to P4
+  local debug archive: D:\AI\Pajoniiir-shared-p4-core\releases\m3-headphones-71ee5342-20261018\pajoniiir-m3-M3-dev-g71ee534269bf\debug\debug-manifest.json (not an OTA payload)

@@ -1,0 +1,16 @@
+schema_version=1
+target=p4
+chip_id=18
+image_size=2609952
+project=main-deck-p4
+version=M2.5-249-g0a33ec1f
+sha256=a3ab2b6a8aedf36b265a0b451c4ea63a1c260d209a5a734a702a890a12770b79
+key_id=rel-001
+Traceback (most recent call last):
+  File "D:\AI\Pajoniiir-shared-p4-core\.cache\shared-p4-beta.2\assemble_assets.py", line 160, in <module>
+    record['kit']=zip_dir(kit,f'{board}-beta-kit.zip')
+                  ~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "D:\AI\Pajoniiir-shared-p4-core\.cache\shared-p4-beta.2\assemble_assets.py", line 24, in zip_dir
+    assert not re.search(rb'-----BEGIN (?:EC |RSA |OPENSSH )?PRIVATE KEY-----',p.read_bytes()),p
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: D:\AI\Pajoniiir-shared-p4-core\.cache\shared-p4-beta.2\jc4880-beta-kit\main-deck-p4.bin

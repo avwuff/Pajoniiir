@@ -34,6 +34,12 @@ class BudgetTest(unittest.TestCase):
         candidate = copy.deepcopy(self.record)
         del candidate["status"]["diagnostics"]["internal_largest_free"]
         self.assertTrue(budget.check(self.record, candidate))
+        # Walk-free status explicitly reports unavailable sizes. This cannot
+        # silently satisfy a fragmentation/resource qualification threshold.
+        for field in ("internal_largest_free", "dma_largest_free"):
+            candidate = copy.deepcopy(self.record)
+            candidate["status"]["diagnostics"][field] = None
+            self.assertTrue(budget.check(self.record, candidate))
         candidate = copy.deepcopy(self.record)
         candidate["board"] = "JC1060"
         self.assertTrue(budget.check(self.record, candidate))

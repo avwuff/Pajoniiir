@@ -1,0 +1,12 @@
+{
+  "complete": false,
+  "stage": "upload_started",
+  "source_sha": "0a33ec1fb16c0136dccaa85ca63a6fbc00a4d527",
+  "upload_attempts": 1,
+  "old_source": "605bcd20d6dadf250ce1816d82353ee2ace21867",
+  "old_slot": "ota_1",
+  "expected_slot": "ota_0",
+  "bundle_sha256": "6dc08acd5398fd1b4348adbd3659d453fedaa745d8ccd5e16940b324c6bceefa",
+  "image_elf_sha256": "078cb8c09cbf4b77622facc5d0a09fedef3382f0970a3cd18bbd5ec0357975bc",
+  "started_utc": "2026-10-19T07:40:55.863936+00:00"
+}

@@ -1,0 +1,47 @@
+{
+  "profiles": [
+    {
+      "id": "pioneer_ddj_flx4",
+      "valid": true,
+      "vid": "0x2B73",
+      "pid": "0x0045",
+      "size": 6236
+    },
+    {
+      "id": "pioneer_ddj_rev7",
+      "valid": true,
+      "vid": "0x2B73",
+      "pid": "0x003B",
+      "size": 1384
+    },
+    {
+      "id": "pioneer_ddj_flx10",
+      "valid": true,
+      "vid": "0x2B73",
+      "pid": "0x0050",
+      "size": 2124
+    },
+    {
+      "id": "numark_dj2go2",
+      "valid": true,
+      "vid": "0x15E4",
+      "pid": "0x004E",
+      "size": 512
+    },
+    {
+      "id": "ni_traktor_s2_mk3_basic",
+      "valid": true,
+      "vid": "0x17CC",
+      "pid": "0x1710",
+      "size": 864
+    },
+    {
+      "id": "hercules_djcontrol_inpulse_500",
+      "valid": true,
+      "vid": "0x06F8",
+      "pid": "0xB12B",
+      "size": 5592
+    }
+  ],
+  "count": 6
+}

@@ -1,0 +1,10 @@
+backward MT handoff deck=0 ratio=0.918750 speed=0.950000 phase=0 keep=1 frame=513 before=7151 after=7150
+Assertion failed: after>=before, file D:\AI\Pajoniiir-shared-p4-core\tests\audio_fw_runtime\build\keylock-handoff\handoff.c, line 84
+Traceback (most recent call last):
+  File "D:\AI\Pajoniiir-shared-p4-core\tests\audio_fw_runtime\test_keylock_handoff.py", line 110, in <module>
+    subprocess.run([str(exe)], check=True)
+    ~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\Daniel\scoop\apps\python313\current\Lib\subprocess.py", line 577, in run
+    raise CalledProcessError(retcode, process.args,
+                             output=stdout, stderr=stderr)
+subprocess.CalledProcessError: Command '['D:\\AI\\Pajoniiir-shared-p4-core\\tests\\audio_fw_runtime\\build\\keylock-handoff\\handoff.exe']' returned non-zero exit status 3221226505.

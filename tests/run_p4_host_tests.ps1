@@ -4050,6 +4050,8 @@ Assert-FileContains `
 # Run the controller suites here as well as in the dedicated dual-USB CI job.
 Invoke-Step -Name "run USB control completion ownership regression" -WorkingDirectory $RepoRoot `
     -Executable $pythonSource -Arguments @("tests/controller_usb_host/test_control_retirement.py")
+Invoke-Step -Name "run USB ancestry and dependency checkout contracts" -WorkingDirectory $RepoRoot `
+    -Executable $pythonSource -Arguments @("tests/controller_usb_host/test_dependency_contracts.py")
 Invoke-Step -Name "run controller audio failure isolation regression" -WorkingDirectory $RepoRoot `
     -Executable $pythonSource -Arguments @("tests/controller_usb_host/test_audio_fault_isolation.py")
 Invoke-Step -Name "run production HS scheduler capture regression" -WorkingDirectory $RepoRoot `
@@ -4087,6 +4089,18 @@ Invoke-Step -Name "run firmware lifecycle regression" -WorkingDirectory $RepoRoo
     -Executable $pythonSource -Arguments @("tests/audio_fw_runtime/test_firmware_lifecycle.py")
 Invoke-Step -Name "run codec publication and media fault backoff regression" -WorkingDirectory $RepoRoot `
     -Executable $pythonSource -Arguments @("tests/audio_fw_runtime/test_review_boundaries.py")
+Invoke-Step -Name "run production USB MAIN reconnect and loop EOF regression" -WorkingDirectory $RepoRoot `
+    -Executable $pythonSource -Arguments @("tests/audio_fw_runtime/test_usb_sink_recovery.py")
+Invoke-Step -Name "run production status memory JSON regression" -WorkingDirectory $RepoRoot `
+    -Executable $pythonSource -Arguments @("tests/audio_engine_memory/test_memory_status_json.py")
+Invoke-Step -Name "run production MT fallback consumer-clock handoff" -WorkingDirectory $RepoRoot `
+    -Executable $pythonSource -Arguments @("tests/audio_fw_runtime/test_keylock_handoff.py")
+Invoke-Step -Name "run production board remote startup readiness regression" -WorkingDirectory $RepoRoot `
+    -Executable $pythonSource -Arguments @("tests/p4_startup_gate/test_board_remote_startup.py")
+Invoke-Step -Name "run linked startup capture initialization contract" -WorkingDirectory $RepoRoot `
+    -Executable $pythonSource -Arguments @("tests/restart_diagnostics/test_startup_elf_contract.py")
+Invoke-Step -Name "run production remote load progress and cancellation retirement" -WorkingDirectory $RepoRoot `
+    -Executable $pythonSource -Arguments @("tests/ui_library/test_remote_progress.py")
 Invoke-Step -Name "run production paired RGB565 fill regression" -WorkingDirectory $RepoRoot `
     -Executable $pythonSource -Arguments @("tests/ui_framebuffer_pair/test_backend_fill.py")
 Invoke-Step -Name "run production controller profile rescan regression" -WorkingDirectory $RepoRoot `

@@ -1,0 +1,4 @@
+# Preserve exact archived log/manifest bytes across checkout line-ending policy.
+* -text whitespace=blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol
+# The captured PDB table deliberately pads its columns; retain verbatim stdout.
+host-qualification.txt whitespace=-blank-at-eol,blank-at-eof,space-before-tab,cr-at-eol

@@ -1,10 +1,102 @@
 # P4 post-release development plan
 
+2026-10-19: [shared-p4-beta.2](validation/SHARED_P4_BETA_2_20261019.md) is published
+with the exact accepted M3/JC4880 bytes and software-verified JC1060 candidate.
+Sixteen public downloads and222 ZIP inventory entries verify, along with all
+signatures/identities. No firmware rebuild or additional hardware test is part
+of delivery. Stable M2.5/public OTA, S2 closeout, JC4880 soak waiver and deferred
+JC1060 physical gates remain unchanged. Continue only separately justified
+open-gate work; do not repeat accepted M3/JC4880 blocks merely for publication.
+
+2026-10-19: [final-hour review and JC4880 follow-up](validation/M3_SOAK_CLOSEOUT_JC4880_OTA_20261019.md)
+complete the offline M3 late assessment with its finding retained. Keep M3 on
+the accepted1556e8d7 image. JC4880 clean0a33ec1f builds/signs and installs VALID
+ota_0; its60.234-s mixed-rate MT/loop/CUE/control smoke passes all22 strict
+deltas/late0 and operator confirmation. Input precedes the automatic loop
+transitions; sustained exit pressure is not qualified. No new
+soak, speculative firmware change or public publication is scheduled here.
+The following dated investigation stages retain their original scopes.
+
+The [2026-10-18 MT fallback handoff](validation/M3_MT_FALLBACK_HANDOFF_20261018.md)
+has a deterministic production-callback reproduction and minimal consumer-clock
+repair. Host qualification and ordinary M3 incremental build/package pass;
+`2fa22631` is VALID `ota_1`. Its loop-exit retest fails on UAC drop/overflow and
+another 139-ms mix segment, despite no operator symptom. Both decks are stopped.
+The mix-window I2S DMA observer `f1c5ec9c` passes host/build/package and is VALID
+`ota_0`; its first 60.267-s loop/CUE retest passes telemetry and operator review.
+The next phase sweep fails at20.192 s with D2 PCM/UAC loss and a141-ms DMA gap
+across the mix window. Extend the existing HS1-KiB task-context cache policy
+to ordinary P4 builds, then replay the failing source positions/exit phase.
+The ordinary-path bound is RED before and GREEN after repair. Clean `1556e8d7`
+passes host/build/package and is VALID `ota_1`; its100.264-s three-exit replay
+passes all22 strict deltas/late0 and full operator audio/display confirmation.
+An isolated30.145-s jog/Browse run also passes all22 strict deltas/late0 with
+2,406 MIDI packets and operator control/audio/display confirmation. Retain both
+bounded scopes: a subsequent60.133-s combined loop/control/CUE run also passes
+all22 strict deltas/late0 and operator confirmation with1,951 MIDI packets.
+Input is concentrated before/around loop activation, not loop exit. Sustained
+exit-time input pressure, long reliability and exact causal attribution remain
+open. JC4880/JC1060 ordinary IDF6.0.2 incremental builds and board verifiers
+now pass clean `2f2b0555`, with unchanged dependency locks and production code
+identical to installed1556e8d7. No JC physical acceptance or hosted CI is inferred.
+Leave installed M3 unchanged. Its subsequent final timing soak completes
+3600.286 s /5,301 samples with all22 strict deltas zero, mixed-rate dual MT/loops
+and healthy FLX4 FS44.1-kHz streaming; both decks end stopped. Output-late24,
+max12,988 us and a sample-observed3/60-s cluster retain an investigation finding.
+Full-hour operator audio/display confirmation is recorded on2026-10-19; the
+output-late investigation remains open. Headphone LEVEL changed near
+861 s (74 MIDI packets); no sustained active-control pressure is inferred.
+See the handoff's final-hour audit and hashed records. This closes the telemetry
+observation window, not exact causal attribution or all reliability gates.
+Clock tests
+do not close UAC timing or admission gates; preserve all failures and criteria.
+
+The [2026-10-18 status observer repair](validation/M3_STATUS_OBSERVER_REPAIR_20261018.md)
+removes confirmed unbounded TLSF walks from the shared observation path.
+Software qualification and the single ordinary M3 build pass; clean `3459a97a`
+is installed VALID `ota_0`. An active-control retest fails downstream admission,
+and a separate zero-MIDI loop-exit retest fails UAC drop/overflow with one slow
+mix segment. Both are safely stopped and archived. Next investigate output-mix
+callback work versus preemption at loop exit, separately from controller queue
+pressure. Do not claim the preceding PCM2 cause solved by the observer repair.
+
+2026-10-18: prioritize the [FLX4 headphone-level repair](validation/FLX4_HEADPHONE_LEVEL_20261018.md)
+before JC4880 OTA. A production-stream regression reproduces a 12.041-dB
+dedicated cue loss; the candidate restores unity after the mixer while retaining
+the legacy USB MAIN mirror level. Full host qualification, JC4880 build and signed
+OTA pass; clean `605bcd20` is VALID `ota_1`. The operator's corrected final answer
+accepts loudness in the short solo-D1 bench test. A later combined 60.125-s
+dual-deck MT/loop/CUE/PFL/MIX/LEVEL smoke also passes all 22 strict deltas,
+output-late zero and operator confirmation of controls/audio/display. Actual
+club use remains separate; the JC4880 long-soak waiver is unchanged.
+
 The operator authorized shared-core PR #46 delivery and GitHub prerelease
 `shared-p4-beta.1`. See the [beta record](validation/SHARED_P4_BETA_1_20261011.md)
 and [JC1060 handoff](JC1060_BETA_HANDOFF_20261011.md). JC1060 physical testing
-is deferred to Kayrosen; JC4880 long soak is explicitly waived, NOT RUN.
+was deferred to Kayrosen; JC4880 long soak is explicitly waived, NOT RUN.
 The following dated checkpoints retain their own source and acceptance scope.
+
+The [2026-10-18 ordinary M3 headphone package](validation/M3_HEADPHONE_PACKAGE_20261018.md)
+builds and signs clean `71ee5342` with unchanged qualified production code and
+ordinary board policy. A later authorized local OTA confirms exact identity,
+VALID `ota_1`, FLX4 and 260 tracks. The subsequent MT smoke stops after 40.642 s
+on new D2 PCM underruns during the loop-clear window. The operator accepts
+headphone volume and reports no disturbance, but the telemetry gate fails.
+Investigate loop-exit refill and diagnostic observer timing before a targeted
+retest; preserve the failed evidence. Both decks are stopped, loops OFF. No
+other board build or public update is part of this step.
+
+The [2026-10-14 JC1060 contributor review](reviews/2026-10-14-jc1060-contributor-review.md)
+is complete on frozen `00041a0d`, with scoped hardware evidence on `4e3aa2b4`
+and production-boundary defect reproductions. Its recommended next step was
+selective integration with repairs/regressions; no new candidate or beta is qualified
+by that review. Published-beta JC1060 acceptance remains NOT RUN.
+
+The [selective integration follow-up](reviews/2026-10-14-jc1060-selective-integration.md)
+implements R01-R08 software repairs and DDJ-400 loop mappings. R09's unsafe HIL
+helper is excluded. Its verification ledger tracks the ordinary build/host/UI
+gates separately from pending exact-image JC1060, SD warm-reset and live Link
+acceptance. No existing beta, S2 closeout or JC4880 soak waiver is replaced.
 
 The [final development handoff](reviews/2026-10-11-shared-core-final-handoff.md)
 is the current delivery/open-gate authority. Installed clean 6166d936 is VALID

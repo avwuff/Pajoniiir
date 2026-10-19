@@ -1,0 +1,225 @@
+{
+  "route-build": {
+    "exit_code": 0,
+    "command": [
+      "C:\\msys64\\ucrt64\\bin\\gcc.exe",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\.cache\\jc1060-review-20261014\\route_repro.c",
+      "-o",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\.cache\\jc1060-review-20261014\\route_repro.exe"
+    ],
+    "log": "route-build.log"
+  },
+  "route-run": {
+    "exit_code": 0,
+    "command": [
+      "D:\\AI\\Pajoniiir-shared-p4-core\\.cache\\jc1060-review-20261014\\route_repro.exe"
+    ],
+    "log": "route-run.log"
+  },
+  "stream-baseline-build": {
+    "exit_code": 0,
+    "command": [
+      "C:\\msys64\\ucrt64\\bin\\gcc.exe",
+      "-std=c11",
+      "-O2",
+      "-Wall",
+      "-Wextra",
+      "-Wpedantic",
+      "-Werror",
+      "-DCONFIG_PAJONIIIR_BOARD_M3=1",
+      "-DCONFIG_BSP_M3_HS_CONTROLLER=1",
+      "-DCONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC=1",
+      "-ID:\\AI\\Pajoniiir-shared-p4-core\\tests\\controller_usb_audio\\stubs",
+      "-ID:\\AI\\Pajoniiir-shared-p4-core\\tests\\controller_usb_audio",
+      "-ID:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\controller_usb_audio",
+      "-ID:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\controller_usb_audio\\include",
+      "-ID:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\service_log\\include",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\.cache\\jc1060-review-20261014\\stream_baseline.c",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\controller_usb_audio\\controller_audio_ring.c",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\controller_usb_audio\\controller_audio_resampler.c",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\controller_usb_audio\\flx4_uac_packetizer.c",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\controller_usb_audio\\flx4_uac_descriptors.c",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\controller_usb_audio\\controller_uac2.c",
+      "-o",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\.cache\\jc1060-review-20261014\\stream_baseline.exe"
+    ],
+    "log": "stream-baseline-build.log"
+  },
+  "stream-baseline-run": {
+    "exit_code": 0,
+    "command": [
+      "D:\\AI\\Pajoniiir-shared-p4-core\\.cache\\jc1060-review-20261014\\stream_baseline.exe"
+    ],
+    "log": "stream-baseline-run.log"
+  },
+  "stream-contributor-build": {
+    "exit_code": 0,
+    "command": [
+      "C:\\msys64\\ucrt64\\bin\\gcc.exe",
+      "-std=c11",
+      "-O2",
+      "-Wall",
+      "-Wextra",
+      "-Wpedantic",
+      "-Werror",
+      "-DCONFIG_PAJONIIIR_BOARD_M3=1",
+      "-DCONFIG_BSP_M3_HS_CONTROLLER=1",
+      "-DCONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC=1",
+      "-DREVIEW_CONTRIBUTOR=1",
+      "-ID:\\AI\\Pajoniiir-shared-p4-core\\tests\\controller_usb_audio\\stubs",
+      "-ID:\\AI\\Pajoniiir-shared-p4-core\\tests\\controller_usb_audio",
+      "-ID:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\controller_usb_audio",
+      "-ID:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\controller_usb_audio\\include",
+      "-ID:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\service_log\\include",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\.cache\\jc1060-review-20261014\\stream_contributor.c",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\controller_usb_audio\\controller_audio_ring.c",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\controller_usb_audio\\controller_audio_resampler.c",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\controller_usb_audio\\flx4_uac_packetizer.c",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\controller_usb_audio\\flx4_uac_descriptors.c",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\controller_usb_audio\\controller_uac2.c",
+      "-o",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\.cache\\jc1060-review-20261014\\stream_contributor.exe"
+    ],
+    "log": "stream-contributor-build.log"
+  },
+  "stream-contributor-run": {
+    "exit_code": 0,
+    "command": [
+      "D:\\AI\\Pajoniiir-shared-p4-core\\.cache\\jc1060-review-20261014\\stream_contributor.exe"
+    ],
+    "log": "stream-contributor-run.log"
+  },
+  "deck-build": {
+    "exit_code": 0,
+    "command": [
+      "C:\\msys64\\ucrt64\\bin\\gcc.exe",
+      "-std=c99",
+      "-Wall",
+      "-Wextra",
+      "-Wpedantic",
+      "-Werror=implicit-function-declaration",
+      "-Wno-unused-variable",
+      "-Wno-unused-parameter",
+      "-DDECK_CORE_PC_TEST",
+      "-ID:\\AI\\Pajoniiir-shared-p4-core\\tests\\deck_core_dual\\stubs",
+      "-ID:\\AI\\Pajoniiir-shared-p4-core\\tests\\support\\stubs",
+      "-ID:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\audio_engine\\include",
+      "-ID:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\beat_jump\\include",
+      "-ID:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\deck_core\\include",
+      "-ID:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\control_link\\include",
+      "-ID:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\hot_cue_store\\include",
+      "-ID:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\media_identity\\include",
+      "-ID:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\library\\include",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\.cache\\jc1060-review-20261014\\deck_repro.c",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\tests\\deck_core_dual\\control_link_stub.c",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\tests\\deck_core_dual\\hot_cue_store_stub.c",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\tests\\deck_loaded_track_store\\anlz_clone_stub.c",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\beat_jump\\beat_jump.c",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\control_link\\flx4_led_snapshot.c",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\deck_core\\deck_loaded_track_store.c",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\media_identity\\media_identity.c",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\tests\\deck_core_dual\\deck_core_test_snapshot_wrapper.c",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\tests\\deck_core_dual\\control_link_sink_wrapper.c",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\library\\anlz_snapshot.c",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\deck_core\\deck_load_lock.c",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\deck_core\\deck_net_sync.c",
+      "-lm",
+      "-o",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\.cache\\jc1060-review-20261014\\deck_repro.exe"
+    ],
+    "log": "deck-build.log"
+  },
+  "deck-run": {
+    "exit_code": 0,
+    "command": [
+      "D:\\AI\\Pajoniiir-shared-p4-core\\.cache\\jc1060-review-20261014\\deck_repro.exe"
+    ],
+    "log": "deck-run.log"
+  },
+  "sink-build": {
+    "exit_code": 0,
+    "command": [
+      "C:\\msys64\\ucrt64\\bin\\gcc.exe",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\.cache\\jc1060-review-20261014\\sink_repro.c",
+      "-o",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\.cache\\jc1060-review-20261014\\sink_repro.exe"
+    ],
+    "log": "sink-build.log"
+  },
+  "sink-run": {
+    "exit_code": 0,
+    "command": [
+      "D:\\AI\\Pajoniiir-shared-p4-core\\.cache\\jc1060-review-20261014\\sink_repro.exe"
+    ],
+    "log": "sink-run.log"
+  },
+  "startup-gate-build": {
+    "exit_code": 0,
+    "command": [
+      "C:\\msys64\\ucrt64\\bin\\gcc.exe",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-ID:\\AI\\Pajoniiir-shared-p4-core\\firmware\\common\\firmware_health\\include",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\tests\\p4_startup_gate\\test_p4_startup_gate.c",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\firmware\\common\\firmware_health\\p4_startup_gate.c",
+      "-o",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\.cache\\jc1060-review-20261014\\startup_gate.exe"
+    ],
+    "log": "startup-gate-build.log"
+  },
+  "startup-gate-run": {
+    "exit_code": 0,
+    "command": [
+      "D:\\AI\\Pajoniiir-shared-p4-core\\.cache\\jc1060-review-20261014\\startup_gate.exe"
+    ],
+    "log": "startup-gate-run.log"
+  },
+  "ddj400-profile-build": {
+    "exit_code": 0,
+    "command": [
+      "C:\\msys64\\ucrt64\\bin\\gcc.exe",
+      "-std=c11",
+      "-Wall",
+      "-Wextra",
+      "-Werror",
+      "-DCONTROLLER_PROFILE_MANAGER_PC_TEST",
+      "-ID:\\AI\\Pajoniiir-shared-p4-core\\tests\\controller_runtime\\stubs",
+      "-ID:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\controller_profile\\include",
+      "-ID:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\controller_profile_manager\\include",
+      "-ID:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\control_link\\include",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\.cache\\jc1060-review-20261014\\ddj400_profile.c",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\controller_profile\\controller_profile.c",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\firmware\\p4-core\\components\\controller_profile_manager\\controller_profile_manager.c",
+      "-o",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\.cache\\jc1060-review-20261014\\ddj400_profile.exe"
+    ],
+    "log": "ddj400-profile-build.log"
+  },
+  "ddj400-profile-run": {
+    "exit_code": 0,
+    "command": [
+      "D:\\AI\\Pajoniiir-shared-p4-core\\.cache\\jc1060-review-20261014\\ddj400_profile.exe",
+      "D:\\AI\\Pajoniiir-shared-p4-core\\.cache\\jc1060-review-20261014\\contributor\\controllers\\pioneer_ddj_400\\profile.s3bin"
+    ],
+    "log": "ddj400-profile-run.log"
+  },
+  "profile": {
+    "byte_identical": true,
+    "size": 6112,
+    "sha256": "2fc922ec2986249f4af7c7a077367e4bb5b9e9f22ced5b3d137e853d21f74408",
+    "source_input_nodes": 126,
+    "source_output_nodes": 29,
+    "compiled_inputs": 284,
+    "compiled_outputs": 127
+  }
+}

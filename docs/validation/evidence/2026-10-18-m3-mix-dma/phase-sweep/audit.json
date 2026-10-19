@@ -1,0 +1,15 @@
+{
+  "samples": 14,
+  "all_sample_identity_matches": true,
+  "strict_paths": 22,
+  "strict_nonzero": {
+    "diagnostics.pcm_underrun2": 1546,
+    "diagnostics.usb_headphones.dropped_blocks": 13,
+    "diagnostics.usb_headphones.overflow_frames": 2318
+  },
+  "stopped": true,
+  "loops_off": true,
+  "last_sample_phase": "wait-loop-False",
+  "operator": "No perceived disturbance; operator explicitly confirms no control or cable movement",
+  "physical_pfl_scope": "Not independently established: raw PFL false/false and MIX/LEVEL16383 retained despite preparation intent"
+}

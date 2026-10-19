@@ -1,0 +1,65 @@
+      "pajoniiir_common_app_main_with_network",
+
+      "install_task",
+
+      "delayed_restart_task",
+
+      "esp_ota_mark_app_invalid_rollback_and_reboot"
+
+    ],
+
+    "__wrap_esp_restart_noos": [
+
+      "panic_restart",
+
+      "esp_restart"
+
+    ]
+
+  },
+
+  "capture_address": "0x50108080",
+
+  "capture_bytes": 256,
+
+  "coredump_noinit_bounds": [
+
+    "0x50108080",
+
+    "0x50108180"
+
+  ],
+
+  "initialization_iram_address": "0x4ff022ce",
+
+  "scope": "linked placement/interception only; physical panic export NOT RUN"
+
+
+}
+
+
+.....
+
+
+----------------------------------------------------------------------
+
+
+Ran 5 tests in 4.968s
+
+
+
+
+
+OK
+
+
+
+
+Project build complete. To flash, run:
+ idf.py flash
+or
+ idf.py -p PORT flash
+or
+ python -m esptool --chip esp32p4 -b 460800 --before default-reset --after hard-reset write-flash --flash-mode dio --flash-size 16MB --flash-freq 80m 0x2000 .cache\idf-jc4880-headphones-20261018\bootloader\bootloader.bin 0x8000 .cache\idf-jc4880-headphones-20261018\partition_table\partition-table.bin 0x10000 .cache\idf-jc4880-headphones-20261018\ota_data_initial.bin 0x20000 .cache\idf-jc4880-headphones-20261018\main-deck-p4.bin
+or from the "D:\AI\Pajoniiir-shared-p4-core\.cache\idf-jc4880-headphones-20261018" directory
+ python -m esptool --chip esp32p4 -b 460800 --before default-reset --after hard-reset write-flash "@flash_args"

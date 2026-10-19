@@ -3095,50 +3095,58 @@ static void test_load_lock_uses_actual_target_deck_transport(void)
 }
 
 void deck_core_test_replacement_contention(void);
-static void test_load_play_race_reserves_actual_semantic_transport(void)
+static void check_load_play_race_for_deck(uint8_t target)
 {
+    const uint8_t other = (uint8_t)(1u - target);
     deck_core_test_reset();
     reset_audio_engine_stub();
     deck_core_test_replacement_contention();
-    ctrl_event_t play1 = deck_button(CTRL_ID_DECK1_PLAY);
-    ctrl_event_t play2 = deck_button(CTRL_ID_DECK2_PLAY);
-    ctrl_event_t cue1 = deck_button(CTRL_ID_DECK1_CUE);
+    ctrl_event_t play1 = deck_button(target == 0 ? CTRL_ID_DECK1_PLAY : CTRL_ID_DECK2_PLAY);
+    ctrl_event_t play2 = deck_button(other == 0 ? CTRL_ID_DECK1_PLAY : CTRL_ID_DECK2_PLAY);
+    ctrl_event_t cue1 = deck_button(target == 0 ? CTRL_ID_DECK1_CUE : CTRL_ID_DECK2_CUE);
     // PLAY wins: replacement must preserve the already-playing target.
     deck_core_test_apply_event(&play1);
-    assert(deck_core_test_get_deck_state(0).playing);
-    assert(deck_core_begin_track_replacement(0) == 0);
-    assert(deck_core_test_get_deck_state(0).playing);
+    assert(deck_core_test_get_deck_state(target).playing);
+    assert(deck_core_begin_track_replacement(target) == 0);
+    assert(deck_core_test_get_deck_state(target).playing);
     deck_core_test_apply_event(&play1);
-    assert(!deck_core_test_get_deck_state(0).playing);
+    assert(!deck_core_test_get_deck_state(target).playing);
     // LOAD wins: transport events cannot start the old/new track before publish.
-    uint32_t token = deck_core_begin_track_replacement(0);
-    assert(token >= 2 && deck_core_track_replacement_active(0));
-    assert(!deck_core_load_allowed(0) && deck_core_begin_track_replacement(0) == 0);
+    uint32_t token = deck_core_begin_track_replacement(target);
+    assert(token >= 2 && deck_core_track_replacement_active(target));
+    assert(!deck_core_load_allowed(target) && deck_core_begin_track_replacement(target) == 0);
     deck_core_test_apply_event(&play1);
     deck_core_test_apply_event(&cue1);
-    assert(!deck_core_test_get_deck_state(0).playing);
+    assert(!deck_core_test_get_deck_state(target).playing);
     deck_core_test_apply_event(&play2);
-    assert(deck_core_test_get_deck_state(1).playing);
-    assert(!deck_core_test_get_deck_state(0).playing);
-    deck_core_end_track_replacement(0, token + 100);
-    assert(deck_core_track_replacement_active(0));
-    deck_core_end_track_replacement(0, token);
-    assert(!deck_core_track_replacement_active(0));
-    uint32_t next = deck_core_begin_track_replacement(0);
+    assert(deck_core_test_get_deck_state(other).playing);
+    assert(!deck_core_test_get_deck_state(target).playing);
+    deck_core_end_track_replacement(target, token + 100);
+    assert(deck_core_track_replacement_active(target));
+    deck_core_end_track_replacement(target, token);
+    assert(!deck_core_track_replacement_active(target));
+    uint32_t next = deck_core_begin_track_replacement(target);
     assert(next >= 2 && next != token);
-    deck_core_end_track_replacement(0, token); // stale completion cannot release next
-    assert(deck_core_track_replacement_active(0));
-    deck_core_end_track_replacement(0, next);
+    deck_core_end_track_replacement(target, token); // stale completion cannot release next
+    assert(deck_core_track_replacement_active(target));
+    deck_core_end_track_replacement(target, next);
     deck_core_test_apply_event(&play1);
-    assert(deck_core_test_get_deck_state(0).playing);
+    assert(deck_core_test_get_deck_state(target).playing);
     // Explicit LOAD LOCK off still allows replacement of playback.
     deck_core_set_load_lock(false);
-    token = deck_core_begin_track_replacement(0);
+    token = deck_core_begin_track_replacement(target);
     assert(token >= 2);
-    deck_core_end_track_replacement(0, token);
+    deck_core_end_track_replacement(target, token);
     assert(deck_core_begin_track_replacement(2) == 0);
     deck_core_test_reset();
     reset_audio_engine_stub();
+}
+
+static void test_load_play_race_reserves_actual_semantic_transport(void)
+{
+    for (uint8_t target = 0; target < DECK_CORE_DECK_COUNT; ++target) {
+        check_load_play_race_for_deck(target);
+    }
 }
 
 static void test_imported_hot_cues_recall_and_local_deletion_survive_reload(void)
@@ -3399,8 +3407,82 @@ static void test_physical_controller_input_uses_wake_policy(void)
     deck_core_set_activity_cb(NULL);
 }
 
+void deck_core_test_input_queue_free(int slots);
+static void test_remote_cue_tap_is_one_admission(void)
+{
+    for (uint8_t d = 0; d < DECK_CORE_DECK_COUNT; ++d) {
+        deck_core_test_reset(); reset_audio_engine_stub();
+        deck_core_test_prepare_input_queue();
+        deck_core_test_input_queue_free(0);
+        assert(deck_core_queue_remote_cue_tap(d) == ESP_FAIL);
+        assert(deck_core_test_input_queue_sends() == 0);
+        assert(!deck_core_get_deck_state(d).cue_held);
+        deck_core_test_input_queue_free(1);
+        assert(deck_core_queue_remote_cue_tap(d) == ESP_OK);
+        assert(deck_core_test_input_queue_sends() == 1);
+        ctrl_event_t tap = deck_core_test_last_queued_event();
+        assert(tap.type == CTRL_EV_CUE_TAP && tap.deck == d);
+        assert(deck_core_queue_remote_cue_tap(d) == ESP_FAIL);
+        deck_core_test_apply_event(&tap);
+        assert(!deck_core_get_deck_state(d).playing);
+        assert(!deck_core_get_deck_state(d).cue_held);
+        ctrl_event_t play = deck_button(d ? CTRL_ID_DECK2_PLAY : CTRL_ID_DECK1_PLAY);
+        deck_core_test_apply_event(&play);
+        assert(audio_engine_stub_deck_playing[d]);
+        deck_core_test_apply_event(&tap);
+        assert(!audio_engine_stub_deck_playing[d]);
+        assert(!deck_core_get_deck_state(d).cue_held);
+        assert(!deck_core_get_deck_state(d).cue_preview);
+        /* A web tap cannot terminate a physically held CUE preview. */
+        ctrl_event_t cue = deck_button(d ? CTRL_ID_DECK2_CUE : CTRL_ID_DECK1_CUE);
+        deck_core_test_apply_event(&cue);
+        assert(deck_core_get_deck_state(d).cue_held);
+        assert(deck_core_get_deck_state(d).cue_preview);
+        deck_core_test_apply_event(&tap);
+        assert(deck_core_get_deck_state(d).cue_held && audio_engine_stub_deck_playing[d]);
+        cue.value = 0; deck_core_test_apply_event(&cue);
+        assert(!deck_core_get_deck_state(d).cue_held && !audio_engine_stub_deck_playing[d]);
+    }
+    assert(deck_core_queue_remote_cue_tap(2u) == ESP_ERR_INVALID_ARG);
+}
+
+static void test_loop_resize_refuses_past_track_end(void)
+{
+    for (uint8_t d = 0; d < DECK_CORE_DECK_COUNT; ++d) {
+        deck_core_test_reset(); reset_audio_engine_stub(); publish_loaded_bpm(d, 120);
+        audio_engine_stub_loop_active[d] = true;
+        audio_engine_stub_loop_start_ms[d] = 100000u;
+        audio_engine_stub_loop_end_ms[d] = 250000u;
+        ctrl_event_t twice = deck_button(d ? CTRL_ID_DECK2_LOOP_DOUBLE : CTRL_ID_DECK1_LOOP_DOUBLE);
+        deck_core_test_apply_event(&twice);
+        assert(audio_engine_stub_loop_end_ms[d] == 250000u && !audio_engine_stub_loop_set_count[d]);
+        ctrl_event_t encoder = deck_encoder(d ? CTRL_ID_DECK2_LOOP_SIZE : CTRL_ID_DECK1_LOOP_SIZE, 4);
+        deck_core_test_apply_event(&encoder);
+        assert(audio_engine_stub_loop_end_ms[d] == 250000u && !audio_engine_stub_loop_set_count[d]);
+        audio_engine_stub_loop_start_ms[d] = 100000u;
+        audio_engine_stub_loop_end_ms[d] = 200000u;
+        deck_core_test_apply_event(&twice);
+        assert(audio_engine_stub_loop_end_ms[d] == 300000u); /* exact exclusive EOF allowed */
+        audio_engine_stub_deck_loaded[d] = true;
+        audio_engine_stub_session_generation[d] = 7u;
+        audio_engine_stub_duration_ms[d] = 105000u;
+        assert(deck_core_publish_loaded_track_session(d, 1u, 2002u, NULL, 120u,
+            300000u, NULL, 7u) == ESP_OK);
+        audio_engine_stub_loop_start_ms[d] = 50000u;
+        audio_engine_stub_loop_end_ms[d] = 100000u;
+        int calls = audio_engine_stub_loop_set_count[d];
+        deck_core_test_apply_event(&twice);
+        assert(audio_engine_stub_loop_end_ms[d] == 100000u && audio_engine_stub_loop_set_count[d] == calls);
+        audio_engine_stub_duration_ms[d] = 0u;
+        deck_core_test_apply_event(&twice);
+        assert(audio_engine_stub_loop_end_ms[d] == 150000u); /* metadata fallback */
+    }
+}
+
 int main(void)
 {
+    test_remote_cue_tap_is_one_admission();
+    test_loop_resize_refuses_past_track_end();
     test_physical_controller_input_uses_wake_policy();
     test_load_lock_uses_actual_target_deck_transport();
     test_load_play_race_reserves_actual_semantic_transport();

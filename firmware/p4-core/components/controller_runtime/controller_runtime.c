@@ -249,6 +249,15 @@ void controller_runtime_set_connected(bool connected)
     } else if (!connected && was_connected) {
         s_disconnect_pending = true;
         s_disconnect_generation = s_connection_generation;
+        /* Unaccepted actions belong to the departed physical connection.
+         * Keep cumulative queue diagnostics and durable held releases, but
+         * never replay old PLAY/LOAD/jog work after a reconnect. */
+        s_buffer.head = 0u;
+        s_buffer.count = 0u;
+        s_retry_pending = false;
+        s_snapshot_pending = false;
+        s_snapshot_count = 0u;
+        s_snapshot_cursor = 0u;
         control_held_state_release_all(&s_held_states, 0u);
     }
     runtime_unlock();
@@ -284,6 +293,7 @@ size_t controller_runtime_dispatch_pending(size_t max_events)
         uint32_t disconnect_generation = 0u;
         bool have_disconnect = false;
         bool captured_connected = false;
+        uint32_t event_generation = 0u;
 
         runtime_lock();
         if (s_config.publish_connection_events &&
@@ -317,6 +327,7 @@ size_t controller_runtime_dispatch_pending(size_t max_events)
             dispatched++;
             continue;
         }
+        event_generation = s_connection_generation;
         prepare_snapshot_if_possible_locked();
 
         size_t cursor = 0u;
@@ -355,9 +366,11 @@ size_t controller_runtime_dispatch_pending(size_t max_events)
                 break;
             }
             runtime_lock();
-            control_held_state_mark_scheduled(&s_held_states,
-                                               held_key,
-                                               event.value);
+            if (event_generation == s_connection_generation) {
+                control_held_state_mark_scheduled(&s_held_states,
+                                                   held_key,
+                                                   event.value);
+            }
             runtime_unlock();
             (void)__atomic_add_fetch(&s_held_reconciliations, 1u,
                                      __ATOMIC_RELAXED);
@@ -372,7 +385,9 @@ size_t controller_runtime_dispatch_pending(size_t max_events)
                 break;
             }
             runtime_lock();
-            s_retry_pending = false;
+            if (event_generation == s_connection_generation) {
+                s_retry_pending = false;
+            }
             runtime_unlock();
             (void)__atomic_add_fetch(&s_semantic_events, 1u,
                                      __ATOMIC_RELAXED);
@@ -385,10 +400,12 @@ size_t controller_runtime_dispatch_pending(size_t max_events)
                 break;
             }
             runtime_lock();
-            s_snapshot_cursor++;
-            if (s_snapshot_cursor == s_snapshot_count) {
-                s_snapshot_cursor = 0u;
-                s_snapshot_count = 0u;
+            if (event_generation == s_connection_generation) {
+                s_snapshot_cursor++;
+                if (s_snapshot_cursor == s_snapshot_count) {
+                    s_snapshot_cursor = 0u;
+                    s_snapshot_count = 0u;
+                }
             }
             runtime_unlock();
             (void)__atomic_add_fetch(&s_semantic_events, 1u,
@@ -410,8 +427,12 @@ size_t controller_runtime_dispatch_pending(size_t max_events)
 
         if (s_config.event_cb(&event, s_config.callback_ctx) != ESP_OK) {
             runtime_lock();
-            s_retry_event = event;
-            s_retry_pending = true;
+            /* The callback runs outside the mutex and may span an unplug.
+             * Do not resurrect retired work in the new connection. */
+            if (event_generation == s_connection_generation) {
+                s_retry_event = event;
+                s_retry_pending = true;
+            }
             runtime_unlock();
             break;
         }

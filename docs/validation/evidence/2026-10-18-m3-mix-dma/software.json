@@ -1,0 +1,21 @@
+{
+  "source_sha": "f1c5ec9ca9e9e3eba89365384762efb95e426ff7",
+  "source_dirty": false,
+  "version": "M3-dev-gf1c5ec9ca9e9",
+  "host_qualification_exit": 0,
+  "documentation_exit": 0,
+  "idf_build_exit": 0,
+  "build_mode": "ESP-IDF 6.0.2 incremental ordinary M3 reconfigure/build",
+  "board_check": "PASS",
+  "application_bytes": 2603184,
+  "application_sha256": "5ae2cf5d10b8fa5adfe20cce4b21442d685ce7063ca1c0093a1c963e61bb112a",
+  "bundle_bytes": 2603372,
+  "bundle_sha256": "3d5e5bc485e99976c05a7d2ad16bb7554d3bc57b01e705c99f37b1acece93d37",
+  "elf_sha256": "b964d5fc5018f43221361e9bc44e8c49407d9a0043b258a3df1974744e931db2",
+  "build_log_sha256": "6cbbab3a87d336e80f61514c8de88584a173bd5960e44f33b8c21680b156915d",
+  "package": "releases/m3-mix-dma-f1c5ec9c-20261018/pajoniiir-m3-M3-dev-gf1c5ec9ca9e9",
+  "signed_format": "rel-001 ECDSA P256 SHA256; bundle and manifest verified",
+  "hardware_observation": "60.267-s loop/CUE PASS; phase sweep FAIL at20.192s: PCM2+1546, UAC drop+13 / overflow+2318; mix DMA gap141430us. Operator reports no disturbance in either window.",
+  "other_board_builds": "NOT RUN; M3-only iteration",
+  "published": false
+}

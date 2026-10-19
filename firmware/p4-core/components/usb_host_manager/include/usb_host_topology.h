@@ -15,6 +15,8 @@ typedef struct {
     bool present;
     bool direct_root_child;
     uint8_t root_port_index;
+    uintptr_t device_token;
+    uintptr_t parent_token;
 } usb_host_topology_entry_t;
 
 typedef struct {
@@ -27,6 +29,11 @@ bool usb_host_topology_observe(usb_host_topology_t *topology,
                                bool direct_root_child,
                                uint8_t root_port_index);
 bool usb_host_topology_remove(usb_host_topology_t *topology, uint8_t address);
+/* Opaque handle tokens are compared only, never dereferenced. Parent publication
+ * may follow a child's; unresolved ancestry remains fail-closed until known. */
+bool usb_host_topology_observe_parent(usb_host_topology_t *topology,
+                                      uint8_t address, uintptr_t device_token,
+                                      uintptr_t parent_token, uint8_t parent_port);
 bool usb_host_topology_matches_root(const usb_host_topology_t *topology,
                                     uint8_t address,
                                     uint8_t root_port_index,

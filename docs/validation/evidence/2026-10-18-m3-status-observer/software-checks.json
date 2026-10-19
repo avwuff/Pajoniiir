@@ -1,0 +1,12 @@
+{
+  "recorded_at_utc": "2026-10-18T18:00:26.886897+00:00",
+  "source_sha": "3459a97a5e2060223ebe24272879f0b731d21083",
+  "command": "tests/run_p4_host_tests.ps1 -Qualification",
+  "exit_code": 0,
+  "sha256": "c536986bfa885db4e3f652c2d83f441417694fe79d84950dcc949c9d1796914a",
+  "focused_memory_red": "ordinary production memory module fails link without TLSF/timer/journal implementations",
+  "focused_memory_green": "ordinary and HS production modules pass without walk/timer/journal symbols",
+  "production_json_formatter": "PASS ordinary and HS",
+  "resource_budget_null_evidence": "rejected by unchanged thresholds",
+  "documentation_checker_exit_code": 0
+}

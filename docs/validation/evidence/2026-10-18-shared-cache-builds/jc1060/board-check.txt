@@ -1,0 +1,1 @@
+PASS main-deck-jc1060: 2668480 bytes, isolated BSP, LVGL 9.5.0, app identity

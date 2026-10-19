@@ -43,16 +43,22 @@ The table distinguishes tested functions from profiles awaiting hardware checks.
 
 | DJ controller | Support status | Audio and setup | Coverage and limits |
 | --- | --- | --- | --- |
-| [Pioneer DDJ-FLX4](docs/DDJ_FLX4_MIDI_MAP.md) | Reference controller; stable JC4880 support and accepted historical M3 configurations | USB MIDI/LED feedback and UAC1 headphone cue; ordinary port policy | Transport, mixer, jogs, pads, loops and effects. Exact board/image qualification is recorded separately. |
+| [Pioneer DDJ-FLX4](docs/DDJ_FLX4_MIDI_MAP.md) | Reference controller; stable JC4880 support and accepted beta2 M3/JC4880 image scopes | USB MIDI/LED feedback and UAC1 headphone cue; ordinary port policy | Transport, mixer, jogs, pads, loops and effects. Exact board/image qualification and remaining gates are recorded separately. |
 | [Hercules DJControl Inpulse 500](controllers/hercules_djcontrol_inpulse_500/README.md) | Beta support; tested on M3 and JC4880 | USB MIDI/LED feedback, UAC1 headphones and native headphone Mix/Volume; M3 requires the experimental USB port swap | M3 exact-image hour and JC4880 short functional blocks accepted. Individual pad/FX/LED coverage remains partial; controller RCA MAIN is unqualified. |
 | [Native Instruments Traktor Kontrol S2 MK3](controllers/ni_traktor_s2_mk3_full/README.md) | Experimental M3 support; operator-closed with explicit waivers | MIDI mode, shared MIDI/LED profile and HS UAC2 headphones; controller USB3 / storage USB2 | Historical exact-image 48/44.1-kHz hours accepted. Remaining checks were waived, not passed; other boards are unqualified. |
-| [Pioneer DDJ-400](controllers/pioneer_ddj_400/README.md) | Software profile available; hardware acceptance NOT RUN | Shared MIDI/LED and USB audio implementation | Source-backed mapping; local MIDI/LED/audio/reconnect qualification is pending. Eight memory-call/store/delete inputs remain omitted. |
+| [Pioneer DDJ-400](controllers/pioneer_ddj_400/README.md) | Software profile available; canonical-image hardware acceptance NOT RUN | Shared MIDI/LED and USB audio implementation | Loop halve/double included; four memory-store/delete inputs remain omitted. Scoped contributor testing is recorded separately; new-image qualification is pending. |
 
 FLX4 remains the ordinary reference controller. M3 Hercules/S2 testing uses an
 **explicit experimental port swap: controller USB3, storage USB2**; the ordinary
 beta M3 download retains FLX4 on USB2 and storage on USB3. Select a matching
 firmware configuration before activating a profile. S2 work is closed by
 operator decision with remaining checks waived.
+
+A JC4880 club-use report of low FLX4 headphone volume led to a
+[headphone-level correction](docs/validation/FLX4_HEADPHONE_LEVEL_20261018.md),
+accepted in JC4880 and M3 bench listening/control tests. The correction is
+included in **shared-p4-beta.2**; stable M2.5 retains its original behavior.
+Start headphone LEVEL low after updating and raise it gradually.
 
 The release also includes a limited S2 basic profile and a generic MIDI-CI
 fixture for development. They are not additional hardware-qualified DJ models.
@@ -73,6 +79,11 @@ JC1060, DDJ-400 and Ethernet Pro DJ Link are implemented as development
 configurations. Their physical qualification is still pending. Recording and
 SD storage experiments remain disabled in regular builds.
 
+The [JC1060/DDJ-400 contributor review](docs/reviews/2026-10-14-jc1060-contributor-review.md)
+records Kayrosen's scoped tests on a separate branch, including long Observe
+and listening evidence. Integration repairs and failed storage/reconnect gates
+remain open; these results do not qualify the published beta or a new image.
+
 The [release record](docs/validation/M2_5_RELEASE_20261006.md) documents
 the tested configuration, explicit final-image soak waiver and remaining
 qualification limits.
@@ -85,11 +96,19 @@ evidence remains tied to its original image.
 ### Shared P4 beta
 
 The shared-core development line is distributed as
-[`shared-p4-beta.1`](https://github.com/dvucinozd/Pajoniiir/releases/tag/shared-p4-beta.1),
+[`shared-p4-beta.2`](https://github.com/dvucinozd/Pajoniiir/releases/tag/shared-p4-beta.2),
 a **GitHub prerelease for contributor testing**. It includes separate signed
 packages for each board, compiled controller profiles, source/configuration
 provenance and SHA-256 inventories. Select the package by project identity;
 the board images are not interchangeable.
+
+Beta2 retains the exact M3 image accepted in a full-hour mixed-rate MT/loop
+test and the exact JC4880 image accepted in a short combined control/audio test.
+It includes the FLX4 headphone-level, MT consumer-clock and bounded cache fixes.
+The JC1060 image is software-verified and awaits Kayrosen's physical testing.
+Per-board versions intentionally differ: accepted binaries were not rebuilt to
+make their version strings match. The [delivery record](docs/validation/SHARED_P4_BETA_2_20261019.md)
+lists exact sources, hashes, output-late findings and the JC4880 soak waiver.
 
 The published **M2.5 JC4880/DDJ-FLX4 stable release and public OTA channels
 remain unchanged**. Beta assets are downloaded from GitHub and installed
@@ -397,6 +416,11 @@ status and acceptance limits are maintained in the
 [final handoff](docs/reviews/2026-10-11-shared-core-final-handoff.md),
 [documentation status](docs/DOCUMENTATION_STATUS.md) and
 [development plan](docs/DEVELOPMENT_PLAN.md).
+
+The [JC1060 selective integration](docs/reviews/2026-10-14-jc1060-selective-integration.md)
+adds DDJ-400 loop controls and regression-backed shared USB/audio/startup repairs.
+It is a local software candidate; JC1060 hardware and SD warm-reset gates remain
+open, and published beta assets retain their original identity.
 
 - [Online user manual](https://docs.pajoniiir.eu/)
 - [Project overview](docs/PROJECT_OVERVIEW.md)

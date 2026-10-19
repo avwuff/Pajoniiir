@@ -8,12 +8,17 @@
 #include "controller_profile.h"
 #include "controller_profile_runtime.h"
 #include "control_link.h"
+#include "flx4_led_snapshot.h"
 
 static unsigned s_checks;
 static esp_err_t s_send_result = ESP_OK;
 static uint8_t s_last_sent[4];
 static uint32_t s_send_calls;
 static bool s_identity_available;
+static uint32_t s_output_generation = 1u;
+static uint32_t s_accepted_sends;
+static bool s_reconnect_during_identity;
+static uint32_t s_output_slots = UINT32_MAX;
 
 #define CHECK(expr) do { \
     s_checks++; \
@@ -23,16 +28,38 @@ static bool s_identity_available;
     } \
 } while (0)
 
-esp_err_t controller_usb_host_send_packet(const uint8_t packet[4])
+uint32_t controller_usb_host_output_generation(void)
+{
+    return s_output_generation;
+}
+
+esp_err_t controller_usb_host_send_packet_for_generation(
+    const uint8_t packet[4], uint32_t generation)
 {
     s_send_calls++;
+    if (generation != s_output_generation) return ESP_ERR_INVALID_STATE;
+    if (s_output_slots == 0u) return ESP_ERR_TIMEOUT;
     memcpy(s_last_sent, packet, sizeof(s_last_sent));
+    if (s_send_result == ESP_OK) {
+        s_accepted_sends++;
+        if (s_output_slots != UINT32_MAX) s_output_slots--;
+    }
     return s_send_result;
+}
+
+esp_err_t controller_usb_host_send_packet(const uint8_t packet[4])
+{
+    return controller_usb_host_send_packet_for_generation(
+        packet, controller_usb_host_output_generation());
 }
 
 bool controller_usb_host_get_identity(controller_usb_identity_t *identity)
 {
     if (!identity || !s_identity_available) return false;
+    if (s_reconnect_during_identity) {
+        s_reconnect_during_identity = false;
+        s_output_generation++;
+    }
     memset(identity, 0, sizeof(*identity));
     identity->vid = 0x2B73u;
     identity->pid = 0x0045u;
@@ -91,6 +118,48 @@ static size_t build_profile(uint8_t blob[CP_HEADER_SIZE +
                  0x01u, 0x02u, 0x03u);
     wr_u32(blob + 12, cp_crc32(blob + 16, total - 16u));
     return total;
+}
+
+static esp_err_t snapshot_send(led_id_t led, uint8_t state,
+                               uint8_t deck, void *ctx)
+{
+    (void)ctx;
+    return controller_led_runtime_send((uint8_t)led, state, deck);
+}
+
+static void test_snapshot_headroom_and_full_queue_retry(void)
+{
+    controller_profile_runtime_clear();
+    controller_led_runtime_set_builtin_flx4_enabled(true);
+    flx4_led_publisher_t publisher;
+    flx4_led_snapshot_input_t input = {0};
+    flx4_led_publisher_init(&publisher);
+    s_output_slots = 256u; /* Current product MIDI OUT queue depth. */
+    const uint32_t before = s_accepted_sends;
+    CHECK(flx4_led_publisher_publish(&publisher, &input, true,
+                                    snapshot_send, NULL) == ESP_OK);
+    CHECK(s_accepted_sends - before == 162u); /* Includes shifted pad banks. */
+    CHECK(s_output_slots == 94u);
+    CHECK(controller_led_runtime_send(LED_VU_METER, 64u, 0u) == ESP_OK);
+    CHECK(controller_led_runtime_send(LED_VU_METER, 64u, 1u) == ESP_OK);
+    CHECK(controller_led_runtime_send(LED_TRACK_LOAD_DECK1, 1u, 0u) == ESP_OK);
+    CHECK(controller_led_runtime_send(LED_TRACK_LOAD_DECK2, 1u, 1u) == ESP_OK);
+    CHECK(s_output_slots == 90u);
+    CHECK(flx4_led_publisher_publish(&publisher, &input, false,
+                                    snapshot_send, NULL) == ESP_OK);
+    CHECK(s_output_slots == 90u); /* Unchanged values are suppressed. */
+
+    s_output_slots = 0u;
+    input.play[0] = 1u;
+    CHECK(flx4_led_publisher_publish(&publisher, &input, false,
+                                    snapshot_send, NULL) == ESP_ERR_TIMEOUT);
+    s_output_slots = 1u;
+    CHECK(flx4_led_publisher_publish(&publisher, &input, false,
+                                    snapshot_send, NULL) == ESP_OK);
+    CHECK(s_output_slots == 0u);
+    CHECK(s_last_sent[1] == 0x90u && s_last_sent[2] == 0x0Bu &&
+          s_last_sent[3] == 0x7Fu);
+    s_output_slots = UINT32_MAX;
 }
 
 int main(void)
@@ -167,6 +236,21 @@ int main(void)
     CHECK(diagnostics.builtin_fallbacks == 1u);
     CHECK(diagnostics.unsupported == 5u);
     CHECK(diagnostics.send_failures == 1u);
+
+    /* Reconnect between primary and shifted mirror. The old bank address
+     * must not be sent through the replacement connection's output gate. */
+    const uint32_t accepted_before = s_accepted_sends;
+    s_reconnect_during_identity = true;
+    CHECK(controller_led_runtime_send(
+        LED_HOT_CUE_PAD_1, 1u, CTRL_DECK_2) == ESP_ERR_INVALID_STATE);
+    CHECK(s_accepted_sends == accepted_before + 1u);
+    CHECK(controller_led_runtime_send(
+        LED_HOT_CUE_PAD_1, 1u, CTRL_DECK_2) == ESP_OK);
+    CHECK(s_accepted_sends == accepted_before + 3u);
+    controller_led_runtime_get_diagnostics(&diagnostics);
+    CHECK(diagnostics.send_failures == 2u);
+
+    test_snapshot_headroom_and_full_queue_retry();
 
     printf("PASS P4 local controller LED runtime\n");
     printf("CHECKS=%u SENDS=%u\n", s_checks, s_send_calls);

@@ -159,8 +159,12 @@ JC4880 registers no network provider, retaining its local sync path. See
 [K evidence and physical gates](validation/FORK_IMPROVEMENTS_PACKAGE_K_SOFTWARE_20261005.md).
 
 Package F separates the authoritative MAIN sink from USB cue mirroring.
-JC4880 defaults to blocking PCM5102A I2S pacing; its FLX4 format, attenuation
-and ring clock corrections remain unchanged. JC1060 defaults to USB MAIN 1/2
+JC4880 defaults to blocking PCM5102A I2S pacing; its FLX4 format and ring clock
+corrections remain unchanged. The 2026-10-18 headphone candidate removes the
+legacy quarter-amplitude cut from dedicated cue PCM after the mixer; the FLX4
+USB MAIN mirror retains its original level. See the
+[headphone investigation](validation/FLX4_HEADPHONE_LEVEL_20261018.md) for
+software and pending physical evidence. JC1060 defaults to USB MAIN 1/2
 and cue 3/4, with ES8311 disabled. The single producer waits on actual UAC ring
 space with a bounded, epoch-aware wait; USB pacing has no duplicate/trim or
 second codec clock. Accepted USB blocks drive timeline bookkeeping. A failed
@@ -268,12 +272,14 @@ Current P4 audio ownership rule:
   limiter counters, shared Beat FX Echo/Delay-line allocation/enabled/delay/mode
   state, and
   heap/internal/PSRAM free space. Internal, internal-DMA and PSRAM diagnostics
-  additionally expose allocator lifetime minimum-free. Current largest-free
-  blocks remain measured for internal/DMA only. The optional JSON
-  `psram_largest_free` is null: IDF's full PSRAM TLSF walk masks interrupts and
-  must not run in periodic status/esp_timer diagnostics while UAC sends audio
-  or idle silence. `heap_walk_max_us` retains internal/DMA query wall-time
-  maxima (including preemption; PSRAM entry zero, not measured).
+  additionally expose allocator lifetime minimum-free. Largest-free fields
+  for internal/DMA/PSRAM and all three `heap_walk_max_us` entries are JSON null
+  on every target. IDF's TLSF largest-block query walks all pool blocks under
+  allocator locks that mask interrupts; it must not run in periodic status or
+  esp_timer diagnostics while FS/HS UAC sends audio or idle silence. C snapshot
+  fields are cleared to zero as unavailable placeholders, not measurements.
+  Missing fragmentation evidence cannot satisfy the runtime resource-budget
+  checker; its thresholds remain unchanged.
   Heap queries run after releasing the audio state mutex, so
   these observation-time values do not extend the mixer critical section.
   `/api/status` includes these values under

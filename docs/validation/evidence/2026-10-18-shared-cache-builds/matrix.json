@@ -1,0 +1,54 @@
+{
+  "source_sha": "2f2b05558ccb68238d7228f59e52cd6c7d06e12f",
+  "production_code_identical_to_installed_m3": "1556e8d7dfcb4f016c52ab1a372dd2e076dcaa1f",
+  "build_mode": "ESP-IDF6.0.2 incremental reconfigure/build, ordinary configurations; not fresh clean builds",
+  "lock_hashes": {
+    "firmware/main-deck-p4/dependencies.lock": "fdfe2610010b7cb25137a35fff3aba3165bc77ffaeff887df9fc715013d85927",
+    "firmware/main-deck-jc1060/dependencies.lock": "b41213015dc95ae87952b56c5e5672503ffe12bc63325c3a68698ee6f958f72e",
+    "firmware/main-deck-m3/dependencies.lock": "d034fe6b34c26d451d75878546947b95dba2a0fedf9f53d10216182784f14f3c"
+  },
+  "shared_host_qualification": "Passed on1556e8d7; since then documentation/evidence only",
+  "hosted_ci": "NOT RUN; user quota restriction",
+  "published": false,
+  "targets": {
+    "jc4880": {
+      "project": "main-deck-p4",
+      "source_sha": "2f2b05558ccb68238d7228f59e52cd6c7d06e12f",
+      "source_dirty": false,
+      "idf_build_exit": 0,
+      "verifier_exit": 0,
+      "version": "M2.5-246-g2f2b0555",
+      "build_log_sha256": "20411be6d207c0078c420dea343958e79f350a43d68974d13b953cd222390f58",
+      "sdkconfig_sha256": "7761fab5c7034b1de55d3426c4b58e776968d49dcb0192905b21d6674dbb6139",
+      "physical_acceptance": "NOT RUN on this image; previous JC4880 smoke is historical and its soak remains waived; JC1060 hardware deferred to contributor",
+      "application_bytes": 2609952,
+      "application_sha256": "bb23a3a02c556fc897d1be286b7df1ad1a7929804e07385ba312a52ed8b3d302",
+      "elf_bytes": 29755916,
+      "elf_sha256": "7b94be086f1ff43c5577df1a17b7c6525bbd951f69ede1c213ed747722164d57"
+    },
+    "jc1060": {
+      "project": "main-deck-jc1060",
+      "source_sha": "2f2b05558ccb68238d7228f59e52cd6c7d06e12f",
+      "source_dirty": false,
+      "idf_build_exit": 0,
+      "verifier_exit": 0,
+      "version": "M2.5-246-g2f2b0555",
+      "build_log_sha256": "3338a50735e406e52d1f083b3ddf2973e5364b12131dd4d7941ada8c5ba4342b",
+      "sdkconfig_sha256": "70c40dbbafc6e6bc15536cde9eb78614f68c90c3d3049629492bc294767288b3",
+      "physical_acceptance": "NOT RUN on this image; previous JC4880 smoke is historical and its soak remains waived; JC1060 hardware deferred to contributor",
+      "application_bytes": 2668480,
+      "application_sha256": "b031af30c50d9760dffad65d07fdb7837283ac24f74befeec0648b6355691582",
+      "elf_bytes": 30220076,
+      "elf_sha256": "b23906312cfe27a38340739f02e05971c0f0ad9a48be2a8dba31935d0d8664fb"
+    },
+    "m3": {
+      "source_sha": "1556e8d7dfcb4f016c52ab1a372dd2e076dcaa1f",
+      "version": "M3-dev-g1556e8d7dfcb",
+      "build_and_host": "Previously PASS; production code identical to matrix HEAD",
+      "installed": "VALID ota_1",
+      "elf_sha256": "4999176a6b7b1fe9c0f48e7c9687a830b45873d8752afc9a8e1a61d8e7992d93",
+      "short_physical_tests": "100.264s three-loop-exit replay,30.145s isolated controls,60.133s combined semantic run pass strict telemetry and operator confirmations; evidence2026-10-18-m3-cache-bound",
+      "long_soak": "NOT RUN on this image; left last by user request"
+    }
+  }
+}

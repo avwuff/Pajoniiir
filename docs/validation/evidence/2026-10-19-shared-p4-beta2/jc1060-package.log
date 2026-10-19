@@ -1,0 +1,14 @@
+PASS main-deck-jc1060: 2668480 bytes, isolated BSP, LVGL 9.5.0, app identity
+schema_version=1
+target=p4
+chip_id=18
+image_size=2668480
+project=main-deck-jc1060
+version=M2.5-246-g2f2b0555
+sha256=b031af30c50d9760dffad65d07fdb7837283ac24f74befeec0648b6355691582
+key_id=rel-001
+Signed OTA release package: D:\AI\Pajoniiir-shared-p4-core\.cache\shared-p4-beta.2\pajoniiir-jc1060-M2.5-246-g2f2b0555
+  P4 2668480 bytes sha256=b031af30c50d9760dffad65d07fdb7837283ac24f74befeec0648b6355691582
+  signing key id=rel-001 algorithm=ECDSA-P256-SHA256
+  upload main-deck-jc1060.ddjota to P4
+  local debug archive: D:\AI\Pajoniiir-shared-p4-core\.cache\shared-p4-beta.2\pajoniiir-jc1060-M2.5-246-g2f2b0555\debug\debug-manifest.json (not an OTA payload)

@@ -1,0 +1,2 @@
+Production stream policy: JC4880
+Assertion failed: output[i * 4 + 2] == phones[i * 2], file D:\AI\Pajoniiir-shared-p4-core\tests\controller_usb_audio\test_controller_usb_audio_stream.c, line 918

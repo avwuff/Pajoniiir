@@ -1,0 +1,196 @@
+{
+  "source_sha": "c0ee81527b4dbd5d83599140aaa106ebcd27772a",
+  "source_dirty": 0,
+  "donor_sha": "00041a0dd1c704781af4d991b663c05cdb6bd4c3",
+  "idf": "v6.0.2",
+  "targets": [
+    {
+      "project": "main-deck-jc1060",
+      "build_directory": ".cache/idf-jc1060-integration-20261014",
+      "identity": {
+        "source_sha": "c0ee81527b4dbd5d83599140aaa106ebcd27772a",
+        "source_dirty": 0
+      },
+      "version": "M2.5-226-gc0ee8152",
+      "bytes": 2668576,
+      "image_sha256": "b116e043f7a7c73f80e1f5dcc70a36897cc25fc21df52310d145d6b2b9652d44",
+      "elf_sha256": "18e390fdf44224be086616b11cf94b7dc1746bb5c76ead38baca67236281b2c9",
+      "sdkconfig_sha256": "70c40dbbafc6e6bc15536cde9eb78614f68c90c3d3049629492bc294767288b3",
+      "dependency_lock_sha256": "b41213015dc95ae87952b56c5e5672503ffe12bc63325c3a68698ee6f958f72e",
+      "verifier": "PASS main-deck-jc1060: 2668576 bytes, isolated BSP, LVGL 9.5.0, app identity",
+      "restart_capture": {
+        "wrapper_iram_addresses": {
+          "__wrap_panic_arch_fill_info": "0x4ff0240c",
+          "__wrap_panic_soc_fill_info": "0x4ff024ce",
+          "__wrap_esp_restart": "0x4ff0231a",
+          "__wrap_esp_restart_noos": "0x4ff02354"
+        },
+        "actual_callers": {
+          "__wrap_panic_arch_fill_info": [
+            "panic_handler"
+          ],
+          "__wrap_panic_soc_fill_info": [
+            "panic_handler"
+          ],
+          "__wrap_esp_restart": [
+            "__esp_system_init_fn_init_efuse_check",
+            "reboot_cli_handler",
+            "hosted_restart_host",
+            "pajoniiir_common_app_main_with_network",
+            "install_task",
+            "delayed_restart_task",
+            "esp_ota_mark_app_invalid_rollback_and_reboot"
+          ],
+          "__wrap_esp_restart_noos": [
+            "panic_restart",
+            "esp_restart"
+          ]
+        },
+        "capture_address": "0x50108080",
+        "capture_bytes": 256,
+        "coredump_noinit_bounds": [
+          "0x50108080",
+          "0x50108180"
+        ],
+        "initialization_iram_address": "0x4ff022ce",
+        "scope": "linked placement/interception only; physical panic export NOT RUN"
+      },
+      "installed": false,
+      "physical_acceptance": "NOT RUN"
+    },
+    {
+      "project": "main-deck-m3",
+      "build_directory": ".cache/idf-main-deck-m3-integration-20261014",
+      "identity": {
+        "source_sha": "c0ee81527b4dbd5d83599140aaa106ebcd27772a",
+        "source_dirty": 0
+      },
+      "version": "M3-dev-gc0ee81527b4d",
+      "bytes": 2603200,
+      "image_sha256": "7b63771563a5da57ad4547f345edd54bac48d43128e9d2285dfe7a4f2e80d13c",
+      "elf_sha256": "282250f0665266e2fb4aa8a348dbf5c0e619401d75df5c686f229fb652267340",
+      "sdkconfig_sha256": "43e4e2697bba2b70cd21b8aced5003a19048c7d479f765b056bfa0f9c8a0152d",
+      "dependency_lock_sha256": "d034fe6b34c26d451d75878546947b95dba2a0fedf9f53d10216182784f14f3c",
+      "verifier": "PASS main-deck-m3: 2603200 bytes, isolated BSP, LVGL 9.5.0, app identity",
+      "restart_capture": {
+        "wrapper_iram_addresses": {
+          "__wrap_panic_arch_fill_info": "0x4ff0240c",
+          "__wrap_panic_soc_fill_info": "0x4ff024ce",
+          "__wrap_esp_restart": "0x4ff0231a",
+          "__wrap_esp_restart_noos": "0x4ff02354"
+        },
+        "actual_callers": {
+          "__wrap_panic_arch_fill_info": [
+            "panic_handler"
+          ],
+          "__wrap_panic_soc_fill_info": [
+            "panic_handler"
+          ],
+          "__wrap_esp_restart": [
+            "__esp_system_init_fn_init_efuse_check",
+            "reboot_cli_handler",
+            "hosted_restart_host",
+            "pajoniiir_common_app_main_with_network",
+            "install_task",
+            "delayed_restart_task",
+            "esp_ota_mark_app_invalid_rollback_and_reboot"
+          ],
+          "__wrap_esp_restart_noos": [
+            "panic_restart",
+            "esp_restart"
+          ]
+        },
+        "capture_address": "0x50108080",
+        "capture_bytes": 256,
+        "coredump_noinit_bounds": [
+          "0x50108080",
+          "0x50108180"
+        ],
+        "initialization_iram_address": "0x4ff022ce",
+        "scope": "linked placement/interception only; physical panic export NOT RUN"
+      },
+      "installed": false,
+      "physical_acceptance": "NOT RUN"
+    },
+    {
+      "project": "main-deck-p4",
+      "build_directory": ".cache/idf-main-deck-p4-integration-20261014",
+      "identity": {
+        "source_sha": "c0ee81527b4dbd5d83599140aaa106ebcd27772a",
+        "source_dirty": 0
+      },
+      "version": "M2.5-226-gc0ee8152",
+      "bytes": 2609856,
+      "image_sha256": "c887e8449867acbdfb85925930265eef7bb6f1e08f49362a7b4d3d8613dcec7e",
+      "elf_sha256": "ef1e0f36c31b6bba9ef05d81a73c66a22c6f487955b3f859572ec2bcc1ba98e0",
+      "sdkconfig_sha256": "7761fab5c7034b1de55d3426c4b58e776968d49dcb0192905b21d6674dbb6139",
+      "dependency_lock_sha256": "fdfe2610010b7cb25137a35fff3aba3165bc77ffaeff887df9fc715013d85927",
+      "verifier": "PASS main-deck-p4: 2609856 bytes, isolated BSP, LVGL 9.5.0, app identity",
+      "restart_capture": {
+        "wrapper_iram_addresses": {
+          "__wrap_panic_arch_fill_info": "0x4ff0240c",
+          "__wrap_panic_soc_fill_info": "0x4ff024ce",
+          "__wrap_esp_restart": "0x4ff0231a",
+          "__wrap_esp_restart_noos": "0x4ff02354"
+        },
+        "actual_callers": {
+          "__wrap_panic_arch_fill_info": [
+            "panic_handler"
+          ],
+          "__wrap_panic_soc_fill_info": [
+            "panic_handler"
+          ],
+          "__wrap_esp_restart": [
+            "__esp_system_init_fn_init_efuse_check",
+            "reboot_cli_handler",
+            "hosted_restart_host",
+            "pajoniiir_common_app_main_with_network",
+            "install_task",
+            "delayed_restart_task",
+            "esp_ota_mark_app_invalid_rollback_and_reboot"
+          ],
+          "__wrap_esp_restart_noos": [
+            "panic_restart",
+            "esp_restart"
+          ]
+        },
+        "capture_address": "0x50108080",
+        "capture_bytes": 256,
+        "coredump_noinit_bounds": [
+          "0x50108080",
+          "0x50108180"
+        ],
+        "initialization_iram_address": "0x4ff022ce",
+        "scope": "linked placement/interception only; physical panic export NOT RUN"
+      },
+      "installed": false,
+      "physical_acceptance": "NOT RUN"
+    }
+  ],
+  "host": {
+    "command": "tests/run_p4_host_tests.ps1 -Qualification -KeepArtifacts",
+    "exit_code": 0,
+    "optional_skips": 0,
+    "log_sha256": "987268c78fb27489a654bb2512a9b8ae7616515dae4ecdc3e6a6acaf913065c9"
+  },
+  "ui": {
+    "baselines_updated": false,
+    "presentations": {
+      "product-compact": "93d3f8e8a914b64b45394a0f42fab228ecf1ed1a867e40efb971ebd35a7e94c9",
+      "product-wide": "a384df16976e996b1a25abbee811fd7b4bffadeb1595be46d0dd6d64999bbd6f",
+      "product-m3": "5ea2696a54249e36e81f2c1e0dc71ac402541ebe6e61ad0308d6865223b6557a",
+      "link-wide": "7bcbeb249fb16e2d10d5db6d05cdb791358673935012b9c0f12a9d05a4e26267"
+    }
+  },
+  "linux_dependency_contract": "PASS; full Linux firmware build NOT RUN",
+  "dependency_locks_changed": false,
+  "published": false,
+  "logs": {
+    ".cache/jc1060-integration-host-final.log": "987268c78fb27489a654bb2512a9b8ae7616515dae4ecdc3e6a6acaf913065c9",
+    ".cache/jc1060-integration-docs-final.log": "d3b2ae0a789e35cc2437257cd7f04d1e66b1e84bb1f9217e4294b731ff5225c4",
+    ".cache/jc1060-integration-linux-dependency-policy.log": "b57847562bc27345675511073df5283092581e42ec10cf28f862950146f1ade8",
+    ".cache/main-deck-jc1060-integration-clean-build.log": "7cf61c5eda124617068f85f3aad54e5a1f67796db4904fc9507662ff24a4cf7f",
+    ".cache/main-deck-m3-integration-clean-build.log": "97ab98a994cd0d9ca26cd0e806c5c191f19a50e630bb6830da8a78a1867028da",
+    ".cache/main-deck-p4-integration-clean-build.log": "ba647d61fa2203777ac57cc94dc698c686cc12f310fbccda3e00ddabf5a341f1"
+  }
+}

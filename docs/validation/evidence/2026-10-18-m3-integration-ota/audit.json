@@ -1,0 +1,24 @@
+{
+  "offline_audit": "pass",
+  "samples": 101,
+  "strict_paths": 22,
+  "source_sha": "c0ee81527b4dbd5d83599140aaa106ebcd27772a",
+  "image_elf_sha256": "282250f0665266e2fb4aa8a348dbf5c0e619401d75df5c686f229fb652267340",
+  "duration_s": 60.531999999999925,
+  "midi_packets_delta": 2100,
+  "output_late_delta": 0,
+  "final_stopped": true,
+  "all_samples_same_identity_and_healthy_uac": true,
+  "pitch_percent": [
+    0,
+    0
+  ],
+  "master_tempo": [
+    false,
+    false
+  ],
+  "historical_crash_summary_unchanged": true,
+  "saved_historical_crash_dump_sha256": "356d0a050d773a9eb287f7a1da51a1e9ba1c67bdb9d99e0af85d47d6902a4a14",
+  "operator_confirmation": "recorded separately when received",
+  "scope": "Short ordinary M3/FLX4 mixed-rate smoke; not a soak or full hardware qualification"
+}

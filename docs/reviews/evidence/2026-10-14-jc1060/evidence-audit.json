@@ -1,0 +1,342 @@
+{
+  "D-audio\\d8_observe_600s_result.json": {
+    "result": "pass",
+    "mode": "Observe",
+    "duration": 600.007,
+    "samples": 2397,
+    "identity": {
+      "board_id": "jc1060",
+      "project": "main-deck-jc1060",
+      "source_sha": "4e3aa2b41ebcebdedb7ab9e25715553a6bff9416",
+      "source_dirty": false,
+      "image_elf_sha256": "08e56f320fd473fc1046950ba54922ac8a0724e17ede15255372c884511c736e"
+    },
+    "baseline": {
+      "output_late": 0,
+      "pcm1": 0,
+      "pcm2": 0,
+      "uac_dropped": 0,
+      "uac_overflow": 0,
+      "uac_underflow": 1838264,
+      "service_log_dropped": 0
+    },
+    "final": {
+      "output_late": 0,
+      "pcm1": 0,
+      "pcm2": 0,
+      "uac_dropped": 0,
+      "uac_overflow": 0,
+      "uac_underflow": 1838264,
+      "service_log_dropped": 0
+    },
+    "calculated_deltas": {
+      "output_late": 0,
+      "pcm1": 0,
+      "pcm2": 0,
+      "uac_dropped": 0,
+      "uac_overflow": 0,
+      "uac_underflow": 0,
+      "service_log_dropped": 0
+    },
+    "declared_deltas": {
+      "output_late": 0,
+      "pcm1": 0,
+      "pcm2": 0,
+      "uac_dropped": 0,
+      "uac_overflow": 0,
+      "uac_underflow": 0,
+      "service_log_dropped": 0
+    },
+    "physical_operator_acceptance": "NOT RUN",
+    "timing_workload": {
+      "samples": 0,
+      "violations": 0
+    }
+  },
+  "E-storage\\e9_observe_1800s_result.json": {
+    "result": "pass",
+    "mode": "Observe",
+    "duration": 1800.207,
+    "samples": 7183,
+    "identity": {
+      "board_id": "jc1060",
+      "project": "main-deck-jc1060",
+      "source_sha": "4e3aa2b41ebcebdedb7ab9e25715553a6bff9416",
+      "source_dirty": false,
+      "image_elf_sha256": "08e56f320fd473fc1046950ba54922ac8a0724e17ede15255372c884511c736e"
+    },
+    "baseline": {
+      "output_late": 0,
+      "pcm1": 0,
+      "pcm2": 0,
+      "uac_dropped": 0,
+      "uac_overflow": 0,
+      "uac_underflow": 8014204,
+      "service_log_dropped": 0
+    },
+    "final": {
+      "output_late": 0,
+      "pcm1": 0,
+      "pcm2": 0,
+      "uac_dropped": 0,
+      "uac_overflow": 0,
+      "uac_underflow": 8014204,
+      "service_log_dropped": 0
+    },
+    "calculated_deltas": {
+      "output_late": 0,
+      "pcm1": 0,
+      "pcm2": 0,
+      "uac_dropped": 0,
+      "uac_overflow": 0,
+      "uac_underflow": 0,
+      "service_log_dropped": 0
+    },
+    "declared_deltas": {
+      "output_late": 0,
+      "pcm1": 0,
+      "pcm2": 0,
+      "uac_dropped": 0,
+      "uac_overflow": 0,
+      "uac_underflow": 0,
+      "service_log_dropped": 0
+    },
+    "physical_operator_acceptance": "NOT RUN",
+    "timing_workload": {
+      "samples": 0,
+      "violations": 0
+    }
+  },
+  "H-soak\\h2_observe_3600s_result.json": {
+    "result": "pass",
+    "mode": "Observe",
+    "duration": 3600.163,
+    "samples": 14378,
+    "identity": {
+      "board_id": "jc1060",
+      "project": "main-deck-jc1060",
+      "source_sha": "4e3aa2b41ebcebdedb7ab9e25715553a6bff9416",
+      "source_dirty": false,
+      "image_elf_sha256": "08e56f320fd473fc1046950ba54922ac8a0724e17ede15255372c884511c736e"
+    },
+    "baseline": {
+      "output_late": 0,
+      "pcm1": 0,
+      "pcm2": 0,
+      "uac_dropped": 0,
+      "uac_overflow": 0,
+      "uac_underflow": 1315591,
+      "service_log_dropped": 0
+    },
+    "final": {
+      "output_late": 0,
+      "pcm1": 0,
+      "pcm2": 0,
+      "uac_dropped": 0,
+      "uac_overflow": 0,
+      "uac_underflow": 1315591,
+      "service_log_dropped": 0
+    },
+    "calculated_deltas": {
+      "output_late": 0,
+      "pcm1": 0,
+      "pcm2": 0,
+      "uac_dropped": 0,
+      "uac_overflow": 0,
+      "uac_underflow": 0,
+      "service_log_dropped": 0
+    },
+    "declared_deltas": {
+      "output_late": 0,
+      "pcm1": 0,
+      "pcm2": 0,
+      "uac_dropped": 0,
+      "uac_overflow": 0,
+      "uac_underflow": 0,
+      "service_log_dropped": 0
+    },
+    "physical_operator_acceptance": "NOT RUN",
+    "timing_workload": {
+      "samples": 0,
+      "violations": 0
+    }
+  },
+  "H-soak\\h3_observe_14400s_result.json": {
+    "result": "pass",
+    "mode": "Observe",
+    "duration": 14400.093,
+    "samples": 57493,
+    "identity": {
+      "board_id": "jc1060",
+      "project": "main-deck-jc1060",
+      "source_sha": "4e3aa2b41ebcebdedb7ab9e25715553a6bff9416",
+      "source_dirty": false,
+      "image_elf_sha256": "08e56f320fd473fc1046950ba54922ac8a0724e17ede15255372c884511c736e"
+    },
+    "baseline": {
+      "output_late": 0,
+      "pcm1": 0,
+      "pcm2": 0,
+      "uac_dropped": 0,
+      "uac_overflow": 0,
+      "uac_underflow": 1315591,
+      "service_log_dropped": 0
+    },
+    "final": {
+      "output_late": 0,
+      "pcm1": 0,
+      "pcm2": 0,
+      "uac_dropped": 0,
+      "uac_overflow": 0,
+      "uac_underflow": 1315591,
+      "service_log_dropped": 0
+    },
+    "calculated_deltas": {
+      "output_late": 0,
+      "pcm1": 0,
+      "pcm2": 0,
+      "uac_dropped": 0,
+      "uac_overflow": 0,
+      "uac_underflow": 0,
+      "service_log_dropped": 0
+    },
+    "declared_deltas": {
+      "output_late": 0,
+      "pcm1": 0,
+      "pcm2": 0,
+      "uac_dropped": 0,
+      "uac_overflow": 0,
+      "uac_underflow": 0,
+      "service_log_dropped": 0
+    },
+    "physical_operator_acceptance": "NOT RUN",
+    "timing_workload": {
+      "samples": 0,
+      "violations": 0
+    }
+  },
+  "O-observability\\o5_observe_120s_result.json": {
+    "result": "pass",
+    "mode": "Observe",
+    "duration": 120.111,
+    "samples": 480,
+    "identity": {
+      "board_id": "jc1060",
+      "project": "main-deck-jc1060",
+      "source_sha": "4ca426d8f0d68db317446281c6d9b6a1b34ad219",
+      "source_dirty": false,
+      "image_elf_sha256": "b73c4e95b9c8c7e27bd6cdec31c1ab298a7b8746972ab68afe0aed63970a3f53"
+    },
+    "baseline": {
+      "output_late": 0,
+      "pcm1": 0,
+      "pcm2": 0,
+      "uac_dropped": 0,
+      "uac_overflow": 0,
+      "uac_underflow": 1378918,
+      "service_log_dropped": 0
+    },
+    "final": {
+      "output_late": 0,
+      "pcm1": 0,
+      "pcm2": 0,
+      "uac_dropped": 0,
+      "uac_overflow": 0,
+      "uac_underflow": 6668096,
+      "service_log_dropped": 0
+    },
+    "calculated_deltas": {
+      "output_late": 0,
+      "pcm1": 0,
+      "pcm2": 0,
+      "uac_dropped": 0,
+      "uac_overflow": 0,
+      "uac_underflow": 5289178,
+      "service_log_dropped": 0
+    },
+    "declared_deltas": {
+      "output_late": 0,
+      "pcm1": 0,
+      "pcm2": 0,
+      "uac_dropped": 0,
+      "uac_overflow": 0,
+      "uac_underflow": 5289178,
+      "service_log_dropped": 0
+    },
+    "physical_operator_acceptance": "NOT RUN",
+    "timing_workload": {
+      "samples": 0,
+      "violations": 0
+    }
+  },
+  "transition_stress": {
+    "top_level_keys": [
+      "schema",
+      "result",
+      "firmware_version",
+      "firmware_slot",
+      "boot_epoch",
+      "requested_cycles",
+      "completed_operations",
+      "actual_seconds",
+      "baseline",
+      "final",
+      "operations",
+      "samples",
+      "failures"
+    ],
+    "result": "PASS",
+    "requested_cycles": 12,
+    "completed_operations": 12,
+    "actual_seconds": 76.343,
+    "samples": 182,
+    "calculated_audio_deltas": {
+      "underflow_frames": 0,
+      "overflow_frames": 0,
+      "dropped_blocks": 0,
+      "packet_failures": 0,
+      "packet_lost_frames": 0,
+      "pcm1": 0,
+      "pcm2": 0,
+      "output_late": 0
+    },
+    "failures": []
+  },
+  "peer_loss": {
+    "total_rows": 115,
+    "status_rows": 115,
+    "duration_wall_s": 114.01999998092651,
+    "playing_both": 115,
+    "counter_deltas": {
+      "pcm_underrun1": 0,
+      "pcm_underrun2": 0,
+      "output_late_count": 0,
+      "af": 0,
+      "sderr": 0
+    },
+    "max_position_minus_uptime_step_ms": {
+      "deck1": 22,
+      "deck2": 23
+    }
+  },
+  "lock_line_endings": {
+    "usb": {
+      "path": "D:\\AI\\Pajoniiir-shared-p4-core\\firmware\\main-deck-jc1060\\managed_components\\usb",
+      "hashes": {
+        "original": "46e3c0998d347f0ed9413ed9884b8be7393e3bb364bae3c87cdc21419aca9eab",
+        "LF": "6250cd00a0fc5cf760980d7d6ef09718044aee4b03bc4594d97ca5c019b7a56a",
+        "CRLF": "46e3c0998d347f0ed9413ed9884b8be7393e3bb364bae3c87cdc21419aca9eab"
+      },
+      "component_hash_file": "46e3c0998d347f0ed9413ed9884b8be7393e3bb364bae3c87cdc21419aca9eab"
+    },
+    "espressif__usb_host_msc": {
+      "path": "D:\\AI\\Pajoniiir-shared-p4-core\\firmware\\main-deck-jc1060\\managed_components\\espressif__usb_host_msc",
+      "hashes": {
+        "original": "f5f178d5941a0ff4baa97ea8cfe0a7831731acc548773a2560ded1947a29a52e",
+        "LF": "77da0bd49685353d8de7e0515acf0f4aa2b827d526f8ffae27b3644c3d0da4d0",
+        "CRLF": "f5f178d5941a0ff4baa97ea8cfe0a7831731acc548773a2560ded1947a29a52e"
+      },
+      "component_hash_file": "f5f178d5941a0ff4baa97ea8cfe0a7831731acc548773a2560ded1947a29a52e"
+    }
+  }
+}

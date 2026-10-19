@@ -370,6 +370,7 @@ typedef enum {
     CTRL_EV_BROWSE,
     CTRL_EV_PITCH,
     CTRL_EV_STATE,
+    CTRL_EV_CUE_TAP, /* internal actor command; never a profile/wire event */
 } ctrl_event_type_t;
 
 typedef struct {

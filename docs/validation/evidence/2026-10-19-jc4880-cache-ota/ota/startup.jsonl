@@ -1,0 +1,7 @@
+{"utc": "2026-10-19T07:41:20.972900+00:00", "firmware": {"target": "p4", "state": "ready_to_reboot", "board_id": "jc4880", "project": "main-deck-p4", "source_sha": "605bcd20d6dadf250ce1816d82353ee2ace21867", "source_dirty": false, "image_elf_sha256": "f1c788368a7feff414909e248043df085e8e5e5e484d7394a5cf99c80fedfeb7", "running_image_state": "valid", "running_slot": "ota_1", "running_version": "M2.5-231-g605bcd20", "target_slot": "ota_0", "target_version": "M2.5-249-g0a33ec1f", "expected_size": 2609952, "received_size": 2609952, "last_error": ""}}
+{"utc": "2026-10-19T07:41:24.052632+00:00", "error": "<urlopen error timed out>"}
+{"utc": "2026-10-19T07:41:32.057209+00:00", "error": "<urlopen error [WinError 10053] An established connection was aborted by the software in your host machine>"}
+{"utc": "2026-10-19T07:41:38.432715+00:00", "error": "<urlopen error timed out>"}
+{"utc": "2026-10-19T07:41:46.440786+00:00", "error": "<urlopen error timed out>"}
+{"utc": "2026-10-19T07:41:54.452211+00:00", "error": "<urlopen error timed out>"}
+{"utc": "2026-10-19T07:42:02.459313+00:00", "error": "<urlopen error timed out>"}

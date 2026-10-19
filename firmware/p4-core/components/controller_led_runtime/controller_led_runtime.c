@@ -58,11 +58,16 @@ esp_err_t controller_led_runtime_send(uint8_t led,
                                       uint8_t state,
                                       uint8_t deck)
 {
+    /* Mapping and both bank packets must belong to one physical connection.
+     * Capturing the generation after mapping could admit an old address to a
+     * newly attached controller. */
+    const uint32_t generation = controller_usb_host_output_generation();
     uint8_t packet[4];
     if (!controller_led_runtime_build_packet(led, state, deck, packet)) {
         return ESP_ERR_NOT_SUPPORTED;
     }
-    const esp_err_t rc = controller_usb_host_send_packet(packet);
+    const esp_err_t rc = controller_usb_host_send_packet_for_generation(
+        packet, generation);
     if (rc != ESP_OK) {
         (void)__atomic_add_fetch(&s_send_failures, 1u,
                                  __ATOMIC_RELAXED);
@@ -74,7 +79,8 @@ esp_err_t controller_led_runtime_send(uint8_t led,
         identity.vid == 0x2B73u && identity.pid == 0x0045u &&
         flx4_led_midi_build_shifted_mirror_packet(
             led, state, deck, packet)) {
-        const esp_err_t mirror_rc = controller_usb_host_send_packet(packet);
+        const esp_err_t mirror_rc = controller_usb_host_send_packet_for_generation(
+            packet, generation);
         if (mirror_rc != ESP_OK) {
             (void)__atomic_add_fetch(&s_send_failures, 1u,
                                      __ATOMIC_RELAXED);

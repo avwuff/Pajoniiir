@@ -1,0 +1,259 @@
+{
+  "master": "8d56f303d13c06daa3d194ae1211785a8cdc33e3",
+  "shared": "584dc0d2b43e8a9deb847b83191a87f40f5a4d0b",
+  "branches": [
+    {
+      "ref": "origin/codex/shared-p4-core-m3",
+      "source_sha": "584dc0d2b43e8a9deb847b83191a87f40f5a4d0b",
+      "merge_base_master": "8d56f303d13c06daa3d194ae1211785a8cdc33e3",
+      "ahead_behind": {
+        "master": [
+          0,
+          32
+        ],
+        "shared": [
+          0,
+          0
+        ]
+      },
+      "cherry": {
+        "master": {
+          "patch_equivalent": 0,
+          "unique_patch": 32
+        },
+        "shared": {
+          "patch_equivalent": 0,
+          "unique_patch": 0
+        }
+      },
+      "virtual_merge": {
+        "master": {
+          "exit": 0,
+          "tree": "87201354b437f3a17249ec9d1f589423b53fe6b9",
+          "conflict_paths": []
+        },
+        "shared": {
+          "exit": 0,
+          "tree": "87201354b437f3a17249ec9d1f589423b53fe6b9",
+          "conflict_paths": []
+        }
+      },
+      "unique_commits_since_master_base": 32,
+      "changed_files_since_master_base": 552
+    },
+    {
+      "ref": "origin/jc8012p4a1-v3",
+      "source_sha": "694ecd6a3f59caa99fd0811e11e0c29d77219411",
+      "merge_base_master": "8d56f303d13c06daa3d194ae1211785a8cdc33e3",
+      "ahead_behind": {
+        "master": [
+          0,
+          97
+        ],
+        "shared": [
+          32,
+          97
+        ]
+      },
+      "cherry": {
+        "master": {
+          "patch_equivalent": 0,
+          "unique_patch": 97
+        },
+        "shared": {
+          "patch_equivalent": 0,
+          "unique_patch": 97
+        }
+      },
+      "virtual_merge": {
+        "master": {
+          "exit": 0,
+          "tree": "62acc57b84cc3050e44f8f94203ebd4c3ab54fa0",
+          "conflict_paths": []
+        },
+        "shared": {
+          "exit": 1,
+          "tree": "597a17ba11d94ef92f0fa68be3455076666b7f66",
+          "conflict_paths": [
+            "controllers/pioneer_ddj_400/README.md",
+            "firmware/main-deck-jc1060/main/CMakeLists.txt",
+            "firmware/main-deck-jc1060/main/app_main.c",
+            "firmware/p4-core/components/board_capabilities/board_capabilities.c",
+            "firmware/p4-core/components/board_capabilities/include/board_capabilities.h",
+            "firmware/p4-core/components/controller_usb_audio/controller_usb_audio_stream.c",
+            "firmware/p4-core/components/usb_storage/usb_storage_shared.c",
+            "firmware/p4-core/components/web_server/web_server.c",
+            "tools/build_storage_experiment.ps1"
+          ]
+        }
+      },
+      "unique_commits_since_master_base": 97,
+      "changed_files_since_master_base": 115
+    },
+    {
+      "ref": "origin/kay/jc1060-hw-bench",
+      "source_sha": "00041a0dd1c704781af4d991b663c05cdb6bd4c3",
+      "merge_base_master": "8d56f303d13c06daa3d194ae1211785a8cdc33e3",
+      "ahead_behind": {
+        "master": [
+          0,
+          61
+        ],
+        "shared": [
+          32,
+          61
+        ]
+      },
+      "cherry": {
+        "master": {
+          "patch_equivalent": 0,
+          "unique_patch": 61
+        },
+        "shared": {
+          "patch_equivalent": 0,
+          "unique_patch": 61
+        }
+      },
+      "virtual_merge": {
+        "master": {
+          "exit": 0,
+          "tree": "edb57d7aef24e79094a5da60caaa6284fd7ed124",
+          "conflict_paths": []
+        },
+        "shared": {
+          "exit": 1,
+          "tree": "f4fbe9fa77538f0a51ba7765a676dcd6f819b7c3",
+          "conflict_paths": [
+            "controllers/pioneer_ddj_400/README.md",
+            "firmware/main-deck-jc1060/main/CMakeLists.txt",
+            "firmware/main-deck-jc1060/main/app_main.c",
+            "firmware/p4-core/components/board_capabilities/include/board_capabilities.h",
+            "firmware/p4-core/components/controller_usb_audio/controller_usb_audio_stream.c",
+            "firmware/p4-core/components/usb_storage/usb_storage_shared.c",
+            "firmware/p4-core/components/web_server/web_server.c",
+            "tools/build_storage_experiment.ps1"
+          ]
+        }
+      },
+      "unique_commits_since_master_base": 61,
+      "changed_files_since_master_base": 71
+    },
+    {
+      "ref": "origin/kay/new-ui",
+      "source_sha": "b8dccf260db4c919cae209091a70ef18f89f18cc",
+      "merge_base_master": "8d56f303d13c06daa3d194ae1211785a8cdc33e3",
+      "ahead_behind": {
+        "master": [
+          0,
+          19
+        ],
+        "shared": [
+          32,
+          19
+        ]
+      },
+      "cherry": {
+        "master": {
+          "patch_equivalent": 0,
+          "unique_patch": 19
+        },
+        "shared": {
+          "patch_equivalent": 0,
+          "unique_patch": 19
+        }
+      },
+      "virtual_merge": {
+        "master": {
+          "exit": 0,
+          "tree": "8a778123430aad294c2c80252e76cd4c1b7fa7a3",
+          "conflict_paths": []
+        },
+        "shared": {
+          "exit": 0,
+          "tree": "9eefb9ae5db1847829c2d92da725a5bab953a76f",
+          "conflict_paths": []
+        }
+      },
+      "unique_commits_since_master_base": 19,
+      "changed_files_since_master_base": 82
+    },
+    {
+      "ref": "origin/numark-dj2go2-touch",
+      "source_sha": "86d6b412b2ba11908b48518dfaf26d51f6c3e0f6",
+      "merge_base_master": "8d56f303d13c06daa3d194ae1211785a8cdc33e3",
+      "ahead_behind": {
+        "master": [
+          0,
+          7
+        ],
+        "shared": [
+          32,
+          7
+        ]
+      },
+      "cherry": {
+        "master": {
+          "patch_equivalent": 0,
+          "unique_patch": 7
+        },
+        "shared": {
+          "patch_equivalent": 0,
+          "unique_patch": 7
+        }
+      },
+      "virtual_merge": {
+        "master": {
+          "exit": 0,
+          "tree": "7e728b3cc2b1ce4be4f37220b921ae7159244bec",
+          "conflict_paths": []
+        },
+        "shared": {
+          "exit": 0,
+          "tree": "95f54bbbc7598d4e99b20542fa739033e15b8b1a",
+          "conflict_paths": []
+        }
+      },
+      "unique_commits_since_master_base": 7,
+      "changed_files_since_master_base": 4
+    },
+    {
+      "ref": "codex/p4-apta-library",
+      "source_sha": "364930b65eceefb562fec597c6c0c681c96084e7",
+      "merge_base_master": "364930b65eceefb562fec597c6c0c681c96084e7",
+      "ahead_behind": {
+        "master": [
+          535,
+          0
+        ],
+        "shared": [
+          567,
+          0
+        ]
+      },
+      "cherry": {
+        "master": {
+          "patch_equivalent": 0,
+          "unique_patch": 0
+        },
+        "shared": {
+          "patch_equivalent": 0,
+          "unique_patch": 0
+        }
+      },
+      "virtual_merge": {
+        "master": {
+          "exit": 0,
+          "tree": "6b4fb71cdd4204291a32e1a583ade9fafc387739",
+          "conflict_paths": []
+        },
+        "shared": {
+          "exit": 0,
+          "tree": "87201354b437f3a17249ec9d1f589423b53fe6b9",
+          "conflict_paths": []
+        }
+      },
+      "unique_commits_since_master_base": 0,
+      "changed_files_since_master_base": 0
+    }
+  ]
+}

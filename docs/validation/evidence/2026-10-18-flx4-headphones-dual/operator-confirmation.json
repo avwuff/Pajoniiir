@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-18",
+  "source_sha": "605bcd20d6dadf250ce1816d82353ee2ace21867",
+  "version": "M2.5-231-g605bcd20",
+  "image_elf_sha256": "f1c788368a7feff414909e248043df085e8e5e5e484d7394a5cf99c80fedfeb7",
+  "question_hr": "Jesu li tijekom testa oba joga/Browse, PFL D1/D2 i headphone MIX/LEVEL reagirali očekivano, MAIN i FLX4 slušalice bili čisti te oba waveforma fluidna, uključujući loop/CUE prijelaze? Navedi ako neki korak nisi stigao provjeriti.",
+  "answer_hr": "Sve navedeno provjereno i uredno",
+  "result": "operator PASS for this 60-s combined smoke",
+  "scope": "Short exact-image mixed-rate MT/loop/CUE controls and audio/visual; not long soak or club acceptance"
+}

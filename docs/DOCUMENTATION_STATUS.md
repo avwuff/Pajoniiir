@@ -1,6 +1,228 @@
 # Documentation status
 
-Status: **current documentation authority, reconciled 2026-10-11**.
+Status: **current documentation authority, reconciled 2026-10-19**.
+
+The [remaining-branches merge review](reviews/2026-10-19-remaining-branches-merge-review.md)
+freezes all remote development tips and the local APTA branch. It recommends
+integrating the qualified shared branch into master first, retaining new UI as
+a disabled prototype, repairing Numark PFL/test wiring, and splitting JC8012
+from inherited donor repairs, the PPA override and unresolved touch-driver
+provenance. The JC1060 donor is already selectively adapted; APTA is ancestral.
+Virtual merges and focused software checks do not qualify new hardware. This
+review performs no merge, branch deletion, firmware change or publication.
+
+[shared-p4-beta.2](validation/SHARED_P4_BETA_2_20261019.md) is now published and
+independently verified as a non-Latest GitHub prerelease. Sixteen public assets
+match their sealed originals;222 ZIP entries, all signatures and exact
+board/source/version/ELF/configuration records verify. Retained accepted M3 and
+JC4880 binaries are unchanged; JC1060 remains software-only pending Kayrosen.
+The three embedded versions/sources intentionally differ under one distribution
+tag. Stable M2.5, beta1 assets and public latest.json are unchanged. Hosted CI
+remains NOT RUN under the quota waiver; no new physical acceptance is inferred.
+
+The [final-hour offline review and JC4880 OTA](validation/M3_SOAK_CLOSEOUT_JC4880_OTA_20261019.md)
+complete the saved-journal interpretation without modifying production firmware
+or repeating M3's accepted hour. The selected same-boot window has no new
+>=50-ms outlier; rate-limited phase/DMA context does not identify an exact cause.
+Ordinary JC4880 `M2.5-249-g0a33ec1f` passes incremental IDF6.0.2 build, board
+verification and signed packaging, then a single HTTP200 OTA confirms VALID
+ota_0 and operator GUI acceptance after host DHCP restoration. Its short smoke
+is recorded separately; the first monitor attempt incorrectly imposed M3's
+48-kHz MAIN policy on JC4880's selected44.1-kHz rate and is incomplete, with all
+strict deltas unchanged. The corrected60.234-s/93-sample smoke records1,902 MIDI
+packets, all22 strict deltas/late0, confirmed loop/CUE/PLAY actions and final
+stopped/loops OFF. The operator confirms controls, clean MAIN/FLX4 headphones
+and fluid waveforms. MIDI precedes automatic loop activation/exit, so sustained
+exit-time pressure is not inferred. All101 saved sample/action/boundary status
+snapshots pass independent offline audit. No public release/channel or JC soak
+waiver changes.
+
+The [MT fallback handoff repair](validation/M3_MT_FALLBACK_HANDOFF_20261018.md)
+reproduces a separate same-generation stale-clock defect: ordinary resampling
+advances the consumer, then MT resumes its old cursor and rewinds it. The real
+engine callback fails the new host regression before repair; all 224 cases
+pass after re-anchoring to the actual playhead. Host qualification, ordinary M3
+incremental build and signed packaging pass. Clean `2fa22631` is VALID `ota_1`.
+Its 43.137-s loop-exit retest fails on 11 UAC dropped blocks / 2,251 overflow
+frames and a 142,503-us output-late (139,212 us in one mix group); other 20 strict
+deltas are zero. Both decks are stopped, loops OFF; operator reports no symptom
+or control movement. CUE phases were not reached. The bounded mix-window DMA
+observer `f1c5ec9c` passes host/build/package and is VALID `ota_0`. Its first
+60.267-s loop/CUE retest has all 22 strict deltas and output-late zero, with
+operator audio/display/transition confirmation. No outlier reproduced: this
+does not establish its cause or a timing repair. A subsequent phase sweep fails
+at20.192 s on D2 PCM +1,546, UAC drop +13 / overflow +2,318 and output-late142,477 us.
+New DMA context records one completion /141,430-us gap during mix141,841 us,
+supporting interrupt starvation rather than attributing all time to MT work.
+The ordinary path lacks the existing HS1-KiB task-context cache bound; extending
+that shared policy is RED/GREEN host-reproduced. Clean `1556e8d7` passes host
+qualification, M3 build/package and is VALID `ota_1`. Its exact-source-position
+replay completes 100.264 s /142 samples and three loop exits with all22 strict
+deltas and output-late zero; the operator confirms the full audio/display/exit
+window. Both decks are stopped, loops OFF. This closes the short targeted replay,
+not long reliability or exact causal attribution. A separate30.145-s active
+jog/Browse test records2,406 MIDI packets, all22 strict deltas/late0 and operator
+confirmation of both controls/audio/display. Both decks are stopped. Combined
+controls/loop/CUE run then completes60.133 s /83 samples /1,951 MIDI packets,
+all22 strict deltas/late0 and operator full-test PASS. Input mostly precedes
+loop activation and stops before loop clear; sustained exit-time pressure and
+long qualification remain unrun. Earlier admission/PCM/UAC failures remain
+preserved. Both decks are stopped, loops OFF. JC4880/JC1060 ordinary IDF6.0.2
+incremental builds and board verifiers pass clean `2f2b0555` (production code
+identical to installed1556e8d7), 2,609,952 /2,668,480 bytes respectively; all three
+dependency locks unchanged. See the
+[build matrix](validation/evidence/2026-10-18-shared-cache-builds/matrix.json).
+Neither JC image is installed or physically accepted here; JC4880 soak stays
+waived, JC1060 hardware stays deferred to Kayrosen and hosted CI is NOT RUN.
+The subsequent final exact-image M3 soak completes3600.286 s /5,301 samples:
+all22 strict counters remain unchanged throughout, final identity stays clean
+1556e8d7 VALID ota_1, both decks stopped, healthy FLX4 FS44.1-kHz streaming.
+Both MT/loops and mixed source rates remain active throughout sampling.
+Output-late24/max12,988 us includes a sample-observed3/60-s cluster, so the
+classification is complete_with_output_late_investigation, not zero-late or an
+unconditional reliability PASS. On2026-10-19 the operator confirms clean MAIN
+and FLX4 headphones, fluid waveforms and stable display for the entire hour;
+the later operator-confirmation record preserves this separately from the
+original audit. Headphone LEVEL changes around860–861 s account for74 observed MIDI
+packets; this is not an untouched-controls claim. The
+[all-sample audit](validation/evidence/2026-10-19-m3-cache-bound-soak/audit.json)
+and hashed compressed raw responses preserve that scope. Earlier long-soak
+NOT RUN statements above describe the earlier short-test stage. Nothing is
+published; open JC physical, hosted CI and remaining shared-core gates stand.
+
+The [shared status observer repair](validation/M3_STATUS_OBSERVER_REPAIR_20261018.md)
+removes unbounded internal/DMA largest-block walks from ordinary as well as HS
+memory snapshots. Free/low-water counters remain measured; fragmentation and
+walk timings are explicitly unavailable, without weakening resource thresholds.
+Full host qualification, ordinary M3 build, board/budget checks and signed
+packaging pass. Clean `3459a97a` is installed VALID `ota_0`; live unavailable
+memory fields and GUI are confirmed. The active-control retest stops at
+25.968 s on 19 runtime admission failures; a separate zero-MIDI loop-only
+retest stops at 42.186 s on 13 UAC dropped blocks/2,320 overflow frames and a
+142,441-us output-late event concentrated in one mix segment. PCM deltas are
+zero on both retests. Both end stopped, loops OFF. The operator reports no
+disturbance and sufficient headphone volume; both telemetry FAILs remain.
+The observer defect is repaired, but loop-exit mix timing and controller
+admission remain open. The prior PCM2 failure is preserved, not reclassified.
+
+The [ordinary M3 headphone-repair package](validation/M3_HEADPHONE_PACKAGE_20261018.md)
+is prepared locally as clean `M3-dev-g71ee534269bf`, project `main-deck-m3`.
+The fresh ESP-IDF 6.0.2 build, ordinary board/component/budget verifier and signed
+bundle/manifest packaging pass. Effective configuration matches the preceding
+ordinary M3 build; the shared production/test/tooling code matches qualified
+`605bcd20`. FLX4 USB2 / storage USB3, PCM5102A MAIN, accepted display/touch and
+Wi-Fi defaults are retained. A subsequent explicitly authorized local OTA
+uploads the same bundle with HTTP 200 and confirms exact source/version/ELF,
+VALID `ota_1`, idle OTA service, FLX4 MIDI/non-faulted 44.1-kHz UAC and 260
+tracks. Both decks remain stopped and the historical crash summary is unchanged.
+The operator confirms GUI/touch; live LEVEL=0 / MIX=0 readback matches the
+reported physical knobs after movement.
+A later operator-ready mixed-rate MT smoke stops at 40.642 s on 3,387 new D2
+PCM underrun counts while awaiting loop-clear completion; the other 21 strict
+deltas and output-late remain zero. Both decks end stopped, loops OFF. The
+operator confirms no perceived disturbance and sufficient headphone volume.
+Volume is accepted for this window; the incomplete combined smoke is a
+telemetry FAIL. Loop-exit refill versus diagnostic observer timing remains
+unresolved; the 436,751-us heap-query wall time does not prove causation.
+Evidence is archived without a firmware change, rerun or public publication.
+
+The [FLX4 headphone-level investigation](validation/FLX4_HEADPHONE_LEVEL_20261018.md)
+reproduces a 12.041-dB dedicated headphone loss in the former JC4880 `c7d2e9cd`
+PCM-paced FLX4 transport. The repair restores dedicated cue unity and exposes
+headphone LEVEL. Clean `605bcd20` is now VALID `ota_1`; full host qualification,
+focused USB policies, the JC4880 build/board checks and signed packaging pass.
+After an operator-confirmed power interruption of the first upload, a controlled
+retry confirms startup with the identical package and unchanged historical crash
+summary. A 30.016-s solo-D1 listening window records 136 MIDI packets, all 22
+strict deltas/output-late zero and both decks stopped. The operator corrects the
+initial answer and confirms sufficient loudness with ATH-M20x. The expectation
+that 100% would suit a club is not a club test or measured full-level sweep.
+A later 60.125-s / 86-sample mixed-rate dual-deck MT/zoom-8 smoke passes with
+3,658 MIDI packets, all 22 strict deltas/output-late zero and confirmed loop/CUE
+isolation. MIX spans CUE..MASTER and LEVEL reaches approximately 91.1%. The
+operator confirms both jogs/Browse, PFL D1/D2, MIX/LEVEL, clean MAIN/headphones
+and fluid waveforms. The exact-image short combined smoke is closed; both decks
+end stopped, loops OFF. No soak or public update occurred. M3 now contains the
+repair on `71ee5342`; its earlier physical acceptance below retains its own scope.
+
+The [ordinary M3 integration OTA and FLX4 smoke](validation/M3_SHARED_INTEGRATION_OTA_SMOKE_20261018.md)
+installs clean `c0ee8152` as `M3-dev-gc0ee81527b4d`, VALID `ota_0`. The ordinary
+FLX4 USB2/FS/root1 and storage USB3/HS/root0 roles are restored; 260 tracks,
+PCM5102A MAIN and FLX4 44.1-kHz headphones are available. The operator confirms
+GUI/touch. One 60.532-s mixed-rate, pitch-zero/MT-OFF smoke receives 2,100 MIDI
+packets; all 22 strict deltas and output-late remain zero. Both-deck loop/CUE
+transitions and the offline all-sample audit pass; both decks end stopped.
+The operator confirms both jogs/Browse, clean MAIN/FLX4 headphones, fluid
+waveforms and disturbance-free loop/CUE transitions, closing this exact-image
+short smoke. No new build, long soak, push, public beta or channel update occurred.
+
+The [JC1060 contributor kit](JC1060_CONTRIBUTOR_KIT_20261015.md) is ready locally
+for Kayrosen on the already verified clean `c0ee8152` BIN/ELF. The signed OTA
+bundle/manifest, signed complete kit inventory and signed ZIP checksum verify.
+ZIP extraction and 11 offline integrity/source-recovery cases pass, along with
+10 existing signing tests and OTA release helper tests. The kit contains the
+short combined checklist, recovery boundaries, matching DDJ-400/FLX4 profiles,
+debug/flash artifacts, source bundle and an unsent handoff draft. No firmware
+was rebuilt, installed or physically qualified; no message, push, public beta
+or OTA-channel update occurred. SD warm reset and the candidate's hardware/
+startup/rollback gates remain open.
+
+The [JC1060 selective integration follow-up](reviews/2026-10-14-jc1060-selective-integration.md)
+implements the confirmed software repairs and four DDJ-400 loop bindings in
+the canonical shared core. Its verification ledger distinguishes ordinary
+software builds/regressions from NOT RUN exact-image JC1060, SD warm reset,
+signed OTA and live Link acceptance. Unsafe donor HIL/Docker tools are excluded.
+Published beta assets remain unchanged; S2 closeout and JC4880 soak waiver stand.
+
+The [completed integration software verification](reviews/2026-10-14-jc1060-integration-verification.md)
+binds clean `c0ee8152` to all three ordinary ESP-IDF 6.0.2 builds, board/isolation/
+budget and linked restart checks, full required-fixture host qualification with
+no SKIP, four unchanged UI baseline gates, and Windows/Ubuntu dependency-byte
+regressions. Hashes and original host evidence are retained. The subsequent M3
+installation is scoped above; the other images are not installed or physically
+accepted by this verification. JC1060 SD, hub, audio reconnect and signed
+OTA gates remain open. Full Linux firmware builds and hosted CI remain NOT RUN.
+
+The [completed JC1060/DDJ-400 contributor review](reviews/2026-10-14-jc1060-contributor-review.md)
+audits frozen branch `00041a0d` against local `78dc3b7d`, preserves all 71 changed
+file hashes and reproduces root-admission, HS UAC1 cadence, partial web CUE,
+loop-EOF and terminal output-sink issues at documented production boundaries.
+The DDJ-400 v4 binary compiles identically and passes parser/storage/map checks.
+Dependency hash differences are exactly LF/CRLF, with no version change.
+Kayrosen's exact `4e3aa2b4` JC1060/DDJ-400 results provide scoped physical and
+long Observe evidence; seven long-window counters are not the current all-22
+TimingSoak gate. Warm-reset SD and USB MAIN recovery remain failed/open;
+signed OTA is NOT RUN. At review completion, selective integration still
+required repairs and canonical production code was unchanged. The subsequent
+software repairs are scoped above; published beta assets remain unchanged.
+
+The [JC4880 controller lifecycle candidate](validation/JC4880_CONTROLLER_LIFECYCLE_20261012.md)
+is now installed as clean `M2.5-221-gc7d2e9cd`, VALID `ota_0`, with Hercules
+MIDI/44.1-kHz UAC and the 260-track library available. Its 150.359-s short
+mixed-rate playback passes all 22 strict deltas and output-late delta zero;
+the operator confirms both audio paths and display. A 90.438-s supplement
+receives 48 MIDI packets with all 22 strict deltas/output-late zero; the operator
+confirms both-deck Pad FX 1/2 pads 1-4 press/release, observed colours/VU and
+audio/display. On 2026-10-14 the same image passes the 30.203-s / 74-sample
+global FX supplement: 16 MIDI packets, all six ordered effect/beat/ON/OFF
+state changes, all 22 strict deltas and output-late zero. The operator confirms
+each command and both audio/display paths. The requested selected Pad FX,
+observed LED/VU and six-command global FX block is closed for JC4880 `c7d2e9cd`;
+other effect DSP types and broader profile qualification remain separate.
+Both decks are stopped and global FX is OFF. Public beta assets/channels
+remain unchanged; this is not a new-image soak or reconnect qualification.
+
+The [2026-10-12 controller lifecycle software follow-up](reviews/2026-10-12-controller-lifecycle-review.md)
+reproduces and repairs stale unaccepted PLAY/LOAD/jog work after disconnect and
+LED packets crossing an output connection generation. It adds partial snapshot,
+callback-race, bounded LED headroom/retry and symmetric D1/D2 LOAD/PLAY regressions.
+Full required-fixture host qualification (no SKIP), a fresh ordinary M3 build
+under ESP-IDF v6.0.2 and its board/isolation/budget verifier pass. The build is a
+working-tree development artifact, not an installed clean release.
+The selected joint Hercules Pad FX/global FX/LED/VU control block is now closed
+on the exact JC4880 image recorded above. The
+subsequent JC4880 installation is separately scoped above; existing beta assets
+and historical physical acceptance retain their exact image boundaries.
 
 Manual revision 2026-10-12: [GitHub Pages user manual](index.html) now covers
 JC4880/JC1060/M3 port/audio/network policies, FLX4/Hercules/S2/DDJ-400 support
@@ -63,6 +285,8 @@ SKIPPED BY OPERATOR / NOT RUN, without changing its accepted short-test scope.
 JC1060 hardware is unavailable to the operator; contributor Kayrosen will test
 it later. Its physical acceptance remains NOT RUN pending exact-image evidence.
 These are recorded dispositions, not additional physical PASS results.
+The later contributor evidence is reconciled in the 2026-10-14 review above;
+it does not qualify the published beta or a future integrated candidate.
 
 [Final development handoff](reviews/2026-10-11-shared-core-final-handoff.md)
 consolidates implementation, software results, installed identity and outstanding

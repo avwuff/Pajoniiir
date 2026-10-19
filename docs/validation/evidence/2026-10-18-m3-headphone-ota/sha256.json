@@ -1,0 +1,15 @@
+{
+  ".gitattributes": "c660b20433bf1b8a975f2b2c2993bad09fed38a0f56ba0b829ac5340b7618019",
+  "after-diagnostic-log.txt": "0fc79abff76a1bcabe3b7f38e5ac4027eeea58b68f6cdeae18c0f206f77432c4",
+  "after-firmware.json": "63e4467ff8abc9feb4bb219910d2472c5afeef07b30913ff382c568a0e501136",
+  "after-library.json": "7244b623ac51c4b03add03eb8f01da47df15e0cf99cea1bc1d9a85a4033acc7b",
+  "after-status.json": "9c64e4d483aee87d5aa05f46291adae77dc29b30110dc882152855769f4cfd12",
+  "before-firmware.json": "699c66b1c4807ed2884d4949ddc20d2a63af36b2623181d772be6df41e037a48",
+  "before-library.json": "7244b623ac51c4b03add03eb8f01da47df15e0cf99cea1bc1d9a85a4033acc7b",
+  "before-status.json": "4a064f81e35f2310298802012091446d1d05ceaa024a7296bf8ccf5fe70c8ccd",
+  "final-firmware.json": "63e4467ff8abc9feb4bb219910d2472c5afeef07b30913ff382c568a0e501136",
+  "final-status.json": "81aaaa21e4baf41fcd0c37354b0b07b6ef7e17d11a801a3f719a20cb24f798df",
+  "installation.json": "f26e032f059cf3d02b2a37b0ed7516f3137b00aff01df8531a21369e0b81b947",
+  "upload-headers.txt": "ac5c4860f6e96959474a9acafc08cd7c4f8c9c251932c142f84f0b3ea0336d60",
+  "upload-response.json": "4907e83e96bf92ce0416b7e8319d558ba09576c8f6b08131d1b8a0ed982f8a3d"
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "environment": "ESP-IDF v6.0.2 local installation",
+    "path": "tools/cmake/component.cmake",
+    "sha256": "de031ba3ad9f0892641428bc3e8035935f11592a8f7a372943cc271c685d51c5",
+    "first_line": 153,
+    "last_line": 179,
+    "text": "    get_filename_component(base_dir ${abs_dir} NAME)\n\n    if(NOT EXISTS \"${abs_dir}/CMakeLists.txt\")\n        message(FATAL_ERROR \"Directory '${component_dir}' does not contain a component.\")\n    endif()\n\n    set(component_name ${base_dir})\n    # The component target has three underscores as a prefix. The corresponding component library\n    # only has two.\n    set(component_target ___${prefix}_${component_name})\n\n    # If a component of the same name has not been added before If it has been added\n    # before just override the properties. As a side effect, components added later\n    # 'override' components added earlier.\n    if(NOT component_target IN_LIST component_targets)\n        if(NOT TARGET ${component_target})\n            add_library(${component_target} STATIC IMPORTED)\n            # Set the IMPORTED_LOCATION property to avoid errors on IDE codemodel queries with CMake >=4.2\n            set_property(TARGET ${component_target} PROPERTY IMPORTED_LOCATION \"${CMAKE_CURRENT_BINARY_DIR}/dummy.a\")\n        endif()\n        idf_build_set_property(__COMPONENT_TARGETS ${component_target} APPEND)\n    else()\n        __component_get_property(dir ${component_target} COMPONENT_DIR)\n        __component_set_property(${component_target} COMPONENT_OVERRIDEN_DIR ${dir})\n    endif()\n\n    set(component_lib __${prefix}_${component_name})"
+  },
+  {
+    "environment": "ESP-IDF v6.0.2 local installation",
+    "path": "tools/cmake/project.cmake",
+    "sha256": "fd755745f23c42fd658b83c21820fc238c0fc9dd7abd3415b7ff21e5aece4619",
+    "first_line": 438,
+    "last_line": 467,
+    "text": "    # these works only for target build\n    set(extra_cflags \"$ENV{EXTRA_CFLAGS}\")\n    set(extra_cxxflags \"$ENV{EXTRA_CXXFLAGS}\")\n    set(extra_cppflags \"$ENV{EXTRA_CPPFLAGS}\")\n\n    spaces2list(extra_cflags)\n    spaces2list(extra_cxxflags)\n    spaces2list(extra_cppflags)\n\n    idf_build_set_property(C_COMPILE_OPTIONS \"${extra_cflags}\" APPEND)\n    idf_build_set_property(CXX_COMPILE_OPTIONS \"${extra_cxxflags}\" APPEND)\n    idf_build_set_property(COMPILE_OPTIONS \"${extra_cppflags}\" APPEND)\n\n    function(__project_component_dir component_dir component_source)\n        get_filename_component(component_dir \"${component_dir}\" ABSOLUTE)\n        # The directory itself is a valid idf component\n        if(EXISTS ${component_dir}/CMakeLists.txt)\n            idf_build_component(${component_dir} ${component_source})\n        else()\n            idf_build_get_property(exclude_dirs EXTRA_COMPONENT_EXCLUDE_DIRS)\n            # otherwise, check whether the subfolders are potential idf components\n            file(GLOB component_dirs ${component_dir}/*)\n            foreach(component_dir ${component_dirs})\n                if(IS_DIRECTORY ${component_dir} AND NOT ${component_dir} IN_LIST exclude_dirs)\n                    __component_dir_quick_check(is_component ${component_dir})\n                    if(is_component)\n                        idf_build_component(${component_dir} ${component_source})\n                    endif()\n                endif()\n            endforeach()"
+  },
+  {
+    "environment": "ESP-IDF v6.0.2 local installation",
+    "path": "tools/cmake/project.cmake",
+    "sha256": "fd755745f23c42fd658b83c21820fc238c0fc9dd7abd3415b7ff21e5aece4619",
+    "first_line": 484,
+    "last_line": 503,
+    "text": "    else()\n        if(EXISTS \"${CMAKE_CURRENT_LIST_DIR}/main\")\n            __project_component_dir(\"${CMAKE_CURRENT_LIST_DIR}/main\" \"project_components\")\n        endif()\n\n        paths_with_spaces_to_list(EXTRA_COMPONENT_DIRS)\n        foreach(component_dir ${EXTRA_COMPONENT_DIRS})\n            get_filename_component(component_abs_path ${component_dir} ABSOLUTE)\n            if(NOT EXISTS ${component_abs_path})\n                message(FATAL_ERROR \"Directory specified in EXTRA_COMPONENT_DIRS doesn't exist: ${component_abs_path}\")\n            endif()\n            __project_component_dir(\"${component_dir}\" \"project_extra_components\")\n        endforeach()\n\n        # Look for components in the usual places: CMAKE_CURRENT_LIST_DIR/main,\n        # extra component dirs, and CMAKE_CURRENT_LIST_DIR/components\n        __project_component_dir(\"${CMAKE_CURRENT_LIST_DIR}/components\" \"project_components\")\n    endif()\n\n    # For bootloader components, we only need to set-up the Kconfig files."
+  }
+]

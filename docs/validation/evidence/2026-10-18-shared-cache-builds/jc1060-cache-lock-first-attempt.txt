@@ -1,0 +1,33 @@
+Executing action: reconfigure
+Running cmake in directory D:\AI\Pajoniiir-shared-p4-core\.cache\idf-jc1060-integration-20261014
+Executing "cmake -G Ninja -B D:\AI\Pajoniiir-shared-p4-core\.cache\idf-jc1060-integration-20261014 -DPYTHON_DEPS_CHECKED=1 -DPYTHON=C:\Espressif\tools\python\v6.0.2\venv\Scripts\python.exe -DESP_PLATFORM=1 -DSDKCONFIG=D:/AI/Pajoniiir-shared-p4-core/.cache/idf-jc1060-integration-20261014/sdkconfig -DCCACHE_ENABLE=False D:\AI\Pajoniiir-shared-p4-core\firmware\main-deck-jc1060"...
+-- Component directory C:/Espressif/v6.0.2/esp-idf/components/mqtt does not contain a CMakeLists.txt file. No component will be added
+-- Minimal build - OFF
+-- Building ESP-IDF components for target esp32p4
+CMake Error at C:/Espressif/v6.0.2/esp-idf/tools/cmake/build.cmake:697 (message):
+  ERROR: 'git --work-tree C:\Users\Daniel\AppData\Local\Temp\tmpf8t83_0r
+  --git-dir
+  C:\Users\Daniel\AppData\Local\Espressif\ComponentManager\Cache\b_git_9f6bfd89
+  checkout --force cc65dc268f9fb6e89b8b3c6c9e94f5aa1dbb2ccb --
+  host/class/msc/usb_host_msc .gitmodules' failed with exit code 128
+
+  fatal: Unable to create
+  'C:\Users\Daniel\AppData\Local\Espressif\ComponentManager\Cache\b_git_9f6bfd89/index.lock':
+  File exists.
+
+
+
+  Another git process seems to be running in this repository, or the lock
+  file may be stale
+
+
+
+
+
+Call Stack (most recent call first):
+  C:/Espressif/v6.0.2/esp-idf/tools/cmake/project.cmake:773 (idf_build_process)
+  CMakeLists.txt:43 (project)
+
+
+-- Configuring incomplete, errors occurred!
+cmake failed with exit code 1, output of the command is in the D:\AI\Pajoniiir-shared-p4-core\.cache\idf-jc1060-integration-20261014\log\idf_py_stderr_output_7012 and D:\AI\Pajoniiir-shared-p4-core\.cache\idf-jc1060-integration-20261014\log\idf_py_stdout_output_7012

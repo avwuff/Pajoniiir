@@ -1,0 +1,10 @@
+{
+  "source_sha": "71ee534269bf37ffe2314ff0ae8bd2110212cf0d",
+  "production_code_ancestor": "605bcd20d6dadf250ce1816d82353ee2ace21867",
+  "production_test_tooling_changes_since_qualified_source": [],
+  "host_evidence": "docs/validation/evidence/2026-10-18-flx4-headphones/host-qualification.log",
+  "prior_host_qualification_exit_code": 0,
+  "scope": "ordinary M3 software build/packaging only; no network/device actions",
+  "installed": false,
+  "published": false
+}

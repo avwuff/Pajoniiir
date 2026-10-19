@@ -1,0 +1,42 @@
+route-build 0
+route-run 0 REPRODUCED: hub-enabled route accepts ESP_OK/matches=false; non-hub and unknown remain rejected
+
+stream-baseline-build 0
+stream-baseline-run 0 BASELINE: both HS UAC1 cases rejected
+PASS captured Hercules UAC1: endpoint association, 10.14 feedback, capacity, fractional pacing, stale stop and FLX4 isolation
+PASS FS 48-kHz fast feedback: 49-frame packets and endpoint bounds
+PASS FS 48-kHz fast feedback: 49-frame packets and endpoint bounds
+PASS UAC2 captured HS descriptor, clock RANGE/CUR, feedback, packing and teardown
+PASS UAC2 bounded asynchronous clock settle, wrap, timeout and disconnect
+PASS UAC2 advertised 44.1-kHz fallback, exact readback, fractional HS cadence and resampling
+PASS UAC startup alloc/submit fault provenance and ownership cleanup
+PASS 30 host HS reconnects: bounded retained payload, no new OUT allocation, FS releases all transfers
+PASS UAC 16/24-bit, consumer pacing, bounded timeout, ownership, reconnect and channel routing
+
+stream-contributor-build 0
+stream-contributor-run 0 REPRODUCED: HS UAC1 bInterval=4 AND native bInterval=1 accepted by the 1-ms path (native interval=1 is 125 us)
+PASS captured Hercules UAC1: endpoint association, 10.14 feedback, capacity, fractional pacing, stale stop and FLX4 isolation
+PASS FS 48-kHz fast feedback: 49-frame packets and endpoint bounds
+PASS FS 48-kHz fast feedback: 49-frame packets and endpoint bounds
+PASS UAC2 captured HS descriptor, clock RANGE/CUR, feedback, packing and teardown
+PASS UAC2 bounded asynchronous clock settle, wrap, timeout and disconnect
+PASS UAC2 advertised 44.1-kHz fallback, exact readback, fractional HS cadence and resampling
+PASS UAC startup alloc/submit fault provenance and ownership cleanup
+PASS 30 host HS reconnects: bounded retained payload, no new OUT allocation, FS releases all transfers
+PASS UAC 16/24-bit, consumer pacing, bounded timeout, ownership, reconnect and channel routing
+
+deck-build 0
+deck-run 0 REPRODUCED: production LOOP_DOUBLE sends end=400000 ms for loaded 300000-ms track
+REPRODUCED: exact web CUE branch rejects release after accepted press; production actor remains cue_held/preview/playing
+deck_core_dual tests passed
+
+sink-build 0
+sink-run 0 REPRODUCED production sink-fault helper: both loaded decks marked EOF/error; output service stopped (restart path audited separately)
+
+startup-gate-build 0
+startup-gate-run 0 p4_startup_gate: PASS
+
+ddj400-profile-build 0
+ddj400-profile-run 0 PASS DDJ-400 contributor v4: production parser/storage validator, four loop bindings press/release, wrong CRC rejected by both
+
+{"byte_identical": true, "size": 6112, "sha256": "2fc922ec2986249f4af7c7a077367e4bb5b9e9f22ced5b3d137e853d21f74408", "source_input_nodes": 126, "source_output_nodes": 29, "compiled_inputs": 284, "compiled_outputs": 127}

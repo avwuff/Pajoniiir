@@ -1,0 +1,1 @@
+PASS real CMake ancestry source selection, upstream drift rejection, and scoped CRLF dependency clone with inherited settings

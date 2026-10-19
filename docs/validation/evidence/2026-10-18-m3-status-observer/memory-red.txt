@@ -1,0 +1,6 @@
+==> build audio_engine_memory
+C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: C:\Users\Daniel\AppData\Local\Temp\ccx6OimB.o:audio_engine_memory.c:(.text+0x12): undefined reference to `esp_timer_get_time'
+C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: C:\Users\Daniel\AppData\Local\Temp\ccx6OimB.o:audio_engine_memory.c:(.text+0x1c): undefined reference to `heap_caps_get_largest_free_block'
+C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: C:\Users\Daniel\AppData\Local\Temp\ccx6OimB.o:audio_engine_memory.c:(.text+0x24): undefined reference to `esp_timer_get_time'
+C:/msys64/ucrt64/bin/../lib/gcc/x86_64-w64-mingw32/15.2.0/../../../../x86_64-w64-mingw32/bin/ld.exe: C:\Users\Daniel\AppData\Local\Temp\ccx6OimB.o:audio_engine_memory.c:(.text+0xc9): undefined reference to `service_log_event'
+collect2.exe: error: ld returned 1 exit status

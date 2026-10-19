@@ -97,6 +97,9 @@ static void topology_event_callback(
         usb_device_handle_t device = NULL;
         usb_device_info_t info = {0};
         const uint8_t address = event_msg->new_dev.address;
+        portENTER_CRITICAL(&s_topology_mux);
+        (void)usb_host_topology_remove(&s_topology, address);
+        portEXIT_CRITICAL(&s_topology_mux);
         __atomic_store_n(&s_last_topology_address, address, __ATOMIC_RELEASE);
         esp_err_t rc = usb_host_device_open(s_topology_client, address, &device);
         if (rc == ESP_OK) {
@@ -121,9 +124,8 @@ static void topology_event_callback(
                          info.parent.dev_hdl == NULL, __ATOMIC_RELEASE);
 
         portENTER_CRITICAL(&s_topology_mux);
-        (void)usb_host_topology_observe(&s_topology, address,
-                                        info.parent.dev_hdl == NULL,
-                                        info.parent.port_num);
+        (void)usb_host_topology_observe_parent(&s_topology, address,
+            (uintptr_t)device, (uintptr_t)info.parent.dev_hdl, info.parent.port_num);
         portEXIT_CRITICAL(&s_topology_mux);
         (void)__atomic_add_fetch(&s_topology_observations, 1u,
                                  __ATOMIC_RELAXED);

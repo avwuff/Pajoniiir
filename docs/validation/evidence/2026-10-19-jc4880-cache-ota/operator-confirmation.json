@@ -1,0 +1,11 @@
+{
+  "recorded_local_date": "2026-10-19",
+  "source": "Direct operator replies in this chat",
+  "gui_and_host_network_reply": "DHCP obnovljen; GUI uredan",
+  "full_smoke_reply": "Sve navedeno provjereno i uredno",
+  "scope": "Both jogs/Browse, PFL D1/D2, headphone MIX/LEVEL, loop/CUE transitions, clean MAIN/FLX4 headphones and fluid waveforms throughout the corrected60-s test",
+  "physical_short_smoke": "PASS",
+  "source_sha": "0a33ec1fb16c0136dccaa85ca63a6fbc00a4d527",
+  "image_elf_sha256": "078cb8c09cbf4b77622facc5d0a09fedef3382f0970a3cd18bbd5ec0357975bc",
+  "limitations": "Short exact-image acceptance only; JC4880 long soak remains waived, no JC1060 physical qualification or publication"
+}

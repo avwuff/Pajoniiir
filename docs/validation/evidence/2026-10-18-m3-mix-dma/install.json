@@ -1,0 +1,14 @@
+{
+  "source_sha": "f1c5ec9ca9e9e3eba89365384762efb95e426ff7",
+  "source_dirty": false,
+  "version": "M3-dev-gf1c5ec9ca9e9",
+  "board": "m3",
+  "project": "main-deck-m3",
+  "image_state": "valid",
+  "slot": "ota_0",
+  "elf_sha256": "b964d5fc5018f43221361e9bc44e8c49407d9a0043b258a3df1974744e931db2",
+  "gui": "Operator confirms normal GUI and Wi-Fi ON",
+  "controller": "FLX4 MIDI IN/OUT, FS 44100Hz 16-bit UAC streaming, nonfaulted",
+  "library_tracks": 260,
+  "deck_state_before_test": "Both stopped; prepared rates 44100/48000 and pitch +5/-5"
+}

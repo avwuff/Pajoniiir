@@ -9,6 +9,7 @@
 #include "freertos/semphr.h"
 #include "esp_log.h"
 #include "audio_engine.h"
+#include "audio_loop_range.h"
 #include "beat_jump.h"
 #include "hot_cue_store.h"
 #include "rekordbox_anlz.h"
@@ -776,7 +777,7 @@ static uint8_t hot_cue_exists_mask_for_deck(uint8_t deck)
     return mask;
 }
 
-static void set_deck_loop(uint8_t deck, uint32_t start_ms, uint32_t end_ms);
+static bool set_deck_loop(uint8_t deck, uint32_t start_ms, uint32_t end_ms);
 static void publish_loop_adjust_leds(uint8_t deck, const deck_state_t *state);
 
 static void handle_hot_cue_pad_action(uint8_t deck, uint8_t pad, bool shifted, deck_state_t *state)
@@ -1047,11 +1048,17 @@ static bool read_active_loop(uint8_t deck, bool *active, uint32_t *start_ms, uin
     return audio_engine_deck_get_loop_state(deck, active, start_ms, end_ms) == ESP_OK;
 }
 
-static void set_deck_loop(uint8_t deck, uint32_t start_ms, uint32_t end_ms)
+static bool set_deck_loop(uint8_t deck, uint32_t start_ms, uint32_t end_ms)
 {
     if (deck >= DECK_CORE_DECK_COUNT || end_ms <= start_ms) {
-        return;
+        return false;
     }
+    deck_loaded_track_summary_t loaded = {0};
+    anlz_snapshot_t *snapshot = NULL;
+    (void)acquire_loaded_track_for_deck(deck, &loaded, &snapshot);
+    const uint32_t duration = loaded_track_duration_ms(deck, &loaded);
+    anlz_snapshot_release(snapshot);
+    if (!audio_loop_range_valid(start_ms, end_ms, duration)) return false;
     esp_err_t rc = audio_engine_deck_set_loop(deck, start_ms, end_ms);
     if (rc == ESP_OK) {
         remember_last_loop(deck, start_ms, end_ms);
@@ -1060,11 +1067,13 @@ static void set_deck_loop(uint8_t deck, uint32_t start_ms, uint32_t end_ms)
                  (unsigned long)start_ms,
                  (unsigned long)end_ms);
         publish_flx4_led_snapshot(false);
+        return true;
     } else {
         ESP_LOGW(TAG, "deck %u loop set failed: %s",
                  (unsigned)deck + 1,
                  esp_err_to_name(rc));
     }
+    return false;
 }
 
 static uint32_t nearest_beat_ms(uint8_t deck, uint32_t position_ms)
@@ -1297,9 +1306,12 @@ static void handle_beat_loop_pad_action(uint8_t deck, uint8_t pad, deck_state_t 
     if (duration_ms == 0 || start_ms > UINT32_MAX - duration_ms) {
         return;
     }
+    const deck_beat_loop_led_state_t previous_led = s_beat_loop_led[deck];
     s_beat_loop_led[deck].active = true;
     s_beat_loop_led[deck].pad = pad;
-    set_deck_loop(deck, start_ms, start_ms + duration_ms);
+    if (!set_deck_loop(deck, start_ms, start_ms + duration_ms)) {
+        s_beat_loop_led[deck] = previous_led;
+    }
 }
 
 static void handle_shifted_beat_loop_press(uint8_t deck, uint8_t pad, deck_state_t *state)
@@ -1384,8 +1396,8 @@ static void on_loop_control(uint8_t deck, ctrl_deck_control_t control, deck_stat
     case CTRL_DECK_CTL_LOOP_OUT:
         if (shadow->pending_in && position_ms > shadow->pending_start_ms) {
             s_beat_loop_led[deck].active = false;
-            set_deck_loop(deck, shadow->pending_start_ms, position_ms);
-            shadow->pending_in = false;
+            if (set_deck_loop(deck, shadow->pending_start_ms, position_ms))
+                shadow->pending_in = false;
         } else {
             ESP_LOGW(TAG, "deck %u loop out ignored: invalid in/out %lu/%lu ms",
                      (unsigned)deck + 1,
@@ -1437,8 +1449,10 @@ static void on_loop_control(uint8_t deck, ctrl_deck_control_t control, deck_stat
                 }
                 next_duration = duration * 2u;
             }
+            const bool previous_led = s_beat_loop_led[deck].active;
             s_beat_loop_led[deck].active = false;
-            set_deck_loop(deck, start_ms, start_ms + next_duration);
+            if (!set_deck_loop(deck, start_ms, start_ms + next_duration))
+                s_beat_loop_led[deck].active = previous_led;
         }
         return;
 
@@ -3136,6 +3150,18 @@ static void apply_deck_transport_event(const ctrl_event_t *ev)
         case CTRL_EV_BROWSE: on_browse_event(ev->id, ev->value); break;
         case CTRL_EV_PITCH: on_pitch(deck, ev->value); break;
         case CTRL_EV_STATE: on_state_event(ev); break;
+        case CTRL_EV_CUE_TAP:
+            if (!s_decks[deck].cue_held) {
+                bool playing = deck_uses_audio_engine(deck) ?
+                    audio_engine_deck_is_playing(deck) : s_decks[deck].playing;
+                /* A remote tap at a parked cue must not briefly start preview. */
+                if (playing || current_deck_position_ms(deck, &s_decks[deck]) !=
+                               s_decks[deck].cue_point_ms) {
+                    handle_cue_button(deck, true, &s_decks[deck]);
+                    handle_cue_button(deck, false, &s_decks[deck]);
+                }
+            }
+            break;
         }
     }
     __atomic_store_n(&s_transport_owner[deck], 0u, __ATOMIC_RELEASE);
@@ -3377,6 +3403,14 @@ esp_err_t deck_core_queue_event(const ctrl_event_t *ev)
 esp_err_t deck_core_queue_remote_event(const ctrl_event_t *ev)
 {
     return queue_event_with_wake_policy(ev, false);
+}
+
+esp_err_t deck_core_queue_remote_cue_tap(uint8_t deck)
+{
+    if (deck >= DECK_CORE_DECK_COUNT) return ESP_ERR_INVALID_ARG;
+    const ctrl_event_t event = {.type = CTRL_EV_CUE_TAP, .deck = deck,
+        .id = deck == CTRL_DECK_2 ? CTRL_ID_DECK2_CUE : CTRL_ID_DECK1_CUE};
+    return deck_core_queue_remote_event(&event);
 }
 
 deck_state_t deck_core_get_state(void)

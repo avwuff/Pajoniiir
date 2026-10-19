@@ -21,7 +21,8 @@ static bool shared_storage_device_route_allowed(uint8_t address)
 {
     bool matches = false;
     const esp_err_t rc = usb_host_manager_device_matches_root(
-        address, SHARED_STORAGE_ROOT_INDEX, true, &matches);
+        address, SHARED_STORAGE_ROOT_INDEX,
+        !board_capabilities_get()->storage_via_hub, &matches);
     if (rc == ESP_ERR_NOT_FOUND) {
         /* The topology client and MSC client receive the same enumeration
          * edge independently. The storage owner retries mounting, so defer

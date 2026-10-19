@@ -183,6 +183,8 @@ void deck_core_get_wake_diagnostics(deck_core_wake_diagnostics_t *out);
  * screensaver is dismissed, but unlike a physical wake press the mutation is
  * never consumed solely to wake the display. */
 esp_err_t deck_core_queue_remote_event(const ctrl_event_t *ev);
+/* One queue item: rejection cannot leave an accepted press without release. */
+esp_err_t deck_core_queue_remote_cue_tap(uint8_t deck);
 
 /*
  * Coherent loaded-track ownership.

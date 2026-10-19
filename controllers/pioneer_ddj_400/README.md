@@ -18,10 +18,18 @@ gate using a profile capability; no controller-name checks are used.
 Initial SysEx is emitted once per activation before LED feedback; VU scale
 150 is applied using saturated integer arithmetic.
 
-Eight donor memory-call/store/delete inputs lack current P4 semantic actions.
-They remain explicitly listed under `omitted_inputs` in the source JSON and
-are not assigned guessed actions. Memory cues themselves remain available
+CUE/LOOP CALL notes 90/51, 90/53, 91/51 and 91/53 map to the corresponding
+deck's loop halve/double. Shared loop admission refuses ranges beyond the
+known track length. Four memory-store/delete inputs still lack semantic
+actions and remain in `omitted_inputs`; source memory cues/loops are available
 through the library/UI implementation.
+
+The v4 binary has 284 inputs, 127 outputs and 6,112 bytes. Its compile identity,
+production parser/storage validator and the four press/release mappings pass
+host tests. Kayrosen's separate JC1060/DDJ-400 branch has scoped hardware
+evidence recorded in the [contributor review](../../docs/reviews/2026-10-14-jc1060-contributor-review.md).
+Those results do not qualify the newly integrated canonical firmware; its
+physical MIDI/LED/audio/reconnect acceptance remains NOT RUN.
 
 Regenerate with:
 `python tools/controller_profile/compile_profile.py controllers/pioneer_ddj_400/profile.json -o controllers/pioneer_ddj_400/profile.s3bin`.

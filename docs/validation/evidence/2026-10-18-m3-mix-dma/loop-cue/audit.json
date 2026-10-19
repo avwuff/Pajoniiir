@@ -1,0 +1,11 @@
+{
+  "samples": 70,
+  "all_sample_identity_matches": true,
+  "strict_paths": 22,
+  "strict_nonzero": {},
+  "stopped": true,
+  "loops_off": true,
+  "last_sample_phase": "playback",
+  "operator": "Operator confirms clean MAIN/headphones, fluid waveforms and normal transitions across full 60s",
+  "physical_pfl_scope": "Not independently established: raw PFL false/false and MIX/LEVEL16383 retained despite preparation intent"
+}

@@ -22,6 +22,7 @@
 #endif
 #include "audio_decoder.h"
 #include "audio_eof_policy.h"
+#include "audio_loop_range.h"
 #include "audio_start_gate.h"
 #include "audio_output_bookkeeping.h"
 #include "audio_format.h"
@@ -367,6 +368,8 @@ typedef struct {
     uint8_t  load_progress;
     esp_err_t last_error;
     char     last_error_text[64];
+    bool usb_resume_pending;
+    uint32_t usb_resume_position_ms;
 
     /* Asynchronous seek */
     volatile uint32_t seek_target_ms;
@@ -1417,14 +1420,19 @@ static bool ae_keylock_render_cb(void *ctx, float tempo_factor,
         atomic_load_bool(&s_start_seek_pending[deck])) return false;
     audio_pcm_timeline_t *timeline = &s_pcm_timelines[deck];
     uint32_t generation = audio_pcm_timeline_generation(timeline);
-    if (!s_keylocks[deck].initialized || s_keylock_generation[deck] != generation) {
-        audio_keylock_reset(&s_keylocks[deck], audio_pcm_timeline_play_seq(timeline));
+    uint64_t play_seq = audio_pcm_timeline_play_seq(timeline);
+    /* Ordinary resampling may have advanced the consumer while MT lacked its
+     * look-ahead after a loop cut or at EOF. A same-generation fallback does
+     * not reset the timeline: never resume the old grain clock and rewind the
+     * real playhead when source PCM becomes available again. */
+    if (!s_keylocks[deck].initialized || s_keylock_generation[deck] != generation ||
+        s_keylocks[deck].logical_seq != play_seq) {
+        audio_keylock_reset(&s_keylocks[deck], play_seq);
         s_keylocks[deck].dense_correlation = board_capabilities_get()->keylock_dense_correlation;
         s_keylocks[deck].antialias = board_capabilities_get()->audio_antialias;
         s_keylock_generation[deck] = generation;
     }
     audio_keylock_configure(&s_keylocks[deck], tempo_factor, rate_ratio);
-    uint64_t play_seq = audio_pcm_timeline_play_seq(timeline);
     if (!audio_keylock_next(&s_keylocks[deck], keylock_timeline_read, ctx,
                             out, out_consumed, &play_seq)) return false;
     return audio_pcm_timeline_set_playhead_output_owner(timeline, play_seq);
@@ -2622,9 +2630,8 @@ static uint32_t *const AE_PHASE_MAX_SLOT[AE_PH_COUNT] = {
 /* Timings of the block currently being rendered, overwritten every block. */
 static uint32_t s_phase_block[AE_PH_COUNT];
 
-/* Coarse split of the mixer loop, so a mix-phase stall can be told apart:
- * confined to one group = a single expensive call, spread across all of them =
- * the whole loop running slow. */
+/* Coarse wall-time split: a localized outlier can be expensive work OR
+ * preemption/interrupt masking within that group. It is not CPU attribution. */
 #define AE_MIX_GROUPS 16
 static uint32_t s_mix_group_max_us;
 static uint32_t s_mix_group_worst;
@@ -2721,6 +2728,9 @@ static inline void ae_phase_note(ae_phase_id_t id, int64_t elapsed_us)
 static int64_t s_last_outlier_us;
 #if AE_FW
 static bsp_main_dma_diag_t s_main_write_dma;
+#if CONFIG_BSP_PCM5102A_MAIN_OUT
+static bsp_main_dma_diag_t s_mix_dma;
+#endif
 #endif
 
 static void ae_report_block_outlier(uint32_t block_us, uint32_t late_threshold_us)
@@ -2751,6 +2761,19 @@ static void ae_report_block_outlier(uint32_t block_us, uint32_t late_threshold_u
                       s_mix_group_worst, s_mix_group_max_us,
                       AE_PHASE_NAME[worst]);
 #if AE_FW
+#if CONFIG_BSP_PCM5102A_MAIN_OUT
+    if (worst == AE_PH_MIX && !s_usb_main_sink) {
+        /* These counters cover the mix window, not the subsequent I2S write.
+         * A DMA gap includes interrupt latency; the highest sampled task
+         * priority/name is context, not attribution of the whole wall time. */
+        service_log_event(SERVICE_LOG_AUDIO_LATE_PHASE, SERVICE_LOG_WARN,
+            4u, s_mix_dma.completions, s_mix_dma.max_gap_us,
+            s_mix_dma.queue_overflows, s_phase_block[AE_PH_MIX], "mix dma");
+        service_log_event(SERVICE_LOG_AUDIO_LATE_PHASE, SERVICE_LOG_WARN,
+            2u, s_mix_dma.interrupted_priority, s_phase_block[AE_PH_MIX],
+            0u, 0u, s_mix_dma.interrupted_task);
+    }
+#endif
     if (worst == AE_PH_MAIN && !s_usb_main_sink) {
         service_log_event(SERVICE_LOG_AUDIO_LATE_PHASE, SERVICE_LOG_WARN,
             4u, s_main_write_dma.completions, s_main_write_dma.max_gap_us,
@@ -3853,6 +3876,26 @@ static esp_err_t audio_output_write_main(const int16_t *frames, size_t bytes)
 #endif
 }
 
+static void audio_output_pause_usb_main(void)
+{
+    if (!s_usb_main_sink) return;
+    uint32_t positions[AUDIO_ENGINE_DECK_COUNT];
+    for (uint8_t deck = 0; deck < AUDIO_ENGINE_DECK_COUNT; ++deck)
+        positions[deck] = audio_engine_deck_position_ms(deck);
+    AE_LOCK();
+    for (uint8_t deck = 0; deck < AUDIO_ENGINE_DECK_COUNT; ++deck) {
+        audio_engine_state_t *eng = &s_engines[deck];
+        if (!eng->loaded || !atomic_load_bool(&eng->playing)) continue;
+        eng->usb_resume_position_ms = positions[deck];
+        atomic_store_bool(&eng->usb_resume_pending, true);
+        atomic_store_bool(&eng->playing, false);
+        atomic_store_bool(&eng->paused, true);
+        /* Keep decoder ownership and EOF/drain state. Explicit PLAY after a
+         * healthy reconnect re-seeks the last audible head, never reloads. */
+    }
+    AE_UNLOCK();
+}
+
 static void audio_output_mark_sink_fault(esp_err_t main_rc, esp_err_t hp_rc)
 {
     __atomic_add_fetch(&s_output_sink_faults, 1u, __ATOMIC_RELAXED);
@@ -3894,6 +3937,14 @@ static void ae_output_task(void *arg)
             if ((s_audio_wdt_block & 1023u) == 0u)
                 firmware_resources_sample_task(FW_RESOURCE_OUTPUT);
             ae_wdt_trace(AUDIO_WDT_PHASE_WAIT_CODEC, 0u);
+            vTaskDelay(pdMS_TO_TICKS(5));
+#if !defined(AUDIO_ENGINE_PC_TEST)
+            s_audio_wdt_last_idle_us = (uint64_t)esp_timer_get_time();
+#endif
+            continue;
+        }
+        if (s_usb_main_sink && !controller_usb_audio_stream_available()) {
+            audio_output_pause_usb_main();
             vTaskDelay(pdMS_TO_TICKS(5));
 #if !defined(AUDIO_ENGINE_PC_TEST)
             s_audio_wdt_last_idle_us = (uint64_t)esp_timer_get_time();
@@ -4181,10 +4232,16 @@ static void ae_output_task(void *arg)
         int64_t phase_mark = phase_t0;
         ae_phase_note(AE_PH_HEAD, phase_t0 - block_start_us);
 
-        /* Split the mixer loop into a few coarse groups. A stall confined to one
-         * group means a single expensive call; one spread evenly across all of
-         * them means the whole loop is running slow, which points at memory or
-         * cache rather than at any one operation. Sixteen timer reads per block
+#if CONFIG_BSP_PCM5102A_MAIN_OUT
+        /* Two bounded snapshots per block. No allocation, log, heap walk or
+         * new ISR hook in the mixer. The write path starts its own later window. */
+        bsp_main_dma_diag_t mix_dma_before;
+        bsp_audio_main_dma_snapshot(&mix_dma_before, true);
+#endif
+
+        /* Split the mixer loop into coarse wall-time groups. A localized stall
+         * can also be preemption or interrupt masking during that group; DMA
+         * observations supply separate interrupt context. Sixteen timer reads per block
          * is a fraction of a percent of the ~5.8 ms period, unlike timing every
          * one of the 256 frames. */
         uint32_t mix_group_max_us = 0u;
@@ -4237,6 +4294,13 @@ static void ae_output_task(void *arg)
         }
         s_mix_group_max_us = mix_group_max_us;
         s_mix_group_worst = mix_group_worst;
+#if CONFIG_BSP_PCM5102A_MAIN_OUT
+        bsp_main_dma_diag_t mix_dma_after;
+        bsp_audio_main_dma_snapshot(&mix_dma_after, false);
+        s_mix_dma = mix_dma_after;
+        s_mix_dma.completions -= mix_dma_before.completions;
+        s_mix_dma.queue_overflows -= mix_dma_before.queue_overflows;
+#endif
         consumed[deck0_index] += s_scratch_handoff_consumed[deck0_index];
         consumed[deck1_index] += s_scratch_handoff_consumed[deck1_index];
         {
@@ -4304,6 +4368,10 @@ static void ae_output_task(void *arg)
             record_deck_ui_peak(deck1_index, block_peak[deck1_index]);
             record_main_ui_peak(master_out, AE_OUT_FRAMES * 2u);
             limiter_stats_record(&block_limiter_stats);
+        } else if (s_usb_main_sink && main_rc == ESP_ERR_INVALID_STATE) {
+            /* Disconnect/configuration may race the pre-render ready check.
+             * Discard this uncommitted block; PLAY re-seeks its audible head. */
+            audio_output_pause_usb_main();
         } else {
             /* Stateful resamplers/DSP have already rendered this block, so it
              * cannot be replayed safely. Do not publish an inaudible position;
@@ -4967,6 +5035,18 @@ static esp_err_t audio_engine_play_for_deck(uint8_t deck)
 {
     audio_engine_state_t *eng = &s_engines[deck];
     if (!eng->loaded) return ESP_ERR_INVALID_STATE;
+#if AE_FW
+    if (s_usb_main_sink && !controller_usb_audio_stream_available())
+        return ESP_ERR_INVALID_STATE;
+    if (atomic_load_bool(&eng->usb_resume_pending)) {
+        const uint32_t position = eng->usb_resume_position_ms;
+        esp_err_t rc = audio_engine_seek_for_deck_reason(deck, position, AE_SEEK_REASON_USER);
+        if (rc != ESP_OK) return rc;
+        if (s_usb_main_sink && !controller_usb_audio_stream_available())
+            return ESP_ERR_INVALID_STATE;
+        atomic_store_bool(&eng->usb_resume_pending, false);
+    }
+#endif
 
     /* A decoder can reach EOF before first PLAY because it fills the future PCM
      * window while the deck is paused. Rewind only after the consumer has
@@ -5169,6 +5249,8 @@ static esp_err_t audio_engine_seek_for_deck_reason(uint8_t deck,
     atomic_store_bool(&eng->playback_finished, false);
     eng->output_base_ms = position_ms;
     eng->output_frames_since_seek = 0u;
+    if (atomic_load_bool(&eng->usb_resume_pending) && reason != AE_SEEK_REASON_LOOP)
+        eng->usb_resume_position_ms = position_ms;
 #if AE_FW
     output_position_epoch_bump(deck);
 #endif
@@ -5419,6 +5501,10 @@ esp_err_t audio_engine_deck_set_loop(uint8_t deck, uint32_t start_ms, uint32_t e
 #endif
     audio_engine_state_t *eng = &s_engines[deck];
     AE_LOCK();
+    if (!audio_loop_range_valid(start_ms, end_ms, eng->duration_ms)) {
+        AE_UNLOCK();
+        return ESP_ERR_INVALID_ARG;
+    }
 #if AE_FW
     const bool resize = eng->loop_active &&
         (eng->loop_start_ms != start_ms || eng->loop_end_ms != end_ms);
@@ -6932,8 +7018,8 @@ void audio_engine_get_diagnostics_snapshot(audio_engine_diagnostics_snapshot_t *
 #endif
     AE_UNLOCK();
 #if !AE_PC
-    /* Heap walks take their own allocator locks. Keep those outside the audio
-     * state mutex: diagnostics must not extend a mixer/control critical section.
+    /* Per-heap counters take their own allocator locks. Keep those outside the
+     * audio state mutex: diagnostics must not extend a mixer/control section.
      * These are observation-time heap values, not an atomic audio snapshot.
      * Minimum-free is the allocator's lifetime low-water mark since boot. */
     audio_engine_snapshot_memory(out_snapshot);

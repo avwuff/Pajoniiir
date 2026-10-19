@@ -324,14 +324,38 @@ static void format_library_load_trace_json(char *out, size_t out_size)
              (unsigned)current.track_key, (unsigned)current.entered_us);
 }
 
+static web_server_address_probe_fn s_address_probe;
+
+void web_server_set_address_probe(web_server_address_probe_fn probe)
+{
+    s_address_probe = probe;
+}
+
+bool web_server_is_running(void) { return s_web_server != NULL; }
+
 static void current_ap_ipv4(char out[16])
 {
     snprintf(out, 16, "192.168.4.1");
     esp_netif_t *ap = esp_netif_get_handle_from_ifkey("WIFI_AP_DEF");
     esp_netif_ip_info_t info = {0};
-    if (ap && esp_netif_get_ip_info(ap, &info) == ESP_OK) {
+    if (ap && esp_netif_is_netif_up(ap) &&
+        esp_netif_get_ip_info(ap, &info) == ESP_OK && info.ip.addr) {
         (void)esp_ip4addr_ntoa(&info.ip, out, 16);
+        return;
     }
+    if (s_address_probe) (void)s_address_probe(out, 16u);
+}
+
+static bool current_host_allowed(const char *host)
+{
+    char ap_ipv4[16];
+    current_ap_ipv4(ap_ipv4);
+    if (web_api_host_allowed(host, ap_ipv4)) return true;
+    /* Ethernet and AP can both be requested. Accept only the other live
+     * board address, using the same strict Host/port parser as the AP. */
+    char board_ipv4[16] = {0};
+    return s_address_probe && s_address_probe(board_ipv4, sizeof(board_ipv4)) &&
+           web_api_host_allowed(host, board_ipv4);
 }
 
 #if CONFIG_CONTROLLER_PROFILE_MANAGER
@@ -394,10 +418,8 @@ static esp_err_t register_uri_or_stop(httpd_handle_t server, const httpd_uri_t *
 static bool api_request_allowed(httpd_req_t *req, bool mutation)
 {
     char host[64] = {0};
-    char ap_ipv4[16] = {0};
-    current_ap_ipv4(ap_ipv4);
     if (httpd_req_get_hdr_value_str(req, "Host", host, sizeof(host)) != ESP_OK ||
-        !web_api_host_allowed(host, ap_ipv4)) {
+        !current_host_allowed(host)) {
         httpd_resp_set_status(req, "403 Forbidden");
         (void)httpd_resp_send(req, "Invalid API host", HTTPD_RESP_USE_STRLEN);
         return false;
@@ -428,10 +450,8 @@ extern const uint8_t app_js_end[]       asm("_binary_app_js_end");
 static bool redirect_if_needed(httpd_req_t *req)
 {
     char host[64] = {0};
-    char ap_ipv4[16] = {0};
-    current_ap_ipv4(ap_ipv4);
     if (httpd_req_get_hdr_value_str(req, "Host", host, sizeof(host)) == ESP_OK) {
-        if (!web_api_host_allowed(host, ap_ipv4)) {
+        if (!current_host_allowed(host)) {
             ESP_LOGD(TAG, "Redirecting Host '%s' to %s", host,
                      WEB_API_CANONICAL_HOSTNAME);
             httpd_resp_set_status(req, "302 Found");
@@ -2031,6 +2051,7 @@ static esp_err_t api_status_handler(httpd_req_t *req)
         "\"crossfader\":%u,"
         "\"master_volume\":%u,"
         "\"headphone_mix\":%u,"
+        "\"headphone_level\":%u,"
         "\"pregain1\":%u,"
         "\"pregain2\":%u,"
         "\"pregain_gain1\":%.3f,"
@@ -2112,22 +2133,14 @@ static esp_err_t api_status_handler(httpd_req_t *req)
         "\"heap_free\":%u,"
         "\"internal_free\":%u,"
         "\"internal_min_free\":%u,"
-#if CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC
         "\"internal_largest_free\":null,"
-#else
-        "\"internal_largest_free\":%u,"
-#endif
         "\"dma_free\":%u,"
         "\"dma_min_free\":%u,"
-#if CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC
         "\"dma_largest_free\":null,"
-#else
-        "\"dma_largest_free\":%u,"
-#endif
         "\"psram_free\":%u,"
         "\"psram_min_free\":%u,"
         "\"psram_largest_free\":null,"
-        "\"heap_walk_max_us\":[%u,%u,%u]"
+        "\"heap_walk_max_us\":[null,null,null]"
         "}"
         "}",
         board_id_name(board->id), board->project, board_build_source_sha(),
@@ -2172,6 +2185,7 @@ static esp_err_t api_status_handler(httpd_req_t *req)
         mixer.channel_volume[0], mixer.channel_volume[1], mixer.crossfader,
         mixer.master_volume,
         mixer.headphone_mix,
+        mixer.headphone_level,
         mixer.pregain[0], mixer.pregain[1],
         (double)mixer.pregain_gain[0], (double)mixer.pregain_gain[1],
         mixer.eq[0][AUDIO_EQ_BAND_LOW], mixer.eq[0][AUDIO_EQ_BAND_MID], mixer.eq[0][AUDIO_EQ_BAND_HIGH],
@@ -2253,19 +2267,10 @@ static esp_err_t api_status_handler(httpd_req_t *req)
         (unsigned)diagnostics.heap_free,
         (unsigned)diagnostics.internal_free,
         (unsigned)diagnostics.internal_min_free,
-#if !CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC
-        (unsigned)diagnostics.internal_largest_free,
-#endif
         (unsigned)diagnostics.dma_free,
         (unsigned)diagnostics.dma_min_free,
-#if !CONFIG_CONTROLLER_USB_HS_AUDIO_DIAGNOSTIC
-        (unsigned)diagnostics.dma_largest_free,
-#endif
         (unsigned)diagnostics.psram_free,
-        (unsigned)diagnostics.psram_min_free,
-        (unsigned)diagnostics.heap_walk_max_us[0],
-        (unsigned)diagnostics.heap_walk_max_us[1],
-        (unsigned)diagnostics.heap_walk_max_us[2]);
+        (unsigned)diagnostics.psram_min_free);
     free(p4_usb_json);
     free(crash_dump_json);
     free(trace_json);
@@ -2562,14 +2567,7 @@ static esp_err_t api_control_handler(httpd_req_t *req)
                                    HTTPD_RESP_USE_STRLEN);
         }
     } else if (strcmp(action, "cue") == 0) {
-        ctrl_event_t ev = {
-            .type  = CTRL_EV_BUTTON,
-            .id    = (deck == CTRL_DECK_2) ? CTRL_ID_DECK2_CUE : CTRL_ID_DECK1_CUE,
-            .deck  = deck,
-            .value = 1,
-            .seq   = 0
-        };
-        queue_rc = deck_core_queue_remote_event(&ev);
+        queue_rc = deck_core_queue_remote_cue_tap((uint8_t)deck);
     } else if (strcmp(action, "pfl") == 0) {
         ctrl_event_t ev = {
             .type  = CTRL_EV_BUTTON,

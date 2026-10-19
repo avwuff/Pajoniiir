@@ -1,0 +1,11 @@
+{
+  ".gitattributes": "0b95973e94b16d18b68f157cce5564bc6e9821f194d7f1d12b165fb15c5ad672",
+  "board_build_identity.json": "4dfc56d568dbcfd1b1b210c7dfd5e35b8ed4b2ce00bdee3df9825cb107e460bd",
+  "jc4880-build.txt": "ea2a963c718f0dabbfc4581d3d5239db9d1157889aa33b3be8b58d174ad678f6",
+  "jc4880-package.txt": "50fa03424ca0d010bc8d9e1a64211d176ba941d27b3740ab36067260ccdd29a0",
+  "late-review.json": "db55b88f4d47dd8cda415dee4b55634f952d8796c39b5386aac691ed284d8cd4",
+  "manifest.json": "d734398a923a74017858e277774fabc3a79d193d4b31c0c71360778593e99534",
+  "manifest.sig": "ab279cfbb69af8c65bf706d4ac209d5ed55d913c518cb4e08fc413c3d3f842d7",
+  "package-evidence.json": "90fd70b980e8834c1660e3b7a331ae756785488ad98adfa1fdcfb72c00dd9bb9",
+  "review_output_late.py": "68179f96a2fbefd9fcf72a68e1c60480060d9366ed10a5fb34252cf85f4c4939"
+}

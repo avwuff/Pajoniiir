@@ -1,0 +1,12 @@
+{
+  ".gitattributes": "97ad57c419772f8a728493d86cea8786684a3b13220b6fdeb7c5631598e34489",
+  "board-check.txt": "b3beeef191bacd1715fd2e9eb9a0791fea7a2bfb4baf9826ee232dd2e35a539c",
+  "board-policy.json": "a5d7fd1ba965240e4661c7a4b59c94f1b7cc9a11658649a413f5453e7176478b",
+  "board_build_identity.json": "354e914ee93ac8f821a957702e08dbbb0965f589e03747de3bb98504eb387ecd",
+  "manifest.json": "0cb1474f8f81534433ca8c181eda73e5dc5267b31d4d89654b2e004624407bb0",
+  "manifest.sig": "e43f95d22afa5d1ff3b25907faa6eecdf8ee0aa5340aebd159c147949a956bf9",
+  "package-verification.txt": "889e45bd46374ef588b09c63a59dc86640a8be6db404d3bb1804231da0b76898",
+  "preparation-context.json": "e7169205a8226a4ce121b3dce6a68df277aa23cc13cf93c5c76bfa4408ceaa1b",
+  "preparation.json": "f5fa5aa1fab9a32291f258bfa89e703b8ef18a8ae3f5276a3a63a377732871bc",
+  "trust-key.json": "792d54ba4382968f16270deb954ab0d04f8e2b777029e5ce38dd0ff9e9f39413"
+}
