@@ -59,6 +59,11 @@ A JC4880 club-use report of low FLX4 headphone volume led to a
 accepted in a short JC4880/FLX4 bench listening test. Published beta assets
 retain their existing behavior; the correction is not yet publicly distributed.
 
+The next contributor distribution, **shared-p4-beta.2**, retains the exact M3
+and JC4880 images accepted after this correction, together with a software-checked
+JC1060 candidate. Its [delivery record](docs/validation/SHARED_P4_BETA_2_20261019.md)
+tracks per-board versions, hashes and remaining physical gates.
+
 The release also includes a limited S2 basic profile and a generic MIDI-CI
 fixture for development. They are not additional hardware-qualified DJ models.
 A historical hour soak qualifies only its exact image and configuration;
