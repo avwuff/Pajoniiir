@@ -4,6 +4,13 @@ This directory is a preparation workspace, **not a fourth production target**.
 No BSP/entrypoint, touch driver, panel table or OTA identity is activated.
 The supported production targets remain JC4880, JC1060 and M3.
 
+The [2026-10-19 source audit](../../../docs/reviews/2026-10-19-jc8012-source-audit.md)
+identifies a published Apache-2.0 panel-table candidate equal to all 204 donor
+commands, without importing it here. A registry MIT touch wrapper has a passing
+IDF6.0.2 synthetic-payload syntax probe, but its manifest requires6.1 and its
+NOTICE explicitly excludes the controller firmware. Touch distribution remains
+unresolved; the original vendor/factory payloads below remain excluded.
+
 Frozen donor: `694ecd6a3f59caa99fd0811e11e0c29d77219411` on
 `jc8012p4a1-v3`. Relevant adaptations must preserve the canonical USB ancestry,
 audio, controller, startup-health and shared-core fixes; do not merge that

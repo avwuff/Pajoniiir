@@ -1,0 +1,72 @@
+[
+  {
+    "path": "components/touch/esp_lcd_touch_gsl3680/CHANGELOG.md",
+    "git_blob": "7dce04516478fc0b28670ab464807727da298ea4",
+    "sha256": "de8dfb15d287df7a9e8aaf18d6f80365957ad6f7ad31a0b5f03947a45fddfd32",
+    "bytes": 1082,
+    "url": "https://api.github.com/repos/Guition-JC/Guition/git/blobs/7dce04516478fc0b28670ab464807727da298ea4"
+  },
+  {
+    "path": "components/touch/esp_lcd_touch_gsl3680/CMakeLists.txt",
+    "git_blob": "072e926dfec33d159befc8370cb10b75e5c524dc",
+    "sha256": "1bdfa0b6886187b5afe8ccf8c80d1793f1506db66afefe3d37818d4a463b8a77",
+    "bytes": 243,
+    "url": "https://api.github.com/repos/Guition-JC/Guition/git/blobs/072e926dfec33d159befc8370cb10b75e5c524dc"
+  },
+  {
+    "path": "components/touch/esp_lcd_touch_gsl3680/LICENSE",
+    "git_blob": "68688297cecd7fd9002d9cf65529e867d17f9f0e",
+    "sha256": "59793c9e812e026dfe19bb8b84bab77c9da79b8474c2ba21b8e7dfe2da63fb70",
+    "bytes": 1091,
+    "url": "https://api.github.com/repos/Guition-JC/Guition/git/blobs/68688297cecd7fd9002d9cf65529e867d17f9f0e"
+  },
+  {
+    "path": "components/touch/esp_lcd_touch_gsl3680/NOTICE",
+    "git_blob": "30f89dd600ee4307452815deecde323020f66b26",
+    "sha256": "185d0f657565be03f0b3caa48a37d4902e90a43685c86f3e216af45e15f5c5f9",
+    "bytes": 561,
+    "url": "https://api.github.com/repos/Guition-JC/Guition/git/blobs/30f89dd600ee4307452815deecde323020f66b26"
+  },
+  {
+    "path": "components/touch/esp_lcd_touch_gsl3680/README.md",
+    "git_blob": "76ce25e2f79544ae1a979e576d0dd471a35d8b58",
+    "sha256": "83a7b3a6dbbd7fc64340e78747971849f8a47e6a0dc33f14f00126c732b8bfd2",
+    "bytes": 2221,
+    "url": "https://api.github.com/repos/Guition-JC/Guition/git/blobs/76ce25e2f79544ae1a979e576d0dd471a35d8b58"
+  },
+  {
+    "path": "components/touch/esp_lcd_touch_gsl3680/README_EN.md",
+    "git_blob": "b28f22c901a40d0c0c5e561dd5d426030bf0771d",
+    "sha256": "437a11560f4788e92d596e1a586ce3317306c1c4dae45a7b89517b24cb1e86cc",
+    "bytes": 2185,
+    "url": "https://api.github.com/repos/Guition-JC/Guition/git/blobs/b28f22c901a40d0c0c5e561dd5d426030bf0771d"
+  },
+  {
+    "path": "components/touch/esp_lcd_touch_gsl3680/esp_lcd_touch_gsl3680.c",
+    "git_blob": "cf0aef65870a37ca65fc8a742c7d98a0f042a098",
+    "sha256": "efd6723324d325a5877b4411b954ff9f5b348032dc08f539d81d8ec7fecda824",
+    "bytes": 17095,
+    "url": "https://api.github.com/repos/Guition-JC/Guition/git/blobs/cf0aef65870a37ca65fc8a742c7d98a0f042a098"
+  },
+  {
+    "path": "components/touch/esp_lcd_touch_gsl3680/idf_component.yml",
+    "git_blob": "34cf8d339ee36fa23a26b78ccb121480d657fbb0",
+    "sha256": "e3d66c7d3053f524b38684572234e1c8469a4bbe263a1f11addc08606d218d48",
+    "bytes": 558,
+    "url": "https://api.github.com/repos/Guition-JC/Guition/git/blobs/34cf8d339ee36fa23a26b78ccb121480d657fbb0"
+  },
+  {
+    "path": "components/touch/esp_lcd_touch_gsl3680/include/esp_lcd_touch_gsl3680.h",
+    "git_blob": "a8fd344efea83b1e52e5c4e84c2e36b068ba1f02",
+    "sha256": "aa765de2dc294c45c57997081026eb96becf17c2f2ff8ce154742a5500f2955c",
+    "bytes": 1835,
+    "url": "https://api.github.com/repos/Guition-JC/Guition/git/blobs/a8fd344efea83b1e52e5c4e84c2e36b068ba1f02"
+  },
+  {
+    "path": "components/touch/esp_lcd_touch_gsl3680/private_include/gsl3680_firmware.h",
+    "git_blob": "fd23f4cf04aa4860e27712988b5788935981a6b3",
+    "sha256": "4bd01b8a3dea88cb82c0db2fd94759f7412754eff6851b4c1b8f2f0ceae48f4c",
+    "bytes": 104885,
+    "url": "https://api.github.com/repos/Guition-JC/Guition/git/blobs/fd23f4cf04aa4860e27712988b5788935981a6b3"
+  }
+]

@@ -1,0 +1,27 @@
+{
+  "tables": {
+    "official_old": {
+      "entries": 197,
+      "wire_semantic_sha256": "4e042426e60ea55b026db19eabd37dfaa4674ce92fba0e5f77b6a4465d666b85"
+    },
+    "donor_factory": {
+      "entries": 204,
+      "wire_semantic_sha256": "3bbccf59f487f54eb71bbe027ffd30f4e6899757b536c3cc1672f882e104c414"
+    },
+    "issue_v2": {
+      "entries": 204,
+      "wire_semantic_sha256": "3bbccf59f487f54eb71bbe027ffd30f4e6899757b536c3cc1672f882e104c414"
+    },
+    "published_apache_v2": {
+      "entries": 204,
+      "wire_semantic_sha256": "3bbccf59f487f54eb71bbe027ffd30f4e6899757b536c3cc1672f882e104c414"
+    }
+  },
+  "published_v2_equals_donor": true,
+  "issue_v2_equals_donor": true,
+  "official_old_equals_donor": false,
+  "published_source_commit": "51440114b059b554cbd74da7000b7b761e724bd2",
+  "published_file_sha256": "ad1a14976b8cd52854b4adc5fa618d1d10e7bf2de674a2037f3f4f97f5e250c1",
+  "published_source_path": "src/devices/guition_jc8012p4a1_v2/vendor/jd9365_init_cmds.h",
+  "published_file_git_blob": "7faec7f9f6ab2d2eef7ef489bf1be9181cd9c6f8"
+}

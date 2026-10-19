@@ -1,0 +1,16 @@
+[
+  {
+    "path": "JC8012P4A1C_I_W_Y/JC8012P4A1C_I_W_Y/1-Demo/arduino-examples/esp32p4_lvgl_v8/src/lcd/esp_lcd_jd9365.c",
+    "sha": "80492fc86104e5349d5fec659bfbd1ea9562b700",
+    "size": 19132,
+    "sha256": "3c02d3a63eaf6a943be3e419347c2d06de7eab379c2d43ce56797b99aaec04d8",
+    "cached_as": "official-panel.c"
+  },
+  {
+    "path": "JC8012P4A1C_I_W_Y/JC8012P4A1C_I_W_Y/4-Driver_IC_Data_Sheet/C-JD9365DA-H3_HKC10.1_IPS(QP101BS01-1)_800x1280_FP7721_ZigZag_G2.2_20221205_andy(2lane).txt",
+    "sha": "d67626cf4babfa2b3e34b76f079605c70ac39f9b",
+    "size": 3784,
+    "sha256": "2445c9f84d9f6a74d3d8ff90ce295b73cf801d45af800f68db16b7e9e1a5dcb9",
+    "cached_as": "official-panel-sequence.txt"
+  }
+]

@@ -1,5 +1,14 @@
 # P4 post-release development plan
 
+2026-10-19 [JC8012 source audit](reviews/2026-10-19-jc8012-source-audit.md):
+PR54 is merged, with green thirteen-job migration CI on head and master.
+A pinned published Apache-2.0 panel candidate matches all 204 donor commands;
+prepare its notice-preserving board-local import separately. The MIT touch
+package explicitly excludes firmware rights. Its wrapper has a passing
+synthetic-only IDF6.0.2 syntax probe, while the published manifest requires6.1.
+Keep IDF6.0.2 and all existing defaults; resolve firmware distribution or decide
+a separate provisioning contract before implementing the actual touch port.
+
 2026-10-19 [JC board preparation](reviews/2026-10-19-jc-board-preparation.md):
 the JC8012 private PPA generator and compile/configure isolation contracts are
 ready for a future licensed BSP. Both the GSL3680 payload and factory JD9365
