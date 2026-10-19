@@ -1,5 +1,13 @@
 # P4 operation and release checklist
 
+For [JC board preparation](reviews/2026-10-19-jc-board-preparation.md), leave
+`PAJONIIIR_SD_COLD_POWER_EXPERIMENT` OFF in ordinary builds. Its JC1060-only
+candidate needs a fresh sdkconfig, explicit build/verifier admission and later
+rail/pin, warm-reset and Hosted/USB hardware checks. Existing boards must select
+stock IDF PPA; never add a JC8012 override to the shared component root. JC8012
+has no active BSP/entrypoint or physical acceptance while touch and factory-panel
+table provenance remains unresolved. Existing accepted images stay installed.
+
 For the 2026-10-19 branch integration, `ui_next` remains a disabled demo, not a
 production startup component. Numark's `deckN.pfl_set` profile requires matching
 post-integration firmware; published beta2 does not implement that semantic

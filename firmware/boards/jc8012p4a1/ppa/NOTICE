@@ -1,0 +1,5 @@
+Copyright 2023-2026 Espressif Systems (Shanghai) CO LTD.
+The workaround.before and workaround.after fragments derive from
+ESP-IDF components/esp_driver_ppa/src/ppa_srm.c (Apache-2.0).
+See LICENSE-IDF for the complete licence. Donor changes and source pins are
+recorded in pins.json and the parent README.md. Keep these notices with copies.

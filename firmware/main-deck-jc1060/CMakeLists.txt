@@ -5,6 +5,9 @@ include("${CMAKE_CURRENT_LIST_DIR}/../p4-core/cmake/project_version.cmake")
 pajoniiir_resolve_version("M2*")
 
 set(SDKCONFIG_DEFAULTS "${CMAKE_CURRENT_LIST_DIR}/../main-deck-p4/sdkconfig.defaults;${CMAKE_CURRENT_LIST_DIR}/sdkconfig.defaults")
+if(PAJONIIIR_SD_COLD_POWER_EXPERIMENT)
+    list(APPEND SDKCONFIG_DEFAULTS "${CMAKE_CURRENT_LIST_DIR}/sdkconfig.sd_cold_power_experiment")
+endif()
 # Explicit allow-list; never discover another board provider or entrypoint.
 set(PAJONIIIR_SHARED_COMPONENTS
     p4_app app_settings audio_engine audio_recorder beat_jump board_adapter board_capabilities control_link dj_link_service
@@ -43,6 +46,12 @@ include($ENV{IDF_PATH}/tools/cmake/project.cmake)
 project(main-deck-jc1060)
 if(NOT CONFIG_PAJONIIIR_BOARD_JC1060)
     message(FATAL_ERROR "JC1060 target requires its board configuration")
+endif()
+if(CONFIG_PAJONIIIR_SD_COLD_POWER_EXPERIMENT AND NOT PAJONIIIR_SD_COLD_POWER_EXPERIMENT)
+    message(FATAL_ERROR "SD cold power requires -DPAJONIIIR_SD_COLD_POWER_EXPERIMENT=ON")
+endif()
+if(PAJONIIIR_SD_COLD_POWER_EXPERIMENT AND NOT CONFIG_PAJONIIIR_SD_COLD_POWER_EXPERIMENT)
+    message(FATAL_ERROR "SD cold-power option was masked by an existing sdkconfig; use a fresh SDKCONFIG")
 endif()
 if(NOT CONFIG_ESPTOOLPY_FLASHSIZE_16MB AND NOT CONFIG_ESPTOOLPY_FLASHSIZE_32MB
    AND NOT CONFIG_ESPTOOLPY_FLASHSIZE_64MB AND NOT CONFIG_ESPTOOLPY_FLASHSIZE_128MB)

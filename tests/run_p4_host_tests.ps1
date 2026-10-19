@@ -2139,6 +2139,22 @@ $tests = @(
         )
     },
     @{
+        Name = "jc8012_ppa_rotation"
+        Dir = "tests/sd_cold_power"
+        Target = "test_ppa_rotation.exe"
+        Args = @("-std=c11", "-Wall", "-Wextra", "-Werror", "test_ppa_rotation.c", "-o", "test_ppa_rotation.exe")
+    },
+    @{
+        Name = "sd_cold_power"
+        Dir = "tests/sd_cold_power"
+        Target = "test_sd_cold_power.exe"
+        Args = @(
+            "-std=c11", "-Wall", "-Wextra", "-Werror", "-I../support/stubs",
+            "-I../../firmware/boards/jc-common", "test_sd_cold_power.c",
+            "../../firmware/boards/jc-common/sd_cold_power.c", "-o", "test_sd_cold_power.exe"
+        )
+    },
+    @{
         Name = "sd_dma"
         Dir = "tests/sd_dma"
         Target = "test_sd_dma.exe"
@@ -3679,6 +3695,9 @@ if ($pythonSource) {
     Invoke-Step -Name "run relocated board build verifier" `
         -WorkingDirectory $RepoRoot -Executable $pythonSource `
         -Arguments @("tests/board_adapter/test_build_verifier.py")
+    Invoke-Step -Name "run private JC8012 PPA preparation" `
+        -WorkingDirectory $RepoRoot -Executable $pythonSource `
+        -Arguments @("tests/board_adapter/test_jc8012_preparation.py")
     Invoke-Step -Name "run incremental board identity generation" `
         -WorkingDirectory $RepoRoot -Executable $pythonSource `
         -Arguments @("tests/board_adapter/test_build_identity.py")

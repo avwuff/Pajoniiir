@@ -1,0 +1,18 @@
+{
+  "source_sha": "5a005092a3bbe499d2d1c48a14c9d34414484916",
+  "idf_version": "ESP-IDF v6.0.2",
+  "project": "main-deck-jc1060",
+  "build_exit": 0,
+  "verifier_exit": 0,
+  "lock_sha256": "B41213015DC95AE87952B56C5E5672503FFE12BC63325C3A68698EE6F958F72E",
+  "lock_unchanged": true,
+  "ui_next_selected": false,
+  "ppa_component_path": "C:/Espressif/v6.0.2/esp-idf/components/esp_driver_ppa",
+  "image_bytes": 2668352,
+  "image_sha256": "18127F17AE5C4B0112A305D3002D2346E47A6C90F5CA155433443A7B9E17101C",
+  "board_build_identity": {
+    "source_sha": "5a005092a3bbe499d2d1c48a14c9d34414484916",
+    "source_dirty": 0
+  },
+  "project_version": "M2.5-290-g5a005092"
+}

@@ -1,0 +1,9 @@
+Traceback (most recent call last):
+  File "D:\AI\Pajoniiir-shared-p4-core\tools\check_board_build.py", line 124, in <module>
+    verify(args.build, args.project, args.experimental_recorder, args.experimental_link,
+  File "D:\AI\Pajoniiir-shared-p4-core\tools\check_board_build.py", line 61, in verify
+    verify_sd_power_policy(config, project, experimental_sd_power)
+  File "D:\AI\Pajoniiir-shared-p4-core\tools\check_board_build.py", line 25, in verify_sd_power_policy
+    assert enabled == experiment, "SD cold power requires explicit experiment admission"
+           ^^^^^^^^^^^^^^^^^^^^^
+AssertionError: SD cold power requires explicit experiment admission

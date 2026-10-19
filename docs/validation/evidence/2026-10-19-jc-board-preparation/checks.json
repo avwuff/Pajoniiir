@@ -1,0 +1,17 @@
+{
+  "source_sha": "5a005092a3bbe499d2d1c48a14c9d34414484916",
+  "host_exit": 0,
+  "ordinary_builds_exit": 0,
+  "sd_experiment_exit": 0,
+  "host_build_steps": 144,
+  "host_run_steps": 206,
+  "explicit_skip_lines": [],
+  "hardware_tests": "NOT RUN",
+  "ota": "NOT RUN",
+  "new_ci_sd_power_variant": "NOT RUN (locally configured only)",
+  "documentation_exit": 0,
+  "documentation_files": 161,
+  "retired_documentation_paths_checked": 134,
+  "readme_images_retained": true,
+  "ci_yaml_structure": "PASS"
+}

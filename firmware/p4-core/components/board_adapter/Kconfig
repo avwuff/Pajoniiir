@@ -22,6 +22,16 @@ config PAJONIIIR_SD_INTERNAL_BOUNCE
         and writes. Required when testing USB DMA in PSRAM; mount fails
         safely if this buffer cannot be allocated. JC4880 USB DMA policy stays
         internal. This does not change SD or media locking.
+config PAJONIIIR_SD_COLD_POWER_EXPERIMENT
+    bool "Experimental JC1060 first-mount SD rail power cycle"
+    depends on PAJONIIIR_BOARD_JC1060
+    default n
+    help
+        Before the first SDMMC slot-0 mount, release LDO4, hold GPIO39-44
+        low for 150 ms, restore the pins, then reacquire and settle the rail.
+        No global SDMMC reset; Hosted slot 1 remains owned by ESP-Hosted.
+        Requires board-specific warm-reset/cold-boot acceptance. Keep OFF
+        in production until that gate is complete.
 endmenu
 
 menu "Pajoniiir JC4880 BSP"

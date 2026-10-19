@@ -1,0 +1,14 @@
+{
+  "board": "jc8012p4a1",
+  "donor_sha": "694ecd6a3f59caa99fd0811e11e0c29d77219411",
+  "files_sha256": {
+    "CMakeLists.txt": "1b0df82b0f3da80bf4452d9f94fd4f3b3c9e32a470daa32be5345bbc8f17e87b",
+    "include/driver/ppa.h": "9c3a60c31e7de90182b1d406680378580e2f3303f23dbbb843e743d41007ce8e",
+    "src/ppa_core.c": "fb7afe6256e6c9a94d07ffd63484019dcef02eb23916196bced82bfaca0ff82e",
+    "src/ppa_priv.h": "dca8976141dd429d256fecb93ad61b8d13f8a95890c2b2d7c4f4463aba794eb3",
+    "src/ppa_srm.c": "7b63e35d0c8b64cfb3aa9b041529295ab81fd73e8f29ff83c6b17eb6807ec469",
+    "src/ppa_blend.c": "d318569aa08b49701cfc44b424372bb9b87b085c8e118b7ff277d67785e3414f",
+    "src/ppa_fill.c": "53301d37706395a582e17378bb6362d889fcca73692ea2b44101391892461c3f",
+    "LICENSE": "cfc7749b96f63bd31c3c42b5c471bf756814053e847c10f3eb003417bc523d30"
+  }
+}

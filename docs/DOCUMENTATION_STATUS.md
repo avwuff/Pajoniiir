@@ -2,6 +2,17 @@
 
 Status: **current documentation authority, reconciled 2026-10-19**.
 
+The [JC board preparation](reviews/2026-10-19-jc-board-preparation.md) isolates
+the JC8012 PPA preparation from all three production targets and implements
+an opt-in JC1060 first-mount SD power sequence. Clean `5a005092` passes full
+host qualification, all three ordinary IDF6.0.2 builds and a fresh-config
+JC1060 SD-experiment build. Existing targets retain stock PPA; locks are
+unchanged. The new CI SD-power variant is wired but not yet hosted-verified.
+JC8012 has no active BSP/entrypoint: both the touch payload and the factory
+panel table have unresolved distribution terms and are excluded. JC1060 SD
+hardware acceptance remains NOT RUN; its Wi-Fi policy is unchanged. No OTA,
+installed firmware, beta2 asset or public channel changes follow from this work.
+
 PR53 repairs the UI mock on master `5b09a1d8`: all twelve migration CI jobs
 pass, including the host/UI screenshot gate and eleven firmware configurations.
 Documentation, Pages deployment and the separate dual-USB workflow pass; all

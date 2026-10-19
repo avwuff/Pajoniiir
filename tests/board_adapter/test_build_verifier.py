@@ -9,7 +9,7 @@ from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT/'tools'))
-from check_board_build import verify
+from check_board_build import verify, verify_sd_power_policy
 
 
 class BuildVerifierTests(unittest.TestCase):
@@ -22,16 +22,18 @@ class BuildVerifierTests(unittest.TestCase):
                  'controller_profile_manager', 'controller_profile_runtime',
                  'controller_usb_host', 'usb_storage', 'usb_host_manager',
                  'audio_recorder', 'restart_diagnostics', 'dj_link_service',
-                 'djlink', 'dj_link_core', 'bsp_p4_m3']
+                 'djlink', 'dj_link_core', 'bsp_p4_m3', 'esp_driver_ppa']
         self.description = {
             'project_name': 'main-deck-m3', 'target': 'esp32p4',
             'project_dir': '/project/firmware/main-deck-m3',
+            'idf_path': '/opt/esp-idf',
             'build_components': names,
             'build_component_paths': [
                 '/project/firmware/p4-core/components/'+n if n not in
                 ('djlink', 'dj_link_core', 'bsp_p4_m3') else '/project/other/'+n
                 for n in names],
         }
+        self.description['build_component_paths'][-1] = '/opt/esp-idf/components/esp_driver_ppa'
         self.write_description()
         flags = ['LV_USE_CUSTOM_MALLOC', 'PAJONIIIR_BOARD_M3',
                  'AUDIO_ANTIALIAS_CACHE', 'BSP_PCM5102A_MAIN_OUT',
@@ -48,7 +50,8 @@ class BuildVerifierTests(unittest.TestCase):
         (self.build/'pajoniiir_usb_parent').mkdir()
         (self.build/'pajoniiir_usb_parent/hub.c').write_text('.parent_dev_hdl = parent_dev_hdl,')
         (self.build/'compile_commands.json').write_text(json.dumps([
-            {'file': '/container/relocated/pajoniiir_usb_parent/hub.c'}]))
+            {'file': '/container/relocated/pajoniiir_usb_parent/hub.c'},
+            {'file': '/opt/esp-idf/components/esp_driver_ppa/src/ppa_srm.c'}]))
 
     def tearDown(self):
         self.temp.cleanup()
@@ -91,9 +94,35 @@ class BuildVerifierTests(unittest.TestCase):
 
     def test_unpatched_selected_hub_is_rejected(self):
         (self.build/'compile_commands.json').write_text(json.dumps([
-            {'file': '/dependency/src/hub.c'}]))
+            {'file': '/dependency/src/hub.c'},
+            {'file': '/opt/esp-idf/components/esp_driver_ppa/src/ppa_srm.c'}]))
         with self.assertRaisesRegex(AssertionError, 'unpatched hub source'):
             self.check()
+
+    def test_board_private_ppa_is_rejected(self):
+        self.description['build_component_paths'][-1] = '/project/boards/jc8012/esp_driver_ppa'
+        self.write_description()
+        with self.assertRaisesRegex(AssertionError, 'private PPA override'):
+            self.check()
+
+    def test_redirected_ppa_source_is_rejected(self):
+        (self.build/'compile_commands.json').write_text(json.dumps([
+            {'file': '/container/relocated/pajoniiir_usb_parent/hub.c'},
+            {'file': '/project/private/ppa_srm.c'}]))
+        with self.assertRaisesRegex(AssertionError, 'PPA SRM source'):
+            self.check()
+
+    def test_sd_experiment_requires_explicit_matching_admission(self):
+        flag = '#define CONFIG_PAJONIIIR_SD_COLD_POWER_EXPERIMENT 1'
+        verify_sd_power_policy('', 'main-deck-jc1060')
+        verify_sd_power_policy(flag, 'main-deck-jc1060', True)
+        for project in ('main-deck-m3', 'main-deck-p4'):
+            with self.assertRaisesRegex(AssertionError, 'JC1060-only'):
+                verify_sd_power_policy(flag, project, True)
+        with self.assertRaisesRegex(AssertionError, 'explicit experiment'):
+            verify_sd_power_policy(flag, 'main-deck-jc1060')
+        with self.assertRaisesRegex(AssertionError, 'explicit experiment'):
+            verify_sd_power_policy('', 'main-deck-jc1060', True)
 
 
 if __name__ == '__main__':

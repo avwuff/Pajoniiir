@@ -1,0 +1,7 @@
+==> build jc8012_ppa_rotation
+==> run jc8012_ppa_rotation
+PASS PPA rotated workaround: 11616 axis/scaling/format/chunk cases
+==> build sd_cold_power
+==> run sd_cold_power
+PASS SD cold power: sequencing, 15 injected failures, cleanup, ownership, one-shot
+Selected functional suites passed; full regression gate was not requested.

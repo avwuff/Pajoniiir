@@ -20,8 +20,15 @@ def verify_usb_dma_policy(config: str, project: str, experimental_recorder: bool
         assert enabled("PAJONIIIR_SD_INTERNAL_BOUNCE"), "PSRAM USB DMA requires internal SD bounce"
 
 
+def verify_sd_power_policy(config: str, project: str, experiment: bool = False) -> None:
+    enabled = "#define CONFIG_PAJONIIIR_SD_COLD_POWER_EXPERIMENT 1" in config
+    assert enabled == experiment, "SD cold power requires explicit experiment admission"
+    assert not enabled or project == "main-deck-jc1060", "SD cold power is JC1060-only"
+
+
 def verify(build: Path, project: str, experimental_recorder: bool = False,
-           experimental_link: bool = False, experimental_s2: bool = False) -> None:
+           experimental_link: bool = False, experimental_s2: bool = False,
+           experimental_sd_power: bool = False) -> None:
     description = json.loads((build / "project_description.json").read_text())
     assert description["project_name"] == project, "wrong configured project"
     assert description["target"] == "esp32p4", "wrong silicon target"
@@ -51,6 +58,11 @@ def verify(build: Path, project: str, experimental_recorder: bool = False,
         if name in names:
             assert path.replace("\\", "/").endswith(f"/p4-core/components/{name}"), f"private copy of {name}"
     config = (build / "config/sdkconfig.h").read_text()
+    verify_sd_power_policy(config, project, experimental_sd_power)
+    ppa_index = description["build_components"].index("esp_driver_ppa")
+    ppa_path = description["build_component_paths"][ppa_index].replace("\\", "/").rstrip("/")
+    idf_path = description["idf_path"].replace("\\", "/").rstrip("/")
+    assert ppa_path == idf_path + "/components/esp_driver_ppa", "private PPA override in existing board"
     link_enabled = "#define CONFIG_PAJONIIIR_DJ_LINK_SERVICE 1" in config
     assert link_enabled == (jc1060 or experimental_link), "unqualified network service in ordinary build"
     link_index = description["build_components"].index("dj_link_service")
@@ -67,6 +79,8 @@ def verify(build: Path, project: str, experimental_recorder: bool = False,
     ancestry = build / "pajoniiir_usb_parent/hub.c"
     assert ancestry.is_file() and ".parent_dev_hdl = parent_dev_hdl," in ancestry.read_text(), "USB root ancestry patch missing"
     compilation = json.loads((build / "compile_commands.json").read_text())
+    assert any(item["file"].replace("\\", "/") == ppa_path + "/src/ppa_srm.c"
+               for item in compilation), "PPA SRM source is not from pinned IDF"
     assert any(item["file"].replace("\\", "/").endswith("/pajoniiir_usb_parent/hub.c") for item in compilation), "unpatched hub source selected"
     assert ("#define CONFIG_PAJONIIIR_BOARD_JC1060 1" in config) == jc1060
     assert ("#define CONFIG_PAJONIIIR_BOARD_M3 1" in config) == m3
@@ -105,5 +119,7 @@ if __name__ == "__main__":
     parser.add_argument("--experimental-recorder", action="store_true")
     parser.add_argument("--experimental-link", action="store_true")
     parser.add_argument("--experimental-s2", action="store_true")
+    parser.add_argument("--experimental-sd-power", action="store_true")
     args = parser.parse_args()
-    verify(args.build, args.project, args.experimental_recorder, args.experimental_link, args.experimental_s2)
+    verify(args.build, args.project, args.experimental_recorder, args.experimental_link,
+           args.experimental_s2, args.experimental_sd_power)
