@@ -15,6 +15,7 @@ int review_claim_result = 0;
 #include "fixtures/hercules_inpulse_500_fs_config.h"
 #include "fixtures/ddj400_hs_as_config.h"
 #include "fixtures/numark_touch_fs_as_config.h"
+#include "fixtures/ddj_sb3_fs_config.h"
 
 static unsigned packet_detail_count;
 static uint32_t packet_details[4][4];
@@ -936,6 +937,46 @@ static void test_numark_touch_fs(void)
     puts("PASS Numark FS focused fixture: PCM16 44.1k, sync cadence, MAIN/CUE routing, 48k source conversion, stop");
 }
 
+static void test_ddj_sb3_trailing_fragment(void)
+{
+    flx4_uac_descriptor_result_t parsed;
+    flx4_uac_playback_format_t selected;
+    uint8_t extended[sizeof(descriptor) + 2u];
+
+    memcpy(extended, descriptor, sizeof(descriptor));
+    extended[2] = (uint8_t)(sizeof(descriptor) + 1u);
+    extended[sizeof(descriptor)] = 0x09;
+    assert(flx4_uac_parse_playback_formats(extended, sizeof(descriptor) + 1u, &parsed));
+    assert(parsed.format_count == 1u);
+
+    memcpy(extended, descriptor, sizeof(descriptor));
+    extended[2] = (uint8_t)(sizeof(descriptor) + 2u);
+    extended[sizeof(descriptor)] = 0x09;
+    extended[sizeof(descriptor) + 1u] = 0x24;
+    assert(!flx4_uac_parse_playback_formats(extended, sizeof(descriptor) + 2u, &parsed));
+
+    assert(flx4_uac_parse_playback_formats(ddj_sb3_fs_config, sizeof(ddj_sb3_fs_config), &parsed));
+    assert(parsed.format_count == 1u);
+    assert(parsed.formats[0].interface_num == 1u && parsed.formats[0].alternate_setting == 1u);
+    assert(parsed.formats[0].endpoint_addr == 0x01u && parsed.formats[0].max_packet_size == 576u);
+    assert(parsed.formats[0].channels == 4u && parsed.formats[0].bits_per_sample == 24u);
+    assert(parsed.formats[0].bytes_per_sample == 3u && parsed.formats[0].interval == 1u);
+    assert(parsed.formats[0].sync_type == 3u && !parsed.formats[0].requires_feedback);
+    assert(parsed.formats[0].pcm_explicit && parsed.formats[0].frequency_control);
+    assert(flx4_uac_format_supports_rate(&parsed.formats[0], 44100u));
+    assert(flx4_uac_format_supports_rate(&parsed.formats[0], 48000u));
+    assert(!flx4_uac_parse_playback_formats(ddj_sb3_fs_config, sizeof(ddj_sb3_fs_config) - 1u, &parsed));
+
+    assert(controller_usb_audio_stream_is_quiesced());
+    assert(controller_usb_audio_stream_set_policy(false, false, false) == ESP_OK);
+    assert(select_stream_format(ddj_sb3_fs_config, sizeof(ddj_sb3_fs_config), &selected));
+    assert(selected.channels == 4u && selected.bits_per_sample == 24u && selected.bytes_per_sample == 3u);
+    assert(selected.max_packet_size == 576u && selected.sync_type == 3u && !selected.requires_feedback);
+    assert(s_target_rate == 44100u);
+    assert(controller_usb_audio_stream_set_policy(true, false, false) == ESP_OK);
+    puts("PASS DDJ-SB3 FS: 4ch packed-24 with one-byte tail, overrun tail still rejected");
+}
+
 static void test_flx4_dedicated_headphones_preserve_pcm_level(void)
 {
     assert(controller_usb_audio_stream_set_policy(true, false, false) == ESP_OK);
@@ -1056,6 +1097,7 @@ int main(void)
     test_hs_reconnect_under_heap_pressure();
     test_ddj400_hs_uac1_cadence();
     test_numark_touch_fs();
+    test_ddj_sb3_trailing_fragment();
     test_flx4_dedicated_headphones_preserve_pcm_level();
     assert(review_live_transfers == 0 && review_live_payload_bytes == 0);
     puts("PASS UAC 16/24-bit, consumer pacing, bounded timeout, ownership, reconnect and channel routing");
