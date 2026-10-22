@@ -8,7 +8,7 @@
   "decks": 2,
   "capabilities": {
     "led_feedback": true,
-    "usb_audio": false,
+    "usb_audio": true,
     "jog_touch": true,
     "pitch_14bit": true,
     "channel_filter_requires_smart_cfx": false
@@ -163,7 +163,7 @@
     { "kind": "note", "led": "track_load_deck2", "deck": "any", "status": "0x96", "data1": "0x47" }
   ],
   "audio": {
-    "enabled": false,
+    "enabled": true,
     "headphone_channels": [3, 4],
     "preferred_sample_rate": 44100
   },
