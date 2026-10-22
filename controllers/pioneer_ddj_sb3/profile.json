@@ -26,8 +26,8 @@
     { "type": "ext_action", "deck": 2, "action": "quantize", "status": "0x91", "data1": "0x5C" },
     { "type": "button", "event": "deck1.shift", "status": "0x90", "data1": "0x3F" },
     { "type": "button", "event": "deck2.shift", "status": "0x91", "data1": "0x3F" },
-    { "type": "ext_action", "deck": 1, "action": "jog_vinyl", "status": "0x90", "data1": "0x17" },
-    { "type": "ext_action", "deck": 2, "action": "jog_vinyl", "status": "0x91", "data1": "0x17" },
+    { "type": "ext_action", "deck": 1, "action": "jog_toggle", "status": "0x90", "data1": "0x17" },
+    { "type": "ext_action", "deck": 2, "action": "jog_toggle", "status": "0x91", "data1": "0x17" },
     { "type": "button", "event": "deck1.jog_touch", "status": "0x90", "data1": "0x36" },
     { "type": "button", "event": "deck2.jog_touch", "status": "0x91", "data1": "0x36" },
     { "type": "button", "event": "deck1.jog_search_touch", "status": "0x90", "data1": "0x67" },
@@ -87,8 +87,8 @@
 
     { "type": "encoder_rel64", "event": "deck1.jog_scratch", "status": "0xB0", "data1": "0x22" },
     { "type": "encoder_rel64", "event": "deck2.jog_scratch", "status": "0xB1", "data1": "0x22" },
-    { "type": "encoder_rel64", "event": "deck1.jog_bend", "status": "0xB0", "data1": "0x23" },
-    { "type": "encoder_rel64", "event": "deck2.jog_bend", "status": "0xB1", "data1": "0x23" },
+    { "type": "encoder_rel64", "event": "deck1.jog_scratch", "status": "0xB0", "data1": "0x23" },
+    { "type": "encoder_rel64", "event": "deck2.jog_scratch", "status": "0xB1", "data1": "0x23" },
     { "type": "encoder_rel64", "event": "deck1.jog_search", "status": "0xB0", "data1": "0x1F" },
     { "type": "encoder_rel64", "event": "deck2.jog_search", "status": "0xB1", "data1": "0x1F" },
     { "type": "encoder_rel64", "event": "deck1.jog_bend", "status": "0xB0", "data1": "0x21" },
@@ -138,6 +138,7 @@
     { "type": "button", "event": "system.master_cue", "status": "0x96", "data1": "0x78" }
   ],
   "outputs": [
+    { "kind": "note", "led": "vinyl", "deck_status": ["0x90", "0x91"], "data1": "0x17" },
     { "kind": "note", "led": "play", "deck_status": ["0x90", "0x91"], "data1": "0x0B" },
     { "kind": "note", "led": "cue", "deck_status": ["0x90", "0x91"], "data1": "0x0C" },
     { "kind": "note", "led": "cue_shift", "deck_status": ["0x90", "0x91"], "data1": "0x48" },

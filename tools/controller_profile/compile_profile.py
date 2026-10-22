@@ -144,6 +144,7 @@ EXT_ACTIONS = {
     "censor": 0, "sync_master": 1, "reloop_stop": 2, "loop_adjust_in": 3,
     "loop_adjust_out": 4, "quantize": 5, "sync_off": 6,
     "restore_source_cues": 7, "jog_vinyl": 8, "jog_cdj": 9,
+    "jog_toggle": 10,
 }
 
 # control_link.h LED ids
@@ -155,7 +156,7 @@ LED_IDS = {
     "loop_in": 15, "loop_out": 16, "smart_cfx": 41, "smart_fader": 42,
     "beat_fx_on": 43, "master_cue": 52, "censor": 53, "cue_shift": 54,
     "loop_adjust_in": 55, "loop_adjust_out": 56, "track_load_deck1": 57,
-    "track_load_deck2": 58,
+    "track_load_deck2": 58, "vinyl": 69,
 }
 LED_BANKS = {
     "beat_loop_pads": (17, 8), "pad_fx1_pads": (25, 8), "pad_fx2_pads": (33, 8),

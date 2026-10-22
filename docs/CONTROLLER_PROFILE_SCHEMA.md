@@ -141,7 +141,7 @@ asserted by the `control_link_protocol` host test.
 | `deckN.play` `deckN.cue` `deckN.shift` `deckN.to_start` `deckN.sync` `deckN.tempo_range` `deckN.loop_in` `deckN.loop_out` `deckN.reloop_exit` `deckN.loop_halve` `deckN.loop_double` `deckN.beat_jump_back` `deckN.beat_jump_forward` `deckN.jog_touch` `deckN.jog_search_touch` `deckN.pfl` | BUTTON | 0/1 |
 | `deckN.pad_mode_hot_cue` `deckN.pad_mode_beat_loop` `deckN.pad_mode_beat_jump` `deckN.pad_mode_pad_fx1` `deckN.pad_mode_pad_fx2` | BUTTON | pad mode select |
 | `deckN.pad_action` | BUTTON | packed value; use `pad_bank` |
-| `deckN.ext_action` | BUTTON | packed value; use `ext_action` with action names `censor`, `sync_master`, `reloop_stop`, `loop_adjust_in`, `loop_adjust_out`, `quantize`, `sync_off`, `restore_source_cues`, `jog_vinyl`, `jog_cdj` |
+| `deckN.ext_action` | BUTTON | packed value; use `ext_action` with action names `censor`, `sync_master`, `reloop_stop`, `loop_adjust_in`, `loop_adjust_out`, `quantize`, `sync_off`, `restore_source_cues`, `jog_vinyl`, `jog_cdj`, `jog_toggle` |
 | `deckN.jog_scratch` `deckN.jog_bend` `deckN.jog_search` `deckN.loop_size` | ENCODER | signed delta; `loop_size` halves on a negative step and doubles on a positive step when a loop is active |
 | `deckN.tempo` | PITCH | 14-bit |
 | `mixer.ch1_volume` `mixer.ch2_volume` `mixer.crossfader` `mixer.ch1_trim` `mixer.ch2_trim` `mixer.ch1_eq_high` `mixer.ch2_eq_high` `mixer.ch1_eq_mid` `mixer.ch2_eq_mid` `mixer.ch1_eq_low` `mixer.ch2_eq_low` `mixer.ch1_filter` `mixer.ch2_filter` `mixer.headphone_mix` | PITCH | 14-bit |
@@ -157,7 +157,9 @@ asserted by the `control_link_protocol` host test.
 
 On v91 and the integrated runtime, `jog_vinyl` and `jog_cdj`
 explicitly select a mode on press; release is ignored by deck core. These are
-idempotent actions, shared with touch controls. They use existing S3CP v2
+idempotent actions, shared with touch controls. `jog_toggle` flips that mode
+on press and ignores release. The `vinyl` LED is on while the deck is in
+VINYL mode. They use existing S3CP v2
 NOTE_VALUE entries; scaled CC input requires at least v3. Existing
 FLX4 profiles and golden bytes are unchanged. The bare historical M2.4 image
 does not implement the new actions; use matching firmware. Assign MIDI addresses from
@@ -189,7 +191,7 @@ as independent outputs rather than silently copying Deck 1 to Deck 2.
 LED names mirror `control_link.h`: `cue`, `play`, `pfl`, `vu_meter`,
 `pad_mode_*`, `sync`, `loop_in`, `loop_out`, `smart_cfx`, `smart_fader`,
 `beat_fx_on`, `master_cue`, `censor`, `cue_shift`, `loop_adjust_in`,
-`loop_adjust_out`, `track_load_deck1`, `track_load_deck2`, plus pad banks
+`loop_adjust_out`, `track_load_deck1`, `track_load_deck2`, `vinyl`, plus pad banks
 `hot_cue_pads`, `pad_fx1_pads`, `pad_fx2_pads`, `beat_jump_pads`,
 `beat_loop_pads`, `beat_jump_shift_helpers`.
 
