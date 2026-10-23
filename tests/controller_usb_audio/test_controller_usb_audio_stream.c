@@ -977,6 +977,87 @@ static void test_ddj_sb3_trailing_fragment(void)
     puts("PASS DDJ-SB3 FS: 4ch packed-24 with one-byte tail, overrun tail still rejected");
 }
 
+static void test_pack24_modes_and_test_tone(void)
+{
+    const int16_t values[] = {32767, -32768, 1, -1};
+    const uint8_t le[] = {0, 0xff, 0x7f, 0, 0, 0x80, 0, 1, 0, 0, 0xff, 0xff};
+    const uint8_t be[] = {0x7f, 0xff, 0, 0x80, 0, 0, 0, 1, 0, 0xff, 0xff, 0};
+    const uint8_t low[] = {0xff, 0x7f, 0, 0, 0x80, 0xff, 1, 0, 0, 0xff, 0xff, 0xff};
+    uint8_t packed[12];
+    assert(controller_uac_pack_pcm24_mode(packed, 12, values, 1, CONTROLLER_UAC_PACK24_LE));
+    assert(memcmp(packed, le, 12) == 0);
+    assert(controller_uac_pack_pcm24_mode(packed, 12, values, 1, CONTROLLER_UAC_PACK24_BE));
+    assert(memcmp(packed, be, 12) == 0);
+    assert(controller_uac_pack_pcm24_mode(packed, 12, values, 1, CONTROLLER_UAC_PACK24_LOW));
+    assert(memcmp(packed, low, 12) == 0);
+    assert(!controller_uac_pack_pcm24_mode(packed, 11, values, 1, CONTROLLER_UAC_PACK24_LE));
+    assert(!controller_uac_pack_pcm24_mode(packed, 12, values, 1, (controller_uac_pack24_mode_t)3));
+    /* The byte-wise LE path is bit-identical to the arithmetic packer for every sample. */
+    for (int32_t v = -32768; v <= 32767; v += 4) {
+        const int16_t frame[4] = {(int16_t)v, (int16_t)(v + 1), (int16_t)(v + 2), (int16_t)(v + 3)};
+        uint8_t a[12], b[12];
+        assert(controller_uac_pack_pcm(a, 12, frame, 1, 3));
+        assert(controller_uac_pack_pcm24_mode(b, 12, frame, 1, CONTROLLER_UAC_PACK24_LE));
+        assert(memcmp(a, b, 12) == 0);
+    }
+
+    assert(controller_usb_audio_stream_is_quiesced());
+    assert(controller_usb_audio_stream_set_policy(false, false, false) == ESP_OK);
+    assert(controller_usb_audio_stream_start((void *)1, (void *)2,
+        ddj_sb3_fs_config, sizeof(ddj_sb3_fs_config), (void *)3, 10, 5) == ESP_OK);
+    s_control->status = USB_TRANSFER_STATUS_COMPLETED;
+    control_callback(s_control);
+    control_callback(s_control);
+    assert(s_streaming && !s_faulted && s_target_rate == 44100u && s_format.bytes_per_sample == 3u);
+
+    assert(controller_usb_audio_stream_set_pack24_mode(9) == ESP_ERR_INVALID_ARG);
+    controller_usb_audio_stream_set_test_tone(true);
+    controller_usb_audio_stream_stats_t stats;
+    controller_usb_audio_stream_get_stats(&stats);
+    assert(stats.test_tone && stats.pack24_mode == CONTROLLER_UAC_PACK24_LE);
+    usb_transfer_t *packet = s_isoc[0];
+    s_isoc_active[0] = false;
+    assert(prepare_and_submit(packet) == ESP_OK);
+    const int frames = packet->isoc_packet_desc[0].num_bytes / 12;
+    assert(frames == 44);
+    bool left_right_differ = false;
+    for (int f = 0; f < frames; ++f) {
+        int16_t ch[4];
+        for (unsigned c = 0; c < 4u; ++c) {
+            const uint8_t *s = &packet->data_buffer[f * 12 + c * 3];
+            assert(s[0] == 0u);
+            ch[c] = (int16_t)(s[1] | (s[2] << 8));
+            assert(ch[c] >= -8192 && ch[c] <= 8192);
+        }
+        assert(ch[0] == ch[2] && ch[1] == ch[3]);
+        left_right_differ = left_right_differ || ch[0] != ch[1];
+    }
+    assert(left_right_differ);
+
+    assert(controller_usb_audio_stream_set_pack24_mode(CONTROLLER_UAC_PACK24_BE) == ESP_OK);
+    s_isoc_active[0] = false;
+    assert(prepare_and_submit(packet) == ESP_OK);
+    for (int f = 0; f < frames; ++f)
+        assert(packet->data_buffer[f * 12 + 2] == 0u);
+
+    controller_usb_audio_stream_request_stop(false);
+    retire_transfers(); finish_cleanup();
+    assert(controller_usb_audio_stream_is_quiesced());
+    assert(controller_usb_audio_stream_start((void *)1, (void *)2,
+        ddj_sb3_fs_config, sizeof(ddj_sb3_fs_config), (void *)3, 10, 5) == ESP_OK);
+    controller_usb_audio_stream_get_stats(&stats);
+    assert(!stats.test_tone && stats.pack24_mode == CONTROLLER_UAC_PACK24_LE);
+    s_control->status = USB_TRANSFER_STATUS_COMPLETED;
+    control_callback(s_control);
+    control_callback(s_control);
+    assert(s_streaming);
+    controller_usb_audio_stream_request_stop(false);
+    retire_transfers(); finish_cleanup();
+    assert(controller_usb_audio_stream_is_quiesced());
+    assert(controller_usb_audio_stream_set_policy(true, false, false) == ESP_OK);
+    puts("PASS UAC1 24-bit LE/BE/LOW packing, LE equivalence, packetizer test tone and start reset");
+}
+
 static void test_flx4_dedicated_headphones_preserve_pcm_level(void)
 {
     assert(controller_usb_audio_stream_set_policy(true, false, false) == ESP_OK);
@@ -1098,6 +1179,7 @@ int main(void)
     test_ddj400_hs_uac1_cadence();
     test_numark_touch_fs();
     test_ddj_sb3_trailing_fragment();
+    test_pack24_modes_and_test_tone();
     test_flx4_dedicated_headphones_preserve_pcm_level();
     assert(review_live_transfers == 0 && review_live_payload_bytes == 0);
     puts("PASS UAC 16/24-bit, consumer pacing, bounded timeout, ownership, reconnect and channel routing");

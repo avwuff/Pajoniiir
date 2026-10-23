@@ -1355,6 +1355,21 @@ input[type="range"]:not(.vertical-slider)::-moz-range-thumb {
     line-height: 1.4;
 }
 
+.uac-diag-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.uac-diag-row .btn {
+    flex: 1 1 88px;
+}
+
+.uac-diag-row .btn.active {
+    background: var(--teal);
+    color: var(--teal-ink);
+}
+
 /* ── Search & Library Table ───────────────────────────────────────────────── */
 .search-wrap {
     display: flex;

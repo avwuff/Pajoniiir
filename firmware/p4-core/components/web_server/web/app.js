@@ -369,6 +369,7 @@ function pollStatus() {
             updateDeckUI(2, status.deck2);
             updateMixerUI(status.mixer);
             updateVu(status.diagnostics);
+            updateUacDiag(status.uac_format);
         })
         .catch(err => {
             setConnected(false);
@@ -516,6 +517,39 @@ function updatePflButton(deckNum, active) {
 function sendControl(deck, action) {
     sendMutation(`/api/control?deck=${deck}&action=${action}`)
         .catch(err => console.error(`Control failed (${action}): ${err.message}`));
+}
+
+function setUacTone(on) {
+    sendMutation(`/api/control?action=uac_test_tone&value=${on ? 'on' : 'off'}`)
+        .catch(err => console.error(`USB tone failed: ${err.message}`));
+}
+
+function setUacPack(mode) {
+    sendMutation(`/api/control?action=uac_pack24&value=${encodeURIComponent(mode)}`)
+        .catch(err => console.error(`USB pack failed: ${err.message}`));
+}
+
+function updateUacDiag(fmt) {
+    const info = document.getElementById('uac-diag-info');
+    if (!info) return;
+    const known = fmt && typeof fmt.pack24 === 'string';
+    const pack = known ? fmt.pack24 : '';
+    const tone = known && fmt.test_tone === true;
+    const toneOn = document.getElementById('uac-tone-on');
+    const toneOff = document.getElementById('uac-tone-off');
+    if (toneOn) toneOn.classList.toggle('active', known && tone);
+    if (toneOff) toneOff.classList.toggle('active', known && !tone);
+    ['le', 'be', 'low'].forEach(mode => {
+        const btn = document.getElementById(`uac-pack-${mode}`);
+        if (btn) btn.classList.toggle('active', pack === mode);
+    });
+    if (!known) {
+        info.textContent = 'Waiting for USB audio status...';
+        return;
+    }
+    const rate = fmt.sample_rate ? `${fmt.sample_rate} Hz` : 'no rate';
+    const stream = fmt.streaming ? 'streaming' : 'not streaming';
+    info.textContent = `${stream} · ${rate} · ${fmt.bits}-bit · pack ${pack} · tone ${tone ? 'on' : 'off'}`;
 }
 
 function onVolumeChange(deck, value) {

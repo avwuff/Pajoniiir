@@ -1,6 +1,7 @@
 /* SPDX-License-Identifier: Apache-2.0 */
 #include "controller_usb_audio_stream.h"
 
+#include <math.h>
 #include <string.h>
 
 #include "controller_audio_resampler.h"
@@ -113,6 +114,14 @@ static uint32_t s_target_rate = STREAM_RATE_HZ;
 static uint8_t s_sample_bits;
 static bool s_qualified_flx4 = true;
 static bool s_consumer_paced;
+static uint8_t s_pack24_mode;
+static bool s_test_tone;
+#define TONE_TABLE_SIZE 256u
+#define TONE_LEFT_HZ 440u
+#define TONE_RIGHT_HZ 660u
+static int16_t s_tone_table[TONE_TABLE_SIZE];
+static bool s_tone_table_ready;
+static uint32_t s_tone_phase[2];
 static TickType_t s_control_started;
 static bool s_control_expired;
 static bool s_alt_zero_sent;
@@ -155,6 +164,41 @@ esp_err_t controller_usb_audio_stream_set_policy(bool qualified_flx4, bool consu
     s_high_speed = high_speed;
     __atomic_store_n(&s_consumer_paced, consumer_paced, __ATOMIC_RELEASE);
     return ESP_OK;
+}
+
+esp_err_t controller_usb_audio_stream_set_pack24_mode(uint8_t mode)
+{
+    if (mode > CONTROLLER_UAC_PACK24_LOW) return ESP_ERR_INVALID_ARG;
+    __atomic_store_n(&s_pack24_mode, mode, __ATOMIC_RELEASE);
+    return ESP_OK;
+}
+
+void controller_usb_audio_stream_set_test_tone(bool enabled)
+{
+    if (enabled && !s_tone_table_ready) {
+        for (unsigned i = 0; i < TONE_TABLE_SIZE; ++i)
+            s_tone_table[i] = (int16_t)lrintf(8192.0f *
+                sinf(6.28318530718f * (float)i / (float)TONE_TABLE_SIZE));
+        s_tone_table_ready = true;
+    }
+    __atomic_store_n(&s_test_tone, enabled, __ATOMIC_RELEASE);
+}
+
+static void fill_test_tone(int16_t *samples, uint16_t frames)
+{
+    const uint32_t rate = s_target_rate ? s_target_rate : STREAM_RATE_HZ;
+    const uint32_t step[2] = {
+        (uint32_t)(((uint64_t)TONE_LEFT_HZ << 32) / rate),
+        (uint32_t)(((uint64_t)TONE_RIGHT_HZ << 32) / rate),
+    };
+    for (uint16_t f = 0; f < frames; ++f) {
+        for (unsigned side = 0; side < 2u; ++side) {
+            const int16_t v = s_tone_table[s_tone_phase[side] >> 24];
+            samples[f * STREAM_CHANNELS + side] = v;
+            samples[f * STREAM_CHANNELS + 2u + side] = v;
+            s_tone_phase[side] += step[side];
+        }
+    }
 }
 
 /* Caller has stopped the producer; claim the same gate as a write. */
@@ -333,12 +377,14 @@ static esp_err_t prepare_and_submit(usb_transfer_t *transfer)
         portENTER_CRITICAL(&s_mux);
         (void)controller_audio_ring_read(&s_ring, samples, frames, true);
         portEXIT_CRITICAL(&s_mux);
+        if (__atomic_load_n(&s_test_tone, __ATOMIC_ACQUIRE)) fill_test_tone(samples, frames);
         if (s_format.uac2 && s_format.bytes_per_sample != 2u &&
             !controller_uac2_pack_pcm(&transfer->data_buffer[offset], bytes, pcm, frames,
                                       s_format.bytes_per_sample, s_format.bits_per_sample))
             return ESP_ERR_INVALID_SIZE;
         if (!s_format.uac2 && s_format.bytes_per_sample == 3u &&
-            !controller_uac_pack_pcm(&transfer->data_buffer[offset], bytes, pcm, frames, 3u))
+            !controller_uac_pack_pcm24_mode(&transfer->data_buffer[offset], bytes, pcm, frames,
+                (controller_uac_pack24_mode_t)__atomic_load_n(&s_pack24_mode, __ATOMIC_ACQUIRE)))
             return ESP_ERR_INVALID_SIZE;
         transfer->isoc_packet_desc[packet].num_bytes = (int)bytes;
         offset += bytes;
@@ -744,6 +790,9 @@ esp_err_t controller_usb_audio_stream_start(
     s_feedback_q16 = (uint32_t)(((uint64_t)s_target_rate << 16u) /
                               (1000000u / s_format.service_interval_us));
     s_feedback_active = false;
+    __atomic_store_n(&s_pack24_mode, CONTROLLER_UAC_PACK24_LE, __ATOMIC_RELEASE);
+    __atomic_store_n(&s_test_tone, false, __ATOMIC_RELEASE);
+    s_tone_phase[0] = s_tone_phase[1] = 0u;
     s_clock_range_bytes = 0;
     s_clock_44100_supported = false;
     s_clock_retry_step = 0;
@@ -1051,4 +1100,6 @@ void controller_usb_audio_stream_get_stats(
     out_stats->feedback_updates = __atomic_load_n(&s_feedback_updates, __ATOMIC_RELAXED);
     out_stats->feedback_invalid = __atomic_load_n(&s_feedback_invalid, __ATOMIC_RELAXED);
     out_stats->consumer_paced = controller_usb_audio_stream_consumer_paced();
+    out_stats->pack24_mode = __atomic_load_n(&s_pack24_mode, __ATOMIC_ACQUIRE);
+    out_stats->test_tone = __atomic_load_n(&s_test_tone, __ATOMIC_ACQUIRE);
 }

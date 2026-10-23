@@ -11,7 +11,7 @@
       resolves back to this device, fails the TLS handshake, and blocks first
       paint until it times out. style.css falls back to system faces instead.
     -->
-    <link rel="stylesheet" href="style.css?v=15">
+    <link rel="stylesheet" href="style.css?v=16">
 </head>
 <body>
 
@@ -233,6 +233,27 @@
 
     </div>
 
+    <!-- ── USB audio diagnostic ─────────────────────────────────────────── -->
+    <section class="card" id="uac-diag-card">
+        <div class="card-head">
+            <div class="card-head-left">
+                <span class="card-icon">🔊</span>
+                <h2 class="card-title">USB AUDIO TEST</h2>
+            </div>
+        </div>
+        <div class="card-body">
+            <p id="uac-diag-info" class="card-info">Waiting for USB audio status...</p>
+            <div class="uac-diag-row">
+                <button class="btn" id="uac-tone-on" type="button" onclick="setUacTone(true)">TONE ON</button>
+                <button class="btn" id="uac-tone-off" type="button" onclick="setUacTone(false)">TONE OFF</button>
+                <button class="btn" id="uac-pack-le" type="button" onclick="setUacPack('le')">PACK LE</button>
+                <button class="btn" id="uac-pack-be" type="button" onclick="setUacPack('be')">PACK BE</button>
+                <button class="btn" id="uac-pack-low" type="button" onclick="setUacPack('low')">PACK LOW</button>
+            </div>
+            <p class="card-info">440 Hz on the left, 660 Hz on the right, on the master and the headphones. Keep the volume low. These reset when the controller reconnects.</p>
+        </div>
+    </section>
+
     <!-- ── Quick Landscape Navigation Tabs ──────────────────────────────── -->
     <div class="landscape-nav-bar" id="landscape-nav-bar">
         <button class="nav-tab-btn" id="nav-btn-browser-card" onclick="toggleCard('browser-card')">
@@ -390,6 +411,6 @@
 
     </main>
 
-    <script src="app.js?v=14"></script>
+    <script src="app.js?v=15"></script>
 </body>
 </html>

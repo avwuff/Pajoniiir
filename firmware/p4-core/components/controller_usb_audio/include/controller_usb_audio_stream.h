@@ -52,7 +52,16 @@ typedef struct {
     uint8_t subslot_bytes;
     uint32_t feedback_updates;
     uint32_t feedback_invalid;
+    uint8_t pack24_mode;
+    bool test_tone;
 } controller_usb_audio_stream_stats_t;
+
+/* Diagnostics, safe while streaming; both reset to production at each start.
+ * pack24_mode is a controller_uac_pack24_mode_t and applies only to packed
+ * 24-bit UAC1 streams. The tone replaces engine audio inside the packetizer:
+ * 440 Hz left / 660 Hz right at -12 dBFS on MAIN 1/2 and CUE 3/4. */
+esp_err_t controller_usb_audio_stream_set_pack24_mode(uint8_t mode);
+void controller_usb_audio_stream_set_test_tone(bool enabled);
 
 /* Owner task only; only while quiesced. FLX4 preserves its qualified format/gain. */
 esp_err_t controller_usb_audio_stream_set_policy(bool qualified_flx4, bool consumer_paced,
