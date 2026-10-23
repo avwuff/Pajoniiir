@@ -116,6 +116,8 @@ static bool s_qualified_flx4 = true;
 static bool s_consumer_paced;
 static uint8_t s_pack24_mode;
 static bool s_test_tone;
+static uint8_t s_wire_bytes;
+static bool s_rate_pending;
 #define TONE_TABLE_SIZE 256u
 #define TONE_LEFT_HZ 440u
 #define TONE_RIGHT_HZ 660u
@@ -170,6 +172,40 @@ esp_err_t controller_usb_audio_stream_set_pack24_mode(uint8_t mode)
 {
     if (mode > CONTROLLER_UAC_PACK24_LOW) return ESP_ERR_INVALID_ARG;
     __atomic_store_n(&s_pack24_mode, mode, __ATOMIC_RELEASE);
+    return ESP_OK;
+}
+
+static uint8_t active_wire_bytes(void)
+{
+    const uint8_t bytes = __atomic_load_n(&s_wire_bytes, __ATOMIC_ACQUIRE);
+    return (bytes == 2u || bytes == 3u || bytes == 4u) ? bytes : s_format.bytes_per_sample;
+}
+
+static bool wire_packet_fits(uint32_t rate, uint8_t bytes)
+{
+    const uint32_t max_frames = (s_format.uac2 || s_format.requires_feedback) ?
+        STREAM_MAX_PACKET_FRAMES : (rate >= 48000u ? 48u : 45u);
+    return s_format.max_packet_size != 0u &&
+        (size_t)max_frames * STREAM_CHANNELS * bytes <= s_format.max_packet_size;
+}
+
+esp_err_t controller_usb_audio_stream_set_wire_bytes(uint8_t bytes)
+{
+    if (bytes != 2u && bytes != 3u && bytes != 4u) return ESP_ERR_INVALID_ARG;
+    if (!s_streaming) return ESP_ERR_INVALID_STATE;
+    if (!wire_packet_fits(__atomic_load_n(&s_target_rate, __ATOMIC_ACQUIRE), bytes))
+        return ESP_ERR_INVALID_SIZE;
+    __atomic_store_n(&s_wire_bytes, bytes, __ATOMIC_RELEASE);
+    return ESP_OK;
+}
+
+esp_err_t controller_usb_audio_stream_set_wire_rate(uint32_t rate)
+{
+    if (rate != 44100u && rate != 48000u) return ESP_ERR_INVALID_ARG;
+    if (!s_streaming) return ESP_ERR_INVALID_STATE;
+    if (!wire_packet_fits(rate, active_wire_bytes())) return ESP_ERR_INVALID_SIZE;
+    __atomic_store_n(&s_target_rate, rate, __ATOMIC_RELEASE);
+    __atomic_store_n(&s_rate_pending, true, __ATOMIC_RELEASE);
     return ESP_OK;
 }
 
@@ -357,6 +393,10 @@ static esp_err_t prepare_and_submit(usb_transfer_t *transfer)
         return ESP_ERR_INVALID_STATE;
     }
 
+    const uint32_t rate = __atomic_load_n(&s_target_rate, __ATOMIC_ACQUIRE);
+    if (s_packetizer.sample_rate != rate)
+        flx4_uac_packetizer_init(&s_packetizer, rate, STREAM_CHANNELS, s_format.bytes_per_sample);
+    const uint8_t sample_bytes = active_wire_bytes();
     size_t offset = 0u;
     for (int packet = 0; packet < transfer->num_isoc_packets; ++packet) {
         uint16_t frames;
@@ -365,26 +405,29 @@ static esp_err_t prepare_and_submit(usb_transfer_t *transfer)
             frames = (uint16_t)(s_feedback_phase >> 16);
             s_feedback_phase &= 0xffffu;
         } else frames = flx4_uac_packetizer_next_frames(&s_packetizer);
-        const size_t bytes =
-            (size_t)frames * STREAM_CHANNELS * s_format.bytes_per_sample;
+        const size_t bytes = (size_t)frames * STREAM_CHANNELS * sample_bytes;
         if (frames > STREAM_MAX_PACKET_FRAMES || bytes > s_format.max_packet_size ||
             offset + bytes > transfer->data_buffer_size) {
             return ESP_ERR_INVALID_SIZE;
         }
         int16_t pcm[STREAM_MAX_PACKET_FRAMES * STREAM_CHANNELS];
-        int16_t *samples = s_format.bytes_per_sample == 2u ?
+        int16_t *samples = sample_bytes == 2u ?
             (int16_t *)&transfer->data_buffer[offset] : pcm;
         portENTER_CRITICAL(&s_mux);
         (void)controller_audio_ring_read(&s_ring, samples, frames, true);
         portEXIT_CRITICAL(&s_mux);
         if (__atomic_load_n(&s_test_tone, __ATOMIC_ACQUIRE)) fill_test_tone(samples, frames);
-        if (s_format.uac2 && s_format.bytes_per_sample != 2u &&
+        const bool negotiated = sample_bytes == s_format.bytes_per_sample;
+        if (s_format.uac2 && negotiated && sample_bytes != 2u &&
             !controller_uac2_pack_pcm(&transfer->data_buffer[offset], bytes, pcm, frames,
                                       s_format.bytes_per_sample, s_format.bits_per_sample))
             return ESP_ERR_INVALID_SIZE;
-        if (!s_format.uac2 && s_format.bytes_per_sample == 3u &&
+        if (sample_bytes == 3u && !(s_format.uac2 && negotiated) &&
             !controller_uac_pack_pcm24_mode(&transfer->data_buffer[offset], bytes, pcm, frames,
                 (controller_uac_pack24_mode_t)__atomic_load_n(&s_pack24_mode, __ATOMIC_ACQUIRE)))
+            return ESP_ERR_INVALID_SIZE;
+        if (sample_bytes == 4u && !(s_format.uac2 && negotiated) &&
+            !controller_uac_pack_pcm32(&transfer->data_buffer[offset], bytes, pcm, frames))
             return ESP_ERR_INVALID_SIZE;
         transfer->isoc_packet_desc[packet].num_bytes = (int)bytes;
         offset += bytes;
@@ -454,9 +497,10 @@ static void isoc_callback(usb_transfer_t *transfer)
             __atomic_add_fetch(&s_packet_failures, 1u, __ATOMIC_RELAXED);
             const unsigned missing = !completed || actual < 0 || actual > wanted
                 ? (unsigned)wanted : (unsigned)(wanted - actual);
+            const uint8_t sample_bytes = active_wire_bytes();
             __atomic_add_fetch(&s_packet_lost_frames,
-                (missing + STREAM_CHANNELS * s_format.bytes_per_sample - 1u) /
-                    (STREAM_CHANNELS * s_format.bytes_per_sample), __ATOMIC_RELAXED);
+                (missing + STREAM_CHANNELS * sample_bytes - 1u) /
+                    (STREAM_CHANNELS * sample_bytes), __ATOMIC_RELAXED);
         }
     }
     if (!s_stopping) {
@@ -625,6 +669,8 @@ static void control_callback(usb_transfer_t *transfer)
             s_control_expired = true;
         return;
     }
+    /* A live rate request must not prime the stream again or fault it. */
+    if (s_control_step == 9u) return;
     if (transfer->status != USB_TRANSFER_STATUS_COMPLETED) {
         ESP_LOGW(TAG, "control step %u status=%d", s_control_step,
                  (int)transfer->status);
@@ -792,6 +838,8 @@ esp_err_t controller_usb_audio_stream_start(
     s_feedback_active = false;
     __atomic_store_n(&s_pack24_mode, CONTROLLER_UAC_PACK24_LE, __ATOMIC_RELEASE);
     __atomic_store_n(&s_test_tone, false, __ATOMIC_RELEASE);
+    __atomic_store_n(&s_wire_bytes, 0u, __ATOMIC_RELEASE);
+    __atomic_store_n(&s_rate_pending, false, __ATOMIC_RELEASE);
     s_tone_phase[0] = s_tone_phase[1] = 0u;
     s_clock_range_bytes = 0;
     s_clock_44100_supported = false;
@@ -861,6 +909,12 @@ void controller_usb_audio_stream_request_stop(bool device_gone)
 
 bool controller_usb_audio_stream_poll_cleanup(void)
 {
+    if (s_streaming && !s_stopping && !s_control_active && s_control &&
+        __atomic_exchange_n(&s_rate_pending, false, __ATOMIC_ACQ_REL) &&
+        s_format.frequency_control && !s_format.uac2 &&
+        submit_control_step(9u) != ESP_OK) {
+        ESP_LOGW(TAG, "UAC live rate request was not sent");
+    }
     if (s_clock_retry_step && s_configuring && !s_stopping && !s_control_active) {
         const TickType_t now = xTaskGetTickCount();
         if ((TickType_t)(now - s_clock_change_tick) >= pdMS_TO_TICKS(500u)) {
@@ -1102,4 +1156,5 @@ void controller_usb_audio_stream_get_stats(
     out_stats->consumer_paced = controller_usb_audio_stream_consumer_paced();
     out_stats->pack24_mode = __atomic_load_n(&s_pack24_mode, __ATOMIC_ACQUIRE);
     out_stats->test_tone = __atomic_load_n(&s_test_tone, __ATOMIC_ACQUIRE);
+    out_stats->wire_bytes = active_wire_bytes();
 }

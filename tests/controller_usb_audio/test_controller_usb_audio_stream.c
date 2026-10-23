@@ -992,6 +992,12 @@ static void test_pack24_modes_and_test_tone(void)
     assert(memcmp(packed, low, 12) == 0);
     assert(!controller_uac_pack_pcm24_mode(packed, 11, values, 1, CONTROLLER_UAC_PACK24_LE));
     assert(!controller_uac_pack_pcm24_mode(packed, 12, values, 1, (controller_uac_pack24_mode_t)3));
+    const uint8_t s32[] = {0x00, 0x00, 0xff, 0x7f, 0x00, 0x00, 0x00, 0x80,
+                           0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0xff, 0xff};
+    uint8_t wide[16];
+    assert(controller_uac_pack_pcm32(wide, 16, values, 1));
+    assert(memcmp(wide, s32, 16) == 0);
+    assert(!controller_uac_pack_pcm32(wide, 15, values, 1));
     /* The byte-wise LE path is bit-identical to the arithmetic packer for every sample. */
     for (int32_t v = -32768; v <= 32767; v += 4) {
         const int16_t frame[4] = {(int16_t)v, (int16_t)(v + 1), (int16_t)(v + 2), (int16_t)(v + 3)};
@@ -1040,6 +1046,35 @@ static void test_pack24_modes_and_test_tone(void)
     for (int f = 0; f < frames; ++f)
         assert(packet->data_buffer[f * 12 + 2] == 0u);
 
+    assert(controller_usb_audio_stream_set_wire_bytes(4u) == ESP_ERR_INVALID_SIZE);
+    assert(controller_usb_audio_stream_set_wire_bytes(9u) == ESP_ERR_INVALID_ARG);
+    assert(controller_usb_audio_stream_set_wire_bytes(2u) == ESP_OK);
+    s_isoc_active[0] = false;
+    assert(prepare_and_submit(packet) == ESP_OK);
+    const int frames16 = packet->isoc_packet_desc[0].num_bytes / 8;
+    assert(frames16 == 44 || frames16 == 45);
+    assert(packet->isoc_packet_desc[0].num_bytes == frames16 * 8);
+    for (int f = 0; f < frames16; ++f) {
+        const int16_t *s = (const int16_t *)&packet->data_buffer[f * 8];
+        assert(s[0] == s[2] && s[1] == s[3]);
+        assert(s[0] >= -8192 && s[0] <= 8192 && s[1] >= -8192 && s[1] <= 8192);
+    }
+    assert(controller_usb_audio_stream_set_wire_rate(48000u) == ESP_OK);
+    assert(!controller_usb_audio_stream_poll_cleanup());
+    assert(s_control_active && s_control_step == 9u);
+    assert(s_control->data_buffer[sizeof(usb_setup_packet_t)] == 0x80u);
+    assert(s_control->data_buffer[sizeof(usb_setup_packet_t) + 1u] == 0xbbu);
+    assert(s_control->data_buffer[sizeof(usb_setup_packet_t) + 2u] == 0u);
+    s_control->status = USB_TRANSFER_STATUS_ERROR;
+    control_callback(s_control);
+    assert(s_streaming && !s_faulted && !s_control_active);
+    s_isoc_active[0] = false;
+    assert(prepare_and_submit(packet) == ESP_OK);
+    assert(packet->isoc_packet_desc[0].num_bytes == 48 * 8);
+    assert(controller_usb_audio_stream_set_wire_bytes(4u) == ESP_ERR_INVALID_SIZE);
+    controller_usb_audio_stream_get_stats(&stats);
+    assert(stats.wire_bytes == 2u && stats.sample_rate == 48000u);
+
     controller_usb_audio_stream_request_stop(false);
     retire_transfers(); finish_cleanup();
     assert(controller_usb_audio_stream_is_quiesced());
@@ -1047,6 +1082,7 @@ static void test_pack24_modes_and_test_tone(void)
         ddj_sb3_fs_config, sizeof(ddj_sb3_fs_config), (void *)3, 10, 5) == ESP_OK);
     controller_usb_audio_stream_get_stats(&stats);
     assert(!stats.test_tone && stats.pack24_mode == CONTROLLER_UAC_PACK24_LE);
+    assert(stats.wire_bytes == 3u && stats.sample_rate == 44100u);
     s_control->status = USB_TRANSFER_STATUS_COMPLETED;
     control_callback(s_control);
     control_callback(s_control);
@@ -1055,7 +1091,7 @@ static void test_pack24_modes_and_test_tone(void)
     retire_transfers(); finish_cleanup();
     assert(controller_usb_audio_stream_is_quiesced());
     assert(controller_usb_audio_stream_set_policy(true, false, false) == ESP_OK);
-    puts("PASS UAC1 24-bit LE/BE/LOW packing, LE equivalence, packetizer test tone and start reset");
+    puts("PASS UAC1 24-bit LE/BE/LOW packing, 16/32-bit and 48 kHz wire overrides, tone and start reset");
 }
 
 static void test_flx4_dedicated_headphones_preserve_pcm_level(void)

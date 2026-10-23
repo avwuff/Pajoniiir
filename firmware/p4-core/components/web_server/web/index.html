@@ -11,7 +11,7 @@
       resolves back to this device, fails the TLS handshake, and blocks first
       paint until it times out. style.css falls back to system faces instead.
     -->
-    <link rel="stylesheet" href="style.css?v=16">
+    <link rel="stylesheet" href="style.css?v=17">
 </head>
 <body>
 
@@ -250,7 +250,15 @@
                 <button class="btn" id="uac-pack-be" type="button" onclick="setUacPack('be')">PACK BE</button>
                 <button class="btn" id="uac-pack-low" type="button" onclick="setUacPack('low')">PACK LOW</button>
             </div>
-            <p class="card-info">440 Hz on the left, 660 Hz on the right, on the master and the headphones. Keep the volume low. These reset when the controller reconnects.</p>
+            <div class="uac-diag-row">
+                <button class="btn" id="uac-bits-16" type="button" onclick="setUacBits(16)">16-BIT</button>
+                <button class="btn" id="uac-bits-24" type="button" onclick="setUacBits(24)">24-BIT</button>
+                <button class="btn" id="uac-bits-32" type="button" onclick="setUacBits(32)">32-BIT</button>
+                <button class="btn" id="uac-rate-44100" type="button" onclick="setUacRate(44100)">44.1 KHZ</button>
+                <button class="btn" id="uac-rate-48000" type="button" onclick="setUacRate(48000)">48 KHZ</button>
+            </div>
+            <p id="uac-diag-error" class="card-info"></p>
+            <p class="card-info">440 Hz on the left, 660 Hz on the right, on the master and the headphones. LE, BE and LOW apply to 24-bit only. Keep the volume low. These reset when the controller reconnects.</p>
         </div>
     </section>
 
@@ -411,6 +419,6 @@
 
     </main>
 
-    <script src="app.js?v=15"></script>
+    <script src="app.js?v=16"></script>
 </body>
 </html>

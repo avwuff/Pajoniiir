@@ -36,6 +36,19 @@ bool controller_uac_pack_pcm24_mode(uint8_t *dst, size_t bytes, const int16_t *s
     return true;
 }
 
+bool controller_uac_pack_pcm32(uint8_t *dst, size_t bytes, const int16_t *src, size_t frames)
+{
+    if (!dst || !src || frames > SIZE_MAX / 16u || bytes < frames * 16u) return false;
+    for (size_t i = 0; i < frames * 4u; ++i) {
+        const uint32_t sample = (uint32_t)((int32_t)src[i] << 16);
+        *dst++ = (uint8_t)sample;
+        *dst++ = (uint8_t)(sample >> 8);
+        *dst++ = (uint8_t)(sample >> 16);
+        *dst++ = (uint8_t)(sample >> 24);
+    }
+    return true;
+}
+
 void flx4_uac_packetizer_init(flx4_uac_packetizer_t *p,
                               uint32_t sample_rate,
                               uint8_t channels,

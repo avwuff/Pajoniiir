@@ -529,6 +529,24 @@ function setUacPack(mode) {
         .catch(err => console.error(`USB pack failed: ${err.message}`));
 }
 
+function reportUacError(err) {
+    const error = document.getElementById('uac-diag-error');
+    if (error) error.textContent = err && err.message ? err.message : '';
+    console.error(err);
+}
+
+function setUacBits(bits) {
+    sendMutation(`/api/control?action=uac_bits&value=${bits}`)
+        .then(() => reportUacError(null))
+        .catch(reportUacError);
+}
+
+function setUacRate(rate) {
+    sendMutation(`/api/control?action=uac_rate&value=${rate}`)
+        .then(() => reportUacError(null))
+        .catch(reportUacError);
+}
+
 function updateUacDiag(fmt) {
     const info = document.getElementById('uac-diag-info');
     if (!info) return;
@@ -543,13 +561,23 @@ function updateUacDiag(fmt) {
         const btn = document.getElementById(`uac-pack-${mode}`);
         if (btn) btn.classList.toggle('active', pack === mode);
     });
+    const wire = known && fmt.wire_bytes ? fmt.wire_bytes : 0;
+    [16, 24, 32].forEach(bits => {
+        const btn = document.getElementById(`uac-bits-${bits}`);
+        if (btn) btn.classList.toggle('active', wire * 8 === bits);
+    });
+    [44100, 48000].forEach(rate => {
+        const btn = document.getElementById(`uac-rate-${rate}`);
+        if (btn) btn.classList.toggle('active', known && fmt.sample_rate === rate);
+    });
     if (!known) {
         info.textContent = 'Waiting for USB audio status...';
         return;
     }
     const rate = fmt.sample_rate ? `${fmt.sample_rate} Hz` : 'no rate';
+    const width = wire ? `${wire * 8}-bit` : `${fmt.bits}-bit`;
     const stream = fmt.streaming ? 'streaming' : 'not streaming';
-    info.textContent = `${stream} · ${rate} · ${fmt.bits}-bit · pack ${pack} · tone ${tone ? 'on' : 'off'}`;
+    info.textContent = `${stream} · ${rate} · ${width} · pack ${pack} · tone ${tone ? 'on' : 'off'}`;
 }
 
 function onVolumeChange(deck, value) {
