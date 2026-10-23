@@ -257,6 +257,8 @@
                 <button class="btn" id="uac-pack-be" type="button" onclick="setUacPack('be')">PACK BE</button>
                 <button class="btn" id="uac-pack-low" type="button" onclick="setUacPack('low')">PACK LOW</button>
                 <button class="btn" id="uac-pack-s16pad" type="button" onclick="setUacPack('s16pad')">S16 PAD</button>
+                <button class="btn" id="uac-pack-s16padbe" type="button" onclick="setUacPack('s16padbe')">S16 PAD BE</button>
+                <button class="btn" id="uac-pack-s16short" type="button" onclick="setUacPack('s16short')">S16 SHORT</button>
             </div>
             <div class="uac-diag-row">
                 <button class="btn" id="uac-test-b0" type="button" onclick="setUacTest('b0')">B0</button>
@@ -272,7 +274,7 @@
                 <button class="btn" id="uac-test-b10" type="button" onclick="setUacTest('b10')">B10</button>
                 <button class="btn" id="uac-test-b11" type="button" onclick="setUacTest('b11')">B11</button>
             </div>
-            <p class="card-info">TONE L/R: 440 Hz left, 660 Hz right on master and headphones. SILENCE: all zeros. CH 1–4: 440 Hz on that one USB channel only (expected: 1 master L, 2 master R, 3 phones L, 4 phones R). S16 PAD: 16-bit samples at the start of each full-length packet. B0–B11: a full-scale 8-bit 440 Hz tone in only that byte of every 12-byte frame, ignoring the PACK setting. Keep the volume low. These reset when the controller reconnects.</p>
+            <p class="card-info">TONE L/R: 440 Hz left, 660 Hz right on master and headphones. SILENCE: all zeros. CH 1–4: 440 Hz on that one USB channel only (expected: 1 master L, 2 master R, 3 phones L, 4 phones R). S16 PAD: 16-bit samples at the start of each full-length packet, then zeros. S16 PAD BE: the same, byte-swapped. S16 SHORT: 16-bit samples only, with shorter packets. B0–B11: a full-scale 8-bit 440 Hz tone in only that byte of every 12-byte frame, ignoring the PACK setting. Keep the volume low. These reset when the controller reconnects.</p>
         </div>
     </section>
 
@@ -433,6 +435,6 @@
 
     </main>
 
-    <script src="app.js?v=18"></script>
+    <script src="app.js?v=19"></script>
 </body>
 </html>

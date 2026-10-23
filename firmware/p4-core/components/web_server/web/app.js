@@ -542,7 +542,7 @@ function updateUacDiag(fmt) {
         const btn = document.getElementById(`uac-test-${name}`);
         if (btn) btn.classList.toggle('active', signal === name);
     });
-    ['le', 'be', 'low', 's16pad'].forEach(mode => {
+    ['le', 'be', 'low', 's16pad', 's16padbe', 's16short'].forEach(mode => {
         const btn = document.getElementById(`uac-pack-${mode}`);
         if (btn) btn.classList.toggle('active', pack === mode);
     });

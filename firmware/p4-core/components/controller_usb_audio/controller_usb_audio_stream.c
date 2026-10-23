@@ -168,7 +168,7 @@ esp_err_t controller_usb_audio_stream_set_policy(bool qualified_flx4, bool consu
 
 esp_err_t controller_usb_audio_stream_set_pack24_mode(uint8_t mode)
 {
-    if (mode > CONTROLLER_UAC_PACK24_S16PAD) return ESP_ERR_INVALID_ARG;
+    if (mode > CONTROLLER_UAC_PACK24_S16SHORT) return ESP_ERR_INVALID_ARG;
     __atomic_store_n(&s_pack24_mode, mode, __ATOMIC_RELEASE);
     return ESP_OK;
 }
@@ -388,7 +388,12 @@ static esp_err_t prepare_and_submit(usb_transfer_t *transfer)
             frames = (uint16_t)(s_feedback_phase >> 16);
             s_feedback_phase &= 0xffffu;
         } else frames = flx4_uac_packetizer_next_frames(&s_packetizer);
-        const size_t bytes =
+        const uint8_t signal = __atomic_load_n(&s_test_signal, __ATOMIC_ACQUIRE);
+        const controller_uac_pack24_mode_t pack24 =
+            (controller_uac_pack24_mode_t)__atomic_load_n(&s_pack24_mode, __ATOMIC_ACQUIRE);
+        const bool pack24_active = !s_format.uac2 && s_format.bytes_per_sample == 3u;
+        const size_t bytes = pack24_active && signal < CONTROLLER_UAC_TEST_BYTE0 ?
+            (size_t)frames * controller_uac_pack24_frame_bytes(pack24) :
             (size_t)frames * STREAM_CHANNELS * s_format.bytes_per_sample;
         if (frames > STREAM_MAX_PACKET_FRAMES || bytes > s_format.max_packet_size ||
             offset + bytes > transfer->data_buffer_size) {
@@ -400,7 +405,6 @@ static esp_err_t prepare_and_submit(usb_transfer_t *transfer)
         portENTER_CRITICAL(&s_mux);
         (void)controller_audio_ring_read(&s_ring, samples, frames, true);
         portEXIT_CRITICAL(&s_mux);
-        const uint8_t signal = __atomic_load_n(&s_test_signal, __ATOMIC_ACQUIRE);
         if (signal >= CONTROLLER_UAC_TEST_BYTE0) {
             fill_byte_probe(&transfer->data_buffer[offset], bytes, frames,
                             (unsigned)(signal - CONTROLLER_UAC_TEST_BYTE0));
@@ -413,9 +417,8 @@ static esp_err_t prepare_and_submit(usb_transfer_t *transfer)
             !controller_uac2_pack_pcm(&transfer->data_buffer[offset], bytes, pcm, frames,
                                       s_format.bytes_per_sample, s_format.bits_per_sample))
             return ESP_ERR_INVALID_SIZE;
-        if (!s_format.uac2 && s_format.bytes_per_sample == 3u &&
-            !controller_uac_pack_pcm24_mode(&transfer->data_buffer[offset], bytes, pcm, frames,
-                (controller_uac_pack24_mode_t)__atomic_load_n(&s_pack24_mode, __ATOMIC_ACQUIRE)))
+        if (pack24_active &&
+            !controller_uac_pack_pcm24_mode(&transfer->data_buffer[offset], bytes, pcm, frames, pack24))
             return ESP_ERR_INVALID_SIZE;
         transfer->isoc_packet_desc[packet].num_bytes = (int)bytes;
         offset += bytes;

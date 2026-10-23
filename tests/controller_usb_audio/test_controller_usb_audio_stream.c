@@ -991,8 +991,18 @@ static void test_pack24_modes_and_test_signals(void)
     assert(controller_uac_pack_pcm24_mode(packed, 12, values, 1, CONTROLLER_UAC_PACK24_LOW));
     assert(memcmp(packed, low, 12) == 0);
     assert(!controller_uac_pack_pcm24_mode(packed, 11, values, 1, CONTROLLER_UAC_PACK24_LE));
-    assert(!controller_uac_pack_pcm24_mode(packed, 12, values, 1, (controller_uac_pack24_mode_t)4));
+    assert(!controller_uac_pack_pcm24_mode(packed, 12, values, 1, (controller_uac_pack24_mode_t)6));
     const uint8_t s16pad[] = {0xff, 0x7f, 0x00, 0x80, 0x01, 0x00, 0xff, 0xff, 0, 0, 0, 0};
+    const uint8_t s16padbe[] = {0x7f, 0xff, 0x80, 0x00, 0x00, 0x01, 0xff, 0xff, 0, 0, 0, 0};
+    memset(packed, 0xaa, sizeof(packed));
+    assert(controller_uac_pack_pcm24_mode(packed, 12, values, 1, CONTROLLER_UAC_PACK24_S16PAD_BE));
+    assert(memcmp(packed, s16padbe, 12) == 0);
+    memset(packed, 0xaa, sizeof(packed));
+    assert(!controller_uac_pack_pcm24_mode(packed, 7, values, 1, CONTROLLER_UAC_PACK24_S16SHORT));
+    assert(controller_uac_pack_pcm24_mode(packed, 8, values, 1, CONTROLLER_UAC_PACK24_S16SHORT));
+    assert(memcmp(packed, s16pad, 8) == 0 && packed[8] == 0xaa);
+    assert(controller_uac_pack24_frame_bytes(CONTROLLER_UAC_PACK24_S16SHORT) == 8u);
+    assert(controller_uac_pack24_frame_bytes(CONTROLLER_UAC_PACK24_S16PAD) == 12u);
     assert(controller_uac_pack_pcm24_mode(packed, 12, values, 1, CONTROLLER_UAC_PACK24_S16PAD));
     assert(memcmp(packed, s16pad, 12) == 0);
     /* Two frames: 16 bytes of 16-bit samples, then an 8-byte zero tail. */
@@ -1023,7 +1033,7 @@ static void test_pack24_modes_and_test_signals(void)
 
     assert(controller_usb_audio_stream_set_pack24_mode(9) == ESP_ERR_INVALID_ARG);
     assert(controller_usb_audio_stream_set_test_signal(CONTROLLER_UAC_TEST_BYTE11 + 1) == ESP_ERR_INVALID_ARG);
-    assert(controller_usb_audio_stream_set_pack24_mode(CONTROLLER_UAC_PACK24_S16PAD + 1) == ESP_ERR_INVALID_ARG);
+    assert(controller_usb_audio_stream_set_pack24_mode(CONTROLLER_UAC_PACK24_S16SHORT + 1) == ESP_ERR_INVALID_ARG);
     assert(controller_usb_audio_stream_set_test_signal(CONTROLLER_UAC_TEST_TONE) == ESP_OK);
     controller_usb_audio_stream_stats_t stats;
     controller_usb_audio_stream_get_stats(&stats);
@@ -1100,6 +1110,26 @@ static void test_pack24_modes_and_test_signals(void)
         }
         assert(nonzero);
         for (int i = frames_pad * 8; i < frames_pad * 12; ++i) assert(packet->data_buffer[i] == 0u);
+    }
+
+    assert(controller_usb_audio_stream_set_pack24_mode(CONTROLLER_UAC_PACK24_S16SHORT) == ESP_OK);
+    s_isoc_active[0] = false;
+    assert(prepare_and_submit(packet) == ESP_OK);
+    {
+        int total = 0;
+        for (int p = 0; p < packet->num_isoc_packets; ++p) {
+            const int n = packet->isoc_packet_desc[p].num_bytes;
+            assert(n == 44 * 8 || n == 45 * 8);
+            total += n;
+        }
+        assert(packet->num_bytes == total);
+        bool nonzero = false;
+        for (int i = 0; i < total; i += 8) {
+            const uint8_t *s = &packet->data_buffer[i];
+            assert((s[2] | s[3] | s[4] | s[5] | s[6] | s[7]) == 0u);
+            nonzero = nonzero || (s[0] | s[1]) != 0u;
+        }
+        assert(nonzero);
     }
 
     /* Byte probes ignore the pack setting and light exactly one byte position. */

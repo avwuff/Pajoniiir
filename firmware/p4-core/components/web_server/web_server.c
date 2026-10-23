@@ -2186,7 +2186,9 @@ static esp_err_t api_status_handler(httpd_req_t *req)
         (unsigned)uac_format.prime_fault_stage, (unsigned)uac_format.prime_fault_index, (long)uac_format.prime_fault_code,
         uac_format.pack24_mode == CONTROLLER_UAC_PACK24_BE ? "be" :
             uac_format.pack24_mode == CONTROLLER_UAC_PACK24_LOW ? "low" :
-            uac_format.pack24_mode == CONTROLLER_UAC_PACK24_S16PAD ? "s16pad" : "le",
+            uac_format.pack24_mode == CONTROLLER_UAC_PACK24_S16PAD ? "s16pad" :
+            uac_format.pack24_mode == CONTROLLER_UAC_PACK24_S16PAD_BE ? "s16padbe" :
+            uac_format.pack24_mode == CONTROLLER_UAC_PACK24_S16SHORT ? "s16short" : "le",
         uac_test_signal_name(uac_format.test_signal),
         title1_esc, artist1_esc, (unsigned)current_bpm1, p1, state1.pitch, (unsigned)state1.position_ms, (unsigned)duration1_ms, state1.playing ? "true" : "false",
         state1.master_tempo ? "true" : "false", loop1.active ? "true" : "false", (unsigned)loop1.start_ms, (unsigned)loop1.end_ms,
@@ -2540,7 +2542,10 @@ static esp_err_t api_control_handler(httpd_req_t *req)
         else if (has_value && strcmp(value_str, "be") == 0) mode = CONTROLLER_UAC_PACK24_BE;
         else if (has_value && strcmp(value_str, "low") == 0) mode = CONTROLLER_UAC_PACK24_LOW;
         else if (has_value && strcmp(value_str, "s16pad") == 0) mode = CONTROLLER_UAC_PACK24_S16PAD;
-        else return httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "Mode must be le, be, low or s16pad");
+        else if (has_value && strcmp(value_str, "s16padbe") == 0) mode = CONTROLLER_UAC_PACK24_S16PAD_BE;
+        else if (has_value && strcmp(value_str, "s16short") == 0) mode = CONTROLLER_UAC_PACK24_S16SHORT;
+        else return httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST,
+                                        "Mode must be le, be, low, s16pad, s16padbe or s16short");
         (void)controller_usb_audio_stream_set_pack24_mode(mode);
         httpd_resp_set_type(req, "application/json");
         return httpd_resp_send(req, "{\"ok\":true}", HTTPD_RESP_USE_STRLEN);
