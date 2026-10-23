@@ -11,7 +11,7 @@
       resolves back to this device, fails the TLS handshake, and blocks first
       paint until it times out. style.css falls back to system faces instead.
     -->
-    <link rel="stylesheet" href="style.css?v=17">
+    <link rel="stylesheet" href="style.css?v=18">
 </head>
 <body>
 
@@ -244,21 +244,20 @@
         <div class="card-body">
             <p id="uac-diag-info" class="card-info">Waiting for USB audio status...</p>
             <div class="uac-diag-row">
-                <button class="btn" id="uac-tone-on" type="button" onclick="setUacTone(true)">TONE ON</button>
-                <button class="btn" id="uac-tone-off" type="button" onclick="setUacTone(false)">TONE OFF</button>
+                <button class="btn" id="uac-test-off" type="button" onclick="setUacTest('off')">OFF</button>
+                <button class="btn" id="uac-test-tone" type="button" onclick="setUacTest('tone')">TONE L/R</button>
+                <button class="btn" id="uac-test-silence" type="button" onclick="setUacTest('silence')">SILENCE</button>
+                <button class="btn" id="uac-test-ch1" type="button" onclick="setUacTest('ch1')">CH 1</button>
+                <button class="btn" id="uac-test-ch2" type="button" onclick="setUacTest('ch2')">CH 2</button>
+                <button class="btn" id="uac-test-ch3" type="button" onclick="setUacTest('ch3')">CH 3</button>
+                <button class="btn" id="uac-test-ch4" type="button" onclick="setUacTest('ch4')">CH 4</button>
+            </div>
+            <div class="uac-diag-row">
                 <button class="btn" id="uac-pack-le" type="button" onclick="setUacPack('le')">PACK LE</button>
                 <button class="btn" id="uac-pack-be" type="button" onclick="setUacPack('be')">PACK BE</button>
                 <button class="btn" id="uac-pack-low" type="button" onclick="setUacPack('low')">PACK LOW</button>
             </div>
-            <div class="uac-diag-row">
-                <button class="btn" id="uac-bits-16" type="button" onclick="setUacBits(16)">16-BIT</button>
-                <button class="btn" id="uac-bits-24" type="button" onclick="setUacBits(24)">24-BIT</button>
-                <button class="btn" id="uac-bits-32" type="button" onclick="setUacBits(32)">32-BIT</button>
-                <button class="btn" id="uac-rate-44100" type="button" onclick="setUacRate(44100)">44.1 KHZ</button>
-                <button class="btn" id="uac-rate-48000" type="button" onclick="setUacRate(48000)">48 KHZ</button>
-            </div>
-            <p id="uac-diag-error" class="card-info"></p>
-            <p class="card-info">440 Hz on the left, 660 Hz on the right, on the master and the headphones. LE, BE and LOW apply to 24-bit only. Keep the volume low. These reset when the controller reconnects.</p>
+            <p class="card-info">TONE L/R: 440 Hz left, 660 Hz right on master and headphones. SILENCE: all zeros. CH 1–4: 440 Hz on that one USB channel only (expected: 1 master L, 2 master R, 3 phones L, 4 phones R). Keep the volume low. These reset when the controller reconnects.</p>
         </div>
     </section>
 
@@ -419,6 +418,6 @@
 
     </main>
 
-    <script src="app.js?v=16"></script>
+    <script src="app.js?v=17"></script>
 </body>
 </html>

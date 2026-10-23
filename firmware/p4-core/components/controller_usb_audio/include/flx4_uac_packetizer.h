@@ -26,9 +26,6 @@ typedef enum {
 
 bool controller_uac_pack_pcm24_mode(uint8_t *dst, size_t bytes, const int16_t *src,
                                     size_t frames, controller_uac_pack24_mode_t mode);
-/* Four channels, signed 32-bit little-endian, 16-bit source left-justified. */
-bool controller_uac_pack_pcm32(uint8_t *dst, size_t bytes, const int16_t *src, size_t frames);
-
 typedef struct {
     uint32_t sample_rate;
     uint8_t channels;
