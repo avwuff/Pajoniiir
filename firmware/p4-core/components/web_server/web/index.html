@@ -11,7 +11,7 @@
       resolves back to this device, fails the TLS handshake, and blocks first
       paint until it times out. style.css falls back to system faces instead.
     -->
-    <link rel="stylesheet" href="style.css?v=18">
+    <link rel="stylesheet" href="style.css?v=15">
 </head>
 <body>
 
@@ -233,51 +233,6 @@
 
     </div>
 
-    <!-- ── USB audio diagnostic ─────────────────────────────────────────── -->
-    <section class="card" id="uac-diag-card">
-        <div class="card-head">
-            <div class="card-head-left">
-                <span class="card-icon">🔊</span>
-                <h2 class="card-title">USB AUDIO TEST</h2>
-            </div>
-        </div>
-        <div class="card-body">
-            <p id="uac-diag-info" class="card-info">Waiting for USB audio status...</p>
-            <div class="uac-diag-row">
-                <button class="btn" id="uac-test-off" type="button" onclick="setUacTest('off')">OFF</button>
-                <button class="btn" id="uac-test-tone" type="button" onclick="setUacTest('tone')">TONE L/R</button>
-                <button class="btn" id="uac-test-silence" type="button" onclick="setUacTest('silence')">SILENCE</button>
-                <button class="btn" id="uac-test-ch1" type="button" onclick="setUacTest('ch1')">CH 1</button>
-                <button class="btn" id="uac-test-ch2" type="button" onclick="setUacTest('ch2')">CH 2</button>
-                <button class="btn" id="uac-test-ch3" type="button" onclick="setUacTest('ch3')">CH 3</button>
-                <button class="btn" id="uac-test-ch4" type="button" onclick="setUacTest('ch4')">CH 4</button>
-            </div>
-            <div class="uac-diag-row">
-                <button class="btn" id="uac-pack-le" type="button" onclick="setUacPack('le')">PACK LE</button>
-                <button class="btn" id="uac-pack-be" type="button" onclick="setUacPack('be')">PACK BE</button>
-                <button class="btn" id="uac-pack-low" type="button" onclick="setUacPack('low')">PACK LOW</button>
-                <button class="btn" id="uac-pack-s16pad" type="button" onclick="setUacPack('s16pad')">S16 PAD</button>
-                <button class="btn" id="uac-pack-s16padbe" type="button" onclick="setUacPack('s16padbe')">S16 PAD BE</button>
-                <button class="btn" id="uac-pack-s16short" type="button" onclick="setUacPack('s16short')">S16 SHORT</button>
-            </div>
-            <div class="uac-diag-row">
-                <button class="btn" id="uac-test-b0" type="button" onclick="setUacTest('b0')">B0</button>
-                <button class="btn" id="uac-test-b1" type="button" onclick="setUacTest('b1')">B1</button>
-                <button class="btn" id="uac-test-b2" type="button" onclick="setUacTest('b2')">B2</button>
-                <button class="btn" id="uac-test-b3" type="button" onclick="setUacTest('b3')">B3</button>
-                <button class="btn" id="uac-test-b4" type="button" onclick="setUacTest('b4')">B4</button>
-                <button class="btn" id="uac-test-b5" type="button" onclick="setUacTest('b5')">B5</button>
-                <button class="btn" id="uac-test-b6" type="button" onclick="setUacTest('b6')">B6</button>
-                <button class="btn" id="uac-test-b7" type="button" onclick="setUacTest('b7')">B7</button>
-                <button class="btn" id="uac-test-b8" type="button" onclick="setUacTest('b8')">B8</button>
-                <button class="btn" id="uac-test-b9" type="button" onclick="setUacTest('b9')">B9</button>
-                <button class="btn" id="uac-test-b10" type="button" onclick="setUacTest('b10')">B10</button>
-                <button class="btn" id="uac-test-b11" type="button" onclick="setUacTest('b11')">B11</button>
-            </div>
-            <p class="card-info">TONE L/R: 440 Hz left, 660 Hz right on master and headphones. SILENCE: all zeros. CH 1–4: 440 Hz on that one USB channel only (expected: 1 master L, 2 master R, 3 phones L, 4 phones R). S16 PAD: 16-bit samples at the start of each full-length packet, then zeros. S16 PAD BE: the same, byte-swapped. S16 SHORT: 16-bit samples only, with shorter packets. B0–B11: a full-scale 8-bit 440 Hz tone in only that byte of every 12-byte frame, ignoring the PACK setting. Keep the volume low. These reset when the controller reconnects.</p>
-        </div>
-    </section>
-
     <!-- ── Quick Landscape Navigation Tabs ──────────────────────────────── -->
     <div class="landscape-nav-bar" id="landscape-nav-bar">
         <button class="nav-tab-btn" id="nav-btn-browser-card" onclick="toggleCard('browser-card')">
@@ -435,6 +390,6 @@
 
     </main>
 
-    <script src="app.js?v=19"></script>
+    <script src="app.js?v=14"></script>
 </body>
 </html>

@@ -977,50 +977,50 @@ static void test_ddj_sb3_trailing_fragment(void)
     puts("PASS DDJ-SB3 FS: 4ch packed-24 with one-byte tail, overrun tail still rejected");
 }
 
-static void test_pack24_modes_and_test_signals(void)
+/* Fills the ring with a constant per-channel pattern, submits one URB and
+ * decodes every frame; returns the frame count after checking all frames match. */
+static int submit_constant_sb3(int sample_bytes, int16_t decoded[4])
 {
-    const int16_t values[] = {32767, -32768, 1, -1};
-    const uint8_t le[] = {0, 0xff, 0x7f, 0, 0, 0x80, 0, 1, 0, 0, 0xff, 0xff};
-    const uint8_t be[] = {0x7f, 0xff, 0, 0x80, 0, 0, 0, 1, 0, 0xff, 0xff, 0};
-    const uint8_t low[] = {0xff, 0x7f, 0, 0, 0x80, 0xff, 1, 0, 0, 0xff, 0xff, 0xff};
-    uint8_t packed[12];
-    assert(controller_uac_pack_pcm24_mode(packed, 12, values, 1, CONTROLLER_UAC_PACK24_LE));
-    assert(memcmp(packed, le, 12) == 0);
-    assert(controller_uac_pack_pcm24_mode(packed, 12, values, 1, CONTROLLER_UAC_PACK24_BE));
-    assert(memcmp(packed, be, 12) == 0);
-    assert(controller_uac_pack_pcm24_mode(packed, 12, values, 1, CONTROLLER_UAC_PACK24_LOW));
-    assert(memcmp(packed, low, 12) == 0);
-    assert(!controller_uac_pack_pcm24_mode(packed, 11, values, 1, CONTROLLER_UAC_PACK24_LE));
-    assert(!controller_uac_pack_pcm24_mode(packed, 12, values, 1, (controller_uac_pack24_mode_t)6));
-    const uint8_t s16pad[] = {0xff, 0x7f, 0x00, 0x80, 0x01, 0x00, 0xff, 0xff, 0, 0, 0, 0};
-    const uint8_t s16padbe[] = {0x7f, 0xff, 0x80, 0x00, 0x00, 0x01, 0xff, 0xff, 0, 0, 0, 0};
-    memset(packed, 0xaa, sizeof(packed));
-    assert(controller_uac_pack_pcm24_mode(packed, 12, values, 1, CONTROLLER_UAC_PACK24_S16PAD_BE));
-    assert(memcmp(packed, s16padbe, 12) == 0);
-    memset(packed, 0xaa, sizeof(packed));
-    assert(!controller_uac_pack_pcm24_mode(packed, 7, values, 1, CONTROLLER_UAC_PACK24_S16SHORT));
-    assert(controller_uac_pack_pcm24_mode(packed, 8, values, 1, CONTROLLER_UAC_PACK24_S16SHORT));
-    assert(memcmp(packed, s16pad, 8) == 0 && packed[8] == 0xaa);
-    assert(controller_uac_pack24_frame_bytes(CONTROLLER_UAC_PACK24_S16SHORT) == 8u);
-    assert(controller_uac_pack24_frame_bytes(CONTROLLER_UAC_PACK24_S16PAD) == 12u);
-    assert(controller_uac_pack_pcm24_mode(packed, 12, values, 1, CONTROLLER_UAC_PACK24_S16PAD));
-    assert(memcmp(packed, s16pad, 12) == 0);
-    /* Two frames: 16 bytes of 16-bit samples, then an 8-byte zero tail. */
-    const int16_t two[] = {1, 2, 3, 4, 5, 6, 7, -1};
-    uint8_t packed2[24];
-    memset(packed2, 0xaa, sizeof(packed2));
-    assert(controller_uac_pack_pcm24_mode(packed2, 24, two, 2, CONTROLLER_UAC_PACK24_S16PAD));
-    for (unsigned i = 0; i < 8u; ++i)
-        assert((int16_t)(packed2[2 * i] | (packed2[2 * i + 1] << 8)) == two[i]);
-    for (unsigned i = 16; i < 24u; ++i) assert(packed2[i] == 0u);
-    /* The byte-wise LE path is bit-identical to the arithmetic packer for every sample. */
-    for (int32_t v = -32768; v <= 32767; v += 4) {
-        const int16_t frame[4] = {(int16_t)v, (int16_t)(v + 1), (int16_t)(v + 2), (int16_t)(v + 3)};
-        uint8_t a[12], b[12];
-        assert(controller_uac_pack_pcm(a, 12, frame, 1, 3));
-        assert(controller_uac_pack_pcm24_mode(b, 12, frame, 1, CONTROLLER_UAC_PACK24_LE));
-        assert(memcmp(a, b, 12) == 0);
+    int16_t main[32 * 2], phones[32 * 2];
+    for (unsigned i = 0; i < 32u; ++i) {
+        main[i * 2] = 4000; main[i * 2 + 1] = -8000;
+        phones[i * 2] = 12000; phones[i * 2 + 1] = -16000;
     }
+    for (unsigned chunk = 0; chunk < 12u; ++chunk)
+        (void)controller_usb_audio_stream_write(main, phones, 32, 44100);
+    usb_transfer_t *transfer = s_isoc[0];
+    s_isoc_active[0] = false;
+    assert(prepare_and_submit(transfer) == ESP_OK);
+    const int frame_bytes = 4 * sample_bytes;
+    int total = 0, frames = 0;
+    for (int p = 0; p < transfer->num_isoc_packets; ++p) {
+        const int n = transfer->isoc_packet_desc[p].num_bytes;
+        assert(n == 44 * frame_bytes || n == 45 * frame_bytes);
+        total += n;
+    }
+    assert(transfer->num_bytes == total);
+    for (int f = 0; f < total / frame_bytes; ++f, ++frames) {
+        for (int c = 0; c < 4; ++c) {
+            const uint8_t *s = &transfer->data_buffer[f * frame_bytes + c * sample_bytes];
+            int16_t v;
+            if (sample_bytes == 3) {
+                assert(s[0] == 0u);
+                v = (int16_t)(s[1] | (s[2] << 8));
+            } else v = (int16_t)(s[0] | (s[1] << 8));
+            if (f == 0) decoded[c] = v;
+            else assert(v == decoded[c]);
+        }
+    }
+    return frames;
+}
+
+static void test_ddj_sb3_s16le_wire_format(void)
+{
+    controller_usb_audio_stream_stats_t stats;
+    assert(controller_usb_audio_stream_set_wire_format((controller_uac_wire_format_t)2) ==
+           ESP_ERR_INVALID_ARG);
+    controller_usb_audio_stream_get_stats(&stats);
+    assert(stats.wire_format == CONTROLLER_UAC_WIRE_DESCRIPTOR);
 
     assert(controller_usb_audio_stream_is_quiesced());
     assert(controller_usb_audio_stream_set_policy(false, false, false) == ESP_OK);
@@ -1031,150 +1031,38 @@ static void test_pack24_modes_and_test_signals(void)
     control_callback(s_control);
     assert(s_streaming && !s_faulted && s_target_rate == 44100u && s_format.bytes_per_sample == 3u);
 
-    assert(controller_usb_audio_stream_set_pack24_mode(9) == ESP_ERR_INVALID_ARG);
-    assert(controller_usb_audio_stream_set_test_signal(CONTROLLER_UAC_TEST_BYTE11 + 1) == ESP_ERR_INVALID_ARG);
-    assert(controller_usb_audio_stream_set_pack24_mode(CONTROLLER_UAC_PACK24_S16SHORT + 1) == ESP_ERR_INVALID_ARG);
-    assert(controller_usb_audio_stream_set_test_signal(CONTROLLER_UAC_TEST_TONE) == ESP_OK);
-    controller_usb_audio_stream_stats_t stats;
+    /* Descriptor format: 24-bit LE, 12 bytes per frame. */
+    int16_t packed24[4], packed16[4];
+    const int frames24 = submit_constant_sb3(3, packed24);
+    assert(packed24[0] != 0 && packed24[0] != packed24[1] && packed24[2] != packed24[3]);
+
+    /* The profile switches a running stream; the next URB is 16-bit LE with the
+     * same samples on the same channels and 16-bit packet lengths. */
+    assert(controller_usb_audio_stream_set_wire_format(CONTROLLER_UAC_WIRE_S16LE) == ESP_OK);
     controller_usb_audio_stream_get_stats(&stats);
-    assert(stats.test_signal == CONTROLLER_UAC_TEST_TONE && stats.pack24_mode == CONTROLLER_UAC_PACK24_LE);
-    usb_transfer_t *packet = s_isoc[0];
-    s_isoc_active[0] = false;
-    assert(prepare_and_submit(packet) == ESP_OK);
-    const int frames = packet->isoc_packet_desc[0].num_bytes / 12;
-    assert(frames == 44);
-    bool left_right_differ = false;
-    for (int f = 0; f < frames; ++f) {
-        int16_t ch[4];
-        for (unsigned c = 0; c < 4u; ++c) {
-            const uint8_t *s = &packet->data_buffer[f * 12 + c * 3];
-            assert(s[0] == 0u);
-            ch[c] = (int16_t)(s[1] | (s[2] << 8));
-            assert(ch[c] >= -8192 && ch[c] <= 8192);
-        }
-        assert(ch[0] == ch[2] && ch[1] == ch[3]);
-        left_right_differ = left_right_differ || ch[0] != ch[1];
-    }
-    assert(left_right_differ);
+    assert(stats.wire_format == CONTROLLER_UAC_WIRE_S16LE && stats.subslot_bytes == 3u);
+    const int frames16 = submit_constant_sb3(2, packed16);
+    assert(frames16 >= 4 * 44 && frames24 >= 4 * 44);
+    assert(memcmp(packed16, packed24, sizeof(packed16)) == 0);
 
-    assert(controller_usb_audio_stream_set_pack24_mode(CONTROLLER_UAC_PACK24_BE) == ESP_OK);
-    s_isoc_active[0] = false;
-    assert(prepare_and_submit(packet) == ESP_OK);
-    for (int f = 0; f < frames; ++f)
-        assert(packet->data_buffer[f * 12 + 2] == 0u);
-
-    assert(controller_usb_audio_stream_set_pack24_mode(CONTROLLER_UAC_PACK24_LE) == ESP_OK);
-    /* Engine audio must never leak through a test signal. */
-    const int16_t loud[] = {30000, -30000, 30000, -30000, 30000, -30000};
-    assert(controller_usb_audio_stream_set_test_signal(CONTROLLER_UAC_TEST_SILENCE) == ESP_OK);
-    assert(controller_usb_audio_stream_write(loud, loud, 3, 44100) == ESP_OK);
-    s_isoc_active[0] = false;
-    assert(prepare_and_submit(packet) == ESP_OK);
-    for (int packet_index = 0; packet_index < packet->num_isoc_packets; ++packet_index)
-        assert(packet->isoc_packet_desc[packet_index].num_bytes % 12 == 0);
-    for (int i = 0; i < packet->num_bytes; ++i) assert(packet->data_buffer[i] == 0u);
-
-    for (uint8_t signal = CONTROLLER_UAC_TEST_CH1; signal <= CONTROLLER_UAC_TEST_CH4; ++signal) {
-        const unsigned lit = (unsigned)(signal - CONTROLLER_UAC_TEST_CH1);
-        assert(controller_usb_audio_stream_set_test_signal(signal) == ESP_OK);
-        assert(controller_usb_audio_stream_write(loud, loud, 3, 44100) == ESP_OK);
-        s_isoc_active[0] = false;
-        assert(prepare_and_submit(packet) == ESP_OK);
-        bool nonzero = false;
-        for (int f = 0; f < packet->num_bytes / 12; ++f) {
-            for (unsigned c = 0; c < 4u; ++c) {
-                const uint8_t *s = &packet->data_buffer[f * 12 + c * 3];
-                const int16_t v = (int16_t)(s[1] | (s[2] << 8));
-                assert(s[0] == 0u && v >= -8192 && v <= 8192);
-                if (c != lit) assert(v == 0);
-                nonzero = nonzero || v != 0;
-            }
-        }
-        assert(nonzero);
-    }
-    controller_usb_audio_stream_get_stats(&stats);
-    assert(stats.test_signal == CONTROLLER_UAC_TEST_CH4);
-
-    assert(controller_usb_audio_stream_set_pack24_mode(CONTROLLER_UAC_PACK24_S16PAD) == ESP_OK);
-    assert(controller_usb_audio_stream_set_test_signal(CONTROLLER_UAC_TEST_CH1) == ESP_OK);
-    s_isoc_active[0] = false;
-    assert(prepare_and_submit(packet) == ESP_OK);
-    {
-        const int frames_pad = packet->isoc_packet_desc[0].num_bytes / 12;
-        assert(packet->isoc_packet_desc[0].num_bytes == frames_pad * 12);
-        bool nonzero = false;
-        for (int f = 0; f < frames_pad; ++f) {
-            const uint8_t *s = &packet->data_buffer[f * 8];
-            assert((s[2] | s[3] | s[4] | s[5] | s[6] | s[7]) == 0u);
-            nonzero = nonzero || (s[0] | s[1]) != 0u;
-        }
-        assert(nonzero);
-        for (int i = frames_pad * 8; i < frames_pad * 12; ++i) assert(packet->data_buffer[i] == 0u);
-    }
-
-    assert(controller_usb_audio_stream_set_pack24_mode(CONTROLLER_UAC_PACK24_S16SHORT) == ESP_OK);
-    s_isoc_active[0] = false;
-    assert(prepare_and_submit(packet) == ESP_OK);
-    {
-        int total = 0;
-        for (int p = 0; p < packet->num_isoc_packets; ++p) {
-            const int n = packet->isoc_packet_desc[p].num_bytes;
-            assert(n == 44 * 8 || n == 45 * 8);
-            total += n;
-        }
-        assert(packet->num_bytes == total);
-        bool nonzero = false;
-        for (int i = 0; i < total; i += 8) {
-            const uint8_t *s = &packet->data_buffer[i];
-            assert((s[2] | s[3] | s[4] | s[5] | s[6] | s[7]) == 0u);
-            nonzero = nonzero || (s[0] | s[1]) != 0u;
-        }
-        assert(nonzero);
-    }
-
-    /* Byte probes ignore the pack setting and light exactly one byte position. */
-    for (unsigned position = 0; position < 12u; ++position) {
-        assert(controller_usb_audio_stream_set_test_signal(
-            (uint8_t)(CONTROLLER_UAC_TEST_BYTE0 + position)) == ESP_OK);
-        assert(controller_usb_audio_stream_write(loud, loud, 3, 44100) == ESP_OK);
-        s_isoc_active[0] = false;
-        assert(prepare_and_submit(packet) == ESP_OK);
-        bool positive = false, negative = false;
-        int base = 0;
-        for (int p = 0; p < packet->num_isoc_packets; ++p) {
-            const int n = packet->isoc_packet_desc[p].num_bytes;
-            assert(n % 12 == 0);
-            for (int i = 0; i < n; ++i) {
-                const uint8_t b = packet->data_buffer[base + i];
-                if ((unsigned)(i % 12) != position) assert(b == 0u);
-                else {
-                    positive = positive || (b > 0u && b < 0x80u);
-                    negative = negative || b >= 0x80u;
-                }
-            }
-            base += n;
-        }
-        assert(positive && negative);
-    }
-    controller_usb_audio_stream_get_stats(&stats);
-    assert(stats.test_signal == CONTROLLER_UAC_TEST_BYTE11);
-
+    /* The setting survives a stream restart; only the profile owner resets it. */
     controller_usb_audio_stream_request_stop(false);
     retire_transfers(); finish_cleanup();
     assert(controller_usb_audio_stream_is_quiesced());
     assert(controller_usb_audio_stream_start((void *)1, (void *)2,
         ddj_sb3_fs_config, sizeof(ddj_sb3_fs_config), (void *)3, 10, 5) == ESP_OK);
-    controller_usb_audio_stream_get_stats(&stats);
-    assert(stats.test_signal == CONTROLLER_UAC_TEST_OFF && stats.pack24_mode == CONTROLLER_UAC_PACK24_LE);
     s_control->status = USB_TRANSFER_STATUS_COMPLETED;
     control_callback(s_control);
     control_callback(s_control);
     assert(s_streaming);
+    (void)submit_constant_sb3(2, packed16);
+    assert(controller_usb_audio_stream_set_wire_format(CONTROLLER_UAC_WIRE_DESCRIPTOR) == ESP_OK);
+    (void)submit_constant_sb3(3, packed24);
     controller_usb_audio_stream_request_stop(false);
     retire_transfers(); finish_cleanup();
     assert(controller_usb_audio_stream_is_quiesced());
     assert(controller_usb_audio_stream_set_policy(true, false, false) == ESP_OK);
-    puts("PASS UAC1 24-bit LE/BE/LOW/S16PAD packing, tone/silence/single-channel/byte-probe test signals and start reset");
+    puts("PASS DDJ-SB3 S16LE wire format: 16-bit LE packets in a 24-bit alternate, live switch, restart persistence");
 }
 
 static void test_flx4_dedicated_headphones_preserve_pcm_level(void)
@@ -1298,7 +1186,7 @@ int main(void)
     test_ddj400_hs_uac1_cadence();
     test_numark_touch_fs();
     test_ddj_sb3_trailing_fragment();
-    test_pack24_modes_and_test_signals();
+    test_ddj_sb3_s16le_wire_format();
     test_flx4_dedicated_headphones_preserve_pcm_level();
     assert(review_live_transfers == 0 && review_live_payload_bytes == 0);
     puts("PASS UAC 16/24-bit, consumer pacing, bounded timeout, ownership, reconnect and channel routing");

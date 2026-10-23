@@ -166,7 +166,8 @@
   "audio": {
     "enabled": true,
     "headphone_channels": [3, 4],
-    "preferred_sample_rate": 44100
+    "preferred_sample_rate": 44100,
+    "wire_format": "s16le"
   },
   "omitted_inputs": [
     { "status": "0x90/0x91", "data1": "0x47", "reason": "Shift+PLAY is reverse; no reverse semantic" },

@@ -369,7 +369,6 @@ function pollStatus() {
             updateDeckUI(2, status.deck2);
             updateMixerUI(status.mixer);
             updateVu(status.diagnostics);
-            updateUacDiag(status.uac_format);
         })
         .catch(err => {
             setConnected(false);
@@ -517,42 +516,6 @@ function updatePflButton(deckNum, active) {
 function sendControl(deck, action) {
     sendMutation(`/api/control?deck=${deck}&action=${action}`)
         .catch(err => console.error(`Control failed (${action}): ${err.message}`));
-}
-
-const UAC_TEST_SIGNALS = ['off', 'tone', 'silence', 'ch1', 'ch2', 'ch3', 'ch4',
-    'b0', 'b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8', 'b9', 'b10', 'b11'];
-
-function setUacTest(signal) {
-    sendMutation(`/api/control?action=uac_test&value=${encodeURIComponent(signal)}`)
-        .catch(err => console.error(`USB test signal failed: ${err.message}`));
-}
-
-function setUacPack(mode) {
-    sendMutation(`/api/control?action=uac_pack24&value=${encodeURIComponent(mode)}`)
-        .catch(err => console.error(`USB pack failed: ${err.message}`));
-}
-
-function updateUacDiag(fmt) {
-    const info = document.getElementById('uac-diag-info');
-    if (!info) return;
-    const known = fmt && typeof fmt.pack24 === 'string';
-    const pack = known ? fmt.pack24 : '';
-    const signal = known && typeof fmt.test_signal === 'string' ? fmt.test_signal : '';
-    UAC_TEST_SIGNALS.forEach(name => {
-        const btn = document.getElementById(`uac-test-${name}`);
-        if (btn) btn.classList.toggle('active', signal === name);
-    });
-    ['le', 'be', 'low', 's16pad', 's16padbe', 's16short'].forEach(mode => {
-        const btn = document.getElementById(`uac-pack-${mode}`);
-        if (btn) btn.classList.toggle('active', pack === mode);
-    });
-    if (!known) {
-        info.textContent = 'Waiting for USB audio status...';
-        return;
-    }
-    const rate = fmt.sample_rate ? `${fmt.sample_rate} Hz` : 'no rate';
-    const stream = fmt.streaming ? 'streaming' : 'not streaming';
-    info.textContent = `${stream} · ${rate} · ${fmt.bits}-bit · pack ${pack} · test ${signal || 'off'}`;
 }
 
 function onVolumeChange(deck, value) {

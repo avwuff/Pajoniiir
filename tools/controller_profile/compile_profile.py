@@ -78,6 +78,12 @@ PF_JOG_TOUCH = 1 << 2
 PF_PITCH_14BIT = 1 << 3
 PF_FILTER_ALWAYS = 1 << 4
 PF_NATIVE_HEADPHONES = 1 << 5
+PF_UAC_S16LE = 1 << 6
+
+# audio.wire_format values. "descriptor" (default) sends the sample size the
+# USB audio descriptor advertises; "s16le" sends 16-bit little-endian samples
+# even when a UAC1 alternate advertises 3-byte subslots (Pioneer DDJ-SB3).
+AUDIO_WIRE_FORMATS = ("descriptor", "s16le")
 
 # control_link.h namespaces
 NS_DECK1 = 0x10
@@ -430,6 +436,13 @@ def compile_profile(profile):
         if any(item.get("event") in native_events for item in profile.get("inputs", [])):
             raise ValueError("native_headphone_controls forbids software headphone mirrors")
         flags |= PF_NATIVE_HEADPHONES
+    wire_format = profile.get("audio", {}).get("wire_format", "descriptor")
+    if wire_format not in AUDIO_WIRE_FORMATS:
+        raise ValueError("audio.wire_format must be one of: " + ", ".join(AUDIO_WIRE_FORMATS))
+    if wire_format == "s16le":
+        if not caps.get("usb_audio"):
+            raise ValueError("audio.wire_format s16le requires usb_audio")
+        flags |= PF_UAC_S16LE
     sysex_values = [num(v) for v in profile.get("init_sysex", [])]
     if sysex_values and (not 2 <= len(sysex_values) <= MAX_INIT_SYSEX or
                          sysex_values[0] != 0xF0 or sysex_values[-1] != 0xF7 or
@@ -450,7 +463,7 @@ def compile_profile(profile):
                          (profile_size, MAX_PROFILE_SIZE))
     crc = zlib.crc32(tail + body) & 0xFFFFFFFF
     version = S3CP_SCALED_VERSION if any(e.raw_type == RAW_CC7_TO14 for e in entries) else S3CP_VERSION
-    if sysex or flags & (PF_FILTER_ALWAYS | PF_NATIVE_HEADPHONES) or any(e.raw_type >= RAW_NOTE_SELECT for e in entries) or any(o.value_scale for o in outputs):
+    if sysex or flags & (PF_FILTER_ALWAYS | PF_NATIVE_HEADPHONES | PF_UAC_S16LE) or any(e.raw_type >= RAW_NOTE_SELECT for e in entries) or any(o.value_scale for o in outputs):
         version = S3CP_EXTENDED_VERSION
     header = S3CP_MAGIC + struct.pack("<HHII", version, HEADER_SIZE,
                                       profile_size, crc) + tail

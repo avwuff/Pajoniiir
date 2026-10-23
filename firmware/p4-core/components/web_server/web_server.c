@@ -9,7 +9,6 @@
 #include "board_capabilities.h"
 #include "audio_engine.h"
 #include "controller_usb_audio_stream.h"
-#include "flx4_uac_packetizer.h"
 #include "audio_uac_health.h"
 #include "media_catalog.h"
 #include "ui.h"
@@ -1674,13 +1673,6 @@ static esp_err_t api_ui_timing_handler(httpd_req_t *req)
     return rc == ESP_OK ? httpd_resp_send_chunk(req, NULL, 0) : rc;
 }
 
-static const char *uac_test_signal_name(uint8_t signal)
-{
-    static const char *const names[] = {"off", "tone", "silence", "ch1", "ch2", "ch3", "ch4",
-        "b0", "b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9", "b10", "b11"};
-    return signal < sizeof(names) / sizeof(names[0]) ? names[signal] : "off";
-}
-
 static esp_err_t api_status_handler(httpd_req_t *req)
 {
     if (!api_request_allowed(req, false)) return ESP_FAIL;
@@ -2022,7 +2014,7 @@ static esp_err_t api_status_handler(httpd_req_t *req)
         "\"sd_metrics\":{\"idle_waits\":%u,\"idle_polls\":%u,\"idle_timeouts\":%u,\"idle_errors\":%u,\"idle_max_us\":%u,"
         "\"reads\":%u,\"writes\":%u,\"transfer_errors\":%u,\"read_max_us\":%u,\"write_max_us\":%u,"
         "\"gate_waits\":%u,\"gate_timeouts\":%u,\"gate_wait_max_us\":%u,\"gate_hold_max_us\":%u,\"activity\":%u},"
-        "\"uac_format\":{\"sample_rate\":%u,\"bits\":%u,\"consumer_paced\":%s,\"queued_us\":%u,\"high_speed\":%s,\"subslot_bytes\":%u,\"feedback_updates\":%u,\"feedback_invalid\":%u,\"streaming\":%s,\"faulted\":%s,\"configuration_fault\":%s,\"fault_control_step\":%u,\"last_control_status\":%ld,\"last_control_bytes\":%ld,\"last_control_word\":%u,\"clock_readback_retries\":%u,\"clock_reported_rate\":%u,\"prime_fault_stage\":%u,\"prime_fault_index\":%u,\"prime_fault_code\":%ld,\"pack24\":\"%s\",\"test_signal\":\"%s\"},"
+        "\"uac_format\":{\"sample_rate\":%u,\"bits\":%u,\"consumer_paced\":%s,\"queued_us\":%u,\"high_speed\":%s,\"subslot_bytes\":%u,\"feedback_updates\":%u,\"feedback_invalid\":%u,\"streaming\":%s,\"faulted\":%s,\"configuration_fault\":%s,\"fault_control_step\":%u,\"last_control_status\":%ld,\"last_control_bytes\":%ld,\"last_control_word\":%u,\"clock_readback_retries\":%u,\"clock_reported_rate\":%u,\"prime_fault_stage\":%u,\"prime_fault_index\":%u,\"prime_fault_code\":%ld,\"wire_format\":\"%s\"},"
         "\"deck1\":{"
         "\"title\":\"%s\","
         "\"artist\":\"%s\","
@@ -2184,12 +2176,7 @@ static esp_err_t api_status_handler(httpd_req_t *req)
         (unsigned)uac_format.last_control_word,
         (unsigned)uac_format.clock_readback_retries, (unsigned)uac_format.clock_reported_rate,
         (unsigned)uac_format.prime_fault_stage, (unsigned)uac_format.prime_fault_index, (long)uac_format.prime_fault_code,
-        uac_format.pack24_mode == CONTROLLER_UAC_PACK24_BE ? "be" :
-            uac_format.pack24_mode == CONTROLLER_UAC_PACK24_LOW ? "low" :
-            uac_format.pack24_mode == CONTROLLER_UAC_PACK24_S16PAD ? "s16pad" :
-            uac_format.pack24_mode == CONTROLLER_UAC_PACK24_S16PAD_BE ? "s16padbe" :
-            uac_format.pack24_mode == CONTROLLER_UAC_PACK24_S16SHORT ? "s16short" : "le",
-        uac_test_signal_name(uac_format.test_signal),
+        uac_format.wire_format == CONTROLLER_UAC_WIRE_S16LE ? "s16le" : "descriptor",
         title1_esc, artist1_esc, (unsigned)current_bpm1, p1, state1.pitch, (unsigned)state1.position_ms, (unsigned)duration1_ms, state1.playing ? "true" : "false",
         state1.master_tempo ? "true" : "false", loop1.active ? "true" : "false", (unsigned)loop1.start_ms, (unsigned)loop1.end_ms,
         state1.sync_enabled ? "true" : "false", state1.sync_master ? "true" : "false", (unsigned)state1.network_sync,(unsigned)state1.network_player,(double)state1.network_phase_error,state1.sink_latency_calibrated?"true":"false",state_text1,
@@ -2533,30 +2520,6 @@ static esp_err_t api_control_handler(httpd_req_t *req)
             httpd_resp_set_status(req, "409 Conflict");
             return httpd_resp_send(req, "Sink unavailable or transport/recorder busy", HTTPD_RESP_USE_STRLEN);
         }
-        httpd_resp_set_type(req, "application/json");
-        return httpd_resp_send(req, "{\"ok\":true}", HTTPD_RESP_USE_STRLEN);
-    }
-    if (strcmp(action, "uac_pack24") == 0) {
-        uint8_t mode;
-        if (has_value && strcmp(value_str, "le") == 0) mode = CONTROLLER_UAC_PACK24_LE;
-        else if (has_value && strcmp(value_str, "be") == 0) mode = CONTROLLER_UAC_PACK24_BE;
-        else if (has_value && strcmp(value_str, "low") == 0) mode = CONTROLLER_UAC_PACK24_LOW;
-        else if (has_value && strcmp(value_str, "s16pad") == 0) mode = CONTROLLER_UAC_PACK24_S16PAD;
-        else if (has_value && strcmp(value_str, "s16padbe") == 0) mode = CONTROLLER_UAC_PACK24_S16PAD_BE;
-        else if (has_value && strcmp(value_str, "s16short") == 0) mode = CONTROLLER_UAC_PACK24_S16SHORT;
-        else return httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST,
-                                        "Mode must be le, be, low, s16pad, s16padbe or s16short");
-        (void)controller_usb_audio_stream_set_pack24_mode(mode);
-        httpd_resp_set_type(req, "application/json");
-        return httpd_resp_send(req, "{\"ok\":true}", HTTPD_RESP_USE_STRLEN);
-    }
-    if (strcmp(action, "uac_test") == 0) {
-        uint8_t signal = CONTROLLER_UAC_TEST_BYTE11 + 1u;
-        for (uint8_t i = CONTROLLER_UAC_TEST_OFF; has_value && i <= CONTROLLER_UAC_TEST_BYTE11; ++i)
-            if (strcmp(value_str, uac_test_signal_name(i)) == 0) signal = i;
-        if (controller_usb_audio_stream_set_test_signal(signal) != ESP_OK)
-            return httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST,
-                                       "Signal must be off, tone, silence, ch1..ch4 or b0..b11");
         httpd_resp_set_type(req, "application/json");
         return httpd_resp_send(req, "{\"ok\":true}", HTTPD_RESP_USE_STRLEN);
     }

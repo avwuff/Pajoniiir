@@ -52,33 +52,25 @@ typedef struct {
     uint8_t subslot_bytes;
     uint32_t feedback_updates;
     uint32_t feedback_invalid;
-    uint8_t pack24_mode;
-    uint8_t test_signal;
+    uint8_t wire_format; /* controller_uac_wire_format_t */
 } controller_usb_audio_stream_stats_t;
 
-/* Test signals replace engine audio inside the packetizer, at -12 dBFS.
- * TONE is 440 Hz on channels 1/3 and 660 Hz on 2/4 (MAIN L/R, CUE L/R).
- * SILENCE sends digital zero on every channel. CH1..CH4 carry 440 Hz on that
- * one wire channel and zero on the other three. BYTE0..BYTE11 bypass packing:
- * every wire frame is zero except byte N, which carries a full-scale signed
- * 8-bit 440 Hz sine; positions past the frame size stay zero. */
+/* How PCM is laid out on the isochronous OUT endpoint.
+ * DESCRIPTOR follows the selected alternate setting's subslot size.
+ * S16LE sends 16-bit little-endian samples (8 bytes per 4-channel frame)
+ * and sizes packets for 16-bit even when a UAC1 alternate advertises 3-byte
+ * subslots. The Pioneer DDJ-SB3 advertises 24-bit but consumes 16-bit LE;
+ * 24-bit or zero-padded packets play distorted and at the wrong pitch.
+ * S16LE has no effect on UAC2 or on alternates that are already 16-bit. */
 typedef enum {
-    CONTROLLER_UAC_TEST_OFF = 0,
-    CONTROLLER_UAC_TEST_TONE = 1,
-    CONTROLLER_UAC_TEST_SILENCE = 2,
-    CONTROLLER_UAC_TEST_CH1 = 3,
-    CONTROLLER_UAC_TEST_CH2 = 4,
-    CONTROLLER_UAC_TEST_CH3 = 5,
-    CONTROLLER_UAC_TEST_CH4 = 6,
-    CONTROLLER_UAC_TEST_BYTE0 = 7,
-    CONTROLLER_UAC_TEST_BYTE11 = 18,
-} controller_uac_test_signal_t;
+    CONTROLLER_UAC_WIRE_DESCRIPTOR = 0,
+    CONTROLLER_UAC_WIRE_S16LE = 1,
+} controller_uac_wire_format_t;
 
-/* Diagnostics, safe while streaming; both reset to production at each start.
- * pack24_mode is a controller_uac_pack24_mode_t and applies only to packed
- * 24-bit UAC1 streams. signal is a controller_uac_test_signal_t. */
-esp_err_t controller_usb_audio_stream_set_pack24_mode(uint8_t mode);
-esp_err_t controller_usb_audio_stream_set_test_signal(uint8_t signal);
+/* Any task, any time; takes effect on the next submitted transfer. The value
+ * persists across stream restarts, so the profile owner must reset it to
+ * DESCRIPTOR when the controller disconnects. */
+esp_err_t controller_usb_audio_stream_set_wire_format(controller_uac_wire_format_t format);
 
 /* Owner task only; only while quiesced. FLX4 preserves its qualified format/gain. */
 esp_err_t controller_usb_audio_stream_set_policy(bool qualified_flx4, bool consumer_paced,
