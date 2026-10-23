@@ -113,6 +113,9 @@ typedef enum {
     LED_BEAT_JUMP_PAD_8,
     LED_BEAT_JUMP_SHIFT_HELPER_7,
     LED_BEAT_JUMP_SHIFT_HELPER_8,
+    /* On while the deck is in VINYL jog mode. Published on mode changes and
+     * when a controller connects; CDJ mode sends it off. */
+    LED_VINYL,
     LED_REMOTE_COUNT,
 } led_id_t;
 
@@ -195,6 +198,8 @@ typedef enum {
     CTRL_DECK_EXT_ACTION_RESTORE_SOURCE_CUES,
     CTRL_DECK_EXT_ACTION_JOG_VINYL,
     CTRL_DECK_EXT_ACTION_JOG_CDJ,
+    /* Press flips VINYL/CDJ. Release is ignored, same as the absolute actions. */
+    CTRL_DECK_EXT_ACTION_JOG_TOGGLE,
 } ctrl_deck_ext_action_t;
 
 #define CTRL_DECK_EXT_VALUE(action, pressed) \
