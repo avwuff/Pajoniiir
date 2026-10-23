@@ -1167,6 +1167,14 @@ static void publish_loop_adjust_leds(uint8_t deck, const deck_state_t *state)
                   deck);
 }
 
+static void publish_jog_mode_led(uint8_t deck, const deck_state_t *state)
+{
+    if (deck >= DECK_CORE_DECK_COUNT || !state) {
+        return;
+    }
+    deck_send_led(LED_VINYL, state->jog_cdj_mode ? 0u : 1u, deck);
+}
+
 static void set_loop_adjust_mode(uint8_t deck,
                                  deck_state_t *state,
                                  deck_core_loop_adjust_mode_t requested)
@@ -1867,6 +1875,7 @@ static void on_state_event(const ctrl_event_t *ev)
             publish_flx4_led_snapshot(true);
             for (uint8_t deck = 0; deck < DECK_CORE_DECK_COUNT; ++deck) {
                 publish_loop_adjust_leds(deck, &s_decks[deck]);
+                publish_jog_mode_led(deck, &s_decks[deck]);
             }
         }
         s_flx4_connection_state_valid = true;
@@ -2394,6 +2403,21 @@ static void handle_jog_touch(uint8_t deck, bool pressed, deck_state_t *state)
     }
 }
 
+static void set_jog_cdj_mode(uint8_t deck, deck_state_t *state, bool cdj)
+{
+    if (deck >= DECK_CORE_DECK_COUNT || !state) {
+        return;
+    }
+    if (state->jog_cdj_mode != cdj) {
+        /* Release the old audio owner before changing touch semantics. */
+        handle_jog_touch(deck, false, state);
+        state->jog_cdj_mode = cdj;
+        ESP_LOGI(TAG, "deck %u jog -> %s", (unsigned)deck + 1,
+                 cdj ? "CDJ" : "VINYL");
+    }
+    publish_jog_mode_led(deck, state);
+}
+
 static bool on_deck_extension_button(const ctrl_event_t *ev)
 {
     if (!ev || ev->type != CTRL_EV_BUTTON || !control_link_id_is_deck(ev->id)) {
@@ -2512,13 +2536,13 @@ static bool on_deck_extension_button(const ctrl_event_t *ev)
             ESP_LOGI(TAG, "deck %u sync -> OFF", (unsigned)deck + 1);
             return true;
         case CTRL_DECK_EXT_ACTION_JOG_VINYL:
-        case CTRL_DECK_EXT_ACTION_JOG_CDJ: {
-            const bool cdj = action == CTRL_DECK_EXT_ACTION_JOG_CDJ;
-            if (state->jog_cdj_mode != cdj) {
-                /* Release the old audio owner before changing touch semantics. */
-                handle_jog_touch(deck, false, state);
-                state->jog_cdj_mode = cdj;
+        case CTRL_DECK_EXT_ACTION_JOG_CDJ:
+        case CTRL_DECK_EXT_ACTION_JOG_TOGGLE: {
+            bool cdj = action == CTRL_DECK_EXT_ACTION_JOG_CDJ;
+            if (action == CTRL_DECK_EXT_ACTION_JOG_TOGGLE) {
+                cdj = !state->jog_cdj_mode;
             }
+            set_jog_cdj_mode(deck, state, cdj);
             return true;
         }
         case CTRL_DECK_EXT_ACTION_RESTORE_SOURCE_CUES: {
