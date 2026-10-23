@@ -1676,7 +1676,8 @@ static esp_err_t api_ui_timing_handler(httpd_req_t *req)
 
 static const char *uac_test_signal_name(uint8_t signal)
 {
-    static const char *const names[] = {"off", "tone", "silence", "ch1", "ch2", "ch3", "ch4"};
+    static const char *const names[] = {"off", "tone", "silence", "ch1", "ch2", "ch3", "ch4",
+        "b0", "b1", "b2", "b3", "b4", "b5", "b6", "b7", "b8", "b9", "b10", "b11"};
     return signal < sizeof(names) / sizeof(names[0]) ? names[signal] : "off";
 }
 
@@ -2184,7 +2185,8 @@ static esp_err_t api_status_handler(httpd_req_t *req)
         (unsigned)uac_format.clock_readback_retries, (unsigned)uac_format.clock_reported_rate,
         (unsigned)uac_format.prime_fault_stage, (unsigned)uac_format.prime_fault_index, (long)uac_format.prime_fault_code,
         uac_format.pack24_mode == CONTROLLER_UAC_PACK24_BE ? "be" :
-            uac_format.pack24_mode == CONTROLLER_UAC_PACK24_LOW ? "low" : "le",
+            uac_format.pack24_mode == CONTROLLER_UAC_PACK24_LOW ? "low" :
+            uac_format.pack24_mode == CONTROLLER_UAC_PACK24_S16PAD ? "s16pad" : "le",
         uac_test_signal_name(uac_format.test_signal),
         title1_esc, artist1_esc, (unsigned)current_bpm1, p1, state1.pitch, (unsigned)state1.position_ms, (unsigned)duration1_ms, state1.playing ? "true" : "false",
         state1.master_tempo ? "true" : "false", loop1.active ? "true" : "false", (unsigned)loop1.start_ms, (unsigned)loop1.end_ms,
@@ -2537,18 +2539,19 @@ static esp_err_t api_control_handler(httpd_req_t *req)
         if (has_value && strcmp(value_str, "le") == 0) mode = CONTROLLER_UAC_PACK24_LE;
         else if (has_value && strcmp(value_str, "be") == 0) mode = CONTROLLER_UAC_PACK24_BE;
         else if (has_value && strcmp(value_str, "low") == 0) mode = CONTROLLER_UAC_PACK24_LOW;
-        else return httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "Mode must be le, be or low");
+        else if (has_value && strcmp(value_str, "s16pad") == 0) mode = CONTROLLER_UAC_PACK24_S16PAD;
+        else return httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST, "Mode must be le, be, low or s16pad");
         (void)controller_usb_audio_stream_set_pack24_mode(mode);
         httpd_resp_set_type(req, "application/json");
         return httpd_resp_send(req, "{\"ok\":true}", HTTPD_RESP_USE_STRLEN);
     }
     if (strcmp(action, "uac_test") == 0) {
-        uint8_t signal = CONTROLLER_UAC_TEST_CH4 + 1u;
-        for (uint8_t i = CONTROLLER_UAC_TEST_OFF; has_value && i <= CONTROLLER_UAC_TEST_CH4; ++i)
+        uint8_t signal = CONTROLLER_UAC_TEST_BYTE11 + 1u;
+        for (uint8_t i = CONTROLLER_UAC_TEST_OFF; has_value && i <= CONTROLLER_UAC_TEST_BYTE11; ++i)
             if (strcmp(value_str, uac_test_signal_name(i)) == 0) signal = i;
         if (controller_usb_audio_stream_set_test_signal(signal) != ESP_OK)
             return httpd_resp_send_err(req, HTTPD_400_BAD_REQUEST,
-                                       "Signal must be off, tone, silence, ch1, ch2, ch3 or ch4");
+                                       "Signal must be off, tone, silence, ch1..ch4 or b0..b11");
         httpd_resp_set_type(req, "application/json");
         return httpd_resp_send(req, "{\"ok\":true}", HTTPD_RESP_USE_STRLEN);
     }

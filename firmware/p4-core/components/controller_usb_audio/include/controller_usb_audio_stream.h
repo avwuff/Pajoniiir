@@ -59,7 +59,9 @@ typedef struct {
 /* Test signals replace engine audio inside the packetizer, at -12 dBFS.
  * TONE is 440 Hz on channels 1/3 and 660 Hz on 2/4 (MAIN L/R, CUE L/R).
  * SILENCE sends digital zero on every channel. CH1..CH4 carry 440 Hz on that
- * one wire channel and zero on the other three. */
+ * one wire channel and zero on the other three. BYTE0..BYTE11 bypass packing:
+ * every wire frame is zero except byte N, which carries a full-scale signed
+ * 8-bit 440 Hz sine; positions past the frame size stay zero. */
 typedef enum {
     CONTROLLER_UAC_TEST_OFF = 0,
     CONTROLLER_UAC_TEST_TONE = 1,
@@ -68,6 +70,8 @@ typedef enum {
     CONTROLLER_UAC_TEST_CH2 = 4,
     CONTROLLER_UAC_TEST_CH3 = 5,
     CONTROLLER_UAC_TEST_CH4 = 6,
+    CONTROLLER_UAC_TEST_BYTE0 = 7,
+    CONTROLLER_UAC_TEST_BYTE11 = 18,
 } controller_uac_test_signal_t;
 
 /* Diagnostics, safe while streaming; both reset to production at each start.

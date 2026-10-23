@@ -168,14 +168,14 @@ esp_err_t controller_usb_audio_stream_set_policy(bool qualified_flx4, bool consu
 
 esp_err_t controller_usb_audio_stream_set_pack24_mode(uint8_t mode)
 {
-    if (mode > CONTROLLER_UAC_PACK24_LOW) return ESP_ERR_INVALID_ARG;
+    if (mode > CONTROLLER_UAC_PACK24_S16PAD) return ESP_ERR_INVALID_ARG;
     __atomic_store_n(&s_pack24_mode, mode, __ATOMIC_RELEASE);
     return ESP_OK;
 }
 
 esp_err_t controller_usb_audio_stream_set_test_signal(uint8_t signal)
 {
-    if (signal > CONTROLLER_UAC_TEST_CH4) return ESP_ERR_INVALID_ARG;
+    if (signal > CONTROLLER_UAC_TEST_BYTE11) return ESP_ERR_INVALID_ARG;
     if (signal != CONTROLLER_UAC_TEST_OFF && !s_tone_table_ready) {
         for (unsigned i = 0; i < TONE_TABLE_SIZE; ++i)
             s_tone_table[i] = (int16_t)lrintf(8192.0f *
@@ -206,6 +206,21 @@ static void fill_test_signal(int16_t *samples, uint16_t frames, uint8_t signal)
             frame[signal - CONTROLLER_UAC_TEST_CH1] = s_tone_table[s_tone_phase[0] >> 24];
             s_tone_phase[0] += step[0];
         }
+    }
+}
+
+static void fill_byte_probe(uint8_t *dst, size_t bytes, uint16_t frames, unsigned position)
+{
+    memset(dst, 0, bytes);
+    const size_t frame_bytes = (size_t)STREAM_CHANNELS * s_format.bytes_per_sample;
+    if (position >= frame_bytes) return;
+    const uint32_t rate = s_target_rate ? s_target_rate : STREAM_RATE_HZ;
+    const uint32_t step = (uint32_t)(((uint64_t)TONE_LEFT_HZ << 32) / rate);
+    for (uint16_t f = 0; f < frames; ++f) {
+        /* Table peak is 8192; scale to a signed 8-bit peak of 127. */
+        const int32_t v = ((int32_t)s_tone_table[s_tone_phase[0] >> 24] * 127) / 8192;
+        dst[f * frame_bytes + position] = (uint8_t)(int8_t)v;
+        s_tone_phase[0] += step;
     }
 }
 
@@ -386,6 +401,13 @@ static esp_err_t prepare_and_submit(usb_transfer_t *transfer)
         (void)controller_audio_ring_read(&s_ring, samples, frames, true);
         portEXIT_CRITICAL(&s_mux);
         const uint8_t signal = __atomic_load_n(&s_test_signal, __ATOMIC_ACQUIRE);
+        if (signal >= CONTROLLER_UAC_TEST_BYTE0) {
+            fill_byte_probe(&transfer->data_buffer[offset], bytes, frames,
+                            (unsigned)(signal - CONTROLLER_UAC_TEST_BYTE0));
+            transfer->isoc_packet_desc[packet].num_bytes = (int)bytes;
+            offset += bytes;
+            continue;
+        }
         if (signal != CONTROLLER_UAC_TEST_OFF) fill_test_signal(samples, frames, signal);
         if (s_format.uac2 && s_format.bytes_per_sample != 2u &&
             !controller_uac2_pack_pcm(&transfer->data_buffer[offset], bytes, pcm, frames,

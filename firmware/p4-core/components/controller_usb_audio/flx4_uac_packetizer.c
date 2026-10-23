@@ -1,5 +1,7 @@
 #include "flx4_uac_packetizer.h"
 
+#include <string.h>
+
 bool controller_uac_pack_pcm(uint8_t *dst, size_t bytes, const int16_t *src,
                              size_t frames, uint8_t sample_bytes)
 {
@@ -18,9 +20,18 @@ bool controller_uac_pack_pcm(uint8_t *dst, size_t bytes, const int16_t *src,
 bool controller_uac_pack_pcm24_mode(uint8_t *dst, size_t bytes, const int16_t *src,
                                     size_t frames, controller_uac_pack24_mode_t mode)
 {
-    if (!dst || !src || mode > CONTROLLER_UAC_PACK24_LOW ||
+    if (!dst || !src || mode > CONTROLLER_UAC_PACK24_S16PAD ||
         frames > SIZE_MAX / 12u || bytes < frames * 12u)
         return false;
+    if (mode == CONTROLLER_UAC_PACK24_S16PAD) {
+        for (size_t i = 0; i < frames * 4u; ++i) {
+            const uint16_t bits = (uint16_t)src[i];
+            *dst++ = (uint8_t)(bits & 0xffu);
+            *dst++ = (uint8_t)(bits >> 8);
+        }
+        memset(dst, 0, frames * 4u);
+        return true;
+    }
     for (size_t i = 0; i < frames * 4u; ++i) {
         const uint16_t bits = (uint16_t)src[i];
         const uint8_t lo = (uint8_t)(bits & 0xffu);

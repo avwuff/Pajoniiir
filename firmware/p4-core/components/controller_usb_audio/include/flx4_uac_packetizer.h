@@ -17,11 +17,14 @@ bool controller_uac_pack_pcm(uint8_t *dst, size_t bytes, const int16_t *src,
 /* Diagnostic packed 24-bit layouts for one 16-bit sample s (bytes in wire order):
  * LE  00 lo hi  UAC1 Type I little-endian, left-justified (production layout)
  * BE  hi lo 00  big-endian, left-justified
- * LOW lo hi ss  little-endian, right-justified, sign-extended (-48 dB) */
+ * LOW lo hi ss  little-endian, right-justified, sign-extended (-48 dB)
+ * S16PAD keeps the 12-byte-per-frame packet length but writes 16-bit LE
+ * 4-channel frames (8 bytes each) from the start and zero-fills the tail. */
 typedef enum {
     CONTROLLER_UAC_PACK24_LE = 0,
     CONTROLLER_UAC_PACK24_BE = 1,
     CONTROLLER_UAC_PACK24_LOW = 2,
+    CONTROLLER_UAC_PACK24_S16PAD = 3,
 } controller_uac_pack24_mode_t;
 
 bool controller_uac_pack_pcm24_mode(uint8_t *dst, size_t bytes, const int16_t *src,

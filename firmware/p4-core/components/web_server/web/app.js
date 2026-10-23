@@ -519,7 +519,8 @@ function sendControl(deck, action) {
         .catch(err => console.error(`Control failed (${action}): ${err.message}`));
 }
 
-const UAC_TEST_SIGNALS = ['off', 'tone', 'silence', 'ch1', 'ch2', 'ch3', 'ch4'];
+const UAC_TEST_SIGNALS = ['off', 'tone', 'silence', 'ch1', 'ch2', 'ch3', 'ch4',
+    'b0', 'b1', 'b2', 'b3', 'b4', 'b5', 'b6', 'b7', 'b8', 'b9', 'b10', 'b11'];
 
 function setUacTest(signal) {
     sendMutation(`/api/control?action=uac_test&value=${encodeURIComponent(signal)}`)
@@ -541,7 +542,7 @@ function updateUacDiag(fmt) {
         const btn = document.getElementById(`uac-test-${name}`);
         if (btn) btn.classList.toggle('active', signal === name);
     });
-    ['le', 'be', 'low'].forEach(mode => {
+    ['le', 'be', 'low', 's16pad'].forEach(mode => {
         const btn = document.getElementById(`uac-pack-${mode}`);
         if (btn) btn.classList.toggle('active', pack === mode);
     });
